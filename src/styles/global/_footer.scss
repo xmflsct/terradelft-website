@@ -1,0 +1,22 @@
+footer {
+  font-size: 0.85em;
+  padding-top: 1.5em;
+  border-top: 1px dashed $color-secondary-light;
+
+  a {
+    color: $color-secondary-light;
+    text-decoration: none;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .footer-center {
+    text-align: center;
+  }
+
+  .footer-right {
+    text-align: right;
+  }
+}

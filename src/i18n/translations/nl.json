@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "1": "Collectie",
+    "2": "Web Winkel",
+    "3": "Expositie",
+    "4": "Nieuws",
+    "5": "Terra in China",
+    "6": "Over Terra"
+  },
+  "home": {
+    "test": "hello",
+    "title": "Hi people",
+    "content": "Welcome to your new Gatsby site.\nNow go build something great.",
+    "link": "Go to page 2"
+  },
+  "page2": {
+    "title": "Hi from the second page",
+    "content": "Welcome to page 2",
+    "link": "Go back to the homepage"
+  }
+}

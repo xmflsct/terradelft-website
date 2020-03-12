@@ -1,0 +1,24 @@
+header {
+  .header-right {
+    .language-switcher {
+      text-align: right;
+
+      button {
+        padding-top: 0;
+        padding-bottom: 0;
+        text-decoration: none;
+        transition: all 0.1s ease-in-out;
+
+        &.inactive {
+          color: $color-primary-light;
+          opacity: 0.5;
+        }
+        &.active,
+        &:hover {
+          color: $color-secondary-light;
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

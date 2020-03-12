@@ -1,0 +1,43 @@
+{
+  "name": "terra-delft",
+  "private": true,
+  "description": "Terra Delft Website",
+  "version": "0.1.0",
+  "author": "Zhiyuan Zheng <me@xmflsct.com>",
+  "dependencies": {
+    "@contentful/rich-text-react-renderer": "^13.4.0",
+    "gatsby": "^2.19.39",
+    "gatsby-image": "^2.2.43",
+    "gatsby-plugin-react-helmet": "^3.1.23",
+    "gatsby-plugin-sass": "^2.1.30",
+    "gatsby-plugin-sharp": "^2.4.11",
+    "gatsby-source-contentful": "^2.1.95",
+    "gatsby-source-filesystem": "^2.1.53",
+    "gatsby-transformer-sharp": "^2.3.18",
+    "i18next": "^19.3.2",
+    "i18next-browser-languagedetector": "^4.0.2",
+    "node-sass": "^4.13.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.0",
+    "react-bootstrap": "^1.0.0-beta.17",
+    "react-dom": "^16.13.0",
+    "react-helmet": "^5.2.1",
+    "react-i18next": "^11.3.3"
+  },
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "serve": "gatsby serve -p 8000",
+    "clean": "gatsby clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
+  },
+  "bugs": {
+    "url": "https://github.com/gatsbyjs/gatsby/issues"
+  }
+}
