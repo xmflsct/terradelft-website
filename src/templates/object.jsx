@@ -1,24 +1,27 @@
 import React from "react"
 import { graphql } from "gatsby"
-
-import Layout from "../components/layout"
+import Img from "gatsby-image"
 import { Button, Col, Container, Row } from "react-bootstrap"
+import Layout from "../components/layout"
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
-const Object = ({ data, location }) => (
+const Object = ({ data, alternateLinks }) => (
   <Layout
-    location={location}
-    name="our-story"
-    SEOtitle="Our Story"
-    SEOkeywords={["Story", "Rotterdam"]}
+    alternateLink={alternateLinks}
+    name={data.object.name}
+    SEOtitle={data.object.name}
+    SEOkeywords={[data.object.name, "Terra Delft"]}
   >
-    <Button>{data.contentfulObjectsObject.id}</Button>
+    <h1>{data.object.name}</h1>
   </Layout>
 )
 
 export const query = graphql`
-  query Object($id: String) {
-    contentfulObjectsObject(id: { eq: $id }) {
-      id
+  query pageObject($contentful_id: String, $language: String) {
+    object: contentfulObjectsObject(
+      contentful_id: { eq: $contentful_id }
+      node_locale: { eq: $language }
+    ) {
       name
     }
   }

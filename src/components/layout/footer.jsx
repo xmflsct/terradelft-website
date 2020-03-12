@@ -1,27 +1,30 @@
 import React from "react"
 import { Col, Row } from "react-bootstrap"
+import { useTranslation } from "react-i18next"
 
 const Footer = () => {
+  const { t } = useTranslation("common")
+
   return (
     <Row as="footer">
       <Col lg={4} className="footer-left">
         <p>
-          © Terra Delft Online 2015 - 2020
+          {t("footer.left.copyright")}
           <br />
-          Wednesday to Friday 11.00 - 18.00
+          {t("footer.left.opening.1")}
           <br />
-          Saturday 11.00 - 17.00
+          {t("footer.left.opening.2")}
           <br />
-          1st Sunday/month 13.00 - 17.00
+          {t("footer.left.opening.3")}
         </p>
       </Col>
       <Col lg={4} className="footer-center">
         <p>
-          Nieuwstraat 7, 2611 HK Delft
+          {t("footer.center.address")}
           <br />
-          Tel/Fax: 015-2147072
+          {t("footer.center.phone")}
           <br />
-          Email: info@terra-delft.nl
+          {t("footer.center.email")}
         </p>
       </Col>
       <Col lg={4} className="footer-right">

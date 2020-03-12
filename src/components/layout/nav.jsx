@@ -5,7 +5,7 @@ import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 
 const Header = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation("common")
   return (
     <Row as="nav">
       <Col lg={2} className="nav-item">

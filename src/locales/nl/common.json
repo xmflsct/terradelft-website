@@ -1,0 +1,27 @@
+{
+  "nl": "Nederlands",
+  "en": "English",
+  "nav": {
+    "1": "Collectie",
+    "2": "Web Winkel",
+    "3": "Expositie",
+    "4": "Nieuws",
+    "5": "Terra in China",
+    "6": "Over Terra"
+  },
+  "footer": {
+    "left": {
+      "copyright": "© Terra Delft Online 2015 - 2020",
+      "opening": {
+        "1": "woensdag t/m vrijdag 11 - 18 uur",
+        "2": "zaterdag 11 - 17 uur",
+        "3": "1e zondag vd mnd 13 - 17 uur"
+      }
+    },
+    "center": {
+      "address": "Nieuwstraat 7, 2611 HK Delft",
+      "phone": "Tel/Fax: 015-2147072",
+      "email": "Email: info@terra-delft.nl"
+    }
+  }
+}

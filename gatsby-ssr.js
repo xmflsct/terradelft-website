@@ -1,9 +1,4 @@
-import React from "react"
-import { renderToString } from "react-dom/server"
-import i18n from "./src/i18n/i18n"
+const wrapWithI18nProvider = require("./src/components/wrapWithI18nProvider")
+  .wrapWithI18nProvider
 
-export default replaceRenderer = ({ bodyComponent, replaceBodyHTMLString }) => {
-  i18n.loadNamespaces(["translations"], () => {
-    replaceBodyHTMLString(bodyComponent)
-  })
-}
+exports.wrapPageElement = wrapWithI18nProvider

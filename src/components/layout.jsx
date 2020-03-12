@@ -1,12 +1,12 @@
 import React from "react"
 
+import "../styles/main.scss"
+
 import SEO from "./layout/seo"
 import Header from "./layout/header"
 import Nav from "./layout/nav"
 import Footer from "./layout/footer"
 import { Button, Container, Row } from "react-bootstrap"
-
-import "../i18n/i18n"
 
 const Layout = props => {
   const [toggleNav, setToggleNav] = React.useState(false)

@@ -1,24 +1,21 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link } from "gatsby"
 import Img from "gatsby-image"
 import { Col, Row } from "react-bootstrap"
 
+import { useTranslation } from "react-i18next"
 import { slugify } from "../utils/slugify"
 
-const ObjectGrid = ({ objects, location, type }) => {
+const Grid = ({ items, type }) => {
+  const { i18n } = useTranslation("common")
+
   switch (type) {
     case "artist":
       return (
         <Row>
-          {objects.map(object => (
+          {items.map(object => (
             <Col key={object.node.artist} lg={2} className="grid-item">
-              <Link
-                to={
-                  location.pathname.substring(0, 3) +
-                  "/" +
-                  slugify(object.node.artist)
-                }
-              >
+              <Link to={`/${i18n.language}/${slugify(object.node.artist)}`}>
                 <Img fluid={object.node.image.fluid} />
                 <p>{object.node.artist}</p>
               </Link>
@@ -29,14 +26,12 @@ const ObjectGrid = ({ objects, location, type }) => {
     case "object":
       return (
         <Row>
-          {objects.map(object => (
+          {items.map(object => (
             <Col key={object.node.name} lg={2} className="grid-item">
               <Link
-                to={
-                  location.pathname.substring(0, 3) +
-                  "/" +
-                  slugify(object.node.slug)
-                }
+                to={`/${i18n.language}/${slugify(
+                  object.node.artist.artist
+                )}/${slugify(object.node.name)}`}
               >
                 <Img fluid={object.node.images[0].fluid} />
                 <p>{object.node.name}</p>
@@ -46,8 +41,8 @@ const ObjectGrid = ({ objects, location, type }) => {
         </Row>
       )
     default:
-      return
+      return <></>
   }
 }
 
-export default ObjectGrid
+export default Grid

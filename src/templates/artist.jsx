@@ -1,17 +1,14 @@
 import React from "react"
 import { graphql } from "gatsby"
 import Img from "gatsby-image"
-
-import Layout from "../components/layout"
 import { Col, Row } from "react-bootstrap"
-
+import Grid from "../components/layout/grid"
+import Layout from "../components/layout"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
-import ObjectGrid from "../components/layout/object-grid"
-
-const Artist = ({ data, location }) => (
+const Artist = ({ data, alternateLinks }) => (
   <Layout
-    location={location}
+    alternateLink={alternateLinks}
     name={data.artist.artist}
     SEOtitle={data.artist.artist}
     SEOkeywords={[data.artist.artist, "Terra Delft"]}
@@ -19,7 +16,7 @@ const Artist = ({ data, location }) => (
     <h1>{data.artist.artist}</h1>
     <Row>
       <Col lg={4}>
-        <Img fluid={data.image.image.fluid} />
+        <Img fluid={data.artist.image.fluid} />
       </Col>
       <Col lg={8}>
         {data.artist.biography
@@ -27,49 +24,43 @@ const Artist = ({ data, location }) => (
           : ""}
       </Col>
     </Row>
-    <ObjectGrid
-      objects={data.objects.edges}
-      type="object"
-      location={location}
-    />
+    <Grid items={data.objects.edges} type="object" />
   </Layout>
 )
 
 export const query = graphql`
-  query Artist($id: String, $contentful_id: String) {
-    artist: contentfulObjectsArtist(id: { eq: $id }) {
-      id
-      artist
-      biography {
-        json
-      }
-    }
-    image: contentfulObjectsArtist(
+  query pageArtist($contentful_id: String, $language: String) {
+    artist: contentfulObjectsArtist(
       contentful_id: { eq: $contentful_id }
-      node_locale: { eq: "nl" }
+      node_locale: { eq: $language }
     ) {
-      contentful_id
+      artist
       image {
         fluid(maxWidth: 800) {
-          ...GatsbyContentfulFluid
+          ...GatsbyContentfulFluid_withWebp
         }
+      }
+      biography {
+        json
       }
     }
     objects: allContentfulObjectsObject(
       filter: {
         artist: { contentful_id: { eq: $contentful_id } }
-        node_locale: { eq: "nl" }
+        node_locale: { eq: $language }
       }
     ) {
       edges {
         node {
           images {
             fluid(maxWidth: 800) {
-              ...GatsbyContentfulFluid
+              ...GatsbyContentfulFluid_withWebp
             }
           }
           name
-          slug
+          artist {
+            artist
+          }
         }
       }
     }
