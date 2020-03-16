@@ -1,0 +1,14 @@
+{
+  "artist": "Kunstenaar",
+  "year": "Jaar",
+  "technique": "Techniek",
+  "material": "Materiaal",
+  "design": "Design",
+  "colour": "Kleur",
+  "dimensionWidth": "Breedte",
+  "dimensionLength": "Lengte",
+  "dimensionHeight": "Hoogte",
+  "dimensionDiameter": "Diameter",
+  "dimensionDepth": "Diepte",
+  "related": "Andere objecten uit "
+}

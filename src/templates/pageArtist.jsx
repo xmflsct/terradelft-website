@@ -6,10 +6,9 @@ import Grid from "../components/layout/grid"
 import Layout from "../components/layout"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
-const Artist = ({ data, alternateLinks }) => (
+const PageArtist = ({ data, alternateLinks }) => (
   <Layout
     alternateLink={alternateLinks}
-    name={data.artist.artist}
     SEOtitle={data.artist.artist}
     SEOkeywords={[data.artist.artist, "Terra Delft"]}
   >
@@ -19,9 +18,7 @@ const Artist = ({ data, alternateLinks }) => (
         <Img fluid={data.artist.image.fluid} />
       </Col>
       <Col lg={8}>
-        {data.artist.biography
-          ? documentToReactComponents(data.artist.biography.json)
-          : ""}
+        {documentToReactComponents(data.artist?.biography?.json)}
       </Col>
     </Row>
     <Grid items={data.objects.edges} type="object" />
@@ -44,7 +41,7 @@ export const query = graphql`
         json
       }
     }
-    objects: allContentfulObjectsObject(
+    objects: allContentfulObjectsObjectMain(
       filter: {
         artist: { contentful_id: { eq: $contentful_id } }
         node_locale: { eq: $language }
@@ -52,6 +49,7 @@ export const query = graphql`
     ) {
       edges {
         node {
+          node_locale
           images {
             fluid(maxWidth: 800) {
               ...GatsbyContentfulFluid_withWebp
@@ -67,4 +65,4 @@ export const query = graphql`
   }
 `
 
-export default Artist
+export default PageArtist

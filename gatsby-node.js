@@ -1,25 +1,8 @@
 const fs = require("fs")
 const path = require(`path`)
+const slugify = require("slugify")
 const i18next = require("i18next")
 const nodeFsBackend = require("i18next-node-fs-backend")
-
-function slugify(string) {
-  const a =
-    "àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;"
-  const b =
-    "aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------"
-  const p = new RegExp(a.split("").join("|"), "g")
-  return string
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-    .replace(/&/g, "-and-") // Replace & with 'and'
-    .replace(/[^\w\-]+/g, "") // Remove all non-word characters
-    .replace(/\-\-+/g, "-") // Replace multiple - with single -
-    .replace(/^-+/, "") // Trim - from start of text
-    .replace(/-+$/, "") // Trim - from end of text
-}
 
 const languages = ["nl", "en"]
 const appDirectory = fs.realpathSync(process.cwd())
@@ -30,79 +13,129 @@ exports.createPages = async ({
   graphql,
   actions: { createPage, createRedirect },
 }) => {
-  /* Biuld Homepage */
-  const indexTemplate = path.resolve(`src/templates/index.jsx`)
-  await buildI18nPages(
-    null,
-    (_, language) => ({
-      path: "/" + language,
-      component: indexTemplate,
-      context: {},
-    }),
-    ["common", "home"],
-    createPage
-  )
+  await buildIndexPages(createPage)
+  await build404Pages(createPage)
 
   /* Biuld Artist Page */
-  const artistTemplate = path.resolve(`src/templates/artist.jsx`)
+  const pageArtist = path.resolve(`src/templates/pageArtist.jsx`)
   const artists = await graphql(`
     {
-      artists: allContentfulObjectsArtist {
+      artists: allContentfulObjectsArtist(
+        filter: { node_locale: { eq: "nl" } }
+      ) {
         edges {
           node {
             contentful_id
-            node_locale
             artist
           }
         }
       }
     }
   `)
-  await buildI18nPages(
-    artists.data.artists.edges,
-    ({ node }, language) => ({
-      path: `/${language}/${slugify(node.artist)}`,
-      component: artistTemplate,
-      context: { contentful_id: node.contentful_id, language: language },
-    }),
-    ["common"],
-    createPage
+  await Promise.all(
+    artists.data.artists.edges
+      .filter(placeholder => placeholder.node.artist !== "PLACEHOLDER")
+      .map(async result => {
+        const artistsNew = await graphql(
+          `
+            query($contentful_id: String!) {
+              artistsNew: allContentfulObjectsArtist(
+                filter: { contentful_id: { eq: $contentful_id } }
+              ) {
+                edges {
+                  node {
+                    contentful_id
+                    node_locale
+                    artist
+                  }
+                }
+              }
+            }
+          `,
+          { contentful_id: result.node.contentful_id }
+        )
+        await buildI18nPages(
+          artistsNew.data.artistsNew.edges,
+          ({ node }, language) => ({
+            path: "/" + language + "/" + slugify(node.artist, { lower: true }),
+            component: pageArtist,
+            context: { contentful_id: node.contentful_id, language: language },
+          }),
+          ["common"],
+          createPage
+        )
+      })
   )
 
   /* Biuld Object Page */
-  const objectTemplate = path.resolve(`src/templates/object.jsx`)
+  const pageObject = path.resolve(`src/templates/pageObject.jsx`)
   const objects = await graphql(`
     {
-      objects: allContentfulObjectsObject {
+      objects: allContentfulObjectsObjectMain(
+        filter: { node_locale: { eq: "nl" } }
+      ) {
         edges {
           node {
             contentful_id
-            node_locale
             name
-            artist {
-              artist
-            }
           }
         }
       }
     }
   `)
-  await buildI18nPages(
-    objects.data.objects.edges,
-    ({ node }, language) => ({
-      path: `/${language}/${slugify(node.artist.artist)}/${slugify(node.name)}`,
-      component: objectTemplate,
-      context: { contentful_id: node.contentful_id, language: language },
-    }),
-    ["common"],
-    createPage
+  await Promise.all(
+    objects.data.objects.edges
+      .filter(placeholder => placeholder.node.name !== "PLACEHOLDER")
+      .map(async result => {
+        const objectsNew = await graphql(
+          `
+            query($contentful_id: String!) {
+              objectsNew: allContentfulObjectsObjectMain(
+                filter: { contentful_id: { eq: $contentful_id } }
+              ) {
+                edges {
+                  node {
+                    contentful_id
+                    node_locale
+                    name
+                    artist {
+                      contentful_id
+                      artist
+                    }
+                  }
+                }
+              }
+            }
+          `,
+          { contentful_id: result.node.contentful_id }
+        )
+        await buildI18nPages(
+          objectsNew.data.objectsNew.edges,
+          ({ node }, language) => ({
+            path:
+              "/" +
+              language +
+              "/" +
+              slugify(node.artist.artist, { lower: true }) +
+              "/" +
+              slugify(node.name, { lower: true }),
+            component: pageObject,
+            context: {
+              contentful_id: node.contentful_id,
+              artist_contentful_id: node.artist.contentful_id,
+              language: language,
+            },
+          }),
+          ["common", "pageObject"],
+          createPage
+        )
+      })
   )
 
-  /* Biuld 404 Page */
-  await build404Pages(createPage)
-
+  /* Redirect - Index */
   createRedirect({ fromPath: "/", toPath: "/nl", isPermanent: true })
 
+  /* Redirect - 404 */
   languages.forEach(language =>
     createRedirect({
       fromPath: `/${language}/*`,
@@ -114,34 +147,33 @@ exports.createPages = async ({
 }
 
 const buildI18nPages = async (
-  inputData,
+  dataRaw,
   pageDefinitionCallback,
   namespaces,
   createPage
 ) => {
-  if (!Array.isArray(inputData)) inputData = [inputData]
+  if (!Array.isArray(dataRaw)) dataRaw = [dataRaw]
+  const definitions = await Promise.all(
+    dataRaw.map(async data => {
+      const language = data.node.node_locale
+      const i18n = await createI18nextInstance(language, namespaces)
+      const res = pageDefinitionCallback(data, language, i18n)
+      res.context.language = language
+      res.context.i18nResources = i18n.services.resourceStore.data
+      return res
+    })
+  )
+  const alternateLinks = await Promise.all(
+    definitions.map(d => ({
+      language: d.context.language,
+      path: d.path,
+    }))
+  )
+
   await Promise.all(
-    inputData.map(async ipt => {
-      const definitions = await Promise.all(
-        languages.map(async language => {
-          const i18n = await createI18nextInstance(language, namespaces) // (1)
-          const res = pageDefinitionCallback(ipt, language, i18n) // (2)
-          res.context.language = language
-          res.context.i18nResources = i18n.services.resourceStore.data // (3)
-          return res
-        })
-      )
-
-      const alternateLinks = definitions.map(d => ({
-        // (4)
-        language: d.context.language,
-        path: d.path,
-      }))
-
-      definitions.forEach(d => {
-        d.context.alternateLinks = alternateLinks
-        createPage(d) // (5)
-      })
+    definitions.map(d => {
+      d.context.alternateLinks = alternateLinks
+      createPage(d)
     })
   )
 }
@@ -164,6 +196,29 @@ const createI18nextInstance = async (language, namespaces) => {
   return i18n
 }
 
+const buildIndexPages = async createPage => {
+  const indexTemplate = path.resolve(`src/templates/index.jsx`)
+  await Promise.all(
+    languages.map(async language => {
+      const i18n = await createI18nextInstance(language, ["common", "index"])
+      const res = {
+        path: "/" + language,
+        component: indexTemplate,
+        context: {},
+      }
+      res.context.language = language
+      res.context.i18nResources = i18n.services.resourceStore.data
+      await Promise.all(
+        (res.context.alternateLinks = languages.map(lang => ({
+          language: lang,
+          path: "/" + lang,
+        })))
+      )
+      createPage(res)
+    })
+  )
+}
+
 const build404Pages = async createPage => {
   const errorTemplate = path.resolve(`src/templates/404.jsx`)
   await Promise.all(
@@ -184,79 +239,3 @@ const build404Pages = async createPage => {
     })
   )
 }
-
-// exports.createResolvers = ({ createResolvers }) => {
-//   createResolvers({
-//     SanityLocaleString: {
-//       translate: {
-//         type: `String!`,
-//         args: { language: { type: "String" } },
-//         resolve: (source, args) => {
-//           return source[args.language] || source["en"]
-//         },
-//       },
-//     },
-//   })
-// }
-
-/* OLD */
-
-// exports.createPages = ({ graphql, actions }) => {
-//   const { createPage } = actions
-
-//   const artistTemplate = path.resolve(`src/templates/artist.jsx`)
-//   const objectTemplate = path.resolve(`src/templates/object.jsx`)
-
-//   return graphql(
-//     `
-//       {
-//         artists: allContentfulObjectsArtist {
-//           edges {
-//             node {
-//               id
-//               artist
-//               node_locale
-//             }
-//           }
-//         }
-//         objects: allContentfulObjectsObject {
-//           edges {
-//             node {
-//               id
-//               slug
-//               node_locale
-//             }
-//           }
-//         }
-//       }
-//     `
-//   ).then(result => {
-//     if (result.errors) {
-//       throw result.errors
-//     }
-
-//     result.data.artists.edges.forEach(edge => {
-//       const { id, artist, node_locale } = edge.node
-//       const path = node_locale + "/" + slugify(artist)
-//       createPage({
-//         path: path,
-//         component: artistTemplate,
-//         context: {
-//           id: id,
-//         },
-//       })
-//     })
-
-//     result.data.objects.edges.forEach(edge => {
-//       const { id, slug, node_locale } = edge.node
-//       const path = node_locale + "/" + slugify(slug)
-//       createPage({
-//         path: path,
-//         component: objectTemplate,
-//         context: {
-//           id: id,
-//         },
-//       })
-//     })
-//   })
-// }

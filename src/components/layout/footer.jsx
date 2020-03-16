@@ -30,7 +30,7 @@ const Footer = () => {
       <Col lg={4} className="footer-right">
         <p>
           Made with ♥ by{" "}
-          <a target="_blank" href="https://xmflsct.com">
+          <a target="_blank" href="https://xmflsct.com" rel="noopener noreferrer">
             xmflsct.com
           </a>
         </p>

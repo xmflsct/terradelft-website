@@ -1,22 +1,17 @@
 import React from "react"
-
 import "../styles/main.scss"
 
 import SEO from "./layout/seo"
 import Header from "./layout/header"
 import Nav from "./layout/nav"
 import Footer from "./layout/footer"
-import { Button, Container, Row } from "react-bootstrap"
+import { Button, Container } from "react-bootstrap"
 
-const Layout = props => {
+const Layout = ({ children, SEOtitle, SEOkeywords }) => {
   const [toggleNav, setToggleNav] = React.useState(false)
 
-  const { children, location, name, SEOtitle, SEOkeywords } = props
-
   return (
-    <Container
-      className={`site-wrapper ${name} ${toggleNav ? "site-head-open" : ""}`}
-    >
+    <Container className={`site-wrapper ${toggleNav ? "site-head-open" : ""}`}>
       <SEO title={SEOtitle} keywords={SEOkeywords} />
       <Button
         className={`nav-burger hamburger hamburger--collapse ${
@@ -30,7 +25,7 @@ const Layout = props => {
         </span>
       </Button>
 
-      <Header location={location} />
+      <Header />
       <Nav />
 
       <Container as="main">{children}</Container>

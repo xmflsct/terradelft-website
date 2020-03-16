@@ -1,0 +1,14 @@
+{
+  "artist": "Artist",
+  "year": "Year",
+  "technique": "Technique",
+  "material": "Material",
+  "design": "Design",
+  "colour": "Colour",
+  "dimensionWidth": "Width",
+  "dimensionLength": "Length",
+  "dimensionHeight": "Height",
+  "dimensionDiameter": "Diameter",
+  "dimensionDepth": "Depth",
+  "related": "Other objects from "
+}

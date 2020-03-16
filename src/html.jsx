@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from "react"
+import PropTypes from "prop-types"
 
 export default function HTML(props) {
   return (
@@ -17,40 +17,6 @@ export default function HTML(props) {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossOrigin="anonymous"
         />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(d) {
-                var config = {
-                    kitId: "rdn6rzv",
-                    scriptTimeout: 3000,
-                    async: true
-                  },
-                  h = d.documentElement,
-                  t = setTimeout(function() {
-                    h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
-                  }, config.scriptTimeout),
-                  tk = d.createElement("script"),
-                  f = false,
-                  s = d.getElementsByTagName("script")[0],
-                  a;
-                h.className += " wf-loading";
-                tk.src = "https://use.typekit.net/" + config.kitId + ".js";
-                tk.async = true;
-                tk.onload = tk.onreadystatechange = function() {
-                  a = this.readyState;
-                  if (f || (a && a != "complete" && a != "loaded")) return;
-                  f = true;
-                  clearTimeout(t);
-                  try {
-                    Typekit.load(config);
-                  } catch (e) {}
-                };
-                s.parentNode.insertBefore(tk, s);
-              })(document);
-            `
-          }}
-        />
         {props.headComponents}
       </head>
       <body {...props.bodyAttributes}>
@@ -66,7 +32,7 @@ export default function HTML(props) {
         {props.postBodyComponents}
       </body>
     </html>
-  );
+  )
 }
 
 HTML.propTypes = {
@@ -75,5 +41,5 @@ HTML.propTypes = {
   bodyAttributes: PropTypes.object,
   preBodyComponents: PropTypes.array,
   body: PropTypes.string,
-  postBodyComponents: PropTypes.array
-};
+  postBodyComponents: PropTypes.array,
+}
