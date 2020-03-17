@@ -1,8 +1,7 @@
 import React, { useState } from "react"
 import { Button, Form } from "react-bootstrap"
 import Select from "react-select"
-var array = require("lodash/array")
-var lang = require("lodash/lang")
+import { intersection, isEmpty, keys } from "lodash"
 
 const SellVariations = ({ variations }) => {
   const variant = {
@@ -20,9 +19,11 @@ const SellVariations = ({ variations }) => {
     colour: [],
     size: [],
   }
+  var finalIndex
+  const [enableATB, updateEnableATB] = useState(false)
 
   // Create variations availability mapping
-  variations.map((d, index) => {
+  variations.forEach((d, index) => {
     if (d.colour) {
       if (!(d.colour.colour in variant["colour"])) {
         variant["colour"][d.colour.colour] = []
@@ -42,110 +43,112 @@ const SellVariations = ({ variations }) => {
       variant["variation"][d.variation.variation].push(index)
     }
   })
-  variant["variation"] &&
-    Object.keys(variant["variation"]).forEach((k, i) => {
-      options["variation"][i] = {
-        allowed: variant["variation"][k],
-        label: k,
-        value: k,
+  keys(variant).forEach(k => {
+    keys(variant[k]).forEach((nk, i) => {
+      options[k][i] = {
+        allowed: variant[k][nk],
+        label: nk,
+        value: nk,
         isDisabled: false,
       }
     })
-  variant["colour"] &&
-    Object.keys(variant["colour"]).forEach((k, i) => {
-      options["colour"][i] = {
-        allowed: variant["colour"][k],
-        label: k,
-        value: k,
-        isDisabled: false,
-      }
-    })
-  variant["size"] &&
-    Object.keys(variant["size"]).forEach((k, i) => {
-      options["size"][i] = {
-        allowed: variant["size"][k],
-        label: k,
-        value: k,
-        isDisabled: false,
-      }
-    })
+  })
 
   const handleChosen = (d, m) => {
-    switch (m.action) {
-      case "select-option":
-        optionsChosen[m.name] = [...d.allowed]
-        break
-      case "clear":
-        optionsChosen[m.name] = []
-        break
-    }
+    m.action === "select-option" && (optionsChosen[m.name] = [...d.allowed])
+    m.action === "clear" && (optionsChosen[m.name] = [])
+    updateEnableATB(false)
 
-    const chosenOptions = Object.keys(optionsChosen).filter(
+    const chosenKeys = keys(optionsChosen).filter(
       k => optionsChosen[k].length > 0
     )
-    const numChosen = chosenOptions.length
-    switch (numChosen) {
+    switch (chosenKeys.length) {
       case 0:
         // All options are available
-        Object.keys(options).forEach(k => {
+        keys(options).forEach(k => {
           options[k].forEach((_, i) => (options[k][i]["isDisabled"] = false))
         })
         break
       case 1:
         // Check chosen options
-        options[chosenOptions[0]].forEach(
-          (_, i) => (options[chosenOptions[0]][i]["isDisabled"] = false)
+        options[chosenKeys[0]].forEach(
+          (_, i) => (options[chosenKeys[0]][i]["isDisabled"] = false)
         )
         // Check non-chosen options
-        Object.keys(options)
-          .filter(k => k !== chosenOptions[0])
+        keys(options)
+          .filter(k => k !== chosenKeys[0])
           .forEach(k => {
             options[k].forEach((_, i) => {
-              options[k][i]["isDisabled"] = lang.isEmpty(
-                array.intersection(
-                  options[k][i]["allowed"],
-                  optionsChosen[chosenOptions[0]]
-                )
-              )
+              updateOption(options[k][i], optionsChosen[chosenKeys[0]])
             })
           })
+
+        finalIndex = optionsChosen[chosenKeys[0]]
+        finalIndex.length === 1 && updateEnableATB(true)
         break
       case 2:
         // Check chosen options
-        options[chosenOptions[0]].forEach((_, i) => {
-          options[chosenOptions[0]][i]["isDisabled"] = lang.isEmpty(
-            array.intersection(
-              options[chosenOptions[0]][i]["allowed"],
-              optionsChosen[chosenOptions[1]]
-            )
-          )
+        options[chosenKeys[0]].forEach((_, i) => {
+          updateOption(options[chosenKeys[0]][i], optionsChosen[chosenKeys[1]])
         })
-        options[chosenOptions[1]].forEach((_, i) => {
-          options[chosenOptions[1]][i]["isDisabled"] = lang.isEmpty(
-            array.intersection(
-              options[chosenOptions[1]][i]["allowed"],
-              optionsChosen[chosenOptions[0]]
-            )
-          )
+        options[chosenKeys[1]].forEach((_, i) => {
+          updateOption(options[chosenKeys[1]][i], optionsChosen[chosenKeys[0]])
         })
         // Check non-chosen options
-        const allowedChosen = array.intersection(
-          optionsChosen[chosenOptions[0]],
-          optionsChosen[chosenOptions[1]]
+        checkMultiple(
+          chosenKeys[0],
+          chosenKeys[1],
+          optionsChosen[chosenKeys[0]],
+          optionsChosen[chosenKeys[1]]
         )
-        Object.keys(options)
-          .filter(k => k !== chosenOptions[0] && k !== chosenOptions[1])
-          .forEach(k => {
-            options[k].forEach((_, i) => {
-              options[k][i]["isDisabled"] = lang.isEmpty(
-                array.intersection(options[k][i]["allowed"], allowedChosen)
-              )
-            })
-          })
+
+        finalIndex = intersection(
+          optionsChosen[chosenKeys[0]],
+          optionsChosen[chosenKeys[1]]
+        )
+        // console.log("chosen 2: " + finalIndex)
+        if (finalIndex.length === 1) {
+          updateEnableATB(true)
+        }
         break
       case 3:
+        chosenKeys.forEach(k => {
+          const checkKeys = keys(options).filter(nk => nk !== k)
+          checkMultiple(
+            variant[checkKeys[0]],
+            variant[checkKeys[1]],
+            optionsChosen[variant[checkKeys[0]]],
+            optionsChosen[variant[checkKeys[1]]]
+          )
+        })
+
+        // finalIndex = intersection(
+        //   intersection(
+        //     optionsChosen[chosenKeys[0]],
+        //     optionsChosen[chosenKeys[1]]
+        //   ),
+        //   optionsChosen[chosenKeys[2]]
+        // )
+        // console.log("chosen 3: " + finalIndex)
+        // finalIndex.length === 1 && changeEnabled(true)
+        break
+      default:
         break
     }
+  }
+
+  const updateOption = (opt, ref) => {
+    opt["isDisabled"] = isEmpty(intersection(opt["allowed"], ref))
+  }
+  const checkMultiple = (variantA, variantB, allowedA, allowedB) => {
+    const allowed = intersection(allowedA, allowedB)
+    keys(options)
+      .filter(k => k !== variantA && k !== variantB)
+      .forEach(k => {
+        options[k].forEach((_, i) => {
+          updateOption(options[k][i], allowed)
+        })
+      })
   }
 
   return (
@@ -185,7 +188,7 @@ const SellVariations = ({ variations }) => {
           </>
         )}
       </Form.Group>
-      <Button variant="primary" type="submit">
+      <Button variant="primary" type="submit" disabled={!enableATB}>
         Add to bag
       </Button>
     </Form>
