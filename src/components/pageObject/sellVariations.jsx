@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { Button, Form } from "react-bootstrap"
-import Select from "react-select"
+import { useForm, Controller } from "react-hook-form"
+import ReactSelect from "react-select"
 import { findIndex, intersection, isEmpty, keys } from "lodash"
 
 const SellVariations = ({ variations }) => {
@@ -31,12 +32,13 @@ const SellVariations = ({ variations }) => {
       })
   })
 
+  const { handleSubmit, register, control } = useForm({ mode: "onChange" })
   const [options] = useState(cache)
   const [enableATB, setEnableATB] = useState(false)
 
-  const handleChosen = (d, m) => {
-    m.action === "select-option" && (optionsChosen[m.name] = [...d.value])
-    m.action === "clear" && (optionsChosen[m.name] = [])
+  const handleChange = d => {
+    d[1].action === "select-option" && (optionsChosen[d[1].name] = [...d[0].value])
+    d[1].action === "clear" && (optionsChosen[d[1].name] = [])
     setEnableATB(false)
 
     const chosenKeys = keys(optionsChosen).filter(
@@ -128,33 +130,39 @@ const SellVariations = ({ variations }) => {
         {options.variation && (
           <>
             <Form.Label>Variation</Form.Label>
-            <Select
+            <Controller
+              as={<ReactSelect />}
               name="variation"
               options={options.variation}
               isClearable
-              onChange={handleChosen}
+              onChange={handleChange}
+              control={control}
             />
           </>
         )}
         {options.colour && (
           <>
             <Form.Label>Colour</Form.Label>
-            <Select
+            <Controller
+              as={<ReactSelect />}
               name="colour"
               options={options.colour}
               isClearable
-              onChange={handleChosen}
+              onChange={handleChange}
+              control={control}
             />
           </>
         )}
         {options.size && (
           <>
             <Form.Label>Size</Form.Label>
-            <Select
+            <Controller
+              as={<ReactSelect />}
               name="size"
               options={options.size}
               isClearable
-              onChange={handleChosen}
+              onChange={handleChange}
+              control={control}
             />
           </>
         )}
