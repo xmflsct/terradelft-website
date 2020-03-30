@@ -1,8 +1,10 @@
 module.exports = {
   siteMetadata: {
     title: `Terra Delft`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@xmflsct`
+    description: `Terra Delft Website`,
+    author: `@xmflsct`,
+    siteUrl: "https://terra-delft.nl",
+    image: "./static/favicon.png"
   },
   plugins: [
     `gatsby-plugin-lodash`,

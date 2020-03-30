@@ -1,0 +1,18 @@
+{
+  "build": {
+    "env": {
+      "CONTENTFUL_HOST": "@terradelft-website-contentful-host",
+      "CONTENTFUL_KEY_GATSBY": "@terradelft-website-contentful-key-gatsby",
+      "CONTENTFUL_SPACE": "@terradelft-website-contentful-space",
+      "CONTENTFUL_ENVIRONMENT": "@terradelft-website-contentful-environment"
+    }
+  },
+  "env": {
+    "CONTENTFUL_HOST": "@terradelft-website-contentful-host",
+    "CONTENTFUL_KEY_CHECKOUT": "@terradelft-website-contentful-key-checkout",
+    "CONTENTFUL_SPACE": "@terradelft-website-contentful-space",
+    "CONTENTFUL_ENVIRONMENT": "@terradelft-website-contentful-environment",
+    "RECAPTCHA_PRIVATE_KEY": "@terradelft-website-recaptcha-private-key",
+    "STRIPE_PRIVATE_KEY": "@terradelft-website-stripe-private-key"
+  }
+}

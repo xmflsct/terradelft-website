@@ -49,12 +49,11 @@ const BagCheckout = () => {
       }
     }
   `)
-  const { state } = useContext(BagObjects)
+  const { state, dispatch } = useContext(BagObjects)
   const { t, i18n } = useTranslation("pageBag")
   const {
     control,
     formState,
-    getValues,
     handleSubmit,
     register,
     setValue,
@@ -99,11 +98,13 @@ const BagCheckout = () => {
       ].rates
   }
 
+  const [correction, setCorrection] = useState(false)
   const [recaptcha, setRecaptcha] = useState(null)
   const onVerify = () => {
     handleSubmit(formSubmit)()
   }
   const formSubmit = async d => {
+    setCorrection(false)
     const data = {
       objects: state,
       shipping: {
@@ -116,19 +117,42 @@ const BagCheckout = () => {
         total: d.payTotal
       }
     }
-    const response = await checkout(await recaptcha.getResponse(), data)
-    // if (response === true) {
-    //   window.location.href =
-    //     window.location.origin + "/" + i18n.language + "/checkout"
-    // } else {
-    //   console.log(response)
-    //   recaptcha.reset()
-    //   // Add update database
-    // }
+    const res = await checkout(await recaptcha.getResponse(), data)
+    if (res.sessionId) {
+      // const stripe = await stripePromise
+      // const { error } = await stripe.redirectToCheckout({
+      //   sessionId: res.sessionId
+      // })
+      // if (error) {
+      //   return false
+      // }
+    } else if (res.error) {
+      setCorrection(true)
+      handleCorrection(res.error)
+      return false
+    } else {
+      return false
+    }
   }
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault()
+    formState.isSubmitted && (await recaptcha.reset())
     recaptcha.execute()
+  }
+
+  const handleCorrection = corrections => {
+    for (const correction of corrections) {
+      console.log(correction)
+      correction.stock === 0
+        ? dispatch({
+            type: "remove",
+            data: correction
+          })
+        : dispatch({
+            type: "add",
+            data: correction
+          })
+    }
   }
 
   return (
@@ -163,9 +187,12 @@ const BagCheckout = () => {
                         ? 0
                         : d.price
                     )
-                    setValue("payTotal", d.freeForTotal && pay.objects >= d.freeForTotal
-                    ? pay.objects
-                    : d.price + pay.objects)
+                    setValue(
+                      "payTotal",
+                      d.freeForTotal && pay.objects >= d.freeForTotal
+                        ? pay.objects
+                        : d.price + pay.objects
+                    )
                   }}
                   ref={register({ required: true })}
                 />
@@ -190,7 +217,7 @@ const BagCheckout = () => {
             </Form.Label>
             <Col sm='8'>{pay.objects}</Col>
           </Form.Row>
-          {pay.discounts > 0 && (
+          {pay.discount > 0 && (
             <Form.Row>
               <Form.Label column lg='4'>
                 Discount
@@ -233,8 +260,11 @@ const BagCheckout = () => {
             type='submit'
             disabled={!formState.isValid || formState.isSubmitting}
           >
-            {t("checkout")}
+            {(formState.isSubmitting && "Connecting") ||
+              (formState.submitCount !== 0 && "Retry") ||
+              t("checkout")}
           </Button>
+          {correction ? "Correction needed" : ""}
           <Reaptcha
             ref={e => setRecaptcha(e)}
             onVerify={onVerify}

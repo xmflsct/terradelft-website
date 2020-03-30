@@ -4,13 +4,13 @@ import { Link } from "gatsby"
 import { Col, Row } from "react-bootstrap"
 
 const Header = () => {
-  const { t } = useTranslation("common")
+  const { t, i18n } = useTranslation("common")
 
   return (
     <Row as='nav'>
       <Col lg={2} className='nav-item'>
         <Col>
-          <Link to='/'>{t("nav.1")}</Link>
+          <Link to={"/" + i18n.language}>{t("nav.1")}</Link>
         </Col>
       </Col>
       <Col lg={2} className='nav-item'>

@@ -2,13 +2,12 @@ import store from "store2"
 import { findIndex } from "lodash"
 
 const storageKey = "terradelft_bag"
+let storageData = store(storageKey)
 
-export function storageAdd(data) {
-  var storageData = store(storageKey)
-
+export function add(data) {
   // Add or update SKUs
-  const keyIndex = findIndex(storageData, ["sku", data.sku]) === -1
-  if (keyIndex) {
+  const keyIndex = findIndex(storageData, ["contentful_id", data.contentful_id])
+  if (keyIndex === -1) {
     // Add SKUs
     data.timestamp = new Date().getTime()
     if (storageData) {
@@ -18,27 +17,26 @@ export function storageAdd(data) {
     }
   } else {
     // Update SKUs
-    data.timestamp = new Date().getTime()
-    storageData.pop(keyIndex)
-    storageData.push(data)
+    storageData[keyIndex].timestamp = new Date().getTime()
+    for (const key in data) {
+      if (key !== "contentful_id") {
+        storageData[keyIndex][key] = data[key]
+      }
+    }
   }
   store(storageKey, storageData)
   return storageData
 }
 
-export function storageRemove(data) {
-  var storageData = store(storageKey)
-
+export function remove(data) {
   // Remove SKU
-  const keyIndex = findIndex(storageData, ["sku", data]) === -1
-  // Remove SKU
-  storageData.pop(keyIndex)
+  const keyIndex = findIndex(storageData, ["contentful_id", data.contentful_id])
+  storageData.splice(keyIndex, 1)
   store(storageKey, storageData)
   return storageData
 }
 
-export function storageCheck() {
-  var storageData = store(storageKey)
+export function check() {
   const timestamp = new Date().getTime()
 
   // Clear outdated objects in shopping bag
@@ -46,7 +44,7 @@ export function storageCheck() {
     storageData.forEach((_, i, a) => {
       // Items are saved for up to 60 minutes
       if (timestamp - storageData[i].timestamp > 60 * 60000) {
-        storageData.pop(i)
+        storageData.splice(i, 1)
       } else {
         storageData[i].timestamp = new Date().getTime()
       }

@@ -7,18 +7,16 @@ import Header from "./layout/header"
 import Nav from "./layout/nav"
 import Footer from "./layout/footer"
 
-import { storageAdd, storageRemove, storageCheck } from "./localStorage"
+import * as storage from "./storage"
 
 export const BagObjects = React.createContext([])
-const initBagObjects = storageCheck()
+const initBagObjects = storage.check()
 function reducer(_, action) {
   switch (action.type) {
     case "add":
-      console.log("add received!")
-      return storageAdd(action.data)
+      return storage.add(action.data)
     case "remove":
-      console.log("remove received!")
-      return storageRemove(action.data)
+      return storage.remove(action.data)
     default:
       throw new Error()
   }

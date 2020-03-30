@@ -11,7 +11,7 @@ const BagList = () => {
     dispatch({
       type: "remove",
       data: {
-        sku: e.target.value
+        contentful_id: e.target.value
       }
     })
   }
@@ -38,11 +38,11 @@ const BagList = () => {
               {state[i].size && state[i].size.size}
               <br />
               {state[i].priceSale
-                ? state[i].priceSale + state[i].priceOriginal
+                ? (<>{state[i].priceSale} {state[i].priceOriginal}</>)
                 : state[i].priceOriginal}
               <Button
                 variant='link'
-                value={state[i].sku}
+                value={state[i].contentful_id}
                 onClick={onRemove}
               >
                 Remove
