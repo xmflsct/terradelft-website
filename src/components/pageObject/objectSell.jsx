@@ -6,6 +6,7 @@ import SellVariations from "./sellVariations"
 const ObjectSell = ({
   contentful_id,
   name,
+  artist,
   images,
   priceOriginal,
   priceSale,
@@ -22,6 +23,7 @@ const ObjectSell = ({
           <SellVariations
             variations={variations}
             name={name}
+            artist={artist}
             imagesParent={images}
           />
         ) : stock && stock > 0 ? (

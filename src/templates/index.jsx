@@ -2,8 +2,8 @@ import React from "react"
 import { useTranslation } from "react-i18next"
 import { useStaticQuery, graphql } from "gatsby"
 
-import Layout from "../components/layout"
-import Grid from "../components/layout/grid"
+import Layout from "../layouts/layout"
+import Grid from "../components/grid"
 
 const Index = props => {
   const data = useStaticQuery(graphql`
@@ -29,7 +29,6 @@ const Index = props => {
 
   return (
     <Layout
-      alternateLink={props.alternateLinks}
       SEOtitle='Terra Delft'
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
     >

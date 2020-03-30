@@ -7,6 +7,12 @@ module.exports = {
     image: "./static/favicon.png"
   },
   plugins: [
+    {
+      resolve: "gatsby-plugin-layout",
+      options: {
+        component: require.resolve(`./src/layouts/bagContext.jsx`),
+      }
+    },
     `gatsby-plugin-lodash`,
     `gatsby-plugin-react-helmet`,
     {

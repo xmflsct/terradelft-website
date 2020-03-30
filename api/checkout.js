@@ -1,5 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const fetch = require("node-fetch")
+var _ = require("lodash")
 
 async function checkRecaptcha(req) {
   console.log("[checkout - checkRecaptcha] Start")
@@ -49,17 +50,21 @@ async function checkContentful(req) {
   if (req.body.objects.length === 0)
     return { fail: true, error: "[checkout - checkContentful] Content error" }
 
-  let objectsCorrection = []
-  let url = "https://" + process.env.CONTENTFUL_HOST
+  let corrections = { objects: [], shipping: null, subtotal: null }
+  let url = {
+    objects: "https://" + process.env.CONTENTFUL_HOST,
+    shipping: "https://" + process.env.CONTENTFUL_HOST
+  }
   const space = process.env.CONTENTFUL_SPACE
   const secret = process.env.CONTENTFUL_KEY_CHECKOUT
   const environment = process.env.CONTENTFUL_ENVIRONMENT
   const contentType = {
     main: "objectsObject",
     variation: "objectsObjectVariation",
-    shipping: ""
+    shipping: "shippingRates"
   }
 
+  // Check SKUs
   let ids = { main: [], variation: [] }
   for (const object of req.body.objects) {
     object.type === "main"
@@ -71,8 +76,8 @@ async function checkContentful(req) {
 
   for (const type in ids) {
     if (ids[type].length) {
-      url =
-        url +
+      url.objects =
+        url.objects +
         "/spaces/" +
         space +
         "/environments/" +
@@ -84,7 +89,7 @@ async function checkContentful(req) {
         "&sys.id[in]=" +
         ids[type]
 
-      await fetch(url)
+      await fetch(url.objects)
         .catch(() => {
           return {
             fail: true,
@@ -136,16 +141,74 @@ async function checkContentful(req) {
             if (correction.required) {
               delete correction.required
               correction.contentful_id = item.sys.id
-              objectsCorrection.push(correction)
+              corrections.objects.push(correction)
             }
           }
         })
     }
   }
 
+  // Check shipping
+  url.shipping =
+    url.shipping +
+    "/spaces/" +
+    space +
+    "/environments/" +
+    environment +
+    "/entries/?access_token=" +
+    secret +
+    "&content_type=" +
+    contentType.shipping +
+    "&fields.year[eq]=2020&locale=" +
+    req.body.locale
+  await fetch(url.shipping)
+    .catch(() => {
+      return {
+        fail: true,
+        error: "[checkout - checkContentful] Contentful server did not respond"
+      }
+    })
+    .then(res => {
+      if (!res.ok)
+        return {
+          fail: true,
+          error: "[checkout - checkContentful] Contentful server responds error"
+        }
+      return res
+    })
+    .then(res => res.json())
+    .then(json => {
+      const rates = json.items[0].fields.rates
+      const country = _.findIndex(rates, r => {
+        return _.includes(r.countryCode, req.body.shipping.countryCode)
+      })
+      const method = _.findIndex(rates[country].rates, {
+        method: req.body.shipping.method
+      })
+      if (!(req.body.pay.shipping === rates[country].rates[method].price)) {
+        corrections.shipping = rates[country].rates[method].price
+      }
+    })
+
+  // Check total
+  const subtotal = _.sumBy(req.body.objects, d => {
+    if (d.priceSale) {
+      return d.priceSale
+    } else {
+      return d.priceOriginal
+    }
+  })
+  if (subtotal !== req.body.pay.subtotal) {
+    corrections.subtotal = subtotal
+  }
+
   console.log("[checkout - checkContentful] End")
-  if (objectsCorrection.length) {
-    return { fail: true, error: objectsCorrection }
+  if (
+    corrections.objects.length ||
+    corrections.shipping ||
+    corrections.subtotal
+  ) {
+    return { fail: true, error: corrections }
   }
 }
 
@@ -153,32 +216,37 @@ async function stripeSession(req) {
   console.log("[checkout - stripeSession] Start")
   var sessionData = {}
   try {
-    sessionData = req.body.shipping
-      ? {
-          payment_method_types: ["ideal"],
-          customer_email: req.body.customer.email,
-          line_items: req.body.items,
-          shipping_address_collection: {
-            allowed_countries: ["NL"]
-          },
-          success_url:
-            req.body.url.success + "?session_id={CHECKOUT_SESSION_ID}",
-          cancel_url: req.body.url.cancel,
-          payment_intent_data: {
-            metadata: req.body.metadata
-          }
-        }
-      : {
-          payment_method_types: ["ideal"],
-          customer_email: req.body.customer.email,
-          line_items: req.body.items,
-          success_url:
-            req.body.url.success + "?session_id={CHECKOUT_SESSION_ID}",
-          cancel_url: req.body.url.cancel,
-          payment_intent_data: {
-            metadata: req.body.metadata
-          }
-        }
+    let line_items = []
+    for (const object of req.body.objects) {
+      line_items.push({
+        name: object.name,
+        amount: object.priceSale
+          ? object.priceSale * 100
+          : object.priceOriginal * 100,
+        currency: "eur",
+        quantity: 1,
+        description: object.sku && object.sku
+      })
+    }
+    line_items.push({
+      name: "Shipping to " + req.body.shipping.countryA2,
+      amount: req.body.pay.shipping * 100,
+      currency: "eur",
+      quantity: 1
+    })
+    sessionData = {
+      payment_method_types: ["ideal", "card"],
+      line_items: line_items,
+      shipping_address_collection: {
+        allowed_countries: [req.body.shipping.countryA2]
+      },
+      success_url:
+        "https://terradelft-website.now.sh/" +
+        req.body.locale +
+        "/checkout/success?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url:
+        "https://terradelft-website.now.sh/" + req.body.locale + "/bag"
+    }
   } catch (err) {
     return { fail: true, error: err }
   }
@@ -199,31 +267,28 @@ async function stripeSession(req) {
 export default async (req, res) => {
   console.log("[app] Start")
   if (!req.body || Object.keys(req.body).length === 0) {
-    res.status(400).send({ error: "[app] Body empty or error" })
+    res.status(400).json({ error: "[app] Body empty or error" })
     return
   }
 
   const resRecaptcha = await checkRecaptcha(req)
   if (resRecaptcha) {
-    res.status(400).send({ error: resRecaptcha.error })
+    res.status(400).json({ error: resRecaptcha.error })
     return
   }
 
   const resContentful = await checkContentful(req)
   if (resContentful) {
-    res.status(400).send({ error: resContentful.error })
+    res.status(400).json({ error: resContentful.error })
     return
-  } else {
-    res.status(200).send({ ok: true })
   }
 
-  // const resStripe = await stripeSession(req, res)
-  // if (resStripe.sessionId) {
-  //   res.status(200).send({ sessionId: resStripe.sessionId })
-  // } else {
-  //   res.status(400).send({ error: resStripe.error })
-  //   return
-  // }
+  const resStripe = await stripeSession(req)
+  if (resStripe.sessionId) {
+    res.status(200).json({ sessionId: resStripe.sessionId })
+  } else {
+    res.status(400).json({ error: resStripe.error })
+  }
 
   console.log("[app] End")
 }

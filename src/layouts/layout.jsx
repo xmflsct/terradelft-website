@@ -1,30 +1,13 @@
-import React, { useReducer } from "react"
+import React from "react"
 import { Button, Container } from "react-bootstrap"
 
-import "../styles/main.scss"
-import SEO from "./layout/seo"
-import Header from "./layout/header"
-import Nav from "./layout/nav"
-import Footer from "./layout/footer"
-
-import * as storage from "./storage"
-
-export const BagObjects = React.createContext([])
-const initBagObjects = storage.check()
-function reducer(_, action) {
-  switch (action.type) {
-    case "add":
-      return storage.add(action.data)
-    case "remove":
-      return storage.remove(action.data)
-    default:
-      throw new Error()
-  }
-}
+import SEO from "./seo"
+import Header from "./header"
+import Navigation from "./navigation"
+import Footer from "./footer"
 
 const Layout = ({ children, SEOtitle, SEOkeywords }) => {
   const [toggleNav, setToggleNav] = React.useState(false)
-  const [state, dispatch] = useReducer(reducer, initBagObjects)
 
   return (
     <Container className={`site-wrapper ${toggleNav ? "site-head-open" : ""}`}>
@@ -41,11 +24,9 @@ const Layout = ({ children, SEOtitle, SEOkeywords }) => {
         </span>
       </Button>
 
-      <BagObjects.Provider value={{ state, dispatch }}>
         <Header />
-        <Nav />
+        <Navigation />
         <Container as='main'>{children}</Container>
-      </BagObjects.Provider>
 
       <Footer />
     </Container>

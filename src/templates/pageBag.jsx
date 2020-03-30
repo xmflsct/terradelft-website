@@ -2,7 +2,7 @@ import React from "react"
 import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 
-import Layout from "../components/layout"
+import Layout from "../layouts/layout"
 import BagList from "../components/pageBag/bagList"
 import BagCheckout from "../components/pageBag/bagCheckout"
 
@@ -11,7 +11,6 @@ const Bag = props => {
 
   return (
     <Layout
-      alternateLink={props.alternateLinks}
       SEOtitle='Terra Delft'
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
     >

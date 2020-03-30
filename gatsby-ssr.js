@@ -1,3 +1,2 @@
-const wrapWithI18nProvider = require("./src/components/wrapWithI18nProvider")
-  .wrapWithI18nProvider
-exports.wrapPageElement = wrapWithI18nProvider
+import LanguageContextProvider from "./src/layouts/languageContext"
+export const wrapPageElement = LanguageContextProvider

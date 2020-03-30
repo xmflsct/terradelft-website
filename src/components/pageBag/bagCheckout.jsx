@@ -6,8 +6,9 @@ import ReactSelect from "react-select"
 import { useStaticQuery, graphql } from "gatsby"
 import { findIndex, forIn, includes, sumBy } from "lodash"
 import Reaptcha from "reaptcha"
+import { loadStripe } from "@stripe/stripe-js"
 
-import { BagObjects } from "../layout"
+import { BagContext } from "../../layouts/bagContext"
 import { checkout } from "../../api/checkout"
 
 var countries = require("i18n-iso-countries")
@@ -49,7 +50,8 @@ const BagCheckout = () => {
       }
     }
   `)
-  const { state, dispatch } = useContext(BagObjects)
+  const stripePromise = loadStripe("pk_test_fcoWHwS6EqtExNpTbYhZU88p00DeNqaVy0")
+  const { state, dispatch } = useContext(BagContext)
   const { t, i18n } = useTranslation("pageBag")
   const {
     control,
@@ -67,14 +69,14 @@ const BagCheckout = () => {
     shipping: []
   }
   const pay = {
-    objects: sumBy(state, d => {
+    objects: sumBy(state.bag, d => {
       if (d.priceSale) {
         return d.priceSale
       } else {
         return d.priceOriginal
       }
     }),
-    discount: sumBy(state, d => {
+    discount: sumBy(state.bag, d => {
       if (d.priceSale) {
         return d.priceOriginal - d.priceSale
       }
@@ -106,27 +108,29 @@ const BagCheckout = () => {
   const formSubmit = async d => {
     setCorrection(false)
     const data = {
-      objects: state,
+      objects: state.bag,
       shipping: {
-        country: d.selectedCountry.value,
+        countryCode: d.selectedCountry.value,
+        countryA2: countries.numericToAlpha2(d.selectedCountry.value),
         method: d.selectedShipping
       },
       pay: {
-        objects: pay.objects,
-        shipping: d.payShipping,
-        total: d.payTotal
-      }
+        subtotal: pay.objects,
+        shipping: d.payShipping
+      },
+      locale: i18n.language
     }
     const res = await checkout(await recaptcha.getResponse(), data)
     if (res.sessionId) {
-      // const stripe = await stripePromise
-      // const { error } = await stripe.redirectToCheckout({
-      //   sessionId: res.sessionId
-      // })
-      // if (error) {
-      //   return false
-      // }
+      const stripe = await stripePromise
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: res.sessionId
+      })
+      if (error) {
+        return false
+      }
     } else if (res.error) {
+      console.log(res.error)
       setCorrection(true)
       handleCorrection(res.error)
       return false
@@ -141,24 +145,26 @@ const BagCheckout = () => {
   }
 
   const handleCorrection = corrections => {
-    for (const correction of corrections) {
-      console.log(correction)
-      correction.stock === 0
-        ? dispatch({
-            type: "remove",
-            data: correction
-          })
-        : dispatch({
-            type: "add",
-            data: correction
-          })
+    if (corrections.objects.length) {
+      for (const correction of corrections.bojects) {
+        console.log(correction)
+        correction.stock === 0
+          ? dispatch({
+              type: "remove",
+              data: correction
+            })
+          : dispatch({
+              type: "add",
+              data: correction
+            })
+      }
     }
   }
 
   return (
     <>
       {t("summary")}
-      {state.length !== 0 && (
+      {state.bag.length !== 0 && (
         <Form onSubmit={e => onSubmit(e)}>
           <Form.Group>
             <Controller

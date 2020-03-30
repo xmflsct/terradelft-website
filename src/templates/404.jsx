@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { useStaticQuery, graphql } from "gatsby"
 import Img from "gatsby-image"
 
-import Layout from "../components/layout"
+import Layout from "../layouts/layout"
 
 const Index = props => {
   const image = useStaticQuery(graphql`
@@ -21,7 +21,6 @@ const Index = props => {
 
   return (
     <Layout
-      alternateLink={props.alternateLinks}
       title={"404 " + t("title")}
       SEOtitle={"404 " + t("title")}
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}

@@ -1,11 +1,16 @@
 import React, { useContext } from "react"
 import { Button, Col, Row } from "react-bootstrap"
+import { useTranslation } from "react-i18next"
+import { Link } from "gatsby"
 import Img from "gatsby-image"
 
-import { BagObjects } from "../layout"
+import { BagContext } from "../../layouts/bagContext"
+
+const slugify = require("slugify")
 
 const BagList = () => {
-  const { state, dispatch } = useContext(BagObjects)
+  const { i18n } = useTranslation("pageBag")
+  const { state, dispatch } = useContext(BagContext)
 
   const onRemove = e => {
     dispatch({
@@ -18,31 +23,46 @@ const BagList = () => {
 
   return (
     <>
-      {state.length !== 0 ? (
-        state.map((_, i) => (
+      {state.bag.length !== 0 ? (
+        state.bag.map((_, i) => (
           <Row key={i}>
             <Col lg={4}>
-              {state[i].image ? (
-                <Img fluid={state[i].image.fluid} />
+              {state.bag[i].image ? (
+                <Img fluid={state.bag[i].image.fluid} />
               ) : (
-                <Img fluid={state[i].imagesParent[0].fluid} />
+                <Img fluid={state.bag[i].imagesParent[0].fluid} />
               )}
             </Col>
             <Col lg={8}>
-              {state[i].name}
+              <Link
+                to={
+                  "/" +
+                  i18n.language +
+                  "/" +
+                  slugify(state.bag[i].artist, { lower: true }) +
+                  "/" +
+                  slugify(state.bag[i].name, { lower: true })
+                }
+              >
+                {state.bag[i].name}
+              </Link>
               <br />
-              {state[i].variation && state[i].variation.variation}
+              {state.bag[i].variation && state.bag[i].variation.variation}
               <br />
-              {state[i].colour && state[i].colour.colour}
+              {state.bag[i].colour && state.bag[i].colour.colour}
               <br />
-              {state[i].size && state[i].size.size}
+              {state.bag[i].size && state.bag[i].size.size}
               <br />
-              {state[i].priceSale
-                ? (<>{state[i].priceSale} {state[i].priceOriginal}</>)
-                : state[i].priceOriginal}
+              {state.bag[i].priceSale ? (
+                <>
+                  {state.bag[i].priceSale} {state.bag[i].priceOriginal}
+                </>
+              ) : (
+                state.bag[i].priceOriginal
+              )}
               <Button
                 variant='link'
-                value={state[i].contentful_id}
+                value={state.bag[i].contentful_id}
                 onClick={onRemove}
               >
                 Remove

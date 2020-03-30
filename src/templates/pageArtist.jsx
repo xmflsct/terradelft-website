@@ -4,12 +4,11 @@ import { graphql } from "gatsby"
 import Img from "gatsby-image"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
-import Layout from "../components/layout"
-import Grid from "../components/layout/grid"
+import Layout from "../layouts/layout"
+import Grid from "../components/grid"
 
-const PageArtist = ({ data, alternateLinks }) => (
+const PageArtist = ({ data }) => (
   <Layout
-    alternateLink={alternateLinks}
     SEOtitle={data.artist.artist}
     SEOkeywords={[data.artist.artist, "Terra Delft"]}
   >

@@ -4,19 +4,18 @@ import { useTranslation } from "react-i18next"
 import { graphql } from "gatsby"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
-import Layout from "../components/layout"
-import Grid from "../components/layout/grid"
+import Layout from "../layouts/layout"
+import Grid from "../components/grid"
 import ObjectImages from "../components/pageObject/objectImages"
 import ObjectSell from "../components/pageObject/objectSell"
 import ObjectAttributes from "../components/pageObject/objectAttributes"
 
-const PageObject = ({ data, alternateLinks }) => {
+const PageObject = ({ data }) => {
   const { t } = useTranslation("pageObject")
   const { object } = data
 
   return (
     <Layout
-      alternateLink={alternateLinks}
       SEOtitle={object.name}
       SEOkeywords={[object.name, "Terra Delft"]}
     >
@@ -29,6 +28,7 @@ const PageObject = ({ data, alternateLinks }) => {
           <ObjectSell
             contentful_id={object.contentful_id}
             name={object.name}
+            artist={object.artist.artist}
             images={object.images}
             priceOriginal={object.priceOriginal}
             priceSale={object.priceSale}

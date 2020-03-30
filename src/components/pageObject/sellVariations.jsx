@@ -12,10 +12,10 @@ import {
   pickBy
 } from "lodash"
 
-import { BagObjects } from "../layout"
+import { BagContext } from "../../layouts/bagContext"
 
-const SellVariations = ({ variations, name, imagesParent }) => {
-  const { dispatch } = useContext(BagObjects)
+const SellVariations = ({ variations, name, artist, imagesParent }) => {
+  const { dispatch } = useContext(BagContext)
   const { control, handleSubmit, watch } = useForm()
 
   const options = {
@@ -91,6 +91,7 @@ const SellVariations = ({ variations, name, imagesParent }) => {
         type: "variation",
         contentful_id: sku.contentful_id,
         name: name,
+        artist: artist,
         imagesParent: imagesParent,
         sku: sku.sku,
         image: sku.image,

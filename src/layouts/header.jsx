@@ -6,8 +6,8 @@ import { faGlobeEurope, faShoppingBag } from "@fortawesome/free-solid-svg-icons"
 import { useStaticQuery, graphql, Link } from "gatsby"
 import Img from "gatsby-image"
 
-import { AlternateLinksContext } from "../wrapWithI18nProvider"
-import { BagObjects } from "../layout"
+import { LanguageContext } from "./languageContext"
+import { BagContext } from "./bagContext"
 
 const Header = () => {
   const image = useStaticQuery(graphql`
@@ -33,8 +33,8 @@ const Header = () => {
     }
   `)
   const { t, i18n } = useTranslation("common")
-  const alternateLinks = useContext(AlternateLinksContext)
-  const { state } = useContext(BagObjects)
+  const alternateLinks = useContext(LanguageContext)
+  const { state } = useContext(BagContext)
 
   return (
     <Row as='header'>
@@ -70,7 +70,8 @@ const Header = () => {
       </Col>
       <Col lg={1} className='temp'>
         <Link to={"/" + i18n.language + "/bag"}>
-          <FontAwesomeIcon icon={faShoppingBag} /> {state.length}
+          <FontAwesomeIcon icon={faShoppingBag} />
+          {state.bag.length}
         </Link>
       </Col>
     </Row>
