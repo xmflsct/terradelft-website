@@ -289,6 +289,5 @@ export default async (req, res) => {
   } else {
     res.status(400).json({ error: resStripe.error })
   }
-
   console.log("[app] End")
 }
