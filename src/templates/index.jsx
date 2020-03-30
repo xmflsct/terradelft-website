@@ -1,11 +1,11 @@
 import React from "react"
+import { useTranslation } from "react-i18next"
 import { useStaticQuery, graphql } from "gatsby"
+
 import Layout from "../components/layout"
 import Grid from "../components/layout/grid"
-import { useTranslation } from "react-i18next"
 
 const Index = props => {
-  const { t } = useTranslation("index")
   const data = useStaticQuery(graphql`
     {
       artists: allContentfulObjectsArtist(
@@ -25,15 +25,16 @@ const Index = props => {
       }
     }
   `)
+  const { t } = useTranslation("index")
 
   return (
     <Layout
       alternateLink={props.alternateLinks}
-      SEOtitle="Terra Delft"
+      SEOtitle='Terra Delft'
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
     >
       <p>{t("section.collection")}</p>
-      <Grid items={data.artists.edges} type="artist" />
+      <Grid items={data.artists.edges} type='artist' />
     </Layout>
   )
 }

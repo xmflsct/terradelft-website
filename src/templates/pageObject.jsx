@@ -1,13 +1,14 @@
 import React from "react"
-import { graphql } from "gatsby"
 import { Col, Row } from "react-bootstrap"
-import Grid from "../components/layout/grid"
+import { useTranslation } from "react-i18next"
+import { graphql } from "gatsby"
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
+
 import Layout from "../components/layout"
+import Grid from "../components/layout/grid"
 import ObjectImages from "../components/pageObject/objectImages"
 import ObjectSell from "../components/pageObject/objectSell"
 import ObjectAttributes from "../components/pageObject/objectAttributes"
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
-import { useTranslation } from "react-i18next"
 
 const PageObject = ({ data, alternateLinks }) => {
   const { t } = useTranslation("pageObject")
@@ -26,6 +27,9 @@ const PageObject = ({ data, alternateLinks }) => {
         <Col lg={6}>
           <h1>{object.name}</h1>
           <ObjectSell
+            contentful_id={object.contentful_id}
+            name={object.name}
+            images={object.images}
             priceOriginal={object.priceOriginal}
             priceSale={object.priceSale}
             sellOnline={object.sellOnline}
@@ -90,7 +94,7 @@ const PageObject = ({ data, alternateLinks }) => {
             {t("related")}
             {object.artist.artist}
           </h2>
-          <Grid items={data.objects.edges} type="object" />
+          <Grid items={data.objects.edges} type='object' />
         </>
       )}
     </Layout>
@@ -107,6 +111,7 @@ export const query = graphql`
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $language }
     ) {
+      contentful_id
       name
       description {
         json
@@ -125,6 +130,7 @@ export const query = graphql`
       sku
       stock
       variations {
+        contentful_id
         sku
         variation {
           variation

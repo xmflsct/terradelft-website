@@ -11,9 +11,10 @@ const srcPath = resolveApp("src")
 
 exports.createPages = async ({
   graphql,
-  actions: { createPage, createRedirect },
+  actions: { createPage, createRedirect }
 }) => {
   await buildIndexPages(createPage)
+  await buildBagPages(createPage)
   await build404Pages(createPage)
 
   /* Biuld Artist Page */
@@ -59,7 +60,7 @@ exports.createPages = async ({
           ({ node }, language) => ({
             path: "/" + language + "/" + slugify(node.artist, { lower: true }),
             component: pageArtist,
-            context: { contentful_id: node.contentful_id, language: language },
+            context: { contentful_id: node.contentful_id, language: language }
           }),
           ["common"],
           createPage
@@ -123,8 +124,8 @@ exports.createPages = async ({
             context: {
               contentful_id: node.contentful_id,
               artist_contentful_id: node.artist.contentful_id,
-              language: language,
-            },
+              language: language
+            }
           }),
           ["common", "pageObject"],
           createPage
@@ -140,7 +141,7 @@ exports.createPages = async ({
     createRedirect({
       fromPath: `/${language}/*`,
       toPath: `/${language}/404`,
-      statusCode: 404,
+      statusCode: 404
     })
   )
   createRedirect({ fromPath: "/*", toPath: "/404", statusCode: 404 })
@@ -166,7 +167,7 @@ const buildI18nPages = async (
   const alternateLinks = await Promise.all(
     definitions.map(d => ({
       language: d.context.language,
-      path: d.path,
+      path: d.path
     }))
   )
 
@@ -188,7 +189,7 @@ const createI18nextInstance = async (language, namespaces) => {
         ns: namespaces,
         fallbackLng: language,
         interpolation: { escapeValue: false },
-        backend: { loadPath: `${srcPath}/locales/{{lng}}/{{ns}}.json` },
+        backend: { loadPath: `${srcPath}/locales/{{lng}}/{{ns}}.json` }
       },
       resolve
     )
@@ -204,14 +205,37 @@ const buildIndexPages = async createPage => {
       const res = {
         path: "/" + language,
         component: indexTemplate,
-        context: {},
+        context: {}
       }
       res.context.language = language
       res.context.i18nResources = i18n.services.resourceStore.data
       await Promise.all(
         (res.context.alternateLinks = languages.map(lang => ({
           language: lang,
-          path: "/" + lang,
+          path: "/" + lang
+        })))
+      )
+      createPage(res)
+    })
+  )
+}
+
+const buildBagPages = async createPage => {
+  const indexTemplate = path.resolve(`src/templates/pageBag.jsx`)
+  await Promise.all(
+    languages.map(async language => {
+      const i18n = await createI18nextInstance(language, ["common", "pageBag"])
+      const res = {
+        path: "/" + language + "/bag",
+        component: indexTemplate,
+        context: {}
+      }
+      res.context.language = language
+      res.context.i18nResources = i18n.services.resourceStore.data
+      await Promise.all(
+        (res.context.alternateLinks = languages.map(lang => ({
+          language: lang,
+          path: "/" + lang + "/bag"
         })))
       )
       createPage(res)
@@ -227,7 +251,7 @@ const build404Pages = async createPage => {
       const res = {
         path: "/" + language + "/404",
         component: errorTemplate,
-        context: {},
+        context: {}
       }
       res.context.language = language
       res.context.i18nResources = i18n.services.resourceStore.data

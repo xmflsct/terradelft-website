@@ -1,7 +1,7 @@
 import React from "react"
+import { Col, Row } from "react-bootstrap"
 import { Link } from "gatsby"
 import Img from "gatsby-image"
-import { Col, Row } from "react-bootstrap"
 
 const slugify = require("slugify")
 
@@ -13,7 +13,7 @@ const Grid = ({ items, type }) => {
           {items
             .filter(placeholder => placeholder.node.artist !== "PLACEHOLDER")
             .map(artist => (
-              <Col key={artist.node.artist} lg={2} className="grid-item">
+              <Col key={artist.node.artist} lg={2} className='grid-item'>
                 <Link
                   to={
                     "/" +
@@ -35,7 +35,7 @@ const Grid = ({ items, type }) => {
           {items
             .filter(placeholder => placeholder.node.name !== "PLACEHOLDER")
             .map(object => (
-              <Col key={object.node.name} lg={2} className="grid-item">
+              <Col key={object.node.name} lg={2} className='grid-item'>
                 <Link
                   to={
                     "/" +

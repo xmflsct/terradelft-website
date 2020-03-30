@@ -1,10 +1,11 @@
 import React from "react"
+import { Col, Row } from "react-bootstrap"
 import { graphql } from "gatsby"
 import Img from "gatsby-image"
-import { Col, Row } from "react-bootstrap"
-import Grid from "../components/layout/grid"
-import Layout from "../components/layout"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
+
+import Layout from "../components/layout"
+import Grid from "../components/layout/grid"
 
 const PageArtist = ({ data, alternateLinks }) => (
   <Layout
@@ -21,7 +22,7 @@ const PageArtist = ({ data, alternateLinks }) => (
         {documentToReactComponents(data.artist?.biography?.json)}
       </Col>
     </Row>
-    <Grid items={data.objects.edges} type="object" />
+    <Grid items={data.objects.edges} type='object' />
   </Layout>
 )
 

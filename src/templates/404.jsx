@@ -1,11 +1,11 @@
 import React from "react"
+import { useTranslation } from "react-i18next"
 import { useStaticQuery, graphql } from "gatsby"
 import Img from "gatsby-image"
+
 import Layout from "../components/layout"
-import { useTranslation } from "react-i18next"
 
 const Index = props => {
-  const { t } = useTranslation("404")
   const image = useStaticQuery(graphql`
     {
       file(relativePath: { regex: "/(404/404.jpg)/" }) {
@@ -17,6 +17,7 @@ const Index = props => {
       }
     }
   `)
+  const { t } = useTranslation("404")
 
   return (
     <Layout

@@ -6,7 +6,9 @@ const ObjectAttributes = ({ title, data }) => (
     {!Array.isArray(data) ? (
       <span>{data}</span>
     ) : (
-      data.map(d => <span key={Object.values(d)[0]}>{Object.values(d)[0]}</span>)
+      data.map(d => (
+        <span key={Object.values(d)[0]}>{Object.values(d)[0]}</span>
+      ))
     )}
   </div>
 )

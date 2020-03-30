@@ -1,33 +1,41 @@
 import React from "react"
 import { Button, Form } from "react-bootstrap"
+
 import SellVariations from "./sellVariations"
 
 const ObjectSell = ({
+  contentful_id,
+  name,
+  images,
   priceOriginal,
   priceSale,
   sellOnline,
   sku,
   stock,
-  variations,
+  variations
 }) => {
   return (
     <div>
       {sellOnline ? (
         variations ? (
           // Online with variation
-          <SellVariations variations={variations} />
+          <SellVariations
+            variations={variations}
+            name={name}
+            imagesParent={images}
+          />
         ) : stock && stock > 0 ? (
           // Online without variation with stock
           <Form>
             <Form.Group>
-              <Form.Control as="select">
+              <Form.Control as='select'>
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
                 <option>4</option>
                 <option>5</option>
               </Form.Control>
-              <Button variant="primary" type="submit">
+              <Button variant='primary' type='submit'>
                 Add to bag
               </Button>
             </Form.Group>

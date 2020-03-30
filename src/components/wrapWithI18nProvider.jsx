@@ -11,7 +11,7 @@ export function wrapWithI18nProvider({ element, props }) {
       lng: props.pageContext.language,
       interpolation: { escapeValue: false },
       initImmediate: false,
-      resources: props.pageContext.i18nResources,
+      resources: props.pageContext.i18nResources
     })
     .use(ReactI18next.initReactI18next)
   // noinspection JSIgnoredPromiseFromCall
@@ -27,7 +27,7 @@ export function wrapWithI18nProvider({ element, props }) {
               props.pageContext.alternateLinks &&
               props.pageContext.alternateLinks.map(link => (
                 <link
-                  rel="alternate"
+                  rel='alternate'
                   hrefLang={link.language}
                   href={link.path}
                   key={link.path}
