@@ -8,7 +8,7 @@ import Layout from "../layouts/layout"
 const Index = props => {
   const image = useStaticQuery(graphql`
     {
-      file(relativePath: { regex: "/(404/404.jpg)/" }) {
+      file(relativePath: { eq: "template-404/404.jpg" }) {
         childImageSharp {
           fluid(maxWidth: 800) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
@@ -17,7 +17,7 @@ const Index = props => {
       }
     }
   `)
-  const { t } = useTranslation("404")
+  const { t } = useTranslation("template-404")
 
   return (
     <Layout

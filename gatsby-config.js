@@ -10,7 +10,7 @@ module.exports = {
     {
       resolve: "gatsby-plugin-layout",
       options: {
-        component: require.resolve(`./src/layouts/bagContext.jsx`),
+        component: require.resolve(`./src/layouts/contexts/bag.jsx`),
       }
     },
     `gatsby-plugin-lodash`,

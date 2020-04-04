@@ -1,6 +1,6 @@
 import React from "react"
 
-const ObjectAttributes = ({ title, data }) => (
+const ObjectAttribute = ({ title, data }) => (
   <div>
     <span>{title}</span>-
     {!Array.isArray(data) ? (
@@ -13,4 +13,4 @@ const ObjectAttributes = ({ title, data }) => (
   </div>
 )
 
-export default ObjectAttributes
+export default ObjectAttribute

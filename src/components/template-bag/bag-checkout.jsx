@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react"
 import { Button, Col, Form } from "react-bootstrap"
-import { useTranslation } from "react-i18next"
+import ReCAPTCHA from "react-google-recaptcha"
 import { Controller, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import ReactSelect from "react-select"
 import { useStaticQuery, graphql } from "gatsby"
 import { findIndex, forIn, includes, sumBy } from "lodash"
-import Reaptcha from "reaptcha"
 import { loadStripe } from "@stripe/stripe-js"
 
-import { BagContext } from "../../layouts/bagContext"
+import { ContextBag } from "../../layouts/contexts/bag"
 import { checkout } from "../../api/checkout"
 
 var countries = require("i18n-iso-countries")
@@ -50,15 +50,17 @@ const BagCheckout = () => {
       }
     }
   `)
-  const stripePromise = loadStripe("pk_test_fcoWHwS6EqtExNpTbYhZU88p00DeNqaVy0")
-  const { state, dispatch } = useContext(BagContext)
   const { t, i18n } = useTranslation("pageBag")
+  const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
+  const { state, dispatch } = useContext(ContextBag)
+  const recaptchaRef = React.createRef()
+  const [corrections, setCorrections] = useState({ required: false })
   const {
     control,
     formState,
+    getValues,
     handleSubmit,
     register,
-    setValue,
     watch
   } = useForm({
     mode: "onChange"
@@ -68,28 +70,12 @@ const BagCheckout = () => {
     countries: [],
     shipping: []
   }
-  const pay = {
-    objects: sumBy(state.bag, d => {
-      if (d.priceSale) {
-        return d.priceSale
-      } else {
-        return d.priceOriginal
-      }
-    }),
-    discount: sumBy(state.bag, d => {
-      if (d.priceSale) {
-        return d.priceOriginal - d.priceSale
-      }
-    })
-  }
-
   forIn(countries.getNames(i18n.language), (v, k) => {
     options.countries.push({
       value: countries.alpha2ToNumeric(k),
       label: v
     })
   })
-
   const selectedCountry = watch("selectedCountry")
   if (selectedCountry) {
     options.shipping =
@@ -100,39 +86,54 @@ const BagCheckout = () => {
       ].rates
   }
 
-  const [correction, setCorrection] = useState(false)
-  const [recaptcha, setRecaptcha] = useState(null)
-  const onVerify = () => {
-    handleSubmit(formSubmit)()
+  const pay = {
+    objects: sumBy(state.bag.objects, d => {
+      if (d.priceSale) {
+        return d.priceSale
+      } else {
+        return d.priceOriginal
+      }
+    }),
+    discount: sumBy(state.bag.objects, d => {
+      if (d.priceSale) {
+        return d.priceOriginal - d.priceSale
+      }
+    }),
+    shipping:
+      options.shipping.length && watch("selectedShipping")
+        ? options.shipping[watch("selectedShipping")].price
+        : null
   }
-  const formSubmit = async d => {
-    setCorrection(false)
+
+  const userVerified = token => {
+    handleSubmit(data => formSubmit(data, token))()
+  }
+  const formSubmit = async (d, t) => {
     const data = {
-      objects: state.bag,
+      objects: state.bag.objects,
       shipping: {
         countryCode: d.selectedCountry.value,
         countryA2: countries.numericToAlpha2(d.selectedCountry.value),
-        method: d.selectedShipping
+        methodIndex: d.selectedShipping
       },
       pay: {
         subtotal: pay.objects,
-        shipping: d.payShipping
+        shipping: pay.shipping
       },
       locale: i18n.language
     }
-    const res = await checkout(await recaptcha.getResponse(), data)
+    const res = await checkout(t, data)
     if (res.sessionId) {
       const stripe = await stripePromise
+      setCorrections({ required: false })
       const { error } = await stripe.redirectToCheckout({
         sessionId: res.sessionId
       })
       if (error) {
         return false
       }
-    } else if (res.error) {
-      console.log(res.error)
-      setCorrection(true)
-      handleCorrection(res.error)
+    } else if (res.corrections) {
+      handleCorrection(res.corrections)
       return false
     } else {
       return false
@@ -140,31 +141,45 @@ const BagCheckout = () => {
   }
   const onSubmit = async e => {
     e.preventDefault()
-    formState.isSubmitted && (await recaptcha.reset())
-    recaptcha.execute()
+    formState.isSubmitted && (await recaptchaRef.current.reset())
+    recaptchaRef.current.execute()
   }
 
   const handleCorrection = corrections => {
+    setCorrections({
+      required: true,
+      subtotal: corrections.objects.length ? pay.objects : null,
+      shipping: corrections.shipping ? pay.shipping : null,
+      total: pay.objects + pay.shipping
+    })
     if (corrections.objects.length) {
-      for (const correction of corrections.bojects) {
-        console.log(correction)
-        correction.stock === 0
+      for (const object of corrections.objects) {
+        object.stock === 0
           ? dispatch({
+              // Remove out of stock
               type: "remove",
-              data: correction
+              data: object
             })
           : dispatch({
-              type: "add",
-              data: correction
+              // Update prices
+              type: "update",
+              data: object
             })
       }
+    }
+    if (corrections.shipping) {
+      options.shipping[getValues().selectedShipping].price =
+        corrections.shipping
+    }
+    if (corrections.subtotal) {
+      console.log("subtotal wrong")
     }
   }
 
   return (
     <>
       {t("summary")}
-      {state.bag.length !== 0 && (
+      {state.bag.objects.length !== 0 && (
         <Form onSubmit={e => onSubmit(e)}>
           <Form.Group>
             <Controller
@@ -183,23 +198,8 @@ const BagCheckout = () => {
                 <input
                   type='radio'
                   name='selectedShipping'
-                  value={d.method}
-                  // label={d.price}
+                  value={i}
                   required
-                  onChange={() => {
-                    setValue(
-                      "payShipping",
-                      d.freeForTotal && pay.objects >= d.freeForTotal
-                        ? 0
-                        : d.price
-                    )
-                    setValue(
-                      "payTotal",
-                      d.freeForTotal && pay.objects >= d.freeForTotal
-                        ? pay.objects
-                        : d.price + pay.objects
-                    )
-                  }}
                   ref={register({ required: true })}
                 />
                 {d.method}{" "}
@@ -221,7 +221,10 @@ const BagCheckout = () => {
             <Form.Label column lg='4'>
               Subtotal
             </Form.Label>
-            <Col sm='8'>{pay.objects}</Col>
+            <Col sm='8'>
+              {corrections.subtotal && <strike>{corrections.subtotal}</strike>}{" "}
+              {pay.objects}
+            </Col>
           </Form.Row>
           {pay.discount > 0 && (
             <Form.Row>
@@ -236,14 +239,8 @@ const BagCheckout = () => {
               Shipping
             </Form.Label>
             <Col sm='8'>
-              <Controller
-                as={<Form.Control />}
-                name='payShipping'
-                plaintext
-                readOnly
-                defaultValue={""}
-                control={control}
-              />
+              {corrections.shipping && <strike>{corrections.shipping}</strike>}{" "}
+              {pay.shipping}
             </Col>
           </Form.Row>
           <Form.Row>
@@ -251,14 +248,8 @@ const BagCheckout = () => {
               Total
             </Form.Label>
             <Col sm='8'>
-              <Controller
-                as={<Form.Control />}
-                name='payTotal'
-                plaintext
-                readOnly
-                defaultValue={""}
-                control={control}
-              />
+              {corrections.required && <strike>{corrections.total}</strike>}{" "}
+              {pay.objects && pay.shipping && pay.objects + pay.shipping}
             </Col>
           </Form.Row>
           <Button
@@ -270,13 +261,13 @@ const BagCheckout = () => {
               (formState.submitCount !== 0 && "Retry") ||
               t("checkout")}
           </Button>
-          {correction ? "Correction needed" : ""}
-          <Reaptcha
-            ref={e => setRecaptcha(e)}
-            onVerify={onVerify}
-            sitekey='6Ld1ruIUAAAAAJyq6JSxAT04pza_Zom9k7hyl1Vb'
+          {corrections.required ? "Correction needed" : ""}
+          <ReCAPTCHA
+            ref={recaptchaRef}
             size='invisible'
             badge='inline'
+            sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
+            onChange={userVerified}
             hl={i18n.language}
           />
         </Form>

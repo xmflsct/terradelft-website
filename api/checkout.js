@@ -1,54 +1,41 @@
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
-const fetch = require("node-fetch")
+const ky = require("ky-universal")
 var _ = require("lodash")
 
 async function checkRecaptcha(req) {
-  console.log("[checkout - checkRecaptcha] Start")
-  if (!req.query.token)
+  if (!req.body.token)
     return {
-      fail: true,
+      success: false,
       error: "[checkout - checkRecaptcha] No token is provided"
     }
 
-  const secret = process.env.RECAPTCHA_PRIVATE_SECRET
-  const url =
-    "https://www.google.com/recaptcha/api/siteverify?secret=" +
-    secret +
-    "&response=" +
-    req.query.token +
-    "&remoteip=" +
-    req.connection.remoteAddress
-
-  await fetch(url)
-    .catch(err => {
-      return { fail: true, error: err }
+  return await ky
+    .get("https://www.google.com/recaptcha/api/siteverify", {
+      searchParams: {
+        secret: process.env.RECAPTCHA_PRIVATE_KEY,
+        response: req.body.token,
+        remoteip: req.connection.remoteAddress
+      }
     })
-    .then(res => {
-      if (!res.ok)
-        return {
-          fail: true,
-          error:
-            "[checkout - checkRecaptcha] Google reCAPTCHA server responds error"
-        }
-      return res
-    })
-    .then(res => res.json())
-    .then(json => {
-      if (!json.success)
-        return {
-          fail: true,
-          error:
-            "[checkout - checkRecaptcha] Google reCAPTCHA could not verify user action"
-        }
-    })
-
-  console.log("[checkout - checkRecaptcha] End")
+    .json()
 }
 
 async function checkContentful(req) {
-  console.log("[checkout - checkContentful] Start")
-  if (req.body.objects.length === 0)
-    return { fail: true, error: "[checkout - checkContentful] Content error" }
+  if (
+    req.body.data.objects.length === 0 ||
+    Object.keys(req.body.data.shipping).length === 0 ||
+    Object.keys(req.body.data.pay).length === 0
+  ) {
+    return {
+      success: false,
+      error: "[checkout - checkContentful] Content empty"
+    }
+  }
+
+  const objects = req.body.data.objects
+  const shipping = req.body.data.shipping
+  const pay = req.body.data.pay
+  const locale = req.body.data.locale
 
   let corrections = { objects: [], shipping: null, subtotal: null }
   let url = {
@@ -64,9 +51,9 @@ async function checkContentful(req) {
     shipping: "shippingRates"
   }
 
-  // Check SKUs
+  // Check objects
   let ids = { main: [], variation: [] }
-  for (const object of req.body.objects) {
+  for (const object of objects) {
     object.type === "main"
       ? ids.main.push(object.contentful_id)
       : ids.variation.push(object.contentful_id)
@@ -82,69 +69,54 @@ async function checkContentful(req) {
         space +
         "/environments/" +
         environment +
-        "/entries/?access_token=" +
-        secret +
-        "&content_type=" +
-        contentType[type] +
-        "&sys.id[in]=" +
-        ids[type]
+        "/entries/"
 
-      await fetch(url.objects)
-        .catch(() => {
-          return {
-            fail: true,
-            error:
-              "[checkout - checkContentful] Contentful server did not respond"
-          }
-        })
-        .then(res => {
-          if (!res.ok)
-            return {
-              fail: true,
-              error:
-                "[checkout - checkContentful] Contentful server responds error"
-            }
-          return res
-        })
-        .then(res => res.json())
-        .then(json => {
-          for (const item of json.items) {
-            let reqIndex = req.body.objects.findIndex(
-              i => i.contentful_id === item.sys.id
-            )
-            let correction = {
-              required: false
-            }
+      const response = await ky(url.objects, {
+        searchParams: {
+          access_token: secret,
+          content_type: contentType[type],
+          "sys.id[in]": ids[type]
+        }
+      }).json()
 
-            if (item.fields.stock < 1) {
-              correction.required = true
-              correction.stock = 0
-            }
-            if (
-              !(
-                req.body.objects[reqIndex].priceOriginal ===
-                item.fields.priceOriginal
-              )
-            ) {
-              correction.required = true
-              correction.priceOriginal = item.fields.priceOriginal
-            }
-            if (
-              !(req.body.objects[reqIndex].priceSale == item.fields.priceSale)
-            ) {
-              correction.required = true
-              correction.priceSale = item.fields.priceSale
-                ? item.fields.priceSale
-                : null
-            }
+      if (!response.hasOwnProperty("items")) {
+        return {
+          success: false,
+          error: "[checkout - checkContentful] Content error"
+        }
+      }
 
-            if (correction.required) {
-              delete correction.required
-              correction.contentful_id = item.sys.id
-              corrections.objects.push(correction)
-            }
-          }
-        })
+      for (const item of response.items) {
+        let objectIndex = objects.findIndex(
+          i => i.contentful_id === item.sys.id
+        )
+        let correction = {
+          required: false
+        }
+
+        if (item.fields.stock < 1) {
+          correction.required = true
+          correction.stock = 0
+        }
+        if (
+          !(objects[objectIndex].priceOriginal === item.fields.priceOriginal)
+        ) {
+          correction.required = true
+          correction.priceOriginal = item.fields.priceOriginal
+        }
+        if (!(objects[objectIndex].priceSale == item.fields.priceSale)) {
+          correction.required = true
+          correction.priceSale = item.fields.priceSale
+            ? item.fields.priceSale
+            : null
+        }
+
+        if (correction.required) {
+          delete correction.required
+          correction.contentful_id = item.sys.id
+          corrections.objects.push(correction)
+        }
+      }
     }
   }
 
@@ -155,110 +127,99 @@ async function checkContentful(req) {
     space +
     "/environments/" +
     environment +
-    "/entries/?access_token=" +
-    secret +
-    "&content_type=" +
-    contentType.shipping +
-    "&fields.year[eq]=2020&locale=" +
-    req.body.locale
-  await fetch(url.shipping)
-    .catch(() => {
-      return {
-        fail: true,
-        error: "[checkout - checkContentful] Contentful server did not respond"
-      }
-    })
-    .then(res => {
-      if (!res.ok)
-        return {
-          fail: true,
-          error: "[checkout - checkContentful] Contentful server responds error"
-        }
-      return res
-    })
-    .then(res => res.json())
-    .then(json => {
-      const rates = json.items[0].fields.rates
-      const country = _.findIndex(rates, r => {
-        return _.includes(r.countryCode, req.body.shipping.countryCode)
-      })
-      const method = _.findIndex(rates[country].rates, {
-        method: req.body.shipping.method
-      })
-      if (!(req.body.pay.shipping === rates[country].rates[method].price)) {
-        corrections.shipping = rates[country].rates[method].price
-      }
-    })
+    "/entries/"
 
-  // Check total
-  const subtotal = _.sumBy(req.body.objects, d => {
-    if (d.priceSale) {
-      return d.priceSale
+  const response = await ky(url.shipping, {
+    searchParams: {
+      access_token: secret,
+      content_type: contentType.shipping,
+      "fields.year[eq]": "2020",
+      locale: locale
+    }
+  }).json()
+
+  if (!response.hasOwnProperty("items")) {
+    return {
+      success: false,
+      error: "[checkout - checkContentful] Content error"
+    }
+  }
+
+  const rates = response.items[0].fields.rates
+  const countryCode = _.findIndex(rates, r => {
+    return _.includes(r.countryCode, shipping.countryCode)
+  })
+  if (!(pay.shipping === rates[countryCode].rates[shipping.methodIndex].price)) {
+    corrections.shipping = rates[countryCode].rates[shipping.methodIndex].price
+  }
+
+  // Check subtotal
+  const subtotal = _.sumBy(objects, o => {
+    if (o.priceSale) {
+      return o.priceSale
     } else {
-      return d.priceOriginal
+      return o.priceOriginal
     }
   })
-  if (subtotal !== req.body.pay.subtotal) {
+  if (!(subtotal === pay.subtotal)) {
     corrections.subtotal = subtotal
   }
 
-  console.log("[checkout - checkContentful] End")
   if (
     corrections.objects.length ||
     corrections.shipping ||
     corrections.subtotal
   ) {
-    return { fail: true, error: corrections }
+    return { success: false, corrections: corrections }
+  } else {
+    return { success: true }
   }
 }
 
 async function stripeSession(req) {
-  console.log("[checkout - stripeSession] Start")
   var sessionData = {}
   try {
     let line_items = []
-    for (const object of req.body.objects) {
+    for (const object of req.body.data.objects) {
       line_items.push({
         name: object.name,
         amount: object.priceSale
-          ? object.priceSale * 100
-          : object.priceOriginal * 100,
+          ? object.priceSale * 10 * 10
+          : object.priceOriginal * 10 * 10,
         currency: "eur",
         quantity: 1,
         description: object.sku && object.sku
       })
     }
     line_items.push({
-      name: "Shipping to " + req.body.shipping.countryA2,
-      amount: req.body.pay.shipping * 100,
+      name: "Shipping to " + req.body.data.shipping.countryA2,
+      amount: req.body.data.pay.shipping * 10 * 10,
       currency: "eur",
       quantity: 1
     })
     sessionData = {
-      payment_method_types: ["ideal", "card"],
+      payment_method_types: ["ideal"],
       line_items: line_items,
       shipping_address_collection: {
-        allowed_countries: [req.body.shipping.countryA2]
+        allowed_countries: [req.body.data.shipping.countryA2]
       },
       success_url:
         "https://terradelft-website.now.sh/" +
-        req.body.locale +
-        "/checkout/success?session_id={CHECKOUT_SESSION_ID}",
+        req.body.data.locale +
+        "/thank-you?session_id={CHECKOUT_SESSION_ID}",
       cancel_url:
-        "https://terradelft-website.now.sh/" + req.body.locale + "/bag"
+        "https://terradelft-website.now.sh/" + req.body.data.locale + "/bag"
     }
   } catch (err) {
-    return { fail: true, error: err }
+    return { success: false, error: err }
   }
   console.log("[checkout - stripeSession] Initialize stripe session")
   const session = await stripe.checkout.sessions.create(sessionData)
   if (session.id) {
-    console.log("[checkout - stripeSession] End")
-    return { fail: false, sessionId: session.id }
+    return { success: true, sessionId: session.id }
   } else {
-    console.log("[checkout - stripeSession] End")
     return {
-      fail: true,
+      success: false,
       error: "[checkout - stripeSession] Failed creating session"
     }
   }
@@ -267,27 +228,34 @@ async function stripeSession(req) {
 export default async (req, res) => {
   console.log("[app] Start")
   if (!req.body || Object.keys(req.body).length === 0) {
-    res.status(400).json({ error: "[app] Body empty or error" })
+    res.status(400).json({ error: "[app] Content error" })
     return
   }
 
+  console.log("[checkout - checkRecaptcha] Start")
   const resRecaptcha = await checkRecaptcha(req)
-  if (resRecaptcha) {
+  console.log("[checkout - checkRecaptcha] End")
+  if (!resRecaptcha.success) {
     res.status(400).json({ error: resRecaptcha.error })
     return
   }
 
+  console.log("[checkout - checkContentful] Start")
   const resContentful = await checkContentful(req)
-  if (resContentful) {
-    res.status(400).json({ error: resContentful.error })
+  console.log("[checkout - checkContentful] End")
+  if (!resContentful.success) {
+    res.status(400).json({ corrections: resContentful.corrections })
     return
   }
 
+  console.log("[checkout - stripeSession] Start")
   const resStripe = await stripeSession(req)
-  if (resStripe.sessionId) {
+  console.log("[checkout - stripeSession] End")
+  if (resStripe.success) {
     res.status(200).json({ sessionId: resStripe.sessionId })
   } else {
     res.status(400).json({ error: resStripe.error })
+    return
   }
   console.log("[app] End")
 }

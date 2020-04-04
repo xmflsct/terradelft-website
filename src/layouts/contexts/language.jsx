@@ -3,9 +3,9 @@ import * as ReactI18next from "react-i18next"
 import { Helmet } from "react-helmet"
 import i18next from "i18next"
 
-export const LanguageContext = React.createContext([])
+export const ContextLanguage = React.createContext([])
 
-export default function LanguageContextProvider({ element, props }) {
+export default function ContextLanguageProvider({ element, props }) {
   const i18n = i18next
     .createInstance({
       lng: props.pageContext.language,
@@ -19,7 +19,7 @@ export default function LanguageContextProvider({ element, props }) {
 
   return (
     <ReactI18next.I18nextProvider i18n={i18n}>
-      <LanguageContext.Provider
+      <ContextLanguage.Provider
         value={props.pageContext && props.pageContext.alternateLinks}
       >
         <Helmet htmlAttributes={{ lang: props.pageContext.language }}>
@@ -35,7 +35,7 @@ export default function LanguageContextProvider({ element, props }) {
             ))}
         </Helmet>
         {element}
-      </LanguageContext.Provider>
+      </ContextLanguage.Provider>
     </ReactI18next.I18nextProvider>
   )
 }

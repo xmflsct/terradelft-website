@@ -18,7 +18,7 @@ exports.createPages = async ({
   await build404Pages(createPage)
 
   /* Biuld Artist Page */
-  const pageArtist = path.resolve(`src/templates/pageArtist.jsx`)
+  const pageArtist = path.resolve(`src/templates/artist.jsx`)
   const artists = await graphql(`
     {
       artists: allContentfulObjectsArtist(
@@ -62,14 +62,14 @@ exports.createPages = async ({
             component: pageArtist,
             context: { contentful_id: node.contentful_id, language: language }
           }),
-          ["common"],
+          ["global"],
           createPage
         )
       })
   )
 
   /* Biuld Object Page */
-  const pageObject = path.resolve(`src/templates/pageObject.jsx`)
+  const object = path.resolve(`src/templates/object.jsx`)
   const objects = await graphql(`
     {
       objects: allContentfulObjectsObjectMain(
@@ -120,14 +120,14 @@ exports.createPages = async ({
               slugify(node.artist.artist, { lower: true }) +
               "/" +
               slugify(node.name, { lower: true }),
-            component: pageObject,
+            component: object,
             context: {
               contentful_id: node.contentful_id,
               artist_contentful_id: node.artist.contentful_id,
               language: language
             }
           }),
-          ["common", "pageObject"],
+          ["global", "template-object"],
           createPage
         )
       })
@@ -198,13 +198,13 @@ const createI18nextInstance = async (language, namespaces) => {
 }
 
 const buildIndexPages = async createPage => {
-  const indexTemplate = path.resolve(`src/templates/index.jsx`)
+  const templateIndex = path.resolve(`src/templates/index.jsx`)
   await Promise.all(
     languages.map(async language => {
-      const i18n = await createI18nextInstance(language, ["common", "index"])
+      const i18n = await createI18nextInstance(language, ["global", "template-index"])
       const res = {
         path: "/" + language,
-        component: indexTemplate,
+        component: templateIndex,
         context: {}
       }
       res.context.language = language
@@ -221,13 +221,13 @@ const buildIndexPages = async createPage => {
 }
 
 const buildBagPages = async createPage => {
-  const indexTemplate = path.resolve(`src/templates/pageBag.jsx`)
+  const templateIndex = path.resolve(`src/templates/bag.jsx`)
   await Promise.all(
     languages.map(async language => {
-      const i18n = await createI18nextInstance(language, ["common", "pageBag"])
+      const i18n = await createI18nextInstance(language, ["global", "template-bag"])
       const res = {
         path: "/" + language + "/bag",
-        component: indexTemplate,
+        component: templateIndex,
         context: {}
       }
       res.context.language = language
@@ -244,13 +244,13 @@ const buildBagPages = async createPage => {
 }
 
 const build404Pages = async createPage => {
-  const errorTemplate = path.resolve(`src/templates/404.jsx`)
+  const template404 = path.resolve(`src/templates/404.jsx`)
   await Promise.all(
     languages.map(async (language, index) => {
-      const i18n = await createI18nextInstance(language, ["404"])
+      const i18n = await createI18nextInstance(language, ["template-404"])
       const res = {
         path: "/" + language + "/404",
-        component: errorTemplate,
+        component: template404,
         context: {}
       }
       res.context.language = language

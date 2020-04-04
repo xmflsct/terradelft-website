@@ -6,14 +6,14 @@ import { faGlobeEurope, faShoppingBag } from "@fortawesome/free-solid-svg-icons"
 import { useStaticQuery, graphql, Link } from "gatsby"
 import Img from "gatsby-image"
 
-import { LanguageContext } from "./languageContext"
-import { BagContext } from "./bagContext"
+import { ContextLanguage } from "./contexts/language"
+import { ContextBag } from "./contexts/bag"
 
 const Header = () => {
   const image = useStaticQuery(graphql`
     {
       logoLargeNL: file(
-        relativePath: { regex: "/(header/logo-large.nl.png)/" }
+        relativePath: { eq: "layout-header/logo-large.nl.png" }
       ) {
         childImageSharp {
           fluid(maxWidth: 700) {
@@ -22,7 +22,7 @@ const Header = () => {
         }
       }
       logoLargeEN: file(
-        relativePath: { regex: "/(header/logo-large.en.png)/" }
+        relativePath: { eq: "layout-header/logo-large.en.png" }
       ) {
         childImageSharp {
           fluid(maxWidth: 700) {
@@ -32,9 +32,9 @@ const Header = () => {
       }
     }
   `)
-  const { t, i18n } = useTranslation("common")
-  const alternateLinks = useContext(LanguageContext)
-  const { state } = useContext(BagContext)
+  const { t, i18n } = useTranslation("global")
+  const alternateLinks = useContext(ContextLanguage)
+  const { state } = useContext(ContextBag)
 
   return (
     <Row as='header'>
@@ -71,7 +71,7 @@ const Header = () => {
       <Col lg={1} className='temp'>
         <Link to={"/" + i18n.language + "/bag"}>
           <FontAwesomeIcon icon={faShoppingBag} />
-          {state.bag.length}
+          {state.bag.objects.length}
         </Link>
       </Col>
     </Row>

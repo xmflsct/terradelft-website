@@ -1,7 +1,7 @@
 import React from "react"
 import { Button, Form } from "react-bootstrap"
 
-import SellVariations from "./sellVariations"
+import SellVariations from "./sell-variations"
 
 const ObjectSell = ({
   contentful_id,

@@ -25,7 +25,7 @@ const Index = props => {
       }
     }
   `)
-  const { t } = useTranslation("index")
+  const { t } = useTranslation("template-index")
 
   return (
     <Layout

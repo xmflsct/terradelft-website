@@ -4,7 +4,7 @@ import { Link } from "gatsby"
 import { Col, Row } from "react-bootstrap"
 
 const Header = () => {
-  const { t, i18n } = useTranslation("common")
+  const { t, i18n } = useTranslation("global")
 
   return (
     <Row as='nav'>

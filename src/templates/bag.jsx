@@ -3,11 +3,11 @@ import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 
 import Layout from "../layouts/layout"
-import BagList from "../components/pageBag/bagList"
-import BagCheckout from "../components/pageBag/bagCheckout"
+import BagList from "../components/template-bag/bag-list"
+import BagCheckout from "../components/template-bag/bag-checkout"
 
 const Bag = props => {
-  const { t } = useTranslation("pageBag")
+  const { t } = useTranslation("template-bag")
 
   return (
     <Layout

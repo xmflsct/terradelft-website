@@ -4,7 +4,9 @@
       "CONTENTFUL_HOST": "@terradelft-website-contentful-host",
       "CONTENTFUL_KEY_GATSBY": "@terradelft-website-contentful-key-gatsby",
       "CONTENTFUL_SPACE": "@terradelft-website-contentful-space",
-      "CONTENTFUL_ENVIRONMENT": "@terradelft-website-contentful-environment"
+      "CONTENTFUL_ENVIRONMENT": "@terradelft-website-contentful-environment",
+      "GATSBY_RECAPTCHA_PUBLIC_KEY": "@terradelft-website-recaptcha-public-key",
+      "GATSBY_STRIPE_PUBLIC_KEY": "@terradelft-website-stripe-public-key"
     }
   },
   "env": {

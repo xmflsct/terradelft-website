@@ -6,12 +6,12 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
 import Layout from "../layouts/layout"
 import Grid from "../components/grid"
-import ObjectImages from "../components/pageObject/objectImages"
-import ObjectSell from "../components/pageObject/objectSell"
-import ObjectAttributes from "../components/pageObject/objectAttributes"
+import ObjectImages from "../components/template-object/object-images"
+import ObjectSell from "../components/template-object/object-sell"
+import ObjectAttribute from "../components/template-object/object-attribute"
 
 const PageObject = ({ data }) => {
-  const { t } = useTranslation("pageObject")
+  const { t } = useTranslation("template-object")
   const { object } = data
 
   return (
@@ -42,46 +42,46 @@ const PageObject = ({ data }) => {
           </p>
           <span>{documentToReactComponents(object?.description?.json)}</span>
           {object.year && (
-            <ObjectAttributes title={t("year")} data={object.year} />
+            <ObjectAttribute title={t("year")} data={object.year} />
           )}
           {object.technique && (
-            <ObjectAttributes title={t("technique")} data={object.technique} />
+            <ObjectAttribute title={t("technique")} data={object.technique} />
           )}
           {object.material && (
-            <ObjectAttributes title={t("material")} data={object.material} />
+            <ObjectAttribute title={t("material")} data={object.material} />
           )}
           {object.design && (
-            <ObjectAttributes title={t("design")} data={object.design} />
+            <ObjectAttribute title={t("design")} data={object.design} />
           )}
           {object.colour && (
-            <ObjectAttributes title={t("colour")} data={object.colour} />
+            <ObjectAttribute title={t("colour")} data={object.colour} />
           )}
           {object.dimensionWidth && (
-            <ObjectAttributes
+            <ObjectAttribute
               title={t("dimensionWidth")}
               data={object.dimensionWidth}
             />
           )}
           {object.dimensionLength && (
-            <ObjectAttributes
+            <ObjectAttribute
               title={t("dimensionLength")}
               data={object.dimensionLength}
             />
           )}
           {object.dimensionHeight && (
-            <ObjectAttributes
+            <ObjectAttribute
               title={t("dimensionHeight")}
               data={object.dimensionHeight}
             />
           )}
           {object.dimensionDiameter && (
-            <ObjectAttributes
+            <ObjectAttribute
               title={t("dimensionDiameter")}
               data={object.dimensionDiameter}
             />
           )}
           {object.dimensionDepth && (
-            <ObjectAttributes
+            <ObjectAttribute
               title={t("dimensionDepth")}
               data={object.dimensionDepth}
             />

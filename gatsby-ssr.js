@@ -1,2 +1,2 @@
-import LanguageContextProvider from "./src/layouts/languageContext"
+import LanguageContextProvider from "./src/layouts/contexts/language"
 export const wrapPageElement = LanguageContextProvider
