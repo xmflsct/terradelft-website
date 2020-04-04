@@ -3,7 +3,7 @@ import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 
 const Footer = () => {
-  const { t } = useTranslation("global")
+  const { t } = useTranslation("constant")
 
   return (
     <Row as='footer'>

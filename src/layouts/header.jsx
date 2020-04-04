@@ -32,7 +32,7 @@ const Header = () => {
       }
     }
   `)
-  const { t, i18n } = useTranslation("global")
+  const { t, i18n } = useTranslation(["constant"])
   const alternateLinks = useContext(ContextLanguage)
   const { state } = useContext(ContextBag)
 
@@ -53,7 +53,7 @@ const Header = () => {
         <Row className='language-switcher'>
           <FontAwesomeIcon icon={faGlobeEurope} />
           {alternateLinks &&
-            alternateLinks.map(link => (
+            alternateLinks.map((link) => (
               <Col lg={12} key={link.language}>
                 <Link
                   to={link.path}
@@ -62,14 +62,14 @@ const Header = () => {
                   }
                   hrefLang={link.language}
                 >
-                  {t(link.language)}
+                  {t(`constant:header.language-switcher.${link.language}`)}
                 </Link>
               </Col>
             ))}
         </Row>
       </Col>
       <Col lg={1} className='temp'>
-        <Link to={"/" + i18n.language + "/bag"}>
+        <Link to={"/" + i18n.language + "/" + t("constant:header.bag.url")}>
           <FontAwesomeIcon icon={faShoppingBag} />
           {state.bag.objects.length}
         </Link>

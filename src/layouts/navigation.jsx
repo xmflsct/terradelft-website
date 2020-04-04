@@ -4,38 +4,40 @@ import { Link } from "gatsby"
 import { Col, Row } from "react-bootstrap"
 
 const Header = () => {
-  const { t, i18n } = useTranslation("global")
+  const { t, i18n } = useTranslation(["constant"])
 
   return (
     <Row as='nav'>
       <Col lg={2} className='nav-item'>
         <Col>
-          <Link to={"/" + i18n.language}>{t("nav.1")}</Link>
+          <Link to={"/" + i18n.language}>{t("constant:navigation.1.name")}</Link>
         </Col>
       </Col>
       <Col lg={2} className='nav-item'>
         <Col>
-          <Link to='/test'>{t("nav.2")}</Link>
+          <Link to={"/" + i18n.language + "/" + t("constant:navigation.2.url")}>
+            {t("constant:navigation.2.name")}
+          </Link>
         </Col>
       </Col>
       <Col lg={2} className='nav-item'>
         <Col>
-          <Link to='/test'>{t("nav.3")}</Link>
+          <Link to='/test'>{t("constant:navigation.3.name")}</Link>
         </Col>
       </Col>
       <Col lg={2} className='nav-item'>
         <Col>
-          <Link to='/test'>{t("nav.4")}</Link>
+          <Link to='/test'>{t("constant:navigation.4.name")}</Link>
         </Col>
       </Col>
       <Col lg={2} className='nav-item'>
         <Col>
-          <Link to='/test'>{t("nav.5")}</Link>
+          <Link to='/test'>{t("constant:navigation.5.name")}</Link>
         </Col>
       </Col>
       <Col lg={2} className='nav-item'>
         <Col>
-          <Link to='/test'>{t("nav.6")}</Link>
+          <Link to='/test'>{t("constant:navigation.6.name")}</Link>
         </Col>
       </Col>
     </Row>

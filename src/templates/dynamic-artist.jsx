@@ -26,7 +26,7 @@ const PageArtist = ({ data }) => (
 )
 
 export const query = graphql`
-  query pageArtist($contentful_id: String, $language: String) {
+  query dynamicArtist($contentful_id: String, $language: String) {
     artist: contentfulObjectsArtist(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $language }

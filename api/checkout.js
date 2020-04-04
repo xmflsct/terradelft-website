@@ -6,7 +6,7 @@ async function checkRecaptcha(req) {
   if (!req.body.token)
     return {
       success: false,
-      error: "[checkout - checkRecaptcha] No token is provided"
+      error: "[checkout - checkRecaptcha] No token is provided",
     }
 
   return await ky
@@ -14,8 +14,8 @@ async function checkRecaptcha(req) {
       searchParams: {
         secret: process.env.RECAPTCHA_PRIVATE_KEY,
         response: req.body.token,
-        remoteip: req.connection.remoteAddress
-      }
+        remoteip: req.connection.remoteAddress,
+      },
     })
     .json()
 }
@@ -28,7 +28,7 @@ async function checkContentful(req) {
   ) {
     return {
       success: false,
-      error: "[checkout - checkContentful] Content empty"
+      error: "[checkout - checkContentful] Content empty",
     }
   }
 
@@ -38,17 +38,14 @@ async function checkContentful(req) {
   const locale = req.body.data.locale
 
   let corrections = { objects: [], shipping: null, subtotal: null }
-  let url = {
-    objects: "https://" + process.env.CONTENTFUL_HOST,
-    shipping: "https://" + process.env.CONTENTFUL_HOST
-  }
+  let url = null
   const space = process.env.CONTENTFUL_SPACE
   const secret = process.env.CONTENTFUL_KEY_CHECKOUT
   const environment = process.env.CONTENTFUL_ENVIRONMENT
   const contentType = {
     main: "objectsObject",
     variation: "objectsObjectVariation",
-    shipping: "shippingRates"
+    shipping: "shippingRates",
   }
 
   // Check objects
@@ -63,35 +60,36 @@ async function checkContentful(req) {
 
   for (const type in ids) {
     if (ids[type].length) {
-      url.objects =
-        url.objects +
+      url =
+        "https://" +
+        process.env.CONTENTFUL_HOST +
         "/spaces/" +
         space +
         "/environments/" +
         environment +
         "/entries/"
 
-      const response = await ky(url.objects, {
+      const response = await ky(url, {
         searchParams: {
           access_token: secret,
           content_type: contentType[type],
-          "sys.id[in]": ids[type]
-        }
+          "sys.id[in]": ids[type],
+        },
       }).json()
 
       if (!response.hasOwnProperty("items")) {
         return {
           success: false,
-          error: "[checkout - checkContentful] Content error"
+          error: "[checkout - checkContentful] Content error",
         }
       }
 
       for (const item of response.items) {
         let objectIndex = objects.findIndex(
-          i => i.contentful_id === item.sys.id
+          (i) => i.contentful_id === item.sys.id
         )
         let correction = {
-          required: false
+          required: false,
         }
 
         if (item.fields.stock < 1) {
@@ -121,40 +119,43 @@ async function checkContentful(req) {
   }
 
   // Check shipping
-  url.shipping =
-    url.shipping +
+  url =
+    "https://" +
+    process.env.CONTENTFUL_HOST +
     "/spaces/" +
     space +
     "/environments/" +
     environment +
     "/entries/"
 
-  const response = await ky(url.shipping, {
+  const response = await ky(url, {
     searchParams: {
       access_token: secret,
       content_type: contentType.shipping,
       "fields.year[eq]": "2020",
-      locale: locale
-    }
+      locale: locale,
+    },
   }).json()
 
   if (!response.hasOwnProperty("items")) {
     return {
       success: false,
-      error: "[checkout - checkContentful] Content error"
+      error: "[checkout - checkContentful] Content error",
     }
   }
 
   const rates = response.items[0].fields.rates
-  const countryCode = _.findIndex(rates, r => {
+  const countryCode = _.findIndex(rates, (r) => {
     return _.includes(r.countryCode, shipping.countryCode)
   })
-  if (!(pay.shipping === rates[countryCode].rates[shipping.methodIndex].price)) {
+  if (
+    !(pay.shipping === rates[countryCode].rates[shipping.methodIndex].price)
+  ) {
     corrections.shipping = rates[countryCode].rates[shipping.methodIndex].price
   }
 
   // Check subtotal
-  const subtotal = _.sumBy(objects, o => {
+  const subtotal = _.sumBy(objects, (o) => {
     if (o.priceSale) {
       return o.priceSale
     } else {
@@ -180,35 +181,52 @@ async function stripeSession(req) {
   var sessionData = {}
   try {
     let line_items = []
+    const locale = req.body.data.locale
     for (const object of req.body.data.objects) {
+      const name =
+        object.type === "main"
+          ? object.name[locale]
+          : object.name[locale] +
+            " | " +
+            (object.variation[locale] || "N/A") +
+            ", " +
+            (object.colour[locale] || "N/A") +
+            ", " +
+            (object.size[locale] || "N/A")
+      const images =
+        object.type === "main"
+          ? ["https:" + object.images[0].fluid.src]
+          : object.image
+          ? ["https:" + object.image]
+          : ["https:" + object.images[0].fluid.src]
       line_items.push({
-        name: object.name,
+        name: name,
         amount: object.priceSale
           ? object.priceSale * 10 * 10
           : object.priceOriginal * 10 * 10,
         currency: "eur",
         quantity: 1,
-        description: object.sku && object.sku
+        images: images,
       })
     }
     line_items.push({
       name: "Shipping to " + req.body.data.shipping.countryA2,
       amount: req.body.data.pay.shipping * 10 * 10,
       currency: "eur",
-      quantity: 1
+      quantity: 1,
     })
     sessionData = {
       payment_method_types: ["ideal"],
       line_items: line_items,
       shipping_address_collection: {
-        allowed_countries: [req.body.data.shipping.countryA2]
+        allowed_countries: [req.body.data.shipping.countryA2],
       },
       success_url:
         "https://terradelft-website.now.sh/" +
         req.body.data.locale +
         "/thank-you?session_id={CHECKOUT_SESSION_ID}",
       cancel_url:
-        "https://terradelft-website.now.sh/" + req.body.data.locale + "/bag"
+        "https://terradelft-website.now.sh/" + req.body.data.locale + "/bag",
     }
   } catch (err) {
     return { success: false, error: err }
@@ -220,7 +238,7 @@ async function stripeSession(req) {
   } else {
     return {
       success: false,
-      error: "[checkout - stripeSession] Failed creating session"
+      error: "[checkout - stripeSession] Failed creating session",
     }
   }
 }
@@ -254,6 +272,7 @@ export default async (req, res) => {
   if (resStripe.success) {
     res.status(200).json({ sessionId: resStripe.sessionId })
   } else {
+    console.log(resStripe.error)
     res.status(400).json({ error: resStripe.error })
     return
   }

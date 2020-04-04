@@ -9,15 +9,15 @@ import { ContextBag } from "../../layouts/contexts/bag"
 const slugify = require("slugify")
 
 const BagList = () => {
-  const { i18n } = useTranslation("pageBag")
   const { state, dispatch } = useContext(ContextBag)
+  const { i18n } = useTranslation()
 
-  const onRemove = e => {
+  const onRemove = (e) => {
     dispatch({
       type: "remove",
       data: {
-        contentful_id: e.target.value
-      }
+        contentful_id: e.target.value,
+      },
     })
   }
 
@@ -32,7 +32,7 @@ const BagList = () => {
                 {object.image ? (
                   <Img fluid={object.image.fluid} />
                 ) : (
-                  <Img fluid={object.imagesParent[0].fluid} />
+                  <Img fluid={object.images[0].fluid} />
                 )}
               </Col>
               <Col lg={8}>
@@ -43,18 +43,22 @@ const BagList = () => {
                     "/" +
                     slugify(object.artist, { lower: true }) +
                     "/" +
-                    slugify(object.name, { lower: true })
+                    slugify(object.name[i18n.language], { lower: true })
                   }
                 >
-                  {object.name}
+                  {object.name[i18n.language]}
                 </Link>
-                <br />
-                {object.variation && object.variation.variation}
-                <br />
-                {object.colour && object.colour.colour}
-                <br />
-                {object.size && object.size.size}
-                <br />
+                {object.type === "variation" && (
+                  <>
+                    <br />
+                    {object.variation[i18n.language]}
+                    <br />
+                    {object.colour[i18n.language]}
+                    <br />
+                    {object.size[i18n.language]}
+                    <br />
+                  </>
+                )}
                 {object.priceSale ? (
                   <>
                     {object.priceSale} {object.priceOriginal}

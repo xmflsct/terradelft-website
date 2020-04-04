@@ -15,15 +15,16 @@ exports.createPages = async ({
 }) => {
   createPage({
     path: "/",
-    component: path.resolve(`src/templates/landing.jsx`),
+    component: path.resolve(`src/templates/static-landing.jsx`),
     context: {},
   })
-  await buildIndexPages(createPage)
-  await buildBagPages(createPage)
-  await build404Pages(createPage)
+  await buildStaticPages(["static-index", "constant"], createPage)
+  await buildStaticPages(["static-online-shop", "constant"], createPage)
+  await buildStaticPages(["static-bag", "constant"], createPage)
+  await buildStaticPages(["static-404", "constant"], createPage)
 
   /* Biuld Artist Page */
-  const pageArtist = path.resolve(`src/templates/artist.jsx`)
+  const pageArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
   const artists = await graphql(`
     {
       artists: allContentfulObjectsArtist(
@@ -60,21 +61,21 @@ exports.createPages = async ({
           `,
           { contentful_id: result.node.contentful_id }
         )
-        await buildI18nPages(
+        await buildDynamicPages(
           artistsNew.data.artistsNew.edges,
           ({ node }, language) => ({
             path: "/" + language + "/" + slugify(node.artist, { lower: true }),
             component: pageArtist,
             context: { contentful_id: node.contentful_id, language: language },
           }),
-          ["global"],
+          ["constant"],
           createPage
         )
       })
   )
 
   /* Biuld Object Page */
-  const object = path.resolve(`src/templates/object.jsx`)
+  const object = path.resolve(`src/templates/dynamic-object.jsx`)
   const objects = await graphql(`
     {
       objects: allContentfulObjectsObjectMain(
@@ -115,7 +116,7 @@ exports.createPages = async ({
           `,
           { contentful_id: result.node.contentful_id }
         )
-        await buildI18nPages(
+        await buildDynamicPages(
           objectsNew.data.objectsNew.edges,
           ({ node }, language) => ({
             path:
@@ -132,7 +133,7 @@ exports.createPages = async ({
               language: language,
             },
           }),
-          ["global", "template-object"],
+          ["constant", "dynamic-object"],
           createPage
         )
       })
@@ -149,13 +150,60 @@ exports.createPages = async ({
   createRedirect({ fromPath: "/*", toPath: "/404", statusCode: 404 })
 }
 
-const buildI18nPages = async (
+const createI18nextInstance = async (language, namespaces) => {
+  const i18n = i18next.createInstance()
+  i18n.use(nodeFsBackend)
+  await new Promise((resolve) =>
+    i18n.init(
+      {
+        lng: language,
+        ns: namespaces,
+        fallbackLng: language,
+        interpolation: { escapeValue: false },
+        backend: { loadPath: `${srcPath}/locales/{{lng}}/{{ns}}.json` },
+      },
+      resolve
+    )
+  )
+  return i18n
+}
+
+const buildStaticPages = async (namespaces, createPage) => {
+  const definitions = await Promise.all(
+    languages.map(async (language) => {
+      const i18n = await createI18nextInstance(language, namespaces)
+      const res = {
+        path: "/" + language + "/" + i18n.t(`${namespaces[0]}:url`),
+        component: path.resolve(`src/templates/${namespaces[0]}.jsx`),
+        context: {
+          language: language,
+          i18nResources: i18n.services.resourceStore.data,
+        },
+      }
+      return res
+    })
+  )
+  const alternateLinks = await Promise.all(
+    definitions.map((d) => ({
+      language: d.context.language,
+      path: d.path,
+    }))
+  )
+
+  await Promise.all(
+    definitions.map((d) => {
+      d.context.alternateLinks = alternateLinks
+      createPage(d)
+    })
+  )
+}
+
+const buildDynamicPages = async (
   dataRaw,
   pageDefinitionCallback,
   namespaces,
   createPage
 ) => {
-  if (!Array.isArray(dataRaw)) dataRaw = [dataRaw]
   const definitions = await Promise.all(
     dataRaw.map(async (data) => {
       const language = data.node.node_locale
@@ -181,93 +229,17 @@ const buildI18nPages = async (
   )
 }
 
-const createI18nextInstance = async (language, namespaces) => {
-  const i18n = i18next.createInstance()
-  i18n.use(nodeFsBackend)
-  await new Promise((resolve) =>
-    i18n.init(
-      {
-        lng: language,
-        ns: namespaces,
-        fallbackLng: language,
-        interpolation: { escapeValue: false },
-        backend: { loadPath: `${srcPath}/locales/{{lng}}/{{ns}}.json` },
-      },
-      resolve
-    )
-  )
-  return i18n
-}
-
-const buildIndexPages = async (createPage) => {
-  const templateIndex = path.resolve(`src/templates/index.jsx`)
-  await Promise.all(
-    languages.map(async (language) => {
-      const i18n = await createI18nextInstance(language, [
-        "global",
-        "template-index",
-      ])
-      const res = {
-        path: "/" + language,
-        component: templateIndex,
-        context: {},
-      }
-      res.context.language = language
-      res.context.i18nResources = i18n.services.resourceStore.data
-      await Promise.all(
-        (res.context.alternateLinks = languages.map((lang) => ({
-          language: lang,
-          path: "/" + lang,
-        })))
-      )
-      createPage(res)
+// Add a node for sorting artist by last name
+exports.onCreateNode = ({ node, actions }) => {
+  const { createNodeField } = actions
+  if (
+    node.internal.owner === "gatsby-source-contentful" &&
+    node.internal.type === "ContentfulObjectsArtist"
+  ) {
+    createNodeField({
+      node,
+      name: "artist_lastname",
+      value: node.artist.split(" ")[node.artist.split(" ").length - 1],
     })
-  )
-}
-
-const buildBagPages = async (createPage) => {
-  const templateIndex = path.resolve(`src/templates/bag.jsx`)
-  await Promise.all(
-    languages.map(async (language) => {
-      const i18n = await createI18nextInstance(language, [
-        "global",
-        "template-bag",
-      ])
-      const res = {
-        path: "/" + language + "/bag",
-        component: templateIndex,
-        context: {},
-      }
-      res.context.language = language
-      res.context.i18nResources = i18n.services.resourceStore.data
-      await Promise.all(
-        (res.context.alternateLinks = languages.map((lang) => ({
-          language: lang,
-          path: "/" + lang + "/bag",
-        })))
-      )
-      createPage(res)
-    })
-  )
-}
-
-const build404Pages = async (createPage) => {
-  const template404 = path.resolve(`src/templates/404.jsx`)
-  await Promise.all(
-    languages.map(async (language, index) => {
-      const i18n = await createI18nextInstance(language, ["template-404"])
-      const res = {
-        path: "/" + language + "/404",
-        component: template404,
-        context: {},
-      }
-      res.context.language = language
-      res.context.i18nResources = i18n.services.resourceStore.data
-      createPage(res)
-      if (index === 0) {
-        res.path = "/404"
-        createPage(res)
-      }
-    })
-  )
+  }
 }

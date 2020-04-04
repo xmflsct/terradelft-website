@@ -1,6 +1,7 @@
 import React, { useContext } from "react"
 import { Button, Form } from "react-bootstrap"
 import { Controller, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import ReactSelect from "react-select"
 import {
   findIndex,
@@ -9,32 +10,49 @@ import {
   isEmpty,
   keys,
   map,
-  pickBy
+  pickBy,
 } from "lodash"
 
 import { ContextBag } from "../../layouts/contexts/bag"
+import { price } from "./price"
+import * as currency from "../utils/currency"
 
-const SellVariations = ({ variations, name, artist, imagesParent }) => {
+const SellVariations = ({ object }) => {
+  const { i18n } = useTranslation("static-index")
   const { dispatch } = useContext(ContextBag)
   const { control, handleSubmit, watch } = useForm()
+  const sellVariations =
+    object.edges[
+      findIndex(object.edges, (e) => e.node.node_locale === i18n.language)
+    ].node.variations
 
   const options = {
     variation: [],
     colour: [],
-    size: []
+    size: [],
+  }
+
+  const priceRange = {
+    lowest: 99999,
+    highest: 0,
   }
 
   // Create variations availability mapping
-  variations.forEach((d, i) => {
+  sellVariations.forEach((d, i) => {
+    const priceTemp = d.priceSale || d.priceOriginal
+    priceTemp < priceRange.lowest && (priceRange.lowest = priceTemp)
+    priceTemp > priceRange.highest && (priceRange.highest = priceTemp)
     keys(d)
-      .filter(k => ["variation", "colour", "size"].includes(k) && d[k] !== null)
-      .forEach(k => {
+      .filter(
+        (k) => ["variation", "colour", "size"].includes(k) && d[k] !== null
+      )
+      .forEach((k) => {
         const index = findIndex(options[k], ["label", d[k][k]])
         index === -1
           ? options[k].push({
               label: d[k][k],
               value: [i],
-              isDisabled: false
+              isDisabled: false,
             })
           : options[k][index].value.push(i)
       })
@@ -42,10 +60,10 @@ const SellVariations = ({ variations, name, artist, imagesParent }) => {
 
   const optionsChosen = watch()
   // Disable not available option
-  keys(optionsChosen).forEach(k => {
+  keys(optionsChosen).forEach((k) => {
     options[k].forEach((_, i) => {
       const optionsCheck = keys(optionsChosen).filter(
-        fk => fk !== k && optionsChosen[fk] !== null
+        (fk) => fk !== k && optionsChosen[fk] !== null
       )
       switch (optionsCheck.length) {
         case 0:
@@ -74,33 +92,42 @@ const SellVariations = ({ variations, name, artist, imagesParent }) => {
     })
   })
 
-  var sku = null
+  var variant = null
   const optionsCombined = intersection(
     ...map(pickBy(optionsChosen, identity), "value")
   )
   if (optionsCombined.length === 1) {
-    sku = variations[optionsCombined[0]]
+    variant = sellVariations[optionsCombined[0]]
   } else {
-    sku = null
+    variant = null
   }
 
   const onSubmit = () => {
+    const data = {
+      type: "variation",
+      contentful_id: variant.contentful_id,
+      artist: object.edges[0].node.artist.artist,
+      images: object.edges[0].node.images,
+      image: variant.image,
+      priceOriginal: variant.priceOriginal,
+      priceSale: variant.priceSale,
+      // Locale dependent
+      name: {},
+      variation: {},
+      colour: {},
+      size: {},
+    }
+    for (const o of object.edges) {
+      const l = o.node.node_locale
+      const v = o.node.variations[optionsCombined[0]]
+      data.name[l] = o.node.name
+      v.variation && (data.variation[l] = v.variation.variation)
+      v.colour && (data.colour[l] = v.colour.colour)
+      v.size && (data.size[l] = v.size.size)
+    }
     dispatch({
       type: "add",
-      data: {
-        type: "variation",
-        contentful_id: sku.contentful_id,
-        name: name,
-        artist: artist,
-        imagesParent: imagesParent,
-        sku: sku.sku,
-        image: sku.image,
-        priceOriginal: sku.priceOriginal,
-        priceSale: sku.priceSale,
-        variation: sku.variation,
-        colour: sku.colour,
-        size: sku.size
-      }
+      data: data,
     })
   }
 
@@ -147,7 +174,15 @@ const SellVariations = ({ variations, name, artist, imagesParent }) => {
           </>
         )}
       </Form.Group>
-      <Button variant='primary' type='submit' disabled={sku === null}>
+      {variant ? (
+        price(variant.priceSale, variant.priceOriginal)
+      ) : (
+        <>
+          {currency.full(priceRange.lowest)} -{" "}
+          {currency.full(priceRange.highest)}
+        </>
+      )}
+      <Button variant='primary' type='submit' disabled={variant === null}>
         Add to bag
       </Button>
     </Form>

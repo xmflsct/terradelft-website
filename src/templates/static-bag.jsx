@@ -6,15 +6,15 @@ import Layout from "../layouts/layout"
 import BagList from "../components/template-bag/bag-list"
 import BagCheckout from "../components/template-bag/bag-checkout"
 
-const Bag = props => {
-  const { t } = useTranslation("template-bag")
+const Bag = () => {
+  const { t } = useTranslation("static-bag")
 
   return (
     <Layout
       SEOtitle='Terra Delft'
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
     >
-      <h1>{t("title")}</h1>
+      <h1>{t("h1")}</h1>
       <Row>
         <Col lg={8}>
           <BagList />

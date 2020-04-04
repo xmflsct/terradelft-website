@@ -1,0 +1,52 @@
+{
+  "header": {
+    "language-switcher": {
+      "nl": "Nederlands",
+      "en": "English"
+    },
+    "bag": {
+      "url": "shopping-bag"
+    }
+  },
+  "navigation": {
+    "1": {
+      "url": "",
+      "name": "Collection"
+    },
+    "2": {
+      "url": "online-shop",
+      "name": "Online Shop"
+    },
+    "3": {
+      "url": "",
+      "name": "Exhibition"
+    },
+    "4": {
+      "url": "",
+      "name": "News"
+    },
+    "5": {
+      "url": "",
+      "name": "Terra in China"
+    },
+    "6": {
+      "url": "",
+      "name": "About Terra"
+    }
+  },
+  "footer": {
+    "left": {
+      "copyright": "© Terra Delft Online 2015 - 2020",
+      "opening": {
+        "1": "Wednesday to Friday 11.00 - 18.00",
+        "2": "Saturday 11.00 - 17.00",
+        "3": "1st Sunday/month 13.00 - 17.00"
+      }
+    },
+    "center": {
+      "address": "Nieuwstraat 7, 2611 HK Delft",
+      "phone": "Tel/Fax: 015-2147072",
+      "email": "Email: info@terra-delft.nl"
+    }
+  }
+}

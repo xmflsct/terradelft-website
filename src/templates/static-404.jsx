@@ -5,7 +5,7 @@ import Img from "gatsby-image"
 
 import Layout from "../layouts/layout"
 
-const Index = props => {
+const Index = () => {
   const image = useStaticQuery(graphql`
     {
       file(relativePath: { eq: "template-404/404.jpg" }) {
@@ -17,7 +17,7 @@ const Index = props => {
       }
     }
   `)
-  const { t } = useTranslation("template-404")
+  const { t } = useTranslation("static-404")
 
   return (
     <Layout
@@ -25,7 +25,7 @@ const Index = props => {
       SEOtitle={"404 " + t("title")}
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
     >
-      <h1>404 {t("title")}</h1>
+      <h1>404 {t("h1")}</h1>
       <Img fluid={image.file.childImageSharp.fluid} />
     </Layout>
   )

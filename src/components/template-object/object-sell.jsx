@@ -1,54 +1,33 @@
 import React from "react"
-import { Button, Form } from "react-bootstrap"
+import { useTranslation } from "react-i18next"
+import { findIndex } from "lodash"
 
 import SellVariations from "./sell-variations"
+import SellMain from "./sell-main"
 
-const ObjectSell = ({
-  contentful_id,
-  name,
-  artist,
-  images,
-  priceOriginal,
-  priceSale,
-  sellOnline,
-  sku,
-  stock,
-  variations
-}) => {
+const ObjectSell = ({ object }) => {
+  const { i18n } = useTranslation("static-index")
+  const objectSell =
+    object.edges[
+      findIndex(object.edges, (e) => e.node.node_locale === i18n.language)
+    ].node
+
   return (
     <div>
-      {sellOnline ? (
-        variations ? (
-          // Online with variation
-          <SellVariations
-            variations={variations}
-            name={name}
-            artist={artist}
-            imagesParent={images}
-          />
-        ) : stock && stock > 0 ? (
-          // Online without variation with stock
-          <Form>
-            <Form.Group>
-              <Form.Control as='select'>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-              </Form.Control>
-              <Button variant='primary' type='submit'>
-                Add to bag
-              </Button>
-            </Form.Group>
-          </Form>
+      {objectSell.sellOnline ? (
+        objectSell.variations ? (
+          // Online variations with stock
+          <SellVariations object={object} />
+        ) : objectSell.stock && objectSell.stock > 0 ? (
+          // Online main with stock
+          <SellMain object={object} />
         ) : (
-          // Online without variation without stock
-          priceDisplay(priceOriginal, priceSale)
+          // Online main without stock
+          priceDisplay(objectSell.priceOriginal, objectSell.priceSale)
         )
-      ) : stock && stock > 0 ? (
+      ) : objectSell.stock && objectSell.stock > 0 ? (
         // Store with stock
-        priceDisplay(priceOriginal, priceSale)
+        priceDisplay(objectSell.priceOriginal, objectSell.priceSale)
       ) : (
         // Store without stock
         ""

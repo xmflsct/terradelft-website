@@ -50,7 +50,7 @@ const BagCheckout = () => {
       }
     }
   `)
-  const { t, i18n } = useTranslation("pageBag")
+  const { t, i18n } = useTranslation("static-bag")
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
   const recaptchaRef = React.createRef()
@@ -61,40 +61,41 @@ const BagCheckout = () => {
     getValues,
     handleSubmit,
     register,
-    watch
+    watch,
   } = useForm({
-    mode: "onChange"
+    mode: "onChange",
   })
 
   const options = {
     countries: [],
-    shipping: []
+    shipping: [],
   }
   forIn(countries.getNames(i18n.language), (v, k) => {
     options.countries.push({
       value: countries.alpha2ToNumeric(k),
-      label: v
+      label: v,
     })
   })
   const selectedCountry = watch("selectedCountry")
+  // ! Rest of the world
   if (selectedCountry) {
     options.shipping =
       rates[i18n.language].rates[
-        findIndex(rates[i18n.language].rates, d => {
+        findIndex(rates[i18n.language].rates, (d) => {
           return includes(d.countryCode, selectedCountry.value)
         })
       ].rates
   }
 
   const pay = {
-    objects: sumBy(state.bag.objects, d => {
+    objects: sumBy(state.bag.objects, (d) => {
       if (d.priceSale) {
         return d.priceSale
       } else {
         return d.priceOriginal
       }
     }),
-    discount: sumBy(state.bag.objects, d => {
+    discount: sumBy(state.bag.objects, (d) => {
       if (d.priceSale) {
         return d.priceOriginal - d.priceSale
       }
@@ -102,11 +103,11 @@ const BagCheckout = () => {
     shipping:
       options.shipping.length && watch("selectedShipping")
         ? options.shipping[watch("selectedShipping")].price
-        : null
+        : null,
   }
 
-  const userVerified = token => {
-    handleSubmit(data => formSubmit(data, token))()
+  const userVerified = (token) => {
+    handleSubmit((data) => formSubmit(data, token))()
   }
   const formSubmit = async (d, t) => {
     const data = {
@@ -114,20 +115,20 @@ const BagCheckout = () => {
       shipping: {
         countryCode: d.selectedCountry.value,
         countryA2: countries.numericToAlpha2(d.selectedCountry.value),
-        methodIndex: d.selectedShipping
+        methodIndex: d.selectedShipping,
       },
       pay: {
         subtotal: pay.objects,
-        shipping: pay.shipping
+        shipping: pay.shipping,
       },
-      locale: i18n.language
+      locale: i18n.language,
     }
     const res = await checkout(t, data)
     if (res.sessionId) {
       const stripe = await stripePromise
       setCorrections({ required: false })
       const { error } = await stripe.redirectToCheckout({
-        sessionId: res.sessionId
+        sessionId: res.sessionId,
       })
       if (error) {
         return false
@@ -136,21 +137,22 @@ const BagCheckout = () => {
       handleCorrection(res.corrections)
       return false
     } else {
+      console.log(res)
       return false
     }
   }
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     formState.isSubmitted && (await recaptchaRef.current.reset())
     recaptchaRef.current.execute()
   }
 
-  const handleCorrection = corrections => {
+  const handleCorrection = (corrections) => {
     setCorrections({
       required: true,
       subtotal: corrections.objects.length ? pay.objects : null,
       shipping: corrections.shipping ? pay.shipping : null,
-      total: pay.objects + pay.shipping
+      total: pay.objects + pay.shipping,
     })
     if (corrections.objects.length) {
       for (const object of corrections.objects) {
@@ -158,12 +160,12 @@ const BagCheckout = () => {
           ? dispatch({
               // Remove out of stock
               type: "remove",
-              data: object
+              data: object,
             })
           : dispatch({
               // Update prices
               type: "update",
-              data: object
+              data: object,
             })
       }
     }
@@ -180,7 +182,7 @@ const BagCheckout = () => {
     <>
       {t("summary")}
       {state.bag.objects.length !== 0 && (
-        <Form onSubmit={e => onSubmit(e)}>
+        <Form onSubmit={(e) => onSubmit(e)}>
           <Form.Group>
             <Controller
               as={<ReactSelect />}
@@ -255,7 +257,7 @@ const BagCheckout = () => {
           <Button
             variant='primary'
             type='submit'
-            disabled={!formState.isValid || formState.isSubmitting}
+            disabled={formState.isSubmitting}
           >
             {(formState.isSubmitting && "Connecting") ||
               (formState.submitCount !== 0 && "Retry") ||
