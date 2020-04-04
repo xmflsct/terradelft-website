@@ -16,5 +16,10 @@
     "CONTENTFUL_ENVIRONMENT": "@terradelft-website-contentful-environment",
     "RECAPTCHA_PRIVATE_KEY": "@terradelft-website-recaptcha-private-key",
     "STRIPE_PRIVATE_KEY": "@terradelft-website-stripe-private-key"
-  }
+  },
+  "routes": [
+    { "src": "/(.*)", "dest": "/$1" },
+    { "handle": "filesystem" },
+    { "src": "/.*", "status": 404, "dest": "/404" }
+  ]
 }
