@@ -17,10 +17,10 @@
     "gatsby-plugin-lodash": "^3.2.1",
     "gatsby-plugin-react-helmet": "^3.2.1",
     "gatsby-plugin-sass": "^2.2.1",
-    "gatsby-plugin-sharp": "^2.5.3",
-    "gatsby-source-contentful": "^2.2.6",
+    "gatsby-plugin-sharp": "^2.5.4",
+    "gatsby-source-contentful": "^2.2.7",
     "gatsby-source-filesystem": "^2.2.2",
-    "gatsby-transformer-sharp": "^2.4.3",
+    "gatsby-transformer-sharp": "^2.4.4",
     "i18n-iso-countries": "^5.1.0",
     "i18next": "^19.3.4",
     "i18next-browser-languagedetector": "^4.0.2",
@@ -34,7 +34,7 @@
     "react-dom": "^16.13.1",
     "react-google-recaptcha": "^2.0.1",
     "react-helmet": "^5.2.1",
-    "react-hook-form": "^5.2.0",
+    "react-hook-form": "^5.3.1",
     "react-i18next": "^11.3.4",
     "react-select": "^3.1.0",
     "slugify": "^1.4.0",
@@ -46,7 +46,7 @@
     "url": "https://github.com/xmflsct/terradelft-website.git"
   },
   "devDependencies": {
-    "stripe": "^8.38.0"
+    "stripe": "^8.39.0"
   },
   "scripts": {
     "test": "mocha"

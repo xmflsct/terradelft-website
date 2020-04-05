@@ -79,12 +79,11 @@ const BagCheckout = () => {
   const selectedCountry = watch("selectedCountry")
   // ! Rest of the world
   if (selectedCountry) {
-    options.shipping =
-      rates[i18n.language].rates[
-        findIndex(rates[i18n.language].rates, (d) => {
-          return includes(d.countryCode, selectedCountry.value)
-        })
-      ].rates
+    let index = findIndex(rates[i18n.language].rates, (d) => {
+      return includes(d.countryCode, selectedCountry.value)
+    })
+    index = index !== -1 ? index : rates[i18n.language].rates.length - 1
+    options.shipping = rates[i18n.language].rates[index].rates
   }
 
   const pay = {

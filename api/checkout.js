@@ -145,9 +145,10 @@ async function checkContentful(req) {
   }
 
   const rates = response.items[0].fields.rates
-  const countryCode = _.findIndex(rates, (r) => {
+  let countryCode = _.findIndex(rates, (r) => {
     return _.includes(r.countryCode, shipping.countryCode)
   })
+  countryCode = countryCode !== -1 ? countryCode : rates.length - 1
   if (
     !(pay.shipping === rates[countryCode].rates[shipping.methodIndex].price)
   ) {
