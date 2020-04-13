@@ -68,11 +68,12 @@ async function checkContentful(req) {
         "/environments/" +
         environment +
         "/entries/"
-
+      console.log(ids[type])
       const response = await ky(url, {
         searchParams: {
           access_token: secret,
           content_type: contentType[type],
+          select: "sys.id,fields.stock,fields.priceOriginal,fields.priceSale",
           "sys.id[in]": ids[type],
         },
       }).json()
@@ -132,6 +133,7 @@ async function checkContentful(req) {
     searchParams: {
       access_token: secret,
       content_type: contentType.shipping,
+      select: "fields.rates",
       "fields.year[eq]": "2020",
       locale: locale,
     },
@@ -149,10 +151,21 @@ async function checkContentful(req) {
     return _.includes(r.countryCode, shipping.countryCode)
   })
   countryCode = countryCode !== -1 ? countryCode : rates.length - 1
-  if (
-    !(pay.shipping === rates[countryCode].rates[shipping.methodIndex].price)
-  ) {
-    corrections.shipping = rates[countryCode].rates[shipping.methodIndex].price
+  if (rates[countryCode].rates[shipping.methodIndex].freeForTotal) {
+    if (
+      pay.subtotal >=
+        rates[countryCode].rates[shipping.methodIndex].freeForTotal &&
+      !(pay.shipping === 0)
+    ) {
+      corrections.shipping = 0
+    }
+  } else {
+    if (
+      !(pay.shipping === rates[countryCode].rates[shipping.methodIndex].price)
+    ) {
+      corrections.shipping =
+        rates[countryCode].rates[shipping.methodIndex].price
+    }
   }
 
   // Check subtotal
@@ -189,17 +202,12 @@ async function stripeSession(req) {
           ? object.name[locale]
           : object.name[locale] +
             " | " +
-            (object.variation[locale] || "N/A") +
+            (object.variant[locale] || "N/A") +
             ", " +
             (object.colour[locale] || "N/A") +
             ", " +
             (object.size[locale] || "N/A")
-      const images =
-        object.type === "main"
-          ? ["https:" + object.images[0].fluid.src]
-          : object.image
-          ? ["https:" + object.image]
-          : ["https:" + object.images[0].fluid.src]
+      const images = ["https:" + object.image.fluid.src]
       line_items.push({
         name: name,
         amount: object.priceSale
@@ -210,25 +218,45 @@ async function stripeSession(req) {
         images: images,
       })
     }
-    line_items.push({
-      name: "Shipping to " + req.body.data.shipping.countryA2,
-      amount: req.body.data.pay.shipping * 10 * 10,
-      currency: "eur",
-      quantity: 1,
-    })
-    sessionData = {
-      payment_method_types: ["ideal"],
-      line_items: line_items,
-      shipping_address_collection: {
-        allowed_countries: [req.body.data.shipping.countryA2],
-      },
-      success_url:
-        "https://terradelft-website.now.sh/" +
-        req.body.data.locale +
-        "/thank-you?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url:
-        "https://terradelft-website.now.sh/" + req.body.data.locale + "/bag",
-    }
+    // Skip pick-up in shop
+    req.body.data.pay.shipping &&
+      line_items.push({
+        name: "Shipping to " + req.body.data.shipping.countryA2,
+        amount: req.body.data.pay.shipping * 10 * 10,
+        currency: "eur",
+        quantity: 1,
+      })
+
+    req.body.data.pay.shipping
+      ? (sessionData = {
+          payment_method_types: ["ideal"],
+          line_items: line_items,
+          shipping_address_collection: {
+            allowed_countries: [req.body.data.shipping.countryA2],
+          },
+          locale: req.body.data.locale,
+          success_url:
+            "https://terradelft-website.now.sh/" +
+            req.body.data.locale +
+            "/thank-you?session_id={CHECKOUT_SESSION_ID}",
+          cancel_url:
+            "https://terradelft-website.now.sh/" +
+            req.body.data.locale +
+            "/bag",
+        })
+      : (sessionData = {
+          payment_method_types: ["ideal"],
+          line_items: line_items,
+          locale: req.body.data.locale,
+          success_url:
+            "https://terradelft-website.now.sh/" +
+            req.body.data.locale +
+            "/thank-you?session_id={CHECKOUT_SESSION_ID}",
+          cancel_url:
+            "https://terradelft-website.now.sh/" +
+            req.body.data.locale +
+            "/bag",
+        })
   } catch (err) {
     return { success: false, error: err }
   }

@@ -1,7 +1,9 @@
 {
   "url": "",
-  "section": {
-    "online-shop": "Online Shop",
-    "collection": "Collection"
+  "content": {
+    "section": {
+      "online-shop": "Online Shop",
+      "collection": "Collection"
+    }
   }
 }

@@ -1,14 +1,15 @@
 import React, { useContext } from "react"
-import { Button, Form } from "react-bootstrap"
+import { Button, Form, InputGroup } from "react-bootstrap"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
+import ReactSelect from "react-select"
 import { findIndex } from "lodash"
 
 import { ContextBag } from "../../layouts/contexts/bag"
-import { price } from "./price"
+import { price } from "../utils/price"
 
-const SellVariations = ({ object }) => {
-  const { i18n } = useTranslation("static-index")
+const SellMain = ({ object }) => {
+  const { t, i18n } = useTranslation("dynamic-object")
   const { dispatch } = useContext(ContextBag)
   const { handleSubmit } = useForm()
   const sellMain =
@@ -21,7 +22,7 @@ const SellVariations = ({ object }) => {
       type: "main",
       contentful_id: sellMain.contentful_id,
       artist: sellMain.artist.artist,
-      images: sellMain.images,
+      image: sellMain.images[0],
       priceOriginal: sellMain.priceOriginal,
       priceSale: sellMain.priceSale,
       // Locale dependent
@@ -38,17 +39,24 @@ const SellVariations = ({ object }) => {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <Form.Group>
-        <Form.Control as='select' disabled>
-          <option>1</option>
-        </Form.Control>
-      </Form.Group>
-        {price(sellMain.priceSale, sellMain.priceOriginal)}
+      <InputGroup>
+        <InputGroup.Prepend>
+          <InputGroup.Text>{t("amount")}</InputGroup.Text>
+        </InputGroup.Prepend>
+        <div className='form-selection'>
+          <ReactSelect
+            options={[{ value: 1, label: 1 }]}
+            defaultValue={{ value: 1, label: 1 }}
+            isDisabled
+          />
+        </div>
+      </InputGroup>
+      {price(sellMain.priceSale, sellMain.priceOriginal)}
       <Button variant='primary' type='submit'>
-        Add to bag
+        {t("add-to-bag")}
       </Button>
     </Form>
   )
 }
 
-export default SellVariations
+export default SellMain

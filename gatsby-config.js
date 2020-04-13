@@ -14,11 +14,27 @@ module.exports = {
       },
     },
     `gatsby-plugin-lodash`,
+    {
+      resolve: `gatsby-plugin-prefetch-google-fonts`,
+      options: {
+        fonts: [
+          {
+            family: `Open Sans`,
+            variants: [`400`, `600`],
+          },
+          {
+            family: `Proza Libre`,
+            variants: [`400`],
+          },
+        ],
+      },
+    },
     `gatsby-plugin-react-helmet`,
     {
       resolve: "gatsby-plugin-sass",
       options: {
         precision: 6,
+        includePaths: [require("path").resolve(__dirname, "node_modules")],
       },
     },
     `gatsby-plugin-sharp`,

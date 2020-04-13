@@ -3,23 +3,18 @@ import { Button, Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { Link } from "gatsby"
 import Img from "gatsby-image"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTimes } from "@fortawesome/free-solid-svg-icons"
+import { isEmpty } from "lodash"
 
 import { ContextBag } from "../../layouts/contexts/bag"
+import { price } from "../utils/price"
 
 const slugify = require("slugify")
 
 const BagList = () => {
   const { state, dispatch } = useContext(ContextBag)
-  const { i18n } = useTranslation()
-
-  const onRemove = (e) => {
-    dispatch({
-      type: "remove",
-      data: {
-        contentful_id: e.target.value,
-      },
-    })
-  }
+  const { t, i18n } = useTranslation("component-object")
 
   return (
     <>
@@ -27,15 +22,11 @@ const BagList = () => {
         state.bag.objects.map((_, i) => {
           const object = state.bag.objects[i]
           return (
-            <Row key={i}>
-              <Col lg={4}>
-                {object.image ? (
-                  <Img fluid={object.image.fluid} />
-                ) : (
-                  <Img fluid={object.images[0].fluid} />
-                )}
+            <Row key={i} className='list-object mb-3'>
+              <Col lg={4} className='object-image'>
+                <Img fluid={object.image.fluid} />
               </Col>
-              <Col lg={8}>
+              <Col lg={8} className='object-details'>
                 <Link
                   to={
                     "/" +
@@ -45,33 +36,54 @@ const BagList = () => {
                     "/" +
                     slugify(object.name[i18n.language], { lower: true })
                   }
+                  className='object-name'
                 >
                   {object.name[i18n.language]}
                 </Link>
-                {object.type === "variation" && (
-                  <>
-                    <br />
-                    {object.variation[i18n.language]}
-                    <br />
-                    {object.colour[i18n.language]}
-                    <br />
-                    {object.size[i18n.language]}
-                    <br />
-                  </>
+                {!isEmpty(object.variant) && (
+                  <Row className='object-variations'>
+                    <Col xs={3} className='variations-type'>
+                      {t("variant")}
+                    </Col>
+                    <Col xs={9} className='variations-value'>
+                      {object.variant[i18n.language]}
+                    </Col>
+                  </Row>
                 )}
-                {object.priceSale ? (
-                  <>
-                    {object.priceSale} {object.priceOriginal}
-                  </>
-                ) : (
-                  object.priceOriginal
+                {!isEmpty(object.colour) && (
+                  <Row className='object-variations'>
+                    <Col xs={3} className='variations-type'>
+                      {t("colour")}
+                    </Col>
+                    <Col xs={9} className='variations-value'>
+                      {object.colour[i18n.language]}
+                    </Col>
+                  </Row>
                 )}
+                {!isEmpty(object.size) && (
+                  <Row className='object-variations'>
+                    <Col xs={3} className='variations-type'>
+                      {t("size")}
+                    </Col>
+                    <Col xs={9} className='variations-value'>
+                      {object.size[i18n.language]}
+                    </Col>
+                  </Row>
+                )}
+                {price(object.priceSale, object.priceOriginal)}
                 <Button
                   variant='link'
-                  value={object.contentful_id}
-                  onClick={onRemove}
+                  onClick={() =>
+                    dispatch({
+                      type: "remove",
+                      data: {
+                        contentful_id: object.contentful_id,
+                      },
+                    })
+                  }
+                  className='object-remove'
                 >
-                  Remove
+                  <FontAwesomeIcon icon={faTimes} />
                 </Button>
               </Col>
             </Row>

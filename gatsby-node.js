@@ -1,4 +1,5 @@
 const fs = require("fs")
+const _ = require("lodash")
 const path = require(`path`)
 const slugify = require("slugify")
 const i18next = require("i18next")
@@ -19,8 +20,8 @@ exports.createPages = async ({
     context: {},
   })
   await buildStaticPages(["static-index", "constant"], createPage)
-  await buildStaticPages(["static-online-shop", "constant"], createPage)
-  await buildStaticPages(["static-bag", "constant"], createPage)
+  await buildStaticPages(["static-online-shop", "constant", "component-object"], createPage)
+  await buildStaticPages(["static-bag", "constant", "component-object"], createPage)
   await buildStaticPages(["static-404", "constant"], createPage)
 
   /* Biuld Artist Page */
@@ -133,7 +134,7 @@ exports.createPages = async ({
               language: language,
             },
           }),
-          ["constant", "dynamic-object"],
+          ["constant", "dynamic-object", "component-object"],
           createPage
         )
       })
@@ -230,16 +231,74 @@ const buildDynamicPages = async (
 }
 
 // Add a node for sorting artist by last name
-exports.onCreateNode = ({ node, actions }) => {
+exports.onCreateNode = ({ actions, getNode, node }) => {
+  if (node.internal.owner !== "gatsby-source-contentful") {
+    return
+  }
   const { createNodeField } = actions
-  if (
-    node.internal.owner === "gatsby-source-contentful" &&
-    node.internal.type === "ContentfulObjectsArtist"
-  ) {
-    createNodeField({
-      node,
-      name: "artist_lastname",
-      value: node.artist.split(" ")[node.artist.split(" ").length - 1],
-    })
+  switch (node.internal.type) {
+    // For sorting by artists' last name
+    case "ContentfulObjectsArtist":
+      createNodeField({
+        node,
+        name: "artist_lastname",
+        value: node.artist.split(" ")[node.artist.split(" ").length - 1],
+      })
+      break
+    // For adding fields to main object, such as variations' discounts
+    case "ContentfulObjectsObjectMain":
+      if (node.variations___NODE) {
+        let sale = false
+        let variants = []
+        let priceRange = {
+          lowest: 99999,
+          highest: 0,
+        }
+        for (const vNode of node.variations___NODE) {
+          const variation = getNode(vNode)
+          variation.priceSale && (sale = true)
+
+          if (variation.variant___NODE) {
+            const variantName = getNode(variation.variant___NODE).variant
+            !variants.includes(variantName) &&
+              variants.push(variantName)
+          }
+
+          const priceTemp = variation.priceSale || variation.priceOriginal
+          priceTemp < priceRange.lowest && (priceRange.lowest = priceTemp)
+          priceTemp > priceRange.highest && (priceRange.highest = priceTemp)
+        }
+
+        createNodeField({
+          node,
+          name: "object_sale",
+          value: sale,
+        })
+        createNodeField({
+          node,
+          name: "object_variants",
+          value: variants,
+        })
+        createNodeField({
+          node,
+          name: "variations_price_range",
+          value: priceRange,
+        })
+      } else {
+        if (node.priceSale) {
+          createNodeField({
+            node,
+            name: "object_sale",
+            value: true,
+          })
+        } else {
+          createNodeField({
+            node,
+            name: "object_sale",
+            value: false,
+          })
+        }
+      }
+      break
   }
 }

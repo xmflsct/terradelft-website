@@ -7,7 +7,7 @@ let storageData = store(storageKey)
 export function add(data) {
   const objectIndex = findIndex(storageData.objects, [
     "contentful_id",
-    data.contentful_id
+    data.contentful_id,
   ])
   if (objectIndex === -1) {
     storageData.objects.push(data)
@@ -21,7 +21,7 @@ export function add(data) {
 export function update(data) {
   const objectIndex = findIndex(storageData.objects, [
     "contentful_id",
-    data.contentful_id
+    data.contentful_id,
   ])
   if (objectIndex !== -1) {
     for (const key in data) {
@@ -34,12 +34,15 @@ export function update(data) {
 }
 
 export function remove(data) {
+  console.log(data)
   const objectIndex = findIndex(storageData.objects, [
     "contentful_id",
-    data.contentful_id
+    data.contentful_id,
   ])
-  storageData.objects.splice(objectIndex, 1)
-  store(storageKey, storageData)
+  if (objectIndex !== -1) {
+    storageData.objects.splice(objectIndex, 1)
+    store(storageKey, storageData)
+  }
   return storageData
 }
 

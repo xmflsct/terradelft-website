@@ -1,0 +1,22 @@
+nav {
+  margin-top: $font-size-base;
+
+  .nav-item {
+    text-align: center;
+
+    a {
+      display: block;
+      line-height: $font-size-base * 2.5;
+      border: 1px solid $color-secondary-light;
+      transition: $transition-base;
+
+      &[aria-current],
+      &:hover {
+        cursor: pointer;
+        background-color: $color-secondary-light;
+        color: $color-background-light;
+        text-decoration: none;
+      }
+    }
+  }
+}

@@ -11,15 +11,16 @@ const Bag = () => {
 
   return (
     <Layout
-      SEOtitle='Terra Delft'
-      SEOkeywords={["Terra", "Delft", "Terra Delft"]}
+      SEOtitle={t("name")}
+      SEOkeywords={[t("name"),"Terra Delft"]}
+      containerName='static-bag'
     >
-      <h1>{t("h1")}</h1>
+      <h1>{t("content.heading")}</h1>
       <Row>
-        <Col lg={8}>
+        <Col lg={8} className='bag-list'>
           <BagList />
         </Col>
-        <Col lg={4}>
+        <Col lg={4} className='bag-checkout'>
           <BagCheckout />
         </Col>
       </Row>

@@ -4,6 +4,7 @@ import { findIndex } from "lodash"
 
 import SellVariations from "./sell-variations"
 import SellMain from "./sell-main"
+import { price } from "../utils/price"
 
 const ObjectSell = ({ object }) => {
   const { i18n } = useTranslation("static-index")
@@ -18,36 +19,22 @@ const ObjectSell = ({ object }) => {
         objectSell.variations ? (
           // Online variations with stock
           <SellVariations object={object} />
-        ) : objectSell.stock && objectSell.stock > 0 ? (
+        ) : objectSell.stock > 0 ? (
           // Online main with stock
           <SellMain object={object} />
         ) : (
           // Online main without stock
-          priceDisplay(objectSell.priceOriginal, objectSell.priceSale)
+          price(objectSell.priceSale, objectSell.priceOriginal)
         )
-      ) : objectSell.stock && objectSell.stock > 0 ? (
+      ) : objectSell.stock > 0 ? (
         // Store with stock
-        priceDisplay(objectSell.priceOriginal, objectSell.priceSale)
+        price(objectSell.priceSale, objectSell.priceOriginal)
       ) : (
         // Store without stock
         ""
       )}
     </div>
   )
-}
-
-function priceDisplay(priceOriginal, priceSale) {
-  if (priceOriginal) {
-    if (priceSale) {
-      return (
-        <p>
-          <span>{priceSale}</span> - <span>{priceOriginal}</span>
-        </p>
-      )
-    } else {
-      return <span>{priceOriginal}</span>
-    }
-  } else return
 }
 
 export default ObjectSell

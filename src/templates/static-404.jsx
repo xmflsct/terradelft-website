@@ -21,9 +21,9 @@ const Index = () => {
 
   return (
     <Layout
-      title={"404 " + t("title")}
       SEOtitle={"404 " + t("title")}
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
+      containerName='static-404'
     >
       <h1>404 {t("h1")}</h1>
       <Img fluid={image.file.childImageSharp.fluid} />

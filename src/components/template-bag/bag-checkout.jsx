@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react"
-import { Button, Col, Form } from "react-bootstrap"
+import { Button, Col, Form, FormCheck, Spinner } from "react-bootstrap"
 import ReCAPTCHA from "react-google-recaptcha"
 import { Controller, useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
@@ -10,6 +10,7 @@ import { loadStripe } from "@stripe/stripe-js"
 
 import { ContextBag } from "../../layouts/contexts/bag"
 import { checkout } from "../../api/checkout"
+import * as currency from "../utils/currency"
 
 var countries = require("i18n-iso-countries")
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"))
@@ -60,7 +61,7 @@ const BagCheckout = () => {
     formState,
     getValues,
     handleSubmit,
-    register,
+    setValue,
     watch,
   } = useForm({
     mode: "onChange",
@@ -77,7 +78,6 @@ const BagCheckout = () => {
     })
   })
   const selectedCountry = watch("selectedCountry")
-  // ! Rest of the world
   if (selectedCountry) {
     let index = findIndex(rates[i18n.language].rates, (d) => {
       return includes(d.countryCode, selectedCountry.value)
@@ -96,13 +96,22 @@ const BagCheckout = () => {
     }),
     discount: sumBy(state.bag.objects, (d) => {
       if (d.priceSale) {
-        return d.priceOriginal - d.priceSale
+        return (d.priceOriginal * 10 - d.priceSale * 10) / 10
       }
     }),
-    shipping:
-      options.shipping.length && watch("selectedShipping")
-        ? options.shipping[watch("selectedShipping")].price
-        : null,
+    shipping: null,
+  }
+
+  const selectedShipping = watch("selectedShipping")
+  if (selectedShipping) {
+    if (
+      options.shipping[selectedShipping].freeForTotal &&
+      pay.objects > options.shipping[selectedShipping].freeForTotal
+    ) {
+      pay.shipping = 0
+    } else {
+      pay.shipping = options.shipping[selectedShipping].price
+    }
   }
 
   const userVerified = (token) => {
@@ -146,15 +155,15 @@ const BagCheckout = () => {
     recaptchaRef.current.execute()
   }
 
-  const handleCorrection = (corrections) => {
+  const handleCorrection = (d) => {
     setCorrections({
       required: true,
-      subtotal: corrections.objects.length ? pay.objects : null,
-      shipping: corrections.shipping ? pay.shipping : null,
-      total: pay.objects + pay.shipping,
+      subtotal: d.objects.length ? pay.objects : null,
+      shipping: d.shipping ? pay.shipping : null,
+      total: (pay.objects * 10 + pay.shipping * 10) / 10,
     })
-    if (corrections.objects.length) {
-      for (const object of corrections.objects) {
+    if (d.objects.length) {
+      for (const object of d.objects) {
         object.stock === 0
           ? dispatch({
               // Remove out of stock
@@ -168,109 +177,158 @@ const BagCheckout = () => {
             })
       }
     }
-    if (corrections.shipping) {
-      options.shipping[getValues().selectedShipping].price =
-        corrections.shipping
+    if (d.shipping) {
+      const tempShippingIndex = getValues().selectedShipping
+      options.shipping[tempShippingIndex].price = d.shipping
     }
-    if (corrections.subtotal) {
+    if (d.subtotal) {
       console.log("subtotal wrong")
     }
   }
 
   return (
     <>
-      {t("summary")}
+      <h2>{t("content.checkout.heading")}</h2>
       {state.bag.objects.length !== 0 && (
         <Form onSubmit={(e) => onSubmit(e)}>
-          <Form.Group>
+          <Form.Group className='checkout-country'>
+            <Form.Label>{t("content.checkout.shipping.heading")}</Form.Label>
             <Controller
               as={<ReactSelect />}
               name='selectedCountry'
               options={options.countries}
+              placeholder={t("content.checkout.shipping.selection")}
               defaultValue={null}
               isSearchable
               control={control}
+              onChange={(e, i) => {
+                setValue("selectedShipping", null)
+                return e[0]
+              }}
               rules={{ required: true }}
             />
           </Form.Group>
           {options.shipping &&
-            options.shipping.map((d, i) => (
-              <Form.Row key={i}>
-                <input
-                  type='radio'
-                  name='selectedShipping'
-                  value={i}
-                  required
-                  ref={register({ required: true })}
-                />
-                {d.method}{" "}
-                {d.price === 0 ||
-                (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
-                  "Free"
-                ) : (
-                  <>€ {d.price}</>
-                )}
-                {d.description && (
-                  <>
-                    <br />
-                    {d.description}
-                  </>
-                )}
-              </Form.Row>
-            ))}
-          <Form.Row>
-            <Form.Label column lg='4'>
-              Subtotal
+            options.shipping.map((d, i) => {
+              return (
+                <Form.Row className='checkout-shipping mb-2' key={i}>
+                  <Col xs={9}>
+                    <FormCheck>
+                      <Controller
+                        as={<FormCheck.Input />}
+                        type='radio'
+                        name='selectedShipping'
+                        value={i}
+                        valueName='id'
+                        control={control}
+                        required
+                      />
+                      <FormCheck.Label>{d.method}</FormCheck.Label>
+                      {d.description && <Form.Text>{d.description}</Form.Text>}
+                      {d.freeForTotal && (
+                        <Form.Text>
+                          {`${t(
+                            "content.checkout.shipping.free-for-total"
+                          )} ${currency.full(d.freeForTotal)}`}
+                        </Form.Text>
+                      )}
+                    </FormCheck>
+                  </Col>
+                  <Col xs={3} className='text-right'>
+                    {d.price === 0 ||
+                    (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
+                      t("content.checkout.shipping.free-fee")
+                    ) : (
+                      <>{currency.full(d.price)}</>
+                    )}
+                  </Col>
+                </Form.Row>
+              )
+            })}
+          <Form.Row className='checkout-sum sum-subtotal'>
+            <Form.Label column md='5'>
+              {t("content.checkout.sum.subtotal")}
             </Form.Label>
-            <Col sm='8'>
-              {corrections.subtotal && <strike>{corrections.subtotal}</strike>}{" "}
-              {pay.objects}
-            </Col>
+            <Form.Label column md='7'>
+              {corrections.subtotal && (
+                <strike>{currency.full(corrections.subtotal)}</strike>
+              )}{" "}
+              {currency.full(pay.objects)}
+            </Form.Label>
           </Form.Row>
           {pay.discount > 0 && (
-            <Form.Row>
-              <Form.Label column lg='4'>
-                Discount
+            <Form.Row className='checkout-sum sum-discount'>
+              <Form.Label column md='5'>
+                {t("content.checkout.sum.discount")}
               </Form.Label>
-              <Col sm='8'>{pay.discount}</Col>
+              <Form.Label column md='7'>
+                {currency.full(pay.discount)}
+              </Form.Label>
             </Form.Row>
           )}
-          <Form.Row>
-            <Form.Label column lg='4'>
-              Shipping
+          <Form.Row className='checkout-sum sum-shipping'>
+            <Form.Label column md='5'>
+              {t("content.checkout.sum.shipping")}
             </Form.Label>
-            <Col sm='8'>
-              {corrections.shipping && <strike>{corrections.shipping}</strike>}{" "}
-              {pay.shipping}
-            </Col>
+            <Form.Label column md='7'>
+              {(corrections.shipping > 0 && (
+                <strike>{currency.full(corrections.shipping)}</strike>
+              )) ||
+                (corrections.shipping === 0 && (
+                  <strike>{t("content.checkout.shipping.free-fee")}</strike>
+                ))}{" "}
+              {(pay.shipping > 0 && currency.full(pay.shipping)) ||
+                (pay.shipping === 0 && "Free")}
+            </Form.Label>
           </Form.Row>
-          <Form.Row>
-            <Form.Label column lg='4'>
-              Total
+          <Form.Row className='checkout-sum sum-total'>
+            <Form.Label column md='5'>
+              {t("content.checkout.sum.total")}
             </Form.Label>
-            <Col sm='8'>
-              {corrections.required && <strike>{corrections.total}</strike>}{" "}
-              {pay.objects && pay.shipping && pay.objects + pay.shipping}
-            </Col>
+            <Form.Label column md='7'>
+              {corrections.required && (
+                <strike>{currency.full(corrections.total)}</strike>
+              )}{" "}
+              {pay.shipping !== null &&
+                currency.full((pay.objects * 10 + pay.shipping * 10) / 10)}
+            </Form.Label>
           </Form.Row>
           <Button
             variant='primary'
             type='submit'
+            className='mb-2'
             disabled={formState.isSubmitting}
           >
-            {(formState.isSubmitting && "Connecting") ||
-              (formState.submitCount !== 0 && "Retry") ||
-              t("checkout")}
+            {(formState.isSubmitting && (
+              <>
+                <Spinner
+                  as='span'
+                  animation='border'
+                  size='sm'
+                  role='status'
+                  aria-hidden='true'
+                />
+                {" " + t("content.checkout.button.wait")}
+              </>
+            )) ||
+              (formState.submitCount !== 0 && t("content.checkout.button.retry")) ||
+              t("content.checkout.button.submit")}
           </Button>
-          {corrections.required ? "Correction needed" : ""}
-          <ReCAPTCHA
-            ref={recaptchaRef}
-            size='invisible'
-            badge='inline'
-            sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
-            onChange={userVerified}
-            hl={i18n.language}
-          />
+          {corrections.required ? (
+            <p className='checkout-correction'>{t("content.checkout.correction")}</p>
+          ) : (
+            ""
+          )}
+          <div className='mt-3'>
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              size='invisible'
+              badge='inline'
+              sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
+              onChange={userVerified}
+              hl={i18n.language}
+            />
+          </div>
         </Form>
       )}
     </>

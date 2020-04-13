@@ -1,5 +1,5 @@
-import React, { useContext } from "react"
-import { Button, Form } from "react-bootstrap"
+import React, { useContext, useEffect } from "react"
+import { Button, Form, InputGroup } from "react-bootstrap"
 import { Controller, useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import ReactSelect from "react-select"
@@ -14,43 +14,39 @@ import {
 } from "lodash"
 
 import { ContextBag } from "../../layouts/contexts/bag"
-import { price } from "./price"
+import { ContextVariationImage } from "../../templates/dynamic-object"
+import { price } from "../utils/price"
 import * as currency from "../utils/currency"
 
 const SellVariations = ({ object }) => {
-  const { i18n } = useTranslation("static-index")
+  const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
   const { dispatch } = useContext(ContextBag)
+  const { updateImage } = useContext(ContextVariationImage)
   const { control, handleSubmit, watch } = useForm()
-  const sellVariations =
+  const variationsMain =
     object.edges[
       findIndex(object.edges, (e) => e.node.node_locale === i18n.language)
-    ].node.variations
+    ].node
+  const sellVariations = variationsMain.variations.filter(
+    (v) => v.sellOnline && v.stock > 0
+  )
 
   const options = {
-    variation: [],
+    variant: [],
     colour: [],
     size: [],
   }
 
-  const priceRange = {
-    lowest: 99999,
-    highest: 0,
-  }
-
   // Create variations availability mapping
   sellVariations.forEach((d, i) => {
-    const priceTemp = d.priceSale || d.priceOriginal
-    priceTemp < priceRange.lowest && (priceRange.lowest = priceTemp)
-    priceTemp > priceRange.highest && (priceRange.highest = priceTemp)
     keys(d)
-      .filter(
-        (k) => ["variation", "colour", "size"].includes(k) && d[k] !== null
-      )
+      .filter((k) => ["variant", "colour", "size"].includes(k))
       .forEach((k) => {
-        const index = findIndex(options[k], ["label", d[k][k]])
+        const option = d[k] ? d[k][k] : "Normal"
+        const index = findIndex(options[k], ["label", option])
         index === -1
           ? options[k].push({
-              label: d[k][k],
+              label: option,
               value: [i],
               isDisabled: false,
             })
@@ -92,28 +88,40 @@ const SellVariations = ({ object }) => {
     })
   })
 
-  var variant = null
-  const optionsCombined = intersection(
+  let variantChosen = null
+  let optionsCombined = intersection(
     ...map(pickBy(optionsChosen, identity), "value")
   )
   if (optionsCombined.length === 1) {
-    variant = sellVariations[optionsCombined[0]]
+    variantChosen = sellVariations[optionsCombined[0]]
   } else {
-    variant = null
+    variantChosen = null
   }
+
+  useEffect(() => {
+    if (variantChosen) {
+      updateImage({
+        type: "update",
+        image: variantChosen.image,
+      })
+    } else {
+      updateImage({
+        type: "clear",
+      })
+    }
+  }, [variantChosen, updateImage])
 
   const onSubmit = () => {
     const data = {
       type: "variation",
-      contentful_id: variant.contentful_id,
+      contentful_id: variantChosen.contentful_id,
       artist: object.edges[0].node.artist.artist,
-      images: object.edges[0].node.images,
-      image: variant.image,
-      priceOriginal: variant.priceOriginal,
-      priceSale: variant.priceSale,
+      image: variantChosen.image || object.edges[0].node.images[0],
+      priceOriginal: variantChosen.priceOriginal,
+      priceSale: variantChosen.priceSale,
       // Locale dependent
       name: {},
-      variation: {},
+      variant: {},
       colour: {},
       size: {},
     }
@@ -121,7 +129,7 @@ const SellVariations = ({ object }) => {
       const l = o.node.node_locale
       const v = o.node.variations[optionsCombined[0]]
       data.name[l] = o.node.name
-      v.variation && (data.variation[l] = v.variation.variation)
+      v.variant && (data.variant[l] = v.variant.variant)
       v.colour && (data.colour[l] = v.colour.colour)
       v.size && (data.size[l] = v.size.size)
     }
@@ -132,60 +140,91 @@ const SellVariations = ({ object }) => {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Form.Group>
-        {options.variation && (
-          <>
-            <Form.Label>Variation</Form.Label>
-            <Controller
-              as={<ReactSelect />}
-              name='variation'
-              options={options.variation}
-              defaultValue={null}
-              isClearable
-              control={control}
-            />
-          </>
+    <>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        {options.variant.length > 1 && (
+          <InputGroup>
+            <InputGroup.Prepend>
+              <InputGroup.Text>{t("component-object:variant")}</InputGroup.Text>
+            </InputGroup.Prepend>
+            <div className='form-selection'>
+              <Controller
+                as={<ReactSelect />}
+                name='variant'
+                options={options.variant}
+                defaultValue={null}
+                isClearable
+                control={control}
+              />
+            </div>
+          </InputGroup>
         )}
-        {options.colour && (
-          <>
-            <Form.Label>Colour</Form.Label>
-            <Controller
-              as={<ReactSelect />}
-              name='colour'
-              options={options.colour}
-              defaultValue={null}
-              isClearable
-              control={control}
-            />
-          </>
+        {options.colour.length > 1 && (
+          <InputGroup>
+            <InputGroup.Prepend>
+              <InputGroup.Text>{t("component-object:colour")}</InputGroup.Text>
+            </InputGroup.Prepend>
+            <div className='form-selection'>
+              <Controller
+                as={<ReactSelect />}
+                name='colour'
+                options={options.colour}
+                defaultValue={null}
+                isClearable
+                control={control}
+              />
+            </div>
+          </InputGroup>
         )}
-        {options.size && (
-          <>
-            <Form.Label>Size</Form.Label>
-            <Controller
-              as={<ReactSelect />}
-              name='size'
-              options={options.size}
-              defaultValue={null}
-              isClearable
-              control={control}
-            />
-          </>
+        {options.size.length > 1 && (
+          <InputGroup>
+            <InputGroup.Prepend>
+              <InputGroup.Text>{t("component-object:size")}</InputGroup.Text>
+            </InputGroup.Prepend>
+            <div className='form-selection'>
+              <Controller
+                as={<ReactSelect />}
+                name='size'
+                options={options.size}
+                defaultValue={null}
+                isClearable
+                control={control}
+              />
+            </div>
+          </InputGroup>
         )}
-      </Form.Group>
-      {variant ? (
-        price(variant.priceSale, variant.priceOriginal)
-      ) : (
-        <>
-          {currency.full(priceRange.lowest)} -{" "}
-          {currency.full(priceRange.highest)}
-        </>
-      )}
-      <Button variant='primary' type='submit' disabled={variant === null}>
-        Add to bag
-      </Button>
-    </Form>
+        <InputGroup>
+          <InputGroup.Prepend>
+            <InputGroup.Text>{t("dynamic-object:amount")}</InputGroup.Text>
+          </InputGroup.Prepend>
+          <div className='form-selection'>
+            <ReactSelect
+              options={[{ value: 1, label: 1 }]}
+              defaultValue={{ value: 1, label: 1 }}
+              isDisabled
+            />
+          </div>
+        </InputGroup>
+        {variantChosen ? (
+          price(variantChosen.priceSale, variantChosen.priceOriginal)
+        ) : (
+          <p className='object-price'>
+            {`${currency.full(
+              variationsMain.fields.variations_price_range.lowest
+            )} - ${currency.full(
+              variationsMain.fields.variations_price_range.highest
+            )}`}
+          </p>
+        )}
+        <Button
+          variant='primary'
+          type='submit'
+          disabled={variantChosen === null}
+        >
+          {t("add-to-bag")}
+        </Button>
+      </Form>
+    </>
   )
 }
 

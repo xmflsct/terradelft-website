@@ -1,7 +1,12 @@
-@import "global/variables";
+@import "variables";
+@import "bootstrap/scss/bootstrap";
 
-@import "global/global";
-@import "global/layout";
-@import "global/header";
-@import "global/nav";
-@import "global/footer";
+@import "layouts/layout";
+@import "layouts/header";
+@import "layouts/navigation";
+@import "layouts/footer";
+
+@import "templates/dynamic-object";
+@import "templates/static-bag";
+@import "components/grid";
+@import "components/price"

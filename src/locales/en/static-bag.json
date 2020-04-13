@@ -1,5 +1,28 @@
 {
   "url": "shopping-bag",
-  "h1": "Shopping Bag",
-  "checkout": "Checkout"
+  "name": "Shopping Bag",
+  "content": {
+    "heading": "Shopping Bag",
+    "checkout": {
+      "heading": "Summary",
+      "shipping": {
+        "heading": "Ship to",
+        "selection": "Select country",
+        "free-for-total": "Free for above ",
+        "free-fee": "Free"
+      },
+      "sum": {
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "shipping": "Shipping fee",
+        "total": "Total"
+      },
+      "button": {
+        "submit": "Checkout",
+        "retry": "Please try again",
+        "wait": "Please wait"
+      },
+      "correction": "Fee corrected. Please double check or contact us."
+    }
+  }
 }

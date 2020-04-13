@@ -1,0 +1,14 @@
+header {
+  .language-switcher,
+  .bag-link {
+    a {
+      color: $black;
+      transition: $transition-base;
+
+      &:hover {
+        color: $red;
+        text-decoration: none;
+      }
+    }
+  }
+}

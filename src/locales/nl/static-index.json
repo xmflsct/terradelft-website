@@ -1,7 +1,9 @@
 {
   "url": "",
-  "section": {
-    "online-shop": "Web Winkel",
-    "collection": "Collectie"
+  "content": {
+    "section": {
+      "online-shop": "Web Winkel",
+      "collection": "Collectie"
+    }
   }
 }

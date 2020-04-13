@@ -1,4 +1,12 @@
 {
   "url": "online-shop",
-  "name": "Online Shop"
+  "name": "Online Shop",
+  "content": {
+    "filters": {
+      "heading": "Filters",
+      "prices": "Price",
+      "artists": "Artist",
+      "variants": "Variant"
+    }
+  }
 }

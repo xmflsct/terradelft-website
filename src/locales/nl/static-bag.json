@@ -1,5 +1,28 @@
 {
   "url": "winkelmandje",
-  "h1": "Winkelmandje",
-  "checkout": "Betalen"
+  "name": "Winkelmandje",
+  "content": {
+    "heading": "Winkelmandje",
+    "checkout": {
+      "heading": "Overzicht",
+      "shipping": {
+        "heading": "Verzend naar",
+        "selection": "Selecteer land",
+        "free-for-total": "Gratis voor boven ",
+        "free-fee": "Gratis"
+      },
+      "sum": {
+        "subtotal": "Subtotaal",
+        "discount": "Korting",
+        "shipping": "Verzendkosten",
+        "total": "Totaal"
+      },
+      "button": {
+        "submit": "Uitchecken",
+        "retry": "Probeer het alstublieft opnieuw",
+        "wait": "Wacht alsjeblieft"
+      },
+      "correction": "Vergoeding gecorrigeerd. Controleer of neem contact met ons op."
+    }
+  }
 }

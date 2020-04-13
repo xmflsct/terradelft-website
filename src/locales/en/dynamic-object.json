@@ -1,14 +1,6 @@
 {
   "artist": "Artist",
-  "year": "Year",
-  "technique": "Technique",
-  "material": "Material",
-  "design": "Design",
-  "colour": "Colour",
-  "dimensionWidth": "Width",
-  "dimensionLength": "Length",
-  "dimensionHeight": "Height",
-  "dimensionDiameter": "Diameter",
-  "dimensionDepth": "Depth",
+  "amount": "Amount",
+  "add-to-bag": "Add to bag",
   "related": "Other objects from "
 }

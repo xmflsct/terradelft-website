@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next"
 import { graphql } from "gatsby"
 
 import Layout from "../layouts/layout"
-import Grid from "../components/grid"
+import GridArtist from "../components/grids/grid-artist"
+import GridObjectDefault from "../components/grids/grid-object-default"
 
 const Index = ({ data }) => {
   const { t } = useTranslation("static-index")
@@ -12,15 +13,54 @@ const Index = ({ data }) => {
     <Layout
       SEOtitle='Terra Delft'
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
+      containerName='static-index'
     >
-      <p>{t("section.collection")}</p>
-      <Grid items={data.artists.edges} type='artist' />
+      <div className='section-online-shop mb-3'>
+        <h2>{t("content.section.online-shop")}</h2>
+        <GridObjectDefault
+          data={data.objects.edges}
+          randomize={true}
+          limit={6}
+        />
+      </div>
+      <div className='section-collection'>
+        <h1>{t("content.section.collection")}</h1>
+        <GridArtist data={data.artists.edges} />
+      </div>
     </Layout>
   )
 }
 
 export const query = graphql`
   query staticIndex($language: String) {
+    objects: allContentfulObjectsObjectMain(
+      filter: { sellOnline: { eq: true }, node_locale: { eq: $language } }
+    ) {
+      edges {
+        node {
+          node_locale
+          images {
+            fluid(maxWidth: 800) {
+              ...GatsbyContentfulFluid_withWebp
+            }
+          }
+          name
+          artist {
+            artist
+          }
+          priceOriginal
+          priceSale
+          fields {
+            object_sale
+            object_variants
+            variations_price_range {
+              highest
+              lowest
+            }
+          }
+        }
+      }
+    }
     artists: allContentfulObjectsArtist(
       filter: { node_locale: { eq: $language } }
       sort: { fields: fields___artist_lastname, order: ASC }
@@ -30,7 +70,7 @@ export const query = graphql`
           node_locale
           artist
           image {
-            fluid(maxWidth: 800) {
+            fluid(maxWidth: 140) {
               ...GatsbyContentfulFluid_withWebp
             }
           }

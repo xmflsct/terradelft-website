@@ -1,0 +1,40 @@
+.dynamic-object {
+  .object-images {
+    .image-zoom {
+      > [data-rmiz-wrap="visible"],
+      > [data-rmiz-wrap="hidden"] {
+        width: 100%;
+        height: 100%;
+        // display: block; // Not necessary, but it caused layout issues for me
+
+        .gatsby-image-wrapper {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+  form {
+    margin-top: 1rem;
+
+    .input-group {
+      margin-bottom: 1rem;
+
+      .form-selection {
+        flex: 1 1;
+      }
+    }
+  }
+  .object-description {
+    margin: 2rem 0;
+  }
+  .object-attribute {
+    margin-bottom: 0.5rem;
+    .attribute-type {
+      font-weight: $font-weight-bold;
+    }
+  }
+  .related-objects {
+    margin-top: 1rem;
+  }
+}

@@ -6,13 +6,13 @@ import Header from "./header"
 import Navigation from "./navigation"
 import Footer from "./footer"
 
-const Layout = ({ children, SEOtitle, SEOkeywords }) => {
+const Layout = ({ children, SEOtitle, SEOkeywords, containerName }) => {
   const [toggleNav, setToggleNav] = React.useState(false)
 
   return (
     <Container className={`site-wrapper ${toggleNav ? "site-head-open" : ""}`}>
       <SEO title={SEOtitle} keywords={SEOkeywords} />
-      <Button
+      {/* <Button
         className={`nav-burger hamburger hamburger--collapse ${
           toggleNav ? "is-active" : ""
         }`}
@@ -22,11 +22,11 @@ const Layout = ({ children, SEOtitle, SEOkeywords }) => {
         <span className='hamburger-box'>
           <span className='hamburger-inner'></span>
         </span>
-      </Button>
+      </Button> */}
 
         <Header />
         <Navigation />
-        <Container as='main'>{children}</Container>
+        <Container as='main' className={containerName}>{children}</Container>
 
       <Footer />
     </Container>

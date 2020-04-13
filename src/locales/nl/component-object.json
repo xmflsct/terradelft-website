@@ -1,0 +1,15 @@
+{
+  "variant": "Variant",
+  "colour": "Kleur",
+  "size": "Afmeting",
+  "year": "Jaar",
+  "technique": "Techniek",
+  "material": "Materiaal",
+  "design": "Design",
+  "dimensionWidth": "Breedte",
+  "dimensionLength": "Lengte",
+  "dimensionHeight": "Hoogte",
+  "dimensionDiameter": "Diameter",
+  "dimensionDepth": "Diepte",
+  "on-sale": "Aanbieding"
+}

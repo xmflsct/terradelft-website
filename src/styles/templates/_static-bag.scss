@@ -1,0 +1,49 @@
+.static-bag {
+  .bag-list {
+    .list-object {
+      .object-details {
+        .object-name {
+          font-size: $font-size-base * 1.2;
+        }
+        .object-variations {
+          font-size: $font-size-base * 0.9;
+
+          .variations-type {
+            font-weight: $font-weight-bold;
+          }
+        }
+        .object-price {
+          margin-top: 1rem;
+          margin-bottom: 0;
+        }
+        button.object-remove {
+          position: absolute;
+          top: 0;
+          right: 0;
+          color: $black;
+
+          &:hover {
+            color: $red;
+          }
+        }
+      }
+    }
+  }
+  .bag-checkout {
+    .checkout-shipping {
+      .form-check {
+        .form-text {
+          margin: 0;
+        }
+      }
+    }
+    .checkout-correction {
+      color: $red;
+
+      &::before {
+        display: inline;
+        content: "⚠ ";
+      }
+    }
+  }
+}

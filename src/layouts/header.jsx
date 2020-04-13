@@ -49,29 +49,30 @@ const Header = () => {
           />
         </Link>
       </Col>
-      <Col lg={2} className='header-right'>
-        <Row className='language-switcher'>
-          <FontAwesomeIcon icon={faGlobeEurope} />
-          {alternateLinks &&
-            alternateLinks.map((link) => (
-              <Col lg={12} key={link.language}>
+      <Col lg={2} className='language-switcher text-right'>
+        {alternateLinks &&
+          alternateLinks.map(
+            (link) =>
+              link.language !== i18n.language && (
                 <Link
                   to={link.path}
                   className={
                     link.language === i18n.language ? "active" : "inactive"
                   }
                   hrefLang={link.language}
+                  key={link.language}
                 >
-                  {t(`constant:header.language-switcher.${link.language}`)}
+                  <FontAwesomeIcon icon={faGlobeEurope} />
+                  {" " +
+                    t(`constant:header.language-switcher.${link.language}`)}
                 </Link>
-              </Col>
-            ))}
-        </Row>
+              )
+          )}
       </Col>
-      <Col lg={1} className='temp'>
+      <Col lg={1} className='bag-link text-right'>
         <Link to={"/" + i18n.language + "/" + t("constant:header.bag.url")}>
           <FontAwesomeIcon icon={faShoppingBag} />
-          {state.bag.objects.length}
+          {` (${state.bag.objects.length})`}
         </Link>
       </Col>
     </Row>

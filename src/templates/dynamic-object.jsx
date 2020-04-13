@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useReducer } from "react"
 import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { graphql, Link } from "gatsby"
@@ -6,96 +6,125 @@ import { findIndex } from "lodash"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
 import Layout from "../layouts/layout"
-import Grid from "../components/grid"
+import GridObjectDefault from "../components/grids/grid-object-default"
 import ObjectImages from "../components/template-object/object-images"
 import ObjectSell from "../components/template-object/object-sell"
 import ObjectAttribute from "../components/template-object/object-attribute"
 
 const slugify = require("slugify")
 
+function reducer(state, action) {
+  switch (action.type) {
+    case "update":
+      return { ...state, image: action.image }
+    case "clear":
+      return { ...state, image: null }
+    default:
+      throw new Error()
+  }
+}
+const initContextVariationImage = { image: null }
+export const ContextVariationImage = React.createContext(
+  initContextVariationImage
+)
+
 const PageObject = ({ data }) => {
-  const { t, i18n } = useTranslation("dynamic-object")
+  const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
+  const [state, updateImage] = useReducer(reducer, initContextVariationImage)
   const object =
     data.object.edges[
       findIndex(data.object.edges, (e) => e.node.node_locale === i18n.language)
     ].node
 
   return (
-    <Layout SEOtitle={object.name} SEOkeywords={[object.name, "Terra Delft"]}>
-      <Row>
-        <Col lg={6}>
-          <ObjectImages images={object.images} />
-        </Col>
-        <Col lg={6}>
-          <h1>{object.name}</h1>
-          <p>
-            {t("artist")}:{" "}
-            <Link
-              to={`/${i18n.language}/${slugify(object.artist.artist, {
-                lower: true,
-              })}`}
-            >
+    <Layout
+      SEOtitle={object.name}
+      SEOkeywords={[object.name, "Terra Delft"]}
+      containerName='dynamic-object'
+    >
+      <ContextVariationImage.Provider value={{ state, updateImage }}>
+        <Row>
+          <Col lg={6} className='object-images'>
+            <ObjectImages images={object.images} />
+          </Col>
+          <Col lg={6} className='object-information'>
+            <h1>{object.name}</h1>
+            <h4>
+              {t("dynamic-object:artist")}:{" "}
+              <Link
+                to={`/${i18n.language}/${slugify(object.artist.artist, {
+                  lower: true,
+                })}`}
+              >
+                {object.artist.artist}
+              </Link>
+            </h4>
+            <ObjectSell object={data.object} />
+            <div className='object-description'>
+              {documentToReactComponents(object?.description?.json)}
+            </div>
+            {object.year && (
+              <ObjectAttribute type={t("component-object:year")} value={object.year} />
+            )}
+            {object.technique && (
+              <ObjectAttribute type={t("component-object:technique")} value={object.technique} />
+            )}
+            {object.material && (
+              <ObjectAttribute type={t("component-object:material")} value={object.material} />
+            )}
+            {object.design && (
+              <ObjectAttribute type={t("component-object:design")} value={object.design} />
+            )}
+            {object.colour && (
+              <ObjectAttribute type={t("component-object:colour")} value={object.colour} />
+            )}
+            {object.dimensionWidth && (
+              <ObjectAttribute
+                type={t("component-object:dimensionWidth")}
+                value={object.dimensionWidth}
+                dimension
+              />
+            )}
+            {object.dimensionLength && (
+              <ObjectAttribute
+                type={t("component-object:dimensionLength")}
+                value={object.dimensionLength}
+                dimension
+              />
+            )}
+            {object.dimensionHeight && (
+              <ObjectAttribute
+                type={t("component-object:dimensionHeight")}
+                value={object.dimensionHeight}
+                dimension
+              />
+            )}
+            {object.dimensionDiameter && (
+              <ObjectAttribute
+                type={t("component-object:dimensionDiameter")}
+                value={object.dimensionDiameter}
+                dimension
+              />
+            )}
+            {object.dimensionDepth && (
+              <ObjectAttribute
+                type={t("component-object:dimensionDepth")}
+                value={object.dimensionDepth}
+                dimension
+              />
+            )}
+          </Col>
+        </Row>
+        {data.objects.edges.length > 1 && (
+          <div className="related-objects">
+            <h2>
+              {t("dynamic-object:related")}
               {object.artist.artist}
-            </Link>
-          </p>
-          <ObjectSell object={data.object} />
-          <span>{documentToReactComponents(object?.description?.json)}</span>
-          {object.year && (
-            <ObjectAttribute title={t("year")} data={object.year} />
-          )}
-          {object.technique && (
-            <ObjectAttribute title={t("technique")} data={object.technique} />
-          )}
-          {object.material && (
-            <ObjectAttribute title={t("material")} data={object.material} />
-          )}
-          {object.design && (
-            <ObjectAttribute title={t("design")} data={object.design} />
-          )}
-          {object.colour && (
-            <ObjectAttribute title={t("colour")} data={object.colour} />
-          )}
-          {object.dimensionWidth && (
-            <ObjectAttribute
-              title={t("dimensionWidth")}
-              data={object.dimensionWidth}
-            />
-          )}
-          {object.dimensionLength && (
-            <ObjectAttribute
-              title={t("dimensionLength")}
-              data={object.dimensionLength}
-            />
-          )}
-          {object.dimensionHeight && (
-            <ObjectAttribute
-              title={t("dimensionHeight")}
-              data={object.dimensionHeight}
-            />
-          )}
-          {object.dimensionDiameter && (
-            <ObjectAttribute
-              title={t("dimensionDiameter")}
-              data={object.dimensionDiameter}
-            />
-          )}
-          {object.dimensionDepth && (
-            <ObjectAttribute
-              title={t("dimensionDepth")}
-              data={object.dimensionDepth}
-            />
-          )}
-        </Col>
-      </Row>
-      {data.objects.edges.length > 1 && (
-        <>
-          <h2>
-            {t("related")}
-            {object.artist.artist}
-          </h2>
-          <Grid items={data.objects.edges} type='object' />
-        </>
-      )}
+            </h2>
+            <GridObjectDefault data={data.objects.edges} />
+          </div>
+        )}
+      </ContextVariationImage.Provider>
     </Layout>
   )
 }
@@ -111,6 +140,12 @@ export const query = graphql`
     ) {
       edges {
         node {
+          fields {
+            variations_price_range {
+              highest
+              lowest
+            }
+          }
           contentful_id
           node_locale
           name
@@ -118,7 +153,7 @@ export const query = graphql`
             json
           }
           images {
-            fluid(maxWidth: 420) {
+            fluid(quality: 80) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
@@ -133,8 +168,8 @@ export const query = graphql`
           variations {
             contentful_id
             sku
-            variation {
-              variation
+            variant {
+              variant
             }
             colour {
               colour
@@ -147,8 +182,8 @@ export const query = graphql`
             sellOnline
             stock
             image {
-              fluid {
-                src
+              fluid(quality: 80) {
+                ...GatsbyContentfulFluid_withWebp
               }
             }
           }
@@ -183,13 +218,16 @@ export const query = graphql`
         node {
           node_locale
           images {
-            fluid(maxWidth: 800) {
+            fluid(maxWidth: 140) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
           name
           artist {
             artist
+          }
+          fields {
+            object_sale
           }
         }
       }

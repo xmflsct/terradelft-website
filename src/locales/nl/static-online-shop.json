@@ -1,4 +1,12 @@
 {
   "url": "web-winkel",
-  "name": "Web Winkel"
+  "name": "Web Winkel",
+  "content": {
+    "filters": {
+      "heading": "Filtreren",
+      "prices": "Prijs",
+      "artists": "Kunstenaar",
+      "variants": "Variant"
+    }
+  }
 }
