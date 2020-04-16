@@ -66,7 +66,7 @@ const GridObjectOnlineShop = ({ data }) => {
 
   return (
     <>
-    <h4>{t("static-online-shop:content.filters.heading")}</h4>
+      <h4>{t("static-online-shop:content.filters.heading")}</h4>
       <Row className='filter-grid mb-3'>
         <Col md={4}>
           <Select
@@ -108,7 +108,11 @@ const GridObjectOnlineShop = ({ data }) => {
       <Row className='component-grid grid-object'>
         {data
           .filter((d) => {
-            let objectMatch = true
+            let objectMatch = {
+              prices: null,
+              artists: null,
+              variants: null,
+            }
             for (const match in selected) {
               const selectedValue = selected[match]
               if (!selectedValue) {
@@ -116,44 +120,39 @@ const GridObjectOnlineShop = ({ data }) => {
               }
               switch (match) {
                 case "price":
-                  if (d.node.fields.object_variants) {
-                    if (
-                      d.node.fields.variations_price_range.highest <
-                        selectedValue.minimum ||
-                      d.node.fields.variations_price_range.lowest >
-                        selectedValue.maximum
-                    ) {
-                      objectMatch = false
-                    }
-                  } else {
-                    const priceTemp = d.node.priceSale || d.node.priceOriginal
-                    if (
-                      priceTemp < selectedValue.minimum ||
-                      priceTemp > selectedValue.maximum
-                    ) {
-                      objectMatch = false
-                    }
-                  }
+                  objectMatch.prices = d.node.fields.object_variants
+                    ? !(
+                        d.node.fields.variations_price_range.highest <
+                          selectedValue.minimum ||
+                        d.node.fields.variations_price_range.lowest >
+                          selectedValue.maximum
+                      )
+                    : !(
+                        d.node.priceSale ||
+                        d.node.priceOriginal < selectedValue.minimum ||
+                        d.node.priceSale ||
+                        d.node.priceOriginal > selectedValue.maximum
+                      )
                   break
                 case "artist":
-                  objectMatch = selectedValue === d.node.artist.artist
+                  objectMatch.artists = selectedValue === d.node.artist.artist
                   break
                 case "variant":
-                  d.node.fields.object_variants
-                    ? includes(d.node.fields.object_variants, selectedValue) &&
-                      (objectMatch = false)
-                    : (objectMatch = false)
+                  objectMatch.variants = d.node.fields.object_variants
+                    ? includes(d.node.fields.object_variants, selectedValue)
+                    : false
                   break
                 default:
                   break
               }
             }
-            !selected.price &&
-              !selected.artist &&
-              !selected.variant &&
-              (objectMatch = true)
 
-            return d.node.name !== "PLACEHOLDER" && objectMatch
+            return (
+              d.node.name !== "PLACEHOLDER" &&
+              objectMatch.prices !== false &&
+              objectMatch.artists !== false &&
+              objectMatch.variants !== false
+            )
           })
           .map((d) => {
             return (
