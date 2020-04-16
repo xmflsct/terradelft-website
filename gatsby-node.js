@@ -20,8 +20,14 @@ exports.createPages = async ({
     context: {},
   })
   await buildStaticPages(["static-index", "constant"], createPage)
-  await buildStaticPages(["static-online-shop", "constant", "component-object"], createPage)
-  await buildStaticPages(["static-bag", "constant", "component-object"], createPage)
+  await buildStaticPages(
+    ["static-online-shop", "constant", "component-object"],
+    createPage
+  )
+  await buildStaticPages(
+    ["static-bag", "constant", "component-object"],
+    createPage
+  )
   await buildStaticPages(["static-404", "constant"], createPage)
 
   /* Biuld Artist Page */
@@ -110,6 +116,9 @@ exports.createPages = async ({
                       contentful_id
                       artist
                     }
+                    description {
+                      json
+                    }
                   }
                 }
               }
@@ -132,6 +141,9 @@ exports.createPages = async ({
               contentful_id: node.contentful_id,
               artist_contentful_id: node.artist.contentful_id,
               language: language,
+              imagesFromRichText: node.description
+                ? getImagesFromRichText(node.description.json.content)
+                : ["null"],
             },
           }),
           ["constant", "dynamic-object", "component-object"],
@@ -230,6 +242,19 @@ const buildDynamicPages = async (
   )
 }
 
+const getImagesFromRichText = (content) => {
+  return (
+    content &&
+    content.reduce((acc, c) => {
+      const contentful_id = _.get(c, "data.target.sys.contentful_id")
+      if (c.nodeType == "embedded-asset-block" && contentful_id) {
+        return [...acc, contentful_id]
+      }
+      return acc
+    }, [])
+  )
+}
+
 // Add a node for sorting artist by last name
 exports.onCreateNode = ({ actions, getNode, node }) => {
   if (node.internal.owner !== "gatsby-source-contentful") {
@@ -256,17 +281,18 @@ exports.onCreateNode = ({ actions, getNode, node }) => {
         }
         for (const vNode of node.variations___NODE) {
           const variation = getNode(vNode)
-          variation.priceSale && (sale = true)
+          if (variation.sellOnline && variation.stock > 0) {
+            variation.priceSale && (sale = true)
 
-          if (variation.variant___NODE) {
-            const variantName = getNode(variation.variant___NODE).variant
-            !variants.includes(variantName) &&
-              variants.push(variantName)
+            if (variation.variant___NODE) {
+              const variantName = getNode(variation.variant___NODE).variant
+              !variants.includes(variantName) && variants.push(variantName)
+            }
+
+            const priceTemp = variation.priceSale || variation.priceOriginal
+            priceTemp < priceRange.lowest && (priceRange.lowest = priceTemp)
+            priceTemp > priceRange.highest && (priceRange.highest = priceTemp)
           }
-
-          const priceTemp = variation.priceSale || variation.priceOriginal
-          priceTemp < priceRange.lowest && (priceRange.lowest = priceTemp)
-          priceTemp > priceRange.highest && (priceRange.highest = priceTemp)
         }
 
         createNodeField({

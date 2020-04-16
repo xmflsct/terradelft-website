@@ -14,7 +14,7 @@ const PageArtist = ({ data }) => (
     containerName='dynamic-artist'
   >
     <h1>{data.artist.artist}</h1>
-    <Row>
+    <Row className="artist-section">
       <Col lg={4}>
         <Img fluid={data.artist.image.fluid} />
       </Col>

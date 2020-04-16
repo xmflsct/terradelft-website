@@ -15,7 +15,7 @@ import {
 
 import { ContextBag } from "../../layouts/contexts/bag"
 import { ContextVariationImage } from "../../templates/dynamic-object"
-import { price } from "../utils/price"
+import { Price } from "../utils/price"
 import * as currency from "../utils/currency"
 
 const SellVariations = ({ object }) => {
@@ -206,14 +206,19 @@ const SellVariations = ({ object }) => {
           </div>
         </InputGroup>
         {variantChosen ? (
-          price(variantChosen.priceSale, variantChosen.priceOriginal)
+          Price(variantChosen.priceSale, variantChosen.priceOriginal)
         ) : (
           <p className='object-price'>
-            {`${currency.full(
-              variationsMain.fields.variations_price_range.lowest
-            )} - ${currency.full(
-              variationsMain.fields.variations_price_range.highest
-            )}`}
+            {variationsMain.fields.variations_price_range.lowest ===
+            variationsMain.fields.variations_price_range.highest
+              ? currency.full(
+                  variationsMain.fields.variations_price_range.highest
+                )
+              : `${currency.full(
+                  variationsMain.fields.variations_price_range.lowest
+                )} - ${currency.full(
+                  variationsMain.fields.variations_price_range.highest
+                )}`}
           </p>
         )}
         <Button

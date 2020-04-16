@@ -1,8 +1,10 @@
 import React, { useReducer } from "react"
-import { Col, Row } from "react-bootstrap"
+import { Container, Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { graphql, Link } from "gatsby"
+import Img from "gatsby-image"
 import { findIndex } from "lodash"
+import { BLOCKS } from "@contentful/rich-text-types"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
 import Layout from "../layouts/layout"
@@ -27,6 +29,29 @@ const initContextVariationImage = { image: null }
 export const ContextVariationImage = React.createContext(
   initContextVariationImage
 )
+
+const renderImages = (imagesFromRichText, locale) => ({
+  renderNode: {
+    [BLOCKS.EMBEDDED_ASSET]: (node) => {
+      const contentful_id = node.data.target.sys.contentful_id
+      const description = node.data.target.fields.description
+      const imageIndex = findIndex(
+        imagesFromRichText.edges,
+        (i) => i.node.contentful_id === contentful_id
+      )
+      return (
+        <Container>
+          {imageIndex !== -1 && (
+            <>
+              <Img fluid={imagesFromRichText.edges[imageIndex].node.fluid} />
+              {description && <figcaption>{description[locale]}</figcaption>}
+            </>
+          )}
+        </Container>
+      )
+    },
+  },
+})
 
 const PageObject = ({ data }) => {
   const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
@@ -60,23 +85,35 @@ const PageObject = ({ data }) => {
               </Link>
             </h4>
             <ObjectSell object={data.object} />
-            <div className='object-description'>
-              {documentToReactComponents(object?.description?.json)}
-            </div>
             {object.year && (
-              <ObjectAttribute type={t("component-object:year")} value={object.year} />
+              <ObjectAttribute
+                type={t("component-object:year")}
+                value={object.year}
+              />
             )}
             {object.technique && (
-              <ObjectAttribute type={t("component-object:technique")} value={object.technique} />
+              <ObjectAttribute
+                type={t("component-object:technique")}
+                value={object.technique}
+              />
             )}
             {object.material && (
-              <ObjectAttribute type={t("component-object:material")} value={object.material} />
+              <ObjectAttribute
+                type={t("component-object:material")}
+                value={object.material}
+              />
             )}
             {object.design && (
-              <ObjectAttribute type={t("component-object:design")} value={object.design} />
+              <ObjectAttribute
+                type={t("component-object:design")}
+                value={object.design}
+              />
             )}
             {object.colour && (
-              <ObjectAttribute type={t("component-object:colour")} value={object.colour} />
+              <ObjectAttribute
+                type={t("component-object:colour")}
+                value={object.colour}
+              />
             )}
             {object.dimensionWidth && (
               <ObjectAttribute
@@ -113,10 +150,16 @@ const PageObject = ({ data }) => {
                 dimension
               />
             )}
+            <div className='object-description'>
+              {documentToReactComponents(
+                object?.description?.json,
+                renderImages(data.imagesFromRichText, i18n.language)
+              )}
+            </div>
           </Col>
         </Row>
-        {data.objects.edges.length > 1 && (
-          <div className="related-objects">
+        {data.objects.edges.length > 0 && (
+          <div className='related-objects'>
             <h2>
               {t("dynamic-object:related")}
               {object.artist.artist}
@@ -134,9 +177,13 @@ export const query = graphql`
     $contentful_id: String
     $artist_contentful_id: String
     $language: String
+    $imagesFromRichText: [String!]!
   ) {
     object: allContentfulObjectsObjectMain(
-      filter: { contentful_id: { eq: $contentful_id } }
+      filter: {
+        contentful_id: { eq: $contentful_id }
+        node_locale: { eq: $language }
+      }
     ) {
       edges {
         node {
@@ -160,10 +207,10 @@ export const query = graphql`
           artist {
             artist
           }
+          kunstKoop
           priceOriginal
           priceSale
           sellOnline
-          sku
           stock
           variations {
             contentful_id
@@ -204,6 +251,21 @@ export const query = graphql`
           dimensionHeight
           dimensionDiameter
           dimensionDepth
+        }
+      }
+    }
+    imagesFromRichText: allContentfulAsset(
+      filter: {
+        contentful_id: { in: $imagesFromRichText }
+        node_locale: { eq: $language }
+      }
+    ) {
+      edges {
+        node {
+          contentful_id
+          fluid(maxWidth: 700, quality: 85) {
+            ...GatsbyContentfulFluid_withWebp
+          }
         }
       }
     }

@@ -8,7 +8,7 @@ import Layout from "../layouts/layout"
 const Index = () => {
   const image = useStaticQuery(graphql`
     {
-      file(relativePath: { eq: "template-404/404.jpg" }) {
+      file(relativePath: { eq: "static-404/404.jpg" }) {
         childImageSharp {
           fluid(maxWidth: 800) {
             ...GatsbyImageSharpFluid_withWebp_noBase64

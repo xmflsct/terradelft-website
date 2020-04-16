@@ -4,7 +4,7 @@ import { findIndex } from "lodash"
 
 import SellVariations from "./sell-variations"
 import SellMain from "./sell-main"
-import { price } from "../utils/price"
+import { Price } from "../utils/price"
 
 const ObjectSell = ({ object }) => {
   const { i18n } = useTranslation("static-index")
@@ -24,14 +24,14 @@ const ObjectSell = ({ object }) => {
           <SellMain object={object} />
         ) : (
           // Online main without stock
-          price(objectSell.priceSale, objectSell.priceOriginal)
+          "Out of stock online"
         )
       ) : objectSell.stock > 0 ? (
         // Store with stock
-        price(objectSell.priceSale, objectSell.priceOriginal)
+        Price(objectSell.priceSale, objectSell.priceOriginal, objectSell.kunstKoop)
       ) : (
         // Store without stock
-        ""
+        "Out of stock in store"
       )}
     </div>
   )

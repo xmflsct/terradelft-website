@@ -14,6 +14,7 @@ module.exports = {
       },
     },
     `gatsby-plugin-lodash`,
+    `gatsby-plugin-preact`,
     {
       resolve: `gatsby-plugin-prefetch-google-fonts`,
       options: {
@@ -39,12 +40,21 @@ module.exports = {
     },
     `gatsby-plugin-sharp`,
     {
-      resolve: `gatsby-source-contentful`,
+      resolve: `gatsby-source-contentful`, // Space - Objects
       options: {
         host: process.env.CONTENTFUL_HOST,
-        accessToken: process.env.CONTENTFUL_KEY_GATSBY,
-        spaceId: process.env.CONTENTFUL_SPACE,
-        environment: process.env.CONTENTFUL_ENVIRONMENT,
+        accessToken: process.env.CONTENTFUL_OBJECTS_KEY_GATSBY,
+        spaceId: process.env.CONTENTFUL_OBJECTS_SPACE,
+        environment: process.env.CONTENTFUL_OBJECTS_ENVIRONMENT,
+      },
+    },
+    {
+      resolve: `gatsby-source-contentful`, // Space - Content
+      options: {
+        host: process.env.CONTENTFUL_HOST,
+        accessToken: process.env.CONTENTFUL_CONTENTs_KEY,
+        spaceId: process.env.CONTENTFUL_CONTENTs_SPACE,
+        environment: process.env.CONTENTFUL_CONTENTs_ENVIRONMENT,
       },
     },
     {

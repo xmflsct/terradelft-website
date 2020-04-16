@@ -6,7 +6,7 @@ import ReactSelect from "react-select"
 import { findIndex } from "lodash"
 
 import { ContextBag } from "../../layouts/contexts/bag"
-import { price } from "../utils/price"
+import { Price } from "../utils/price"
 
 const SellMain = ({ object }) => {
   const { t, i18n } = useTranslation("dynamic-object")
@@ -51,7 +51,7 @@ const SellMain = ({ object }) => {
           />
         </div>
       </InputGroup>
-      {price(sellMain.priceSale, sellMain.priceOriginal)}
+      {Price(sellMain.priceSale, sellMain.priceOriginal)}
       <Button variant='primary' type='submit'>
         {t("add-to-bag")}
       </Button>

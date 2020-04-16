@@ -1,11 +1,17 @@
-p.object-price {
+.object-price {
   font-size: $font-size-base * 1.2;
-  .price-discount {
-    color: $red;
-    font-weight: $font-weight-bold;
-    margin-right: 0.35rem;
-  }
-  strike {
-    font-size: $font-size-base * 0.9;
+
+  > p {
+    margin-bottom: 1rem;
+    .price-sale {
+      color: $red;
+      font-weight: $font-weight-bold;
+      margin-right: 0.35rem;
+    }
+    .price-original {
+      strike {
+        font-size: $font-size-base * 0.9;
+      }
+    }
   }
 }

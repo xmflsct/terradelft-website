@@ -8,7 +8,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import { isEmpty } from "lodash"
 
 import { ContextBag } from "../../layouts/contexts/bag"
-import { price } from "../utils/price"
+import { Price } from "../utils/price"
 
 const slugify = require("slugify")
 
@@ -70,7 +70,7 @@ const BagList = () => {
                     </Col>
                   </Row>
                 )}
-                {price(object.priceSale, object.priceOriginal)}
+                {Price(object.priceSale, object.priceOriginal)}
                 <Button
                   variant='link'
                   onClick={() =>

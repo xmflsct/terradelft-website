@@ -39,9 +39,9 @@ async function checkContentful(req) {
 
   let corrections = { objects: [], shipping: null, subtotal: null }
   let url = null
-  const space = process.env.CONTENTFUL_SPACE
-  const secret = process.env.CONTENTFUL_KEY_CHECKOUT
-  const environment = process.env.CONTENTFUL_ENVIRONMENT
+  const space = process.env.CONTENTFUL_OBJECTS_SPACE
+  const secret = process.env.CONTENTFUL_OBJECTS_KEY_CHECKOUT
+  const environment = process.env.CONTENTFUL_OBJECTS_ENVIRONMENT
   const contentType = {
     main: "objectsObject",
     variation: "objectsObjectVariation",
