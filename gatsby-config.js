@@ -52,9 +52,9 @@ module.exports = {
       resolve: `gatsby-source-contentful`, // Space - Content
       options: {
         host: process.env.CONTENTFUL_HOST,
-        accessToken: process.env.CONTENTFUL_CONTENTs_KEY,
-        spaceId: process.env.CONTENTFUL_CONTENTs_SPACE,
-        environment: process.env.CONTENTFUL_CONTENTs_ENVIRONMENT,
+        accessToken: process.env.CONTENTFUL_CONTENTS_KEY,
+        spaceId: process.env.CONTENTFUL_CONTENTS_SPACE,
+        environment: process.env.CONTENTFUL_CONTENTS_ENVIRONMENT,
       },
     },
     {
