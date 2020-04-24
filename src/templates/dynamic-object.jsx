@@ -103,12 +103,6 @@ const PageObject = ({ data }) => {
                 value={object.material}
               />
             )}
-            {object.design && (
-              <ObjectAttribute
-                type={t("component-object:design")}
-                value={object.design}
-              />
-            )}
             {object.colour && (
               <ObjectAttribute
                 type={t("component-object:colour")}
@@ -242,9 +236,6 @@ export const query = graphql`
           }
           material {
             material
-          }
-          design {
-            design
           }
           dimensionWidth
           dimensionLength

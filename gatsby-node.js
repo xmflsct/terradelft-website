@@ -1,4 +1,4 @@
-const fs = require("fs")
+const fs = require("graceful-fs")
 const _ = require("lodash")
 const path = require(`path`)
 const slugify = require("slugify")
@@ -48,8 +48,7 @@ exports.createPages = async ({
   `)
   await Promise.all(
     artists.data.artists.edges
-      .filter((placeholder) => placeholder.node.artist !== "PLACEHOLDER")
-      .map(async (result) => {
+      .map(async (node) => {
         const artistsNew = await graphql(
           `
             query($contentful_id: String!) {
@@ -66,7 +65,7 @@ exports.createPages = async ({
               }
             }
           `,
-          { contentful_id: result.node.contentful_id }
+          { contentful_id: node.node.contentful_id }
         )
         await buildDynamicPages(
           artistsNew.data.artistsNew.edges,
@@ -99,8 +98,7 @@ exports.createPages = async ({
   `)
   await Promise.all(
     objects.data.objects.edges
-      .filter((placeholder) => placeholder.node.name !== "PLACEHOLDER")
-      .map(async (result) => {
+      .map(async (node) => {
         const objectsNew = await graphql(
           `
             query($contentful_id: String!) {
@@ -124,7 +122,7 @@ exports.createPages = async ({
               }
             }
           `,
-          { contentful_id: result.node.contentful_id }
+          { contentful_id: node.node.contentful_id }
         )
         await buildDynamicPages(
           objectsNew.data.objectsNew.edges,

@@ -34,7 +34,6 @@ export function update(data) {
 }
 
 export function remove(data) {
-  console.log(data)
   const objectIndex = findIndex(storageData.objects, [
     "contentful_id",
     data.contentful_id,
