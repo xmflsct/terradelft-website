@@ -35,12 +35,13 @@ export const query = graphql`
   query staticIndex($language: String) {
     objects: allContentfulObjectsObjectMain(
       filter: { sellOnline: { eq: true }, node_locale: { eq: $language } }
+      limit: 36
     ) {
       edges {
         node {
           node_locale
           images {
-            fluid(maxWidth: 800) {
+            fluid(maxWidth: 140) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
@@ -48,15 +49,8 @@ export const query = graphql`
           artist {
             artist
           }
-          priceOriginal
-          priceSale
           fields {
             object_sale
-            object_variants
-            variations_price_range {
-              highest
-              lowest
-            }
           }
         }
       }

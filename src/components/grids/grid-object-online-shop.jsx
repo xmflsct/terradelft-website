@@ -46,7 +46,6 @@ const GridObjectOnlineShop = ({ data }) => {
     variants: [],
   }
   data
-    .filter((d) => d.node.name !== "PLACEHOLDER")
     .forEach((d) => {
       find(options.artists, ["label", d.node.artist.artist]) ||
         options.artists.push({
@@ -148,7 +147,6 @@ const GridObjectOnlineShop = ({ data }) => {
             }
 
             return (
-              d.node.name !== "PLACEHOLDER" &&
               objectMatch.prices !== false &&
               objectMatch.artists !== false &&
               objectMatch.variants !== false

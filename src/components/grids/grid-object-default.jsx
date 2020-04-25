@@ -10,7 +10,6 @@ const slugify = require("slugify")
 const GridObjectDefault = ({ data, randomize, limit }) => {
   const { t } = useTranslation("component-object")
 
-  data.filter((d) => d.node.name !== "PLACEHOLDER")
   randomize && (data = shuffle(data))
   limit && (data = data.slice(0, limit))
 
@@ -30,7 +29,11 @@ const GridObjectDefault = ({ data, randomize, limit }) => {
               }
             >
               <div className='item-image'>
-                <Img fluid={d.node.images[0].fluid} />
+                {d.node.images[0].fixed ? (
+                  <Img fluid={d.node.images[0].fixed} />
+                ) : (
+                  <Img fluid={d.node.images[0].fluid} />
+                )}
               </div>
               <p className='item-name'>{d.node.name}</p>
             </Link>

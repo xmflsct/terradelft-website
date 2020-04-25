@@ -8,7 +8,6 @@ const slugify = require("slugify")
 const GridArtist = ({ data }) => (
   <Row className='component-grid grid-artist'>
     {data
-      .filter((d) => d.node.artist !== "PLACEHOLDER")
       .map((d) => (
         <Col key={d.node.artist} lg={2} className='grid-item'>
           <Link
@@ -20,7 +19,11 @@ const GridArtist = ({ data }) => (
             }
           >
             <div className='item-image'>
-              <Img fluid={d.node.image.fluid} />
+              {d.node.image.fixed ? (
+                <Img fluid={d.node.image.fixed} />
+              ) : (
+                <Img fluid={d.node.image.fluid} />
+              )}
             </div>
             <p className='item-name'>{d.node.artist}</p>
           </Link>
