@@ -21,7 +21,7 @@ const Index = () => {
 
   return (
     <Layout
-      SEOtitle={"404 " + t("title")}
+      SEOtitle={`404 ${t("title")}`}
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
       containerName='static-404'
     >

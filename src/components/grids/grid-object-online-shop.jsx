@@ -45,23 +45,22 @@ const GridObjectOnlineShop = ({ data }) => {
     artists: [],
     variants: [],
   }
-  data
-    .forEach((d) => {
-      find(options.artists, ["label", d.node.artist.artist]) ||
-        options.artists.push({
-          label: d.node.artist.artist,
-          value: d.node.artist.artist,
-        })
+  data.forEach((d) => {
+    find(options.artists, ["label", d.node.artist.artist]) ||
+      options.artists.push({
+        label: d.node.artist.artist,
+        value: d.node.artist.artist,
+      })
 
-      d.node.fields.object_variants &&
-        d.node.fields.object_variants.forEach((v) => {
-          find(options.variants, ["label", v]) ||
-            options.variants.push({
-              label: v,
-              value: v,
-            })
-        })
-    })
+    d.node.fields.object_variants &&
+      d.node.fields.object_variants.forEach((v) => {
+        find(options.variants, ["label", v]) ||
+          options.variants.push({
+            label: v,
+            value: v,
+          })
+      })
+  })
 
   return (
     <>
@@ -156,14 +155,11 @@ const GridObjectOnlineShop = ({ data }) => {
             return (
               <Col key={d.node.name} lg={2} className='grid-item'>
                 <Link
-                  to={
-                    "/" +
-                    d.node.node_locale +
-                    "/" +
-                    slugify(d.node.artist.artist, { lower: true }) +
-                    "/" +
-                    slugify(d.node.name, { lower: true })
-                  }
+                  to={`/${d.node.node_locale}/${slugify(d.node.artist.artist, {
+                    lower: true,
+                  })}/${slugify(`${d.node.name}-${d.node.contentful_id}`, {
+                    lower: true,
+                  })}`}
                 >
                   <div className='item-image'>
                     <Img fluid={d.node.images[0].fluid} />

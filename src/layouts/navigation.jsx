@@ -9,10 +9,10 @@ const Header = () => {
   return (
     <Row as='nav'>
       <Col lg={2} className='nav-item'>
-        <Link to={"/" + i18n.language}>{t("constant:navigation.1.name")}</Link>
+        <Link to={`/${i18n.language}`}>{t("constant:navigation.1.name")}</Link>
       </Col>
       <Col lg={2} className='nav-item'>
-        <Link to={"/" + i18n.language + "/" + t("constant:navigation.2.url")}>
+        <Link to={`/${i18n.language}/${t("constant:navigation.2.url")}`}>
           {t("constant:navigation.2.name")}
         </Link>
       </Col>

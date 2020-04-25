@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"
 const Index = () => {
   const { i18n } = useTranslation()
   if (typeof window !== "undefined") {
-    window.location.replace(window.location.origin + "/" + i18n.languages[0])
+    window.location.replace(`${window.location.origin}/${i18n.languages[0]}`)
   }
   return (
     <Container

@@ -28,14 +28,12 @@ const BagList = () => {
               </Col>
               <Col lg={8} className='object-details'>
                 <Link
-                  to={
-                    "/" +
-                    i18n.language +
-                    "/" +
-                    slugify(object.artist, { lower: true }) +
-                    "/" +
-                    slugify(object.name[i18n.language], { lower: true })
-                  }
+                  to={`/${i18n.language}/${slugify(object.artist, {
+                    lower: true,
+                  })}/${slugify(
+                    `${object.name[i18n.language]}-${object.contentful_id}`,
+                    { lower: true }
+                  )}`}
                   className='object-name'
                 >
                   {object.name[i18n.language]}

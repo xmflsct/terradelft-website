@@ -308,14 +308,17 @@ const BagCheckout = () => {
                   role='status'
                   aria-hidden='true'
                 />
-                {" " + t("content.checkout.button.wait")}
+                {` ${t("content.checkout.button.wait")}`}
               </>
             )) ||
-              (formState.submitCount !== 0 && t("content.checkout.button.retry")) ||
+              (formState.submitCount !== 0 &&
+                t("content.checkout.button.retry")) ||
               t("content.checkout.button.submit")}
           </Button>
           {corrections.required ? (
-            <p className='checkout-correction'>{t("content.checkout.correction")}</p>
+            <p className='checkout-correction'>
+              {t("content.checkout.correction")}
+            </p>
           ) : (
             ""
           )}

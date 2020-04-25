@@ -70,7 +70,7 @@ const Header = () => {
           )}
       </Col>
       <Col lg={1} className='bag-link text-right'>
-        <Link to={"/" + i18n.language + "/" + t("constant:header.bag.url")}>
+        <Link to={`/${i18n.language}/${t("constant:header.bag.url")}`}>
           <FontAwesomeIcon icon={faShoppingBag} />
           {` (${state.bag.objects.length})`}
         </Link>

@@ -51,6 +51,7 @@ export const query = graphql`
     ) {
       edges {
         node {
+          contentful_id
           node_locale
           images {
             fluid(maxWidth: 140) {
