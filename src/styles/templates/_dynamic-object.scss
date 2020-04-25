@@ -26,6 +26,17 @@
       }
     }
   }
+  .object-sold {
+    margin: 1rem 0;
+
+    span {
+      background: $red;
+      color: $white;
+      font-weight: $font-weight-bold;
+      padding: 0.5rem 1rem;
+      border-radius: 5rem;
+    }
+  }
   .object-attribute {
     .attribute-type {
       font-weight: $font-weight-bold;

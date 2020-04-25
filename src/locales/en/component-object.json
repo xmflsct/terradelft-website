@@ -1,4 +1,5 @@
 {
+  "option-default": "Normal",
   "variant": "Variant",
   "colour": "Colour",
   "size": "Size",
@@ -11,5 +12,6 @@
   "dimensionHeight": "Height",
   "dimensionDiameter": "Diameter",
   "dimensionDepth": "Depth",
-  "on-sale": "On sale"
+  "on-sale": "On sale",
+  "out-of-stock": "Sold"
 }

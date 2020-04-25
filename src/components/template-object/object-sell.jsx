@@ -7,7 +7,7 @@ import SellMain from "./sell-main"
 import { Price } from "../utils/price"
 
 const ObjectSell = ({ object }) => {
-  const { i18n } = useTranslation("static-index")
+  const { t, i18n } = useTranslation("component-object")
   const objectSell =
     object.edges[
       findIndex(object.edges, (e) => e.node.node_locale === i18n.language)
@@ -15,23 +15,22 @@ const ObjectSell = ({ object }) => {
 
   return (
     <div>
-      {objectSell.sellOnline ? (
-        objectSell.variations ? (
-          // Online variations with stock
-          <SellVariations object={object} />
-        ) : objectSell.stock > 0 ? (
-          // Online main with stock
+      {objectSell.variations ? (
+        <SellVariations object={object} />
+      ) : objectSell.stock > 0 ? (
+        objectSell.sellOnline ? (
           <SellMain object={object} />
         ) : (
-          // Online main without stock
-          "Out of stock online"
+          Price(
+            objectSell.priceSale,
+            objectSell.priceOriginal,
+            objectSell.kunstKoop
+          )
         )
-      ) : objectSell.stock > 0 ? (
-        // Store with stock
-        Price(objectSell.priceSale, objectSell.priceOriginal, objectSell.kunstKoop)
       ) : (
-        // Store without stock
-        "Out of stock in store"
+        <div className='object-sold'>
+          <span>{t("out-of-stock")}</span>
+        </div>
       )}
     </div>
   )

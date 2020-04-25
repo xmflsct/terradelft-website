@@ -10,9 +10,9 @@ const ObjectImages = (images) => {
 
   if (typeof window !== "undefined") {
     mediumZoom(".image-zoom > picture > img", {
-      margin: 20,
+      margin: 50,
       background: "rgba(0, 0, 0, 0.88)",
-      scrollOffset: 40,
+      scrollOffset: 50,
       container: null,
       template: null,
       zIndex: 99999,

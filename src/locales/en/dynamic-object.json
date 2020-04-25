@@ -1,6 +1,10 @@
 {
   "artist": "Artist",
   "amount": "Amount",
-  "add-to-bag": "Add to bag",
+  "add-button": {
+    "add-to-bag": "Add to bag",
+    "select-variation": "select options",
+    "out-of-stock": "Sold"
+  },
   "related": "Other objects from "
 }
