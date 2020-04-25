@@ -1,5 +1,6 @@
 import React from "react"
 import { Button, Container } from "react-bootstrap"
+import { config } from '@fortawesome/fontawesome-svg-core'
 
 import SEO from "./seo"
 import Header from "./header"
@@ -8,6 +9,7 @@ import Footer from "./footer"
 
 const Layout = ({ children, SEOtitle, SEOkeywords, containerName }) => {
   const [toggleNav, setToggleNav] = React.useState(false)
+  config.autoAddCss = false
 
   return (
     <Container className={`site-wrapper ${toggleNav ? "site-head-open" : ""}`}>

@@ -9,6 +9,8 @@ import Img from "gatsby-image"
 import { ContextLanguage } from "./contexts/language"
 import { ContextBag } from "./contexts/bag"
 
+import "../../node_modules/@fortawesome/fontawesome-svg-core/styles.css"
+
 const Header = () => {
   const image = useStaticQuery(graphql`
     {
