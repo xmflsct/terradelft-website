@@ -6,8 +6,6 @@ import Header from "./header"
 import Navigation from "./navigation"
 import Footer from "./footer"
 
-import "../styles/main.scss"
-
 const Layout = ({ children, SEOtitle, SEOkeywords, containerName }) => {
   const [toggleNav, setToggleNav] = React.useState(false)
 
