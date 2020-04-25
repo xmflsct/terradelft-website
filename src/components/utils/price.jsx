@@ -9,7 +9,7 @@ export function Price(priceSale, priceOriginal, kunstKoop) {
     {
       file(relativePath: { eq: "dynamic-object/kunstkoop.jpg" }) {
         childImageSharp {
-          fixed(width: 70, quality: 100) {
+          fixed(width: 70, quality: 90) {
             ...GatsbyImageSharpFixed_withWebp_noBase64
           }
         }

@@ -1,4 +1,5 @@
 {
+  "option-default": "Normaal",
   "variant": "Variant",
   "colour": "Kleur",
   "size": "Afmeting",
@@ -11,5 +12,6 @@
   "dimensionHeight": "Hoogte",
   "dimensionDiameter": "Diameter",
   "dimensionDepth": "Diepte",
-  "on-sale": "Aanbieding"
+  "on-sale": "Aanbieding",
+  "out-of-stock": "Verkocht"
 }

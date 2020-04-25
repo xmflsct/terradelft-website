@@ -9,6 +9,8 @@ import Img from "gatsby-image"
 import { ContextLanguage } from "./contexts/language"
 import { ContextBag } from "./contexts/bag"
 
+import "../../node_modules/@fortawesome/fontawesome-svg-core/styles.css"
+
 const Header = () => {
   const image = useStaticQuery(graphql`
     {
@@ -62,7 +64,7 @@ const Header = () => {
                   hrefLang={link.language}
                   key={link.language}
                 >
-                  <FontAwesomeIcon icon={faGlobeEurope} />
+                  <FontAwesomeIcon icon={faGlobeEurope} size="sm" />
                   {" " +
                     t(`constant:header.language-switcher.${link.language}`)}
                 </Link>
@@ -71,7 +73,7 @@ const Header = () => {
       </Col>
       <Col lg={1} className='bag-link text-right'>
         <Link to={`/${i18n.language}/${t("constant:header.bag.url")}`}>
-          <FontAwesomeIcon icon={faShoppingBag} />
+          <FontAwesomeIcon icon={faShoppingBag} size="sm" />
           {` (${state.bag.objects.length})`}
         </Link>
       </Col>
