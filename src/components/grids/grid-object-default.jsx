@@ -19,14 +19,11 @@ const GridObjectDefault = ({ data, randomize, limit }) => {
         return (
           <Col key={d.node.name} lg={2} className='grid-item'>
             <Link
-              to={
-                "/" +
-                d.node.node_locale +
-                "/" +
-                slugify(d.node.artist.artist, { lower: true }) +
-                "/" +
-                slugify(d.node.name, { lower: true })
-              }
+              to={`/${d.node.node_locale}/${slugify(d.node.artist.artist, {
+                lower: true,
+              })}/${slugify(`${d.node.name}-${d.node.contentful_id}`, {
+                lower: true,
+              })}`}
             >
               <div className='item-image'>
                 {d.node.images[0].fixed ? (

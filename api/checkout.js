@@ -207,7 +207,7 @@ async function stripeSession(req) {
             (object.colour[locale] || "N/A") +
             ", " +
             (object.size[locale] || "N/A")
-      const images = ["https:" + object.image.fluid.src]
+      const images = [`https:${object.image.fluid.src}`]
       line_items.push({
         name: name,
         amount: object.priceSale
@@ -221,7 +221,7 @@ async function stripeSession(req) {
     // Skip pick-up in shop
     req.body.data.pay.shipping &&
       line_items.push({
-        name: "Shipping to " + req.body.data.shipping.countryA2,
+        name: `Shipping to ${req.body.data.shipping.countryA2}`,
         amount: req.body.data.pay.shipping * 10 * 10,
         currency: "eur",
         quantity: 1,

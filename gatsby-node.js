@@ -1,5 +1,5 @@
-const realFs = require('fs')
-const gracefulFs = require('graceful-fs')
+const realFs = require("fs")
+const gracefulFs = require("graceful-fs")
 gracefulFs.gracefulify(realFs)
 const _ = require("lodash")
 const path = require(`path`)
@@ -46,37 +46,36 @@ exports.createPages = async ({
     }
   `)
   await Promise.all(
-    artists.data.artists.edges
-      .map(async (node) => {
-        const artistsNew = await graphql(
-          `
-            query($contentful_id: String!) {
-              artistsNew: allContentfulObjectsArtist(
-                filter: { contentful_id: { eq: $contentful_id } }
-              ) {
-                edges {
-                  node {
-                    contentful_id
-                    node_locale
-                    artist
-                  }
+    artists.data.artists.edges.map(async (node) => {
+      const artistsNew = await graphql(
+        `
+          query($contentful_id: String!) {
+            artistsNew: allContentfulObjectsArtist(
+              filter: { contentful_id: { eq: $contentful_id } }
+            ) {
+              edges {
+                node {
+                  contentful_id
+                  node_locale
+                  artist
                 }
               }
             }
-          `,
-          { contentful_id: node.node.contentful_id }
-        )
-        await buildDynamicPages(
-          artistsNew.data.artistsNew.edges,
-          ({ node }, language) => ({
-            path: "/" + language + "/" + slugify(node.artist, { lower: true }),
-            component: pageArtist,
-            context: { contentful_id: node.contentful_id, language: language },
-          }),
-          ["constant"],
-          createPage
-        )
-      })
+          }
+        `,
+        { contentful_id: node.node.contentful_id }
+      )
+      await buildDynamicPages(
+        artistsNew.data.artistsNew.edges,
+        ({ node }, language) => ({
+          path: `/${language}/${slugify(node.artist, { lower: true })}`,
+          component: pageArtist,
+          context: { contentful_id: node.contentful_id, language: language },
+        }),
+        ["constant"],
+        createPage
+      )
+    })
   )
 
   /* Biuld Object Page */
@@ -96,57 +95,54 @@ exports.createPages = async ({
     }
   `)
   await Promise.all(
-    objects.data.objects.edges
-      .map(async (node) => {
-        const objectsNew = await graphql(
-          `
-            query($contentful_id: String!) {
-              objectsNew: allContentfulObjectsObjectMain(
-                filter: { contentful_id: { eq: $contentful_id } }
-              ) {
-                edges {
-                  node {
+    objects.data.objects.edges.map(async (node) => {
+      const objectsNew = await graphql(
+        `
+          query($contentful_id: String!) {
+            objectsNew: allContentfulObjectsObjectMain(
+              filter: { contentful_id: { eq: $contentful_id } }
+            ) {
+              edges {
+                node {
+                  contentful_id
+                  node_locale
+                  name
+                  artist {
                     contentful_id
-                    node_locale
-                    name
-                    artist {
-                      contentful_id
-                      artist
-                    }
-                    description {
-                      json
-                    }
+                    artist
+                  }
+                  description {
+                    json
                   }
                 }
               }
             }
-          `,
-          { contentful_id: node.node.contentful_id }
-        )
-        await buildDynamicPages(
-          objectsNew.data.objectsNew.edges,
-          ({ node }, language) => ({
-            path:
-              "/" +
-              language +
-              "/" +
-              slugify(node.artist.artist, { lower: true }) +
-              "/" +
-              slugify(node.name, { lower: true }),
-            component: object,
-            context: {
-              contentful_id: node.contentful_id,
-              artist_contentful_id: node.artist.contentful_id,
-              language: language,
-              imagesFromRichText: node.description
-                ? getImagesFromRichText(node.description.json.content)
-                : ["null"],
-            },
-          }),
-          ["constant", "dynamic-object", "component-object"],
-          createPage
-        )
-      })
+          }
+        `,
+        { contentful_id: node.node.contentful_id }
+      )
+      await buildDynamicPages(
+        objectsNew.data.objectsNew.edges,
+        ({ node }, language) => ({
+          path: `/${language}/${slugify(node.artist.artist, {
+            lower: true,
+          })}/${slugify(`${node.name}-${node.contentful_id}`, {
+            lower: true,
+          })}`,
+          component: object,
+          context: {
+            contentful_id: node.contentful_id,
+            artist_contentful_id: node.artist.contentful_id,
+            language: language,
+            imagesFromRichText: node.description
+              ? getImagesFromRichText(node.description.json.content)
+              : ["null"],
+          },
+        }),
+        ["constant", "dynamic-object", "component-object"],
+        createPage
+      )
+    })
   )
 
   /* Redirect - 404 */
@@ -183,7 +179,7 @@ const buildStaticPages = async (namespaces, createPage) => {
     languages.map(async (language) => {
       const i18n = await createI18nextInstance(language, namespaces)
       const res = {
-        path: "/" + language + "/" + i18n.t(`${namespaces[0]}:url`),
+        path: `/${language}/${i18n.t(`${namespaces[0]}:url`)}`,
         component: path.resolve(`src/templates/${namespaces[0]}.jsx`),
         context: {
           language: language,
