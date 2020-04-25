@@ -1,4 +1,6 @@
-const fs = require("graceful-fs")
+const realFs = require('fs')
+const gracefulFs = require('graceful-fs')
+gracefulFs.gracefulify(realFs)
 const _ = require("lodash")
 const path = require(`path`)
 const slugify = require("slugify")
@@ -6,9 +8,6 @@ const i18next = require("i18next")
 const nodeFsBackend = require("i18next-node-fs-backend")
 
 const languages = ["nl", "en"]
-const appDirectory = fs.realpathSync(process.cwd())
-const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath)
-const srcPath = resolveApp("src")
 
 exports.createPages = async ({
   graphql,
@@ -171,7 +170,7 @@ const createI18nextInstance = async (language, namespaces) => {
         ns: namespaces,
         fallbackLng: language,
         interpolation: { escapeValue: false },
-        backend: { loadPath: `${srcPath}/locales/{{lng}}/{{ns}}.json` },
+        backend: { loadPath: `src/locales/{{lng}}/{{ns}}.json` },
       },
       resolve
     )
