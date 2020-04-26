@@ -6,7 +6,7 @@ import Layout from "../layouts/layout"
 import GridArtist from "../components/grids/grid-artist"
 import GridObjectDefault from "../components/grids/grid-object-default"
 
-const Index = ({ data }) => {
+const StaticIndex = ({ data }) => {
   const { t } = useTranslation("static-index")
 
   return (
@@ -78,4 +78,4 @@ export const query = graphql`
   }
 `
 
-export default Index
+export default StaticIndex

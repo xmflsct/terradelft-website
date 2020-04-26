@@ -2,7 +2,7 @@ import React from "react"
 import { Container, Spinner } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 
-const Index = () => {
+const StaticLanding = () => {
   const { i18n } = useTranslation()
   if (typeof window !== "undefined") {
     window.location.replace(`${window.location.origin}/${i18n.languages[0]}`)
@@ -21,4 +21,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default StaticLanding

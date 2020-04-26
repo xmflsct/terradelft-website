@@ -53,7 +53,7 @@ const renderImages = (imagesFromRichText, locale) => ({
   },
 })
 
-const PageObject = ({ data }) => {
+const DynamicObject = ({ data }) => {
   const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
   const [state, updateImage] = useReducer(reducer, initContextVariationImage)
   const object =
@@ -288,4 +288,4 @@ export const query = graphql`
   }
 `
 
-export default PageObject
+export default DynamicObject

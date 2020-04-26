@@ -5,7 +5,7 @@ import { graphql } from "gatsby"
 import Layout from "../layouts/layout"
 import GridObjectOnlineShop from "../components/grids/grid-object-online-shop"
 
-const OnlineShop = ({ data }) => {
+const StaticOnlineShop = ({ data }) => {
   const { t } = useTranslation("static-online-shop")
 
   return (
@@ -53,4 +53,4 @@ export const query = graphql`
   }
 `
 
-export default OnlineShop
+export default StaticOnlineShop

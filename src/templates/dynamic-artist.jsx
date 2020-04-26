@@ -7,7 +7,7 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import Layout from "../layouts/layout"
 import GridObjectDefault from "../components/grids/grid-object-default"
 
-const PageArtist = ({ data }) => (
+const DynamicArtist = ({ data }) => (
   <Layout
     SEOtitle={data.artist.artist}
     SEOkeywords={[data.artist.artist, "Terra Delft"]}
@@ -71,4 +71,4 @@ export const query = graphql`
   }
 `
 
-export default PageArtist
+export default DynamicArtist
