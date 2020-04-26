@@ -7,7 +7,8 @@ const slugify = require("slugify")
 const i18next = require("i18next")
 const nodeFsBackend = require("i18next-node-fs-backend")
 
-const languages = ["nl", "en"]
+// Default locale in first place
+const locales = ["nl", "en"]
 
 exports.createPages = async ({
   graphql,
@@ -30,11 +31,11 @@ exports.createPages = async ({
   await buildStaticPages(["static-404", "constant"], createPage)
 
   /* Biuld Artist Page */
-  const pageArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
+  const dynamicArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
   const artists = await graphql(`
     {
       artists: allContentfulObjectsArtist(
-        filter: { node_locale: { eq: "nl" } }
+        filter: { node_locale: { eq: "${locales[0]}" } }
       ) {
         edges {
           node {
@@ -69,7 +70,7 @@ exports.createPages = async ({
         artistsNew.data.artistsNew.edges,
         ({ node }, language) => ({
           path: `/${language}/${slugify(node.artist, { lower: true })}`,
-          component: pageArtist,
+          component: dynamicArtist,
           context: { contentful_id: node.contentful_id, language: language },
         }),
         ["constant"],
@@ -79,11 +80,11 @@ exports.createPages = async ({
   )
 
   /* Biuld Object Page */
-  const object = path.resolve(`src/templates/dynamic-object.jsx`)
+  const dynamicObject = path.resolve(`src/templates/dynamic-object.jsx`)
   const objects = await graphql(`
     {
       objects: allContentfulObjectsObjectMain(
-        filter: { node_locale: { eq: "nl" } }
+        filter: { node_locale: { eq: "${locales[0]}" } }
       ) {
         edges {
           node {
@@ -129,7 +130,7 @@ exports.createPages = async ({
           })}/${slugify(`${node.name}-${node.contentful_id}`, {
             lower: true,
           })}`,
-          component: object,
+          component: dynamicObject,
           context: {
             contentful_id: node.contentful_id,
             artist_contentful_id: node.artist.contentful_id,
@@ -145,11 +146,69 @@ exports.createPages = async ({
     })
   )
 
+  /* Biuld Object Attribute Page */
+  const dynamicObjectAttribute = path.resolve(
+    `src/templates/dynamic-object-attribute.jsx`
+  )
+  const objectAttributes = await graphql(`
+    {
+      objectAttributes: allContentfulObjectsYear(
+        filter: { node_locale: { eq: "${locales[0]}" } }
+      ) {
+        edges {
+          node {
+            contentful_id
+            year
+          }
+        }
+      }
+    }
+  `)
+  await Promise.all(
+    objectAttributes.data.objectAttributes.edges.map(async (node) => {
+      console.log(node)
+      const objectAttributesNew = await graphql(
+        `
+          query($contentful_id: String!) {
+            objectAttributesNew: allContentfulObjectsObjectMain(
+              filter: { year: { contentful_id: { eq: $contentful_id } } }
+            ) {
+              edges {
+                node {
+                  contentful_id
+                  node_locale
+                  name
+                  artist {
+                    artist
+                  }
+                }
+              }
+            }
+          }
+        `,
+        { contentful_id: node.node.contentful_id }
+      )
+      await buildDynamicPages(
+        objectAttributesNew.data.objectAttributesNew.edges,
+        ({}, language) => ({
+          path: `/${language}/objects/year/${node.node.year}`,
+          component: dynamicObjectAttribute,
+          context: {
+            contentful_id: node.node.contentful_id,
+            language: language,
+          },
+        }),
+        ["constant", "dynamic-object", "component-object"],
+        createPage
+      )
+    })
+  )
+
   /* Redirect - 404 */
-  languages.forEach((language) =>
+  locales.forEach((locale) =>
     createRedirect({
-      fromPath: `/${language}/*`,
-      toPath: `/${language}/404`,
+      fromPath: `/${locale}/*`,
+      toPath: `/${locale}/404`,
       statusCode: 404,
     })
   )
@@ -176,13 +235,13 @@ const createI18nextInstance = async (language, namespaces) => {
 
 const buildStaticPages = async (namespaces, createPage) => {
   const definitions = await Promise.all(
-    languages.map(async (language) => {
-      const i18n = await createI18nextInstance(language, namespaces)
+    locales.map(async (locale) => {
+      const i18n = await createI18nextInstance(locale, namespaces)
       const res = {
-        path: `/${language}/${i18n.t(`${namespaces[0]}:url`)}`,
+        path: `/${locale}/${i18n.t(`${namespaces[0]}:url`)}`,
         component: path.resolve(`src/templates/${namespaces[0]}.jsx`),
         context: {
-          language: language,
+          language: locale,
           i18nResources: i18n.services.resourceStore.data,
         },
       }
