@@ -1,41 +1,41 @@
 import React from "react"
 import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
-import { Link } from "gatsby"
+import { graphql, Link } from "gatsby"
 import Img from "gatsby-image"
 import { shuffle } from "lodash"
 
 const slugify = require("slugify")
 
-const GridObjectDefault = ({ data, randomize, limit }) => {
+const GridObjectDefault = ({ nodes, randomize, limit }) => {
   const { t } = useTranslation("component-object")
 
-  randomize && (data = shuffle(data))
-  limit && (data = data.slice(0, limit))
+  randomize && (nodes = shuffle(nodes))
+  limit && (nodes = nodes.slice(0, limit))
 
   return (
     <Row className='component-grid grid-object-default'>
-      {data.map((d) => {
+      {nodes.map((node) => {
         return (
-          <Col key={d.node.name} lg={2} className='grid-item'>
+          <Col key={node.name} lg={2} className='grid-item'>
             <Link
-              to={`/${d.node.node_locale}/${slugify(d.node.artist.artist, {
+              to={`/${node.node_locale}/${slugify(node.artist.artist, {
                 lower: true,
-              })}/${slugify(`${d.node.name}-${d.node.contentful_id}`, {
+              })}/${slugify(`${node.name}-${node.contentful_id}`, {
                 lower: true,
               })}`}
             >
               <div className='item-image'>
-                {d.node.images[0].fixed ? (
-                  <Img fluid={d.node.images[0].fixed} />
+                {node.images[0].fixed ? (
+                  <Img fluid={node.images[0].fixed} />
                 ) : (
-                  <Img fluid={d.node.images[0].fluid} />
+                  <Img fluid={node.images[0].fluid} />
                 )}
               </div>
-              <p className='item-name'>{d.node.name}</p>
+              <p className='item-name'>{node.name}</p>
             </Link>
             <span className='item-sale'>
-              {d.node.fields.object_sale && t("on-sale")}
+              {node.fields.object_sale && t("on-sale")}
             </span>
           </Col>
         )
@@ -43,5 +43,24 @@ const GridObjectDefault = ({ data, randomize, limit }) => {
     </Row>
   )
 }
+
+export const query = graphql`
+  fragment ObjectDefault on ContentfulObjectsObjectMain {
+    contentful_id
+    node_locale
+    name
+    artist {
+      artist
+    }
+    images {
+      fluid(maxWidth: 140) {
+        ...GatsbyContentfulFluid_withWebp
+      }
+    }
+    fields {
+      object_sale
+    }
+  }
+`
 
 export default GridObjectDefault

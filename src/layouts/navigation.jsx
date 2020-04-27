@@ -17,7 +17,9 @@ const Header = () => {
         </Link>
       </Col>
       <Col lg={2} className='nav-item'>
-        <Link to='/test'>{t("constant:navigation.3.name")}</Link>
+        <Link to={`/${i18n.language}/${t("constant:navigation.3.url")}`}>
+          {t("constant:navigation.3.name")}
+        </Link>
       </Col>
       <Col lg={2} className='nav-item'>
         <Link to='/test'>{t("constant:navigation.4.name")}</Link>

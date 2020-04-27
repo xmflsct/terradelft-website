@@ -7,7 +7,7 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import Layout from "../layouts/layout"
 import GridObjectDefault from "../components/grids/grid-object-default"
 
-const PageArtist = ({ data }) => (
+const DynamicArtist = ({ data }) => (
   <Layout
     SEOtitle={data.artist.artist}
     SEOkeywords={[data.artist.artist, "Terra Delft"]}
@@ -23,7 +23,7 @@ const PageArtist = ({ data }) => (
       </Col>
     </Row>
     <h2>Objects by {data.artist.artist}</h2>
-    <GridObjectDefault data={data.objects.edges} />
+    <GridObjectDefault nodes={data.objects.nodes} />
   </Layout>
 )
 
@@ -49,26 +49,11 @@ export const query = graphql`
         node_locale: { eq: $language }
       }
     ) {
-      edges {
-        node {
-          contentful_id
-          node_locale
-          images {
-            fluid(maxWidth: 140) {
-              ...GatsbyContentfulFluid_withWebp
-            }
-          }
-          name
-          artist {
-            artist
-          }
-          fields {
-            object_sale
-          }
-        }
+      nodes {
+        ...ObjectDefault
       }
     }
   }
 `
 
-export default PageArtist
+export default DynamicArtist

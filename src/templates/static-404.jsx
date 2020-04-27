@@ -5,7 +5,7 @@ import Img from "gatsby-image"
 
 import Layout from "../layouts/layout"
 
-const Index = () => {
+const Static404 = () => {
   const image = useStaticQuery(graphql`
     {
       file(relativePath: { eq: "static-404/404.jpg" }) {
@@ -31,4 +31,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default Static404

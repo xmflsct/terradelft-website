@@ -6,7 +6,7 @@ import Layout from "../layouts/layout"
 import BagList from "../components/template-bag/bag-list"
 import BagCheckout from "../components/template-bag/bag-checkout"
 
-const Bag = () => {
+const StaticBag = () => {
   const { t } = useTranslation("static-bag")
 
   return (
@@ -28,4 +28,4 @@ const Bag = () => {
   )
 }
 
-export default Bag
+export default StaticBag

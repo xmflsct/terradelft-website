@@ -6,7 +6,7 @@ import Layout from "../layouts/layout"
 import GridArtist from "../components/grids/grid-artist"
 import GridObjectDefault from "../components/grids/grid-object-default"
 
-const Index = ({ data }) => {
+const StaticIndex = ({ data }) => {
   const { t } = useTranslation("static-index")
 
   return (
@@ -18,7 +18,7 @@ const Index = ({ data }) => {
       <div className='section-online-shop mb-3'>
         <h2>{t("content.section.online-shop")}</h2>
         <GridObjectDefault
-          data={data.objects.edges}
+          nodes={data.objects.nodes}
           randomize={true}
           limit={6}
         />
@@ -37,23 +37,8 @@ export const query = graphql`
       filter: { sellOnline: { eq: true }, node_locale: { eq: $language } }
       limit: 36
     ) {
-      edges {
-        node {
-          contentful_id
-          node_locale
-          images {
-            fluid(maxWidth: 140) {
-              ...GatsbyContentfulFluid_withWebp
-            }
-          }
-          name
-          artist {
-            artist
-          }
-          fields {
-            object_sale
-          }
-        }
+      nodes {
+        ...ObjectDefault
       }
     }
     artists: allContentfulObjectsArtist(
@@ -78,4 +63,4 @@ export const query = graphql`
   }
 `
 
-export default Index
+export default StaticIndex

@@ -7,7 +7,10 @@ const slugify = require("slugify")
 const i18next = require("i18next")
 const nodeFsBackend = require("i18next-node-fs-backend")
 
-const languages = ["nl", "en"]
+// Default locale in first place
+const locales = ["nl", "en"]
+
+const allObjectAttributes = ["year", "technique", "material"]
 
 exports.createPages = async ({
   graphql,
@@ -18,11 +21,17 @@ exports.createPages = async ({
     component: path.resolve(`src/templates/static-landing.jsx`),
     context: {},
   })
+  createPage({
+    path: "/404",
+    component: path.resolve(`src/templates/static-404.jsx`),
+    context: {},
+  })
   await buildStaticPages(["static-index", "constant"], createPage)
   await buildStaticPages(
     ["static-online-shop", "constant", "component-object"],
     createPage
   )
+  await buildStaticPages(["static-events", "constant"], createPage)
   await buildStaticPages(
     ["static-bag", "constant", "component-object"],
     createPage
@@ -30,47 +39,43 @@ exports.createPages = async ({
   await buildStaticPages(["static-404", "constant"], createPage)
 
   /* Biuld Artist Page */
-  const pageArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
+  const dynamicArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
   const artists = await graphql(`
     {
       artists: allContentfulObjectsArtist(
-        filter: { node_locale: { eq: "nl" } }
+        filter: { node_locale: { eq: "${locales[0]}" } }
       ) {
-        edges {
-          node {
-            contentful_id
-            artist
-          }
+        nodes {
+          contentful_id
+          artist
         }
       }
     }
   `)
   await Promise.all(
-    artists.data.artists.edges.map(async (node) => {
-      const artistsNew = await graphql(
+    artists.data.artists.nodes.map(async (node) => {
+      const artist = await graphql(
         `
           query($contentful_id: String!) {
-            artistsNew: allContentfulObjectsArtist(
+            artist: allContentfulObjectsArtist(
               filter: { contentful_id: { eq: $contentful_id } }
             ) {
-              edges {
-                node {
-                  contentful_id
-                  node_locale
-                  artist
-                }
+              nodes {
+                contentful_id
+                node_locale
+                artist
               }
             }
           }
         `,
-        { contentful_id: node.node.contentful_id }
+        { contentful_id: node.contentful_id }
       )
       await buildDynamicPages(
-        artistsNew.data.artistsNew.edges,
-        ({ node }, language) => ({
-          path: `/${language}/${slugify(node.artist, { lower: true })}`,
-          component: pageArtist,
-          context: { contentful_id: node.contentful_id, language: language },
+        artist.data.artist.nodes,
+        (language, { artist, contentful_id }) => ({
+          path: `/${language}/${slugify(artist, { lower: true })}`,
+          component: dynamicArtist,
+          context: { contentful_id: contentful_id, language: language },
         }),
         ["constant"],
         createPage
@@ -79,63 +84,59 @@ exports.createPages = async ({
   )
 
   /* Biuld Object Page */
-  const object = path.resolve(`src/templates/dynamic-object.jsx`)
+  const dynamicObject = path.resolve(`src/templates/dynamic-object.jsx`)
   const objects = await graphql(`
     {
       objects: allContentfulObjectsObjectMain(
-        filter: { node_locale: { eq: "nl" } }
+        filter: { node_locale: { eq: "${locales[0]}" } }
       ) {
-        edges {
-          node {
-            contentful_id
-            name
-          }
+        nodes {
+          contentful_id
+          name
         }
       }
     }
   `)
   await Promise.all(
-    objects.data.objects.edges.map(async (node) => {
-      const objectsNew = await graphql(
+    objects.data.objects.nodes.map(async (node) => {
+      const object = await graphql(
         `
           query($contentful_id: String!) {
-            objectsNew: allContentfulObjectsObjectMain(
+            object: allContentfulObjectsObjectMain(
               filter: { contentful_id: { eq: $contentful_id } }
             ) {
-              edges {
-                node {
+              nodes {
+                contentful_id
+                node_locale
+                name
+                artist {
                   contentful_id
-                  node_locale
-                  name
-                  artist {
-                    contentful_id
-                    artist
-                  }
-                  description {
-                    json
-                  }
+                  artist
+                }
+                description {
+                  json
                 }
               }
             }
           }
         `,
-        { contentful_id: node.node.contentful_id }
+        { contentful_id: node.contentful_id }
       )
       await buildDynamicPages(
-        objectsNew.data.objectsNew.edges,
-        ({ node }, language) => ({
-          path: `/${language}/${slugify(node.artist.artist, {
+        object.data.object.nodes,
+        (language, { artist, name, contentful_id, description }) => ({
+          path: `/${language}/${slugify(artist.artist, {
             lower: true,
-          })}/${slugify(`${node.name}-${node.contentful_id}`, {
+          })}/${slugify(`${name}-${contentful_id}`, {
             lower: true,
           })}`,
-          component: object,
+          component: dynamicObject,
           context: {
-            contentful_id: node.contentful_id,
-            artist_contentful_id: node.artist.contentful_id,
+            contentful_id: contentful_id,
+            artist_contentful_id: artist.contentful_id,
             language: language,
-            imagesFromRichText: node.description
-              ? getImagesFromRichText(node.description.json.content)
+            imagesFromRichText: description
+              ? getImagesFromRichText(description.json.content)
               : ["null"],
           },
         }),
@@ -145,11 +146,77 @@ exports.createPages = async ({
     })
   )
 
+  /* Biuld Object Attribute Page */
+  const dynamicObjectAttribute = path.resolve(
+    `src/templates/dynamic-object-attribute.jsx`
+  )
+  await Promise.all(
+    allObjectAttributes.map(async (attribute) => {
+      const objectAttributes = await graphql(`
+      {
+        objectAttributes: allContentfulObjects${
+          attribute[0].toUpperCase() + attribute.slice(1)
+        }(
+          filter: { node_locale: { eq: "${locales[0]}" } }
+        ) {
+          nodes {
+            contentful_id
+            ${attribute}
+          }
+        }
+      }
+    `)
+      await Promise.all(
+        objectAttributes.data.objectAttributes.nodes.map(async (node) => {
+          const objectAttribute = await graphql(
+            `
+              query($contentful_id: String!) {
+                objectAttribute: allContentfulObjects${
+                  attribute[0].toUpperCase() + attribute.slice(1)
+                }(
+                  filter: { contentful_id: { eq: $contentful_id } }
+                ) {
+                  nodes {
+                    contentful_id
+                    node_locale
+                    ${attribute}
+                  }
+                }
+              }
+            `,
+            { contentful_id: node.contentful_id }
+          )
+          objectAttribute.data.objectAttribute.nodes.length > 0 &&
+            (await buildDynamicPages(
+              objectAttribute.data.objectAttribute.nodes,
+              (language, node, i18n) => ({
+                path: `/${language}/objects/${slugify(
+                  i18n.t(`component-object:${attribute}`),
+                  { lower: true }
+                )}/${slugify(node[attribute].toString(), { lower: true })}`,
+                component: dynamicObjectAttribute,
+                context: {
+                  byYear: attribute === "year",
+                  byTechnique: attribute === "technique",
+                  byMaterial: attribute === "material",
+                  attributeValue: node[attribute].toString(),
+                  contentful_id: node.contentful_id,
+                  language: language,
+                },
+              }),
+              ["constant", "dynamic-object", "component-object"],
+              createPage
+            ))
+        })
+      )
+    })
+  )
+
   /* Redirect - 404 */
-  languages.forEach((language) =>
+  locales.forEach((locale) =>
     createRedirect({
-      fromPath: `/${language}/*`,
-      toPath: `/${language}/404`,
+      fromPath: `/${locale}/*`,
+      toPath: `/${locale}/404`,
       statusCode: 404,
     })
   )
@@ -176,13 +243,13 @@ const createI18nextInstance = async (language, namespaces) => {
 
 const buildStaticPages = async (namespaces, createPage) => {
   const definitions = await Promise.all(
-    languages.map(async (language) => {
-      const i18n = await createI18nextInstance(language, namespaces)
+    locales.map(async (locale) => {
+      const i18n = await createI18nextInstance(locale, namespaces)
       const res = {
-        path: `/${language}/${i18n.t(`${namespaces[0]}:url`)}`,
+        path: `/${locale}/${i18n.t(`${namespaces[0]}:url`)}`,
         component: path.resolve(`src/templates/${namespaces[0]}.jsx`),
         context: {
-          language: language,
+          language: locale,
           i18nResources: i18n.services.resourceStore.data,
         },
       }
@@ -205,16 +272,16 @@ const buildStaticPages = async (namespaces, createPage) => {
 }
 
 const buildDynamicPages = async (
-  dataRaw,
+  nodes,
   pageDefinitionCallback,
   namespaces,
   createPage
 ) => {
   const definitions = await Promise.all(
-    dataRaw.map(async (data) => {
-      const language = data.node.node_locale
+    nodes.map(async (node) => {
+      const language = node.node_locale
       const i18n = await createI18nextInstance(language, namespaces)
-      const res = pageDefinitionCallback(data, language, i18n)
+      const res = pageDefinitionCallback(language, node, i18n)
       res.context.language = language
       res.context.i18nResources = i18n.services.resourceStore.data
       return res
@@ -248,7 +315,6 @@ const getImagesFromRichText = (content) => {
   )
 }
 
-// Add a node for sorting artist by last name
 exports.onCreateNode = ({ actions, getNode, node }) => {
   if (node.internal.owner !== "gatsby-source-contentful") {
     return
@@ -320,4 +386,26 @@ exports.onCreateNode = ({ actions, getNode, node }) => {
       }
       break
   }
+}
+
+exports.createSchemaCustomization = ({ actions, schema }) => {
+  // Custom date filter for events
+  actions.createTypes([
+    schema.buildObjectType({
+      name: "ContentfulEventsEvent",
+      interfaces: ["Node"],
+      fields: {
+        isCurrent: {
+          type: "Boolean!",
+          resolve: (source) =>
+            new Date(source.datetimeEnd) >= new Date() &&
+            new Date(source.datetimeStart) <= new Date(),
+        },
+        isFuture: {
+          type: "Boolean!",
+          resolve: (source) => new Date(source.datetimeStart) > new Date(),
+        },
+      },
+    }),
+  ])
 }

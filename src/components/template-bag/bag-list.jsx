@@ -31,39 +31,53 @@ const BagList = () => {
                   to={`/${i18n.language}/${slugify(object.artist, {
                     lower: true,
                   })}/${slugify(
-                    `${object.name[i18n.language]}-${object.contentful_id}`,
+                    `${object.name[i18n.language]}-${object.contentful_id_url}`,
                     { lower: true }
                   )}`}
                   className='object-name'
                 >
                   {object.name[i18n.language]}
                 </Link>
+                <Row className='object-details'>
+                  <Col xs={3} className='detail-type'>
+                    {t("artist")}
+                  </Col>
+                  <Col xs={9} className='detail-value'>
+                    <Link
+                      to={`/${i18n.language}/${slugify(object.artist, {
+                        lower: true,
+                      })}`}
+                    >
+                      {object.artist}
+                    </Link>
+                  </Col>
+                </Row>
                 {!isEmpty(object.variant) && (
-                  <Row className='object-variations'>
-                    <Col xs={3} className='variations-type'>
+                  <Row className='object-details'>
+                    <Col xs={3} className='detail-type'>
                       {t("variant")}
                     </Col>
-                    <Col xs={9} className='variations-value'>
+                    <Col xs={9} className='detail-value'>
                       {object.variant[i18n.language]}
                     </Col>
                   </Row>
                 )}
                 {!isEmpty(object.colour) && (
-                  <Row className='object-variations'>
-                    <Col xs={3} className='variations-type'>
+                  <Row className='object-details'>
+                    <Col xs={3} className='detail-type'>
                       {t("colour")}
                     </Col>
-                    <Col xs={9} className='variations-value'>
+                    <Col xs={9} className='detail-value'>
                       {object.colour[i18n.language]}
                     </Col>
                   </Row>
                 )}
                 {!isEmpty(object.size) && (
-                  <Row className='object-variations'>
-                    <Col xs={3} className='variations-type'>
+                  <Row className='object-details'>
+                    <Col xs={3} className='detail-type'>
                       {t("size")}
                     </Col>
-                    <Col xs={9} className='variations-value'>
+                    <Col xs={9} className='detail-value'>
                       {object.size[i18n.language]}
                     </Col>
                   </Row>
