@@ -122,6 +122,7 @@ const SellVariations = ({ object }) => {
     const data = {
       type: "variation",
       contentful_id: variantChosen.contentful_id,
+      contentful_id_url: object.nodes[0].contentful_id,
       artist: object.nodes[0].artist.artist,
       image: variantChosen.image || object.nodes[0].images[0],
       priceOriginal: variantChosen.priceOriginal,

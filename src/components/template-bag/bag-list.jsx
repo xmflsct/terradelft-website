@@ -31,7 +31,7 @@ const BagList = () => {
                   to={`/${i18n.language}/${slugify(object.artist, {
                     lower: true,
                   })}/${slugify(
-                    `${object.name[i18n.language]}-${object.contentful_id}`,
+                    `${object.name[i18n.language]}-${object.contentful_id_url}`,
                     { lower: true }
                   )}`}
                   className='object-name'

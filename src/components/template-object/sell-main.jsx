@@ -21,6 +21,7 @@ const SellMain = ({ object }) => {
     const data = {
       type: "main",
       contentful_id: sellMain.contentful_id,
+      contentful_id_url: sellMain.contentful_id,
       artist: sellMain.artist.artist,
       image: sellMain.images[0],
       priceOriginal: sellMain.priceOriginal,
