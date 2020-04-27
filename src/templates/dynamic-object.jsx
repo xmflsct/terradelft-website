@@ -176,7 +176,6 @@ export const query = graphql`
     object: allContentfulObjectsObjectMain(
       filter: {
         contentful_id: { eq: $contentful_id }
-        node_locale: { eq: $language }
       }
     ) {
       nodes {

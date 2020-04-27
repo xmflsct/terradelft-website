@@ -24,9 +24,9 @@ const SellVariations = ({ object }) => {
   const { updateImage } = useContext(ContextVariationImage)
   const { control, handleSubmit, watch } = useForm()
   const variationsMain =
-    object.edges[
-      findIndex(object.edges, (e) => e.node.node_locale === i18n.language)
-    ].node
+    object.nodes[
+      findIndex(object.nodes, (node) => node.node_locale === i18n.language)
+    ]
   const sellVariations = variationsMain.variations.filter((v) => v.sellOnline)
 
   const options = {
@@ -122,8 +122,8 @@ const SellVariations = ({ object }) => {
     const data = {
       type: "variation",
       contentful_id: variantChosen.contentful_id,
-      artist: object.edges[0].node.artist.artist,
-      image: variantChosen.image || object.edges[0].node.images[0],
+      artist: object.nodes[0].artist.artist,
+      image: variantChosen.image || object.nodes[0].images[0],
       priceOriginal: variantChosen.priceOriginal,
       priceSale: variantChosen.priceSale,
       // Locale dependent
@@ -133,10 +133,10 @@ const SellVariations = ({ object }) => {
       data[type] = {}
     }
 
-    for (const o of object.edges) {
-      const l = o.node.node_locale
-      const v = o.node.variations[optionsCombined[0]]
-      data.name[l] = o.node.name
+    for (const node of object.nodes) {
+      const l = node.node_locale
+      const v = node.variations[optionsCombined[0]]
+      data.name[l] = node.name
       for (const type in options) {
         data[type][l] = v[type]
           ? v[type][type]

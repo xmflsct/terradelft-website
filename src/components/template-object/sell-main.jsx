@@ -13,9 +13,9 @@ const SellMain = ({ object }) => {
   const { dispatch } = useContext(ContextBag)
   const { handleSubmit } = useForm()
   const sellMain =
-    object.edges[
-      findIndex(object.edges, (e) => e.node.node_locale === i18n.language)
-    ].node
+    object.nodes[
+      findIndex(object.nodes, (node) => node.node_locale === i18n.language)
+    ]
 
   const onSubmit = () => {
     const data = {
@@ -28,8 +28,8 @@ const SellMain = ({ object }) => {
       // Locale dependent
       name: {},
     }
-    for (const o of object.edges) {
-      data.name[o.node.node_locale] = o.node.name
+    for (const node of object.nodes) {
+      data.name[node.node_locale] = node.name
     }
     dispatch({
       type: "add",
@@ -53,7 +53,7 @@ const SellMain = ({ object }) => {
       </InputGroup>
       {Price(sellMain.priceSale, sellMain.priceOriginal)}
       <Button variant='primary' type='submit'>
-        {t("add-to-bag")}
+        {t("add-button.add-to-bag")}
       </Button>
     </Form>
   )

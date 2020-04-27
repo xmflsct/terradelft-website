@@ -9,9 +9,9 @@ import { Price } from "../utils/price"
 const ObjectSell = ({ object }) => {
   const { t, i18n } = useTranslation("component-object")
   const objectSell =
-    object.edges[
-      findIndex(object.edges, (e) => e.node.node_locale === i18n.language)
-    ].node
+    object.nodes[
+      findIndex(object.nodes, (node) => node.node_locale === i18n.language)
+    ]
 
   return (
     <div>
