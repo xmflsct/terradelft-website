@@ -1,49 +1,77 @@
 import React from "react"
 import { graphql } from "gatsby"
+import { useTranslation } from "react-i18next"
 
 import Layout from "../layouts/layout"
 import GridObjectDefault from "../components/grids/grid-object-default"
 
-const DynamicObjectAttribute = ({ data }) => {
-  // console.log(data)
+const DynamicObjectAttribute = ({ pageContext, data }) => {
+  const { t } = useTranslation("component-object")
+  const attributeType =
+    (pageContext.byYear && "year") ||
+    (pageContext.byTechnique && "technique") ||
+    (pageContext.byMaterial && "material")
+  const headline = `Objects of ${t(attributeType)} in ${
+    pageContext.attributeValue
+  }`
+
   return (
     <Layout
-      SEOtitle="test"
-      SEOkeywords={["test", "Terra Delft"]}
-      containerName='dynamic-artist'
+      SEOtitle={headline}
+      SEOkeywords={[headline, "Terra Delft"]}
+      containerName='dynamic-object-attribute'
     >
-      <h1>year</h1>
-      <h2>Objects by</h2>
-      <GridObjectDefault data={data.objects.edges} />
+      <h1>{headline}</h1>
+      <GridObjectDefault nodes={data[`${attributeType}Objects`].nodes} />
     </Layout>
   )
 }
 
 export const query = graphql`
-  query dynamicObjectAttribute($contentful_id: String, $language: String) {
-    objects: allContentfulObjectsObjectMain(
+  query dynamicObjectAttribute(
+    $byYear: Boolean!
+    $byTechnique: Boolean!
+    $byMaterial: Boolean!
+    $contentful_id: String
+    $language: String
+  ) {
+    ...ObjectsByYear @include(if: $byYear)
+    ...ObjectsByTechnique @include(if: $byTechnique)
+    ...ObjectsByMaterial @include(if: $byMaterial)
+  }
+  fragment ObjectsByYear on Query {
+    yearObjects: allContentfulObjectsObjectMain(
       filter: {
         year: { contentful_id: { eq: $contentful_id } }
         node_locale: { eq: $language }
       }
     ) {
-      edges {
-        node {
-          contentful_id
-          node_locale
-          images {
-            fluid(maxWidth: 140) {
-              ...GatsbyContentfulFluid_withWebp
-            }
-          }
-          name
-          artist {
-            artist
-          }
-          fields {
-            object_sale
-          }
-        }
+      nodes {
+        ...ObjectDefault
+      }
+    }
+  }
+  fragment ObjectsByTechnique on Query {
+    techniqueObjects: allContentfulObjectsObjectMain(
+      filter: {
+        technique: { elemMatch: { contentful_id: { eq: $contentful_id } } }
+        node_locale: { eq: $language }
+      }
+    ) {
+      nodes {
+        ...ObjectDefault
+      }
+    }
+  }
+  fragment ObjectsByMaterial on Query {
+    materialObjects: allContentfulObjectsObjectMain(
+      filter: {
+        material: { elemMatch: { contentful_id: { eq: $contentful_id } } }
+        node_locale: { eq: $language }
+      }
+    ) {
+      nodes {
+        ...ObjectDefault
       }
     }
   }
