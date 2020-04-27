@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import Select from "react-select"
-import { Link } from "gatsby"
+import { Link, graphql } from "gatsby"
 import Img from "gatsby-image"
 import { find, includes } from "lodash"
 
@@ -10,7 +10,7 @@ import * as currency from "../utils/currency"
 
 const slugify = require("slugify")
 
-const GridObjectOnlineShop = ({ data }) => {
+const GridObjectOnlineShop = ({ nodes }) => {
   const { t } = useTranslation(["static-online-shop", "component-object"])
 
   const [selected, setSelected] = useState({
@@ -45,15 +45,15 @@ const GridObjectOnlineShop = ({ data }) => {
     artists: [],
     variants: [],
   }
-  data.forEach((d) => {
-    find(options.artists, ["label", d.node.artist.artist]) ||
+  nodes.forEach((node) => {
+    find(options.artists, ["label", node.artist.artist]) ||
       options.artists.push({
-        label: d.node.artist.artist,
-        value: d.node.artist.artist,
+        label: node.artist.artist,
+        value: node.artist.artist,
       })
 
-    d.node.fields.object_variants &&
-      d.node.fields.object_variants.forEach((v) => {
+    node.fields.object_variants &&
+      node.fields.object_variants.forEach((v) => {
         find(options.variants, ["label", v]) ||
           options.variants.push({
             label: v,
@@ -104,8 +104,8 @@ const GridObjectOnlineShop = ({ data }) => {
         </Col>
       </Row>
       <Row className='component-grid grid-object'>
-        {data
-          .filter((d) => {
+        {nodes
+          .filter((node) => {
             let objectMatch = {
               prices: null,
               artists: null,
@@ -118,26 +118,26 @@ const GridObjectOnlineShop = ({ data }) => {
               }
               switch (match) {
                 case "price":
-                  objectMatch.prices = d.node.fields.object_variants
+                  objectMatch.prices = node.fields.object_variants
                     ? !(
-                        d.node.fields.variations_price_range.highest <
+                        node.fields.variations_price_range.highest <
                           selectedValue.minimum ||
-                        d.node.fields.variations_price_range.lowest >
+                        node.fields.variations_price_range.lowest >
                           selectedValue.maximum
                       )
                     : !(
-                        d.node.priceSale ||
-                        d.node.priceOriginal < selectedValue.minimum ||
-                        d.node.priceSale ||
-                        d.node.priceOriginal > selectedValue.maximum
+                        node.priceSale ||
+                        node.priceOriginal < selectedValue.minimum ||
+                        node.priceSale ||
+                        node.priceOriginal > selectedValue.maximum
                       )
                   break
                 case "artist":
-                  objectMatch.artists = selectedValue === d.node.artist.artist
+                  objectMatch.artists = selectedValue === node.artist.artist
                   break
                 case "variant":
-                  objectMatch.variants = d.node.fields.object_variants
-                    ? includes(d.node.fields.object_variants, selectedValue)
+                  objectMatch.variants = node.fields.object_variants
+                    ? includes(node.fields.object_variants, selectedValue)
                     : false
                   break
                 default:
@@ -151,23 +151,23 @@ const GridObjectOnlineShop = ({ data }) => {
               objectMatch.variants !== false
             )
           })
-          .map((d) => {
+          .map((node) => {
             return (
-              <Col key={d.node.name} lg={2} className='grid-item'>
+              <Col key={node.contentful_id} lg={2} className='grid-item'>
                 <Link
-                  to={`/${d.node.node_locale}/${slugify(d.node.artist.artist, {
+                  to={`/${node.node_locale}/${slugify(node.artist.artist, {
                     lower: true,
-                  })}/${slugify(`${d.node.name}-${d.node.contentful_id}`, {
+                  })}/${slugify(`${node.name}-${node.contentful_id}`, {
                     lower: true,
                   })}`}
                 >
                   <div className='item-image'>
-                    <Img fluid={d.node.images[0].fluid} />
+                    <Img fluid={node.images[0].fluid} />
                   </div>
-                  <p className='item-name'>{d.node.name}</p>
+                  <p className='item-name'>{node.name}</p>
                 </Link>
                 <span className='item-sale'>
-                  {d.node.fields.object_sale && t("component-object:on-sale")}
+                  {node.fields.object_sale && t("component-object:on-sale")}
                 </span>
               </Col>
             )
@@ -176,5 +176,31 @@ const GridObjectOnlineShop = ({ data }) => {
     </>
   )
 }
+
+export const query = graphql`
+  fragment ObjectOnlineShop on ContentfulObjectsObjectMain {
+    contentful_id
+    node_locale
+    name
+    artist {
+      artist
+    }
+    images {
+      fluid(maxWidth: 800) {
+        ...GatsbyContentfulFluid_withWebp
+      }
+    }
+    priceOriginal
+    priceSale
+    fields {
+      object_sale
+      object_variants
+      variations_price_range {
+        highest
+        lowest
+      }
+    }
+  }
+`
 
 export default GridObjectOnlineShop

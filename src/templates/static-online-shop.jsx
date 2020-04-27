@@ -14,7 +14,7 @@ const StaticOnlineShop = ({ data }) => {
       SEOkeywords={[t("name"), "Terra Delft"]}
       containerName='static-online-shop'
     >
-      <GridObjectOnlineShop data={data.objects.edges} />
+      <GridObjectOnlineShop nodes={data.objects.nodes} />
     </Layout>
   )
 }
@@ -24,30 +24,8 @@ export const query = graphql`
     objects: allContentfulObjectsObjectMain(
       filter: { sellOnline: { eq: true }, node_locale: { eq: $language } }
     ) {
-      edges {
-        node {
-          contentful_id
-          node_locale
-          images {
-            fluid(maxWidth: 800) {
-              ...GatsbyContentfulFluid_withWebp
-            }
-          }
-          name
-          artist {
-            artist
-          }
-          priceOriginal
-          priceSale
-          fields {
-            object_sale
-            object_variants
-            variations_price_range {
-              highest
-              lowest
-            }
-          }
-        }
+      nodes {
+        ...ObjectOnlineShop
       }
     }
   }

@@ -36,14 +36,14 @@ const renderImages = (imagesFromRichText, locale) => ({
       const contentful_id = node.data.target.sys.contentful_id
       const description = node.data.target.fields.description
       const imageIndex = findIndex(
-        imagesFromRichText.edges,
-        (i) => i.node.contentful_id === contentful_id
+        imagesFromRichText.nodes,
+        (node) => node.contentful_id === contentful_id
       )
       return (
         <Container>
           {imageIndex !== -1 && (
             <>
-              <Img fluid={imagesFromRichText.edges[imageIndex].node.fluid} />
+              <Img fluid={imagesFromRichText.nodes[imageIndex].fluid} />
               {description && <figcaption>{description[locale]}</figcaption>}
             </>
           )}
@@ -57,9 +57,9 @@ const DynamicObject = ({ data }) => {
   const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
   const [state, updateImage] = useReducer(reducer, initContextVariationImage)
   const object =
-    data.object.edges[
-      findIndex(data.object.edges, (e) => e.node.node_locale === i18n.language)
-    ].node
+    data.object.nodes[
+      findIndex(data.object.nodes, (node) => node.node_locale === i18n.language)
+    ]
 
   return (
     <Layout
@@ -152,13 +152,13 @@ const DynamicObject = ({ data }) => {
             </div>
           </Col>
         </Row>
-        {data.objects.edges.length > 0 && (
+        {data.objects.nodes.length > 0 && (
           <div className='related-objects'>
             <h2>
               {t("dynamic-object:related")}
               {object.artist.artist}
             </h2>
-            <GridObjectDefault data={data.objects.edges} />
+            <GridObjectDefault nodes={data.objects.nodes} />
           </div>
         )}
       </ContextVariationImage.Provider>
@@ -179,70 +179,68 @@ export const query = graphql`
         node_locale: { eq: $language }
       }
     ) {
-      edges {
-        node {
-          fields {
-            variations_price_range {
-              highest
-              lowest
-            }
+      nodes {
+        fields {
+          variations_price_range {
+            highest
+            lowest
           }
+        }
+        contentful_id
+        node_locale
+        name
+        description {
+          json
+        }
+        images {
+          fluid(maxWidth: 1600, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp
+          }
+        }
+        artist {
+          artist
+        }
+        kunstKoop
+        priceOriginal
+        priceSale
+        sellOnline
+        stock
+        variations {
           contentful_id
-          node_locale
-          name
-          description {
-            json
+          sku
+          variant {
+            variant
           }
-          images {
-            fluid(maxWidth: 1600, quality: 80) {
-              ...GatsbyContentfulFluid_withWebp
-            }
+          colour {
+            colour
           }
-          artist {
-            artist
+          size {
+            size
           }
-          kunstKoop
           priceOriginal
           priceSale
           sellOnline
           stock
-          variations {
-            contentful_id
-            sku
-            variant {
-              variant
-            }
-            colour {
-              colour
-            }
-            size {
-              size
-            }
-            priceOriginal
-            priceSale
-            sellOnline
-            stock
-            image {
-              fluid(quality: 80) {
-                ...GatsbyContentfulFluid_withWebp
-              }
+          image {
+            fluid(quality: 80) {
+              ...GatsbyContentfulFluid_withWebp
             }
           }
-          year {
-            year
-          }
-          technique {
-            technique
-          }
-          material {
-            material
-          }
-          dimensionWidth
-          dimensionLength
-          dimensionHeight
-          dimensionDiameter
-          dimensionDepth
         }
+        year {
+          year
+        }
+        technique {
+          technique
+        }
+        material {
+          material
+        }
+        dimensionWidth
+        dimensionLength
+        dimensionHeight
+        dimensionDiameter
+        dimensionDepth
       }
     }
     imagesFromRichText: allContentfulAsset(
@@ -251,12 +249,10 @@ export const query = graphql`
         node_locale: { eq: $language }
       }
     ) {
-      edges {
-        node {
-          contentful_id
-          fluid(maxWidth: 700, quality: 85) {
-            ...GatsbyContentfulFluid_withWebp
-          }
+      nodes {
+        contentful_id
+        fluid(maxWidth: 700, quality: 85) {
+          ...GatsbyContentfulFluid_withWebp
         }
       }
     }
@@ -267,22 +263,8 @@ export const query = graphql`
         node_locale: { eq: $language }
       }
     ) {
-      edges {
-        node {
-          node_locale
-          images {
-            fluid(maxWidth: 140) {
-              ...GatsbyContentfulFluid_withWebp
-            }
-          }
-          name
-          artist {
-            artist
-          }
-          fields {
-            object_sale
-          }
-        }
+      nodes {
+        ...ObjectDefault
       }
     }
   }
