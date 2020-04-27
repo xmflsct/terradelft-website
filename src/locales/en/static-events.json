@@ -1,0 +1,11 @@
+{
+  "url": "exhibition",
+  "name": "Exhibition",
+  "content": {
+    "heading": {
+      "current": "Now",
+      "upcoming": "Coming Up",
+      "past": "Past archive"
+    }
+  }
+}

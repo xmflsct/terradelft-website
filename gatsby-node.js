@@ -31,6 +31,7 @@ exports.createPages = async ({
     ["static-online-shop", "constant", "component-object"],
     createPage
   )
+  await buildStaticPages(["static-events", "constant"], createPage)
   await buildStaticPages(
     ["static-bag", "constant", "component-object"],
     createPage
@@ -314,7 +315,6 @@ const getImagesFromRichText = (content) => {
   )
 }
 
-// Add a node for sorting artist by last name
 exports.onCreateNode = ({ actions, getNode, node }) => {
   if (node.internal.owner !== "gatsby-source-contentful") {
     return
@@ -386,4 +386,26 @@ exports.onCreateNode = ({ actions, getNode, node }) => {
       }
       break
   }
+}
+
+exports.createSchemaCustomization = ({ actions, schema }) => {
+  // Custom date filter for events
+  actions.createTypes([
+    schema.buildObjectType({
+      name: "ContentfulEventsEvent",
+      interfaces: ["Node"],
+      fields: {
+        isCurrent: {
+          type: "Boolean!",
+          resolve: (source) =>
+            new Date(source.datetimeEnd) >= new Date() &&
+            new Date(source.datetimeStart) <= new Date(),
+        },
+        isFuture: {
+          type: "Boolean!",
+          resolve: (source) => new Date(source.datetimeStart) > new Date(),
+        },
+      },
+    }),
+  ])
 }
