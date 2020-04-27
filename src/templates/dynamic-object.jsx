@@ -75,7 +75,7 @@ const DynamicObject = ({ data }) => {
           <Col lg={6} className='object-information'>
             <h1>{object.name}</h1>
             <h4>
-              {t("dynamic-object:artist")}:{" "}
+              {t("component-artist:artist")}:{" "}
               <Link
                 to={`/${i18n.language}/${slugify(object.artist.artist, {
                   lower: true,

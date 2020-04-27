@@ -1,5 +1,6 @@
 {
   "option-default": "Normal",
+  "artist": "Artist",
   "variant": "Variant",
   "colour": "Colour",
   "size": "Size",
