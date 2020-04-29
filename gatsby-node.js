@@ -32,6 +32,7 @@ exports.createPages = async ({
     createPage
   )
   await buildStaticPages(["static-events", "constant"], createPage)
+  await buildStaticPages(["static-news", "constant"], createPage)
   await buildStaticPages(
     ["static-bag", "constant", "component-object"],
     createPage
@@ -269,6 +270,64 @@ exports.createPages = async ({
       )
     })
   )
+
+    /* Biuld News Page */
+    const templateDynamicNews = path.resolve(`src/templates/dynamic-news.jsx`)
+    const news = await graphql(`
+        {
+          news: allContentfulNewsNews(
+            filter: { node_locale: { eq: "${locales[0]}" } }
+          ) {
+            nodes {
+              contentful_id
+            }
+          }
+        }
+      `)
+    await Promise.all(
+      news.data.news.nodes.map(async (node) => {
+        const newsPiece = await graphql(
+          `
+            query($contentful_id: String!) {
+              newsPiece: allContentfulNewsNews(
+                filter: { contentful_id: { eq: $contentful_id } }
+              ) {
+                nodes {
+                  contentful_id
+                  node_locale
+                  title
+                  content {
+                    json
+                  }
+                }
+              }
+            }
+          `,
+          { contentful_id: node.contentful_id }
+        )
+        await buildDynamicPages(
+          newsPiece.data.newsPiece.nodes,
+          (language, { title, contentful_id, content }, i18n) => ({
+            path: `/${language}/${i18n.t("static-news:url")}/${slugify(
+              `${title}-${contentful_id}`,
+              {
+                lower: true,
+              }
+            )}`,
+            component: templateDynamicNews,
+            context: {
+              contentful_id: contentful_id,
+              language: language,
+              imagesFromRichText: content
+                ? getImagesFromRichText(content.json.content)
+                : [],
+            },
+          }),
+          ["constant", "static-news"],
+          createPage
+        )
+      })
+    )
 
   /* Redirect - 404 */
   // locales.forEach((locale) =>

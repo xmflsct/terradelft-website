@@ -1,0 +1,7 @@
+{
+  "url": "nieuws",
+  "name": "Nieuws",
+  "content": {
+    "published": "Gepubliceerd op {{date}}"
+  }
+}

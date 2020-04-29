@@ -1,0 +1,7 @@
+{
+  "url": "news",
+  "name": "News",
+  "content": {
+    "published": "Published on {{date}}"
+  }
+}
