@@ -1,0 +1,13 @@
+.event-information {
+  .information-dates {
+    margin: 0.3rem 0;
+  }
+  dl {
+    margin: 0;
+
+    dd {
+      font-size: 0.9rem;
+      color: $grey;
+    }
+  }
+}

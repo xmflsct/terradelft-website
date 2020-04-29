@@ -1,10 +1,8 @@
 import React, { useReducer } from "react"
-import { Container, Col, Row } from "react-bootstrap"
+import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { graphql, Link } from "gatsby"
-import Img from "gatsby-image"
 import { findIndex } from "lodash"
-import { BLOCKS } from "@contentful/rich-text-types"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
 import Layout from "../layouts/layout"
@@ -12,6 +10,7 @@ import GridObjectDefault from "../components/grids/grid-object-default"
 import ObjectImages from "../components/template-object/object-images"
 import ObjectSell from "../components/template-object/object-sell"
 import ObjectAttribute from "../components/template-object/object-attribute"
+import { imageFromRichText } from "../components/utils/image-from-rich-text"
 
 const slugify = require("slugify")
 
@@ -29,29 +28,6 @@ const initContextVariationImage = { image: null }
 export const ContextVariationImage = React.createContext(
   initContextVariationImage
 )
-
-const renderImages = (imagesFromRichText, locale) => ({
-  renderNode: {
-    [BLOCKS.EMBEDDED_ASSET]: (node) => {
-      const contentful_id = node.data.target.sys.contentful_id
-      const description = node.data.target.fields.description
-      const imageIndex = findIndex(
-        imagesFromRichText.nodes,
-        (node) => node.contentful_id === contentful_id
-      )
-      return (
-        <Container>
-          {imageIndex !== -1 && (
-            <>
-              <Img fluid={imagesFromRichText.nodes[imageIndex].fluid} />
-              {description && <figcaption>{description[locale]}</figcaption>}
-            </>
-          )}
-        </Container>
-      )
-    },
-  },
-})
 
 const DynamicObject = ({ data }) => {
   const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
@@ -146,8 +122,8 @@ const DynamicObject = ({ data }) => {
             )}
             <div className='object-description'>
               {documentToReactComponents(
-                object?.description?.json,
-                renderImages(data.imagesFromRichText, i18n.language)
+                object.description?.json,
+                imageFromRichText(data.imagesFromRichText, i18n.language)
               )}
             </div>
           </Col>
@@ -174,9 +150,7 @@ export const query = graphql`
     $imagesFromRichText: [String!]!
   ) {
     object: allContentfulObjectsObjectMain(
-      filter: {
-        contentful_id: { eq: $contentful_id }
-      }
+      filter: { contentful_id: { eq: $contentful_id } }
     ) {
       nodes {
         fields {
@@ -249,10 +223,7 @@ export const query = graphql`
       }
     ) {
       nodes {
-        contentful_id
-        fluid(maxWidth: 700, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp
-        }
+        ...ImageFromRichText
       }
     }
     objects: allContentfulObjectsObjectMain(

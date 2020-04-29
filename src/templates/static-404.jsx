@@ -18,6 +18,7 @@ const Static404 = () => {
     }
   `)
   const { t } = useTranslation("static-404")
+  console.log(t("static-404:h1"))
 
   return (
     <Layout

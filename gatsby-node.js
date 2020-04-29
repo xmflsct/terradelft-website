@@ -39,7 +39,7 @@ exports.createPages = async ({
   await buildStaticPages(["static-404", "constant"], createPage)
 
   /* Biuld Artist Page */
-  const dynamicArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
+  const templateDynamicArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
   const artists = await graphql(`
     {
       artists: allContentfulObjectsArtist(
@@ -74,7 +74,7 @@ exports.createPages = async ({
         artist.data.artist.nodes,
         (language, { artist, contentful_id }) => ({
           path: `/${language}/${slugify(artist, { lower: true })}`,
-          component: dynamicArtist,
+          component: templateDynamicArtist,
           context: { contentful_id: contentful_id, language: language },
         }),
         ["constant"],
@@ -84,7 +84,7 @@ exports.createPages = async ({
   )
 
   /* Biuld Object Page */
-  const dynamicObject = path.resolve(`src/templates/dynamic-object.jsx`)
+  const templateDynamicObject = path.resolve(`src/templates/dynamic-object.jsx`)
   const objects = await graphql(`
     {
       objects: allContentfulObjectsObjectMain(
@@ -130,14 +130,14 @@ exports.createPages = async ({
           })}/${slugify(`${name}-${contentful_id}`, {
             lower: true,
           })}`,
-          component: dynamicObject,
+          component: templateDynamicObject,
           context: {
             contentful_id: contentful_id,
             artist_contentful_id: artist.contentful_id,
             language: language,
             imagesFromRichText: description
               ? getImagesFromRichText(description.json.content)
-              : ["null"],
+              : [],
           },
         }),
         ["constant", "dynamic-object", "component-object"],
@@ -147,7 +147,7 @@ exports.createPages = async ({
   )
 
   /* Biuld Object Attribute Page */
-  const dynamicObjectAttribute = path.resolve(
+  const templateDynamicObjectAttribute = path.resolve(
     `src/templates/dynamic-object-attribute.jsx`
   )
   await Promise.all(
@@ -194,7 +194,7 @@ exports.createPages = async ({
                   i18n.t(`component-object:${attribute}`),
                   { lower: true }
                 )}/${slugify(node[attribute].toString(), { lower: true })}`,
-                component: dynamicObjectAttribute,
+                component: templateDynamicObjectAttribute,
                 context: {
                   byYear: attribute === "year",
                   byTechnique: attribute === "technique",
@@ -212,15 +212,73 @@ exports.createPages = async ({
     })
   )
 
-  /* Redirect - 404 */
-  locales.forEach((locale) =>
-    createRedirect({
-      fromPath: `/${locale}/*`,
-      toPath: `/${locale}/404`,
-      statusCode: 404,
+  /* Biuld Event Page */
+  const templateDynamicEvent = path.resolve(`src/templates/dynamic-event.jsx`)
+  const events = await graphql(`
+      {
+        events: allContentfulEventsEvent(
+          filter: { node_locale: { eq: "${locales[0]}" } }
+        ) {
+          nodes {
+            contentful_id
+          }
+        }
+      }
+    `)
+  await Promise.all(
+    events.data.events.nodes.map(async (node) => {
+      const event = await graphql(
+        `
+          query($contentful_id: String!) {
+            event: allContentfulEventsEvent(
+              filter: { contentful_id: { eq: $contentful_id } }
+            ) {
+              nodes {
+                contentful_id
+                node_locale
+                name
+                description {
+                  json
+                }
+              }
+            }
+          }
+        `,
+        { contentful_id: node.contentful_id }
+      )
+      await buildDynamicPages(
+        event.data.event.nodes,
+        (language, { name, contentful_id, description }, i18n) => ({
+          path: `/${language}/${i18n.t("static-events:url")}/${slugify(
+            `${name}-${contentful_id}`,
+            {
+              lower: true,
+            }
+          )}`,
+          component: templateDynamicEvent,
+          context: {
+            contentful_id: contentful_id,
+            language: language,
+            imagesFromRichText: description
+              ? getImagesFromRichText(description.json.content)
+              : [],
+          },
+        }),
+        ["constant", "static-events"],
+        createPage
+      )
     })
   )
-  createRedirect({ fromPath: "/*", toPath: "/404", statusCode: 404 })
+
+  /* Redirect - 404 */
+  // locales.forEach((locale) =>
+  //   createRedirect({
+  //     fromPath: `/${locale}/*`,
+  //     toPath: `/${locale}/404`,
+  //     statusCode: 404,
+  //   })
+  // )
+  // createRedirect({ fromPath: "/*", toPath: "/404", statusCode: 404 })
 }
 
 const createI18nextInstance = async (language, namespaces) => {

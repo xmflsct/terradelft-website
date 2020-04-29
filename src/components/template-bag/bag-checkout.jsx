@@ -297,7 +297,7 @@ const BagCheckout = () => {
             variant='primary'
             type='submit'
             className='mb-2'
-            disabled={formState.isSubmitting}
+            disabled={!selectedShipping || formState.isSubmitting}
           >
             {(formState.isSubmitting && (
               <>

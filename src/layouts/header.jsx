@@ -64,7 +64,7 @@ const Header = () => {
                   hrefLang={link.language}
                   key={link.language}
                 >
-                  <FontAwesomeIcon icon={faGlobeEurope} size="sm" />
+                  <FontAwesomeIcon icon={faGlobeEurope} size="sm" fixedWidth />
                   {" " +
                     t(`constant:header.language-switcher.${link.language}`)}
                 </Link>
@@ -73,7 +73,7 @@ const Header = () => {
       </Col>
       <Col lg={1} className='bag-link text-right'>
         <Link to={`/${i18n.language}/${t("constant:header.bag.url")}`}>
-          <FontAwesomeIcon icon={faShoppingBag} size="sm" />
+          <FontAwesomeIcon icon={faShoppingBag} size="sm" fixedWidth />
           {` (${state.bag.objects.length})`}
         </Link>
       </Col>

@@ -6,6 +6,12 @@
       "current": "Now",
       "upcoming": "Coming Up",
       "past": "Past archive"
+    },
+    "organizer": "Organizer",
+    "location": "Location",
+    "datetime": {
+      "Start": "Starts",
+      "End": "Ends"
     }
   }
 }

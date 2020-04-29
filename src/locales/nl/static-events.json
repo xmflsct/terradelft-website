@@ -6,6 +6,12 @@
       "current": "Nu",
       "upcoming": "Verwacht",
       "past": "Afgelopen archief"
+    },
+    "organizer": "Organisator",
+    "location": "Locatie",
+    "datetime": {
+      "Start": "Begint",
+      "End": "Eindigt"
     }
   }
 }

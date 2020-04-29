@@ -1,0 +1,27 @@
+.static-events {
+  .events-upcoming {
+    margin-bottom: 1rem;
+
+    .upcoming-name {
+      h5 {
+        margin: 0;
+      }
+    }
+    .upcoming-starts {
+      margin: 0.3rem 0;
+    }
+  }
+  .events-current {
+    margin-bottom: 1rem;
+
+    .current-type {
+      line-height: 0;
+      margin-bottom: 0.3rem;
+    }
+    .current-name {
+      h3 {
+        margin: 0;
+      }
+    }
+  }
+}
