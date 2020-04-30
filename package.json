@@ -25,6 +25,7 @@
     "gatsby-source-contentful": "~2.1.88",
     "gatsby-source-filesystem": "^2.3.0",
     "gatsby-transformer-sharp": "^2.5.0",
+    "get-youtube-id": "^1.0.1",
     "i18n-iso-countries": "^5.2.0",
     "i18next": "^19.4.4",
     "i18next-browser-languagedetector": "^4.1.1",

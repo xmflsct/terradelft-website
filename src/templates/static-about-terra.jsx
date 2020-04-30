@@ -32,11 +32,11 @@ const StaticAboutTerra = ({ pageContext, data }) => {
           )}
         </Col>
       </Row>
-      <Row>
+      <Row className='terra-staff'>
         <Col>
           <h2>{t("static-about-terra:content.staff")}</h2>
           {data.aboutTerra.staff.map((s) => (
-            <Row key={s.name}>
+            <Row key={s.name} className='staff-member'>
               <Col sm={2}>
                 <Img fluid={s.avatar.fluid} />
                 <figcaption>{s.name}</figcaption>

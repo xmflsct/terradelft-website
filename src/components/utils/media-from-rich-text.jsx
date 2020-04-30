@@ -1,8 +1,9 @@
 import React from "react"
 import { graphql } from "gatsby"
 import Img from "gatsby-image"
-import { findIndex } from "lodash"
 import { BLOCKS, INLINES } from "@contentful/rich-text-types"
+import getYouTubeID from "get-youtube-id"
+import { findIndex } from "lodash"
 
 const NonStretchedImage = (props) => {
   let normalizedProps = props
@@ -42,20 +43,26 @@ export const mediaFromRichText = (data, locale) => ({
     },
     [INLINES.HYPERLINK]: (node) => {
       if (node.data.uri.includes("youtube.com")) {
-        const uri = node.data.uri.replace(
-          "youtube.com/watch?v=",
-          "youtube.com/embed/"
-        )
         return (
-          <div>
+          <div className='iframe-container youtube-video'>
             <iframe
-              title='Unique Title 002'
-              src={uri}
+              src={`https://www.youtube.com/embed/${getYouTubeID(
+                node.data.uri
+              )}`}
+              title='Youtube Video'
               allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
               frameBorder='0'
               allowFullScreen
             ></iframe>
           </div>
+        )
+      } else if (node.data.uri.includes("terra-delft.nl")) {
+        return <a href={node.data.uri}>{node.content[0].value}</a>
+      } else {
+        return (
+          <a href={node.data.uri} target='_blank' rel='noopener noreferrer'>
+            {node.content[0].value}
+          </a>
         )
       }
     },
