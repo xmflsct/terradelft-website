@@ -66,7 +66,7 @@
       },
       "index": {
         "slug": "/{{locale}}",
-        "name": "Terra Delft"
+        "name": "Collectie"
       },
       "news": {
         "slug": "/{{locale}}/nieuws",

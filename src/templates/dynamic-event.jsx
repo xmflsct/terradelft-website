@@ -6,7 +6,7 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
 import Layout from "../layouts/layout"
 import EventInformation from "../components/template-event/event-information"
-import { imageFromRichText } from "../components/utils/image-from-rich-text"
+import { mediaFromRichText } from "../components/utils/media-from-rich-text"
 
 const DynamicEvent = ({ pageContext, data }) => {
   return (
@@ -26,7 +26,7 @@ const DynamicEvent = ({ pageContext, data }) => {
           <EventInformation event={data.event} />
           {documentToReactComponents(
             data.event.description?.json,
-            imageFromRichText(data.imagesFromRichText, pageContext.locale)
+            mediaFromRichText(data.imagesFromRichText, pageContext.locale)
           )}
         </Col>
       </Row>

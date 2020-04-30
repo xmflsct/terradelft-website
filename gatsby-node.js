@@ -12,10 +12,7 @@ const locales = ["nl", "en"]
 
 const allObjectsAttributes = ["year", "technique", "material"]
 
-exports.createPages = async ({
-  graphql,
-  actions: { createPage, createRedirect },
-}) => {
+exports.createPages = async ({ graphql, actions: { createPage } }) => {
   createPage({
     path: "/",
     component: path.resolve(`src/templates/static-landing.jsx`),
@@ -36,7 +33,35 @@ exports.createPages = async ({
     createPage
   )
   await buildStaticPages(["static-news", "constant"], createPage)
-  await buildStaticPages(["static-about-terra", "constant"], createPage)
+  const aboutTerra = await graphql(`
+    {
+      aboutTerra: allContentfulInformationAboutTerra {
+        nodes {
+          node_locale
+          columnLeft {
+            json
+          }
+          columnRight {
+            json
+          }
+        }
+      }
+    }
+  `)
+  const aboutTerraImages = {}
+  await Promise.all(
+    aboutTerra.data.aboutTerra.nodes.map((node) => {
+      aboutTerraImages[node.node_locale] = [
+        ...getImagesFromRichText(node.columnLeft.json.content),
+        ...getImagesFromRichText(node.columnRight.json.content),
+      ]
+    })
+  )
+  await buildStaticPages(
+    ["static-about-terra", "constant"],
+    createPage,
+    aboutTerraImages
+  )
   await buildStaticPages(["static-reach-terra", "constant"], createPage)
   await buildStaticPages(
     ["static-bag", "constant", "component-object"],
@@ -372,7 +397,7 @@ const createI18nextInstance = async (locale, namespaces) => {
   return i18n
 }
 
-const buildStaticPages = async (namespaces, createPage) => {
+const buildStaticPages = async (namespaces, createPage, images) => {
   const definitions = await Promise.all(
     locales.map(async (locale) => {
       const i18n = await createI18nextInstance(locale, namespaces)
@@ -384,6 +409,7 @@ const buildStaticPages = async (namespaces, createPage) => {
           i18nResources: i18n.services.resourceStore.data,
         },
       }
+      images && (res.context.imagesFromRichText = images[locale])
       return res
     })
   )

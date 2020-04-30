@@ -6,8 +6,9 @@ import Img from "gatsby-image"
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
 import Layout from "../layouts/layout"
+import { mediaFromRichText } from "../components/utils/media-from-rich-text"
 
-const StaticAboutTerra = ({ data }) => {
+const StaticAboutTerra = ({ pageContext, data }) => {
   const { t } = useTranslation("static-about-terra")
 
   return (
@@ -19,10 +20,16 @@ const StaticAboutTerra = ({ data }) => {
       <h1>{t("static-about-terra:name")}</h1>
       <Row>
         <Col sm={6}>
-          {documentToReactComponents(data.aboutTerra.columnLeft.json)}
+          {documentToReactComponents(
+            data.aboutTerra.columnLeft.json,
+            mediaFromRichText(data.imagesFromRichText, pageContext.locale)
+          )}
         </Col>
         <Col sm={6}>
-          {documentToReactComponents(data.aboutTerra.columnRight.json)}
+          {documentToReactComponents(
+            data.aboutTerra.columnRight.json,
+            mediaFromRichText(data.imagesFromRichText, pageContext.locale)
+          )}
         </Col>
       </Row>
       <Row>
@@ -44,7 +51,7 @@ const StaticAboutTerra = ({ data }) => {
 }
 
 export const query = graphql`
-  query staticAboutTerra($locale: String) {
+  query staticAboutTerra($locale: String, $imagesFromRichText: [String!]!) {
     aboutTerra: contentfulInformationAboutTerra(node_locale: { eq: $locale }) {
       columnLeft {
         json
@@ -62,6 +69,16 @@ export const query = graphql`
         biography {
           json
         }
+      }
+    }
+    imagesFromRichText: allContentfulAsset(
+      filter: {
+        contentful_id: { in: $imagesFromRichText }
+        node_locale: { eq: $locale }
+      }
+    ) {
+      nodes {
+        ...ImageFromRichText
       }
     }
   }

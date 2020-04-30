@@ -10,7 +10,7 @@ import GridObjectDefault from "../components/grids/grid-object-default"
 import ObjectImages from "../components/template-object/object-images"
 import ObjectSell from "../components/template-object/object-sell"
 import ObjectAttribute from "../components/template-object/object-attribute"
-import { imageFromRichText } from "../components/utils/image-from-rich-text"
+import { mediaFromRichText } from "../components/utils/media-from-rich-text"
 
 function reducer(state, action) {
   switch (action.type) {
@@ -129,7 +129,7 @@ const DynamicObject = ({ pageContext, data }) => {
             <div className='object-description'>
               {documentToReactComponents(
                 object.description?.json,
-                imageFromRichText(data.imagesFromRichText, pageContext.locale)
+                mediaFromRichText(data.imagesFromRichText, pageContext.locale)
               )}
             </div>
           </Col>

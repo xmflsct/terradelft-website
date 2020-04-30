@@ -8,7 +8,7 @@ import moment from "moment"
 import "moment/locale/nl"
 
 import Layout from "../layouts/layout"
-import { imageFromRichText } from "../components/utils/image-from-rich-text"
+import { mediaFromRichText } from "../components/utils/media-from-rich-text"
 
 const DynamicNews = ({ pageContext, data }) => {
   const { t } = useTranslation("static-news")
@@ -34,7 +34,7 @@ const DynamicNews = ({ pageContext, data }) => {
           </p>
           {documentToReactComponents(
             data.news.content?.json,
-            imageFromRichText(data.imagesFromRichText, pageContext.locale)
+            mediaFromRichText(data.imagesFromRichText, pageContext.locale)
           )}
         </Col>
       </Row>
