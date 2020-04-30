@@ -1,0 +1,7 @@
+{
+  "slug": "$t(constant:slug.static.about-terra.slug)",
+  "name": "$t(constant:slug.static.about-terra.name)",
+  "content": {
+    "staff": "Personeel"
+  }
+}

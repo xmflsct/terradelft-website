@@ -11,7 +11,7 @@ import { ContextBag } from "./contexts/bag"
 
 import "../../node_modules/@fortawesome/fontawesome-svg-core/styles.css"
 
-const Header = () => {
+const Header = ({ pageContext }) => {
   const image = useStaticQuery(graphql`
     {
       logoLargeNL: file(
@@ -34,7 +34,7 @@ const Header = () => {
       }
     }
   `)
-  const { t, i18n } = useTranslation(["constant", "static-bag"])
+  const { t, i18n } = useTranslation("constant")
   const alternateLinks = useContext(ContextLanguage)
   const { state } = useContext(ContextBag)
 
@@ -64,16 +64,19 @@ const Header = () => {
                   hrefLang={link.locale}
                   key={link.locale}
                 >
-                  <FontAwesomeIcon icon={faGlobeEurope} size="sm" fixedWidth />
-                  {" " +
-                    t(`constant:header.language-switcher.${link.locale}`)}
+                  <FontAwesomeIcon icon={faGlobeEurope} size='sm' fixedWidth />
+                  {" " + t(`constant:header.language-switcher.${link.locale}`)}
                 </Link>
               )
           )}
       </Col>
       <Col lg={1} className='bag-link text-right'>
-        <Link to={`/${i18n.language}/${t("static-bag:slug")}`}>
-          <FontAwesomeIcon icon={faShoppingBag} size="sm" fixedWidth />
+        <Link
+          to={t("constant:slug.static.bag.slug", {
+            locale: i18n.language,
+          })}
+        >
+          <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
           {` (${state.bag.objects.length})`}
         </Link>
       </Col>

@@ -76,6 +76,10 @@
         "slug": "/{{locale}}/web-winkel",
         "name": "Web Winkel"
       },
+      "reach-terra": {
+        "slug": "/{{locale}}/bezoek-terra",
+        "name": "Bezoek Terra"
+      },
       "terra-in-china": {
         "slug": "/{{locale}}/terra-in-china",
         "name": "Terra in China"

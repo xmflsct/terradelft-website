@@ -76,6 +76,10 @@
         "slug": "/{{locale}}/online-shop",
         "name": "Online Shop"
       },
+      "reach-terra": {
+        "slug": "/{{locale}}/reach-terra",
+        "name": "Reach Terra"
+      },
       "terra-in-china": {
         "slug": "/{{locale}}/terra-in-china",
         "name": "Terra in China"

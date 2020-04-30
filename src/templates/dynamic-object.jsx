@@ -36,7 +36,10 @@ const DynamicObject = ({ pageContext, data }) => {
   const [state, updateImage] = useReducer(reducer, initContextVariationImage)
   const object =
     data.object.nodes[
-      findIndex(data.object.nodes, (node) => node.node_locale === pageContext.locale)
+      findIndex(
+        data.object.nodes,
+        (node) => node.node_locale === pageContext.locale
+      )
     ]
 
   return (
@@ -53,7 +56,7 @@ const DynamicObject = ({ pageContext, data }) => {
           <Col lg={6} className='object-information'>
             <h1>{object.name}</h1>
             <h4>
-              {t("component-object:artist")}:{" "}
+              {t("component-object:artist")}{" "}
               <Link
                 to={t("constant:slug.dynamic.artist.slug", {
                   locale: pageContext.locale,

@@ -1,0 +1,4 @@
+{
+  "slug": "$t(constant:slug.static.reach-terra.slug)",
+  "name": "$t(constant:slug.static.reach-terra.name)"
+}

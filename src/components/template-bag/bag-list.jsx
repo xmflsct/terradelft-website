@@ -12,7 +12,11 @@ import { Price } from "../utils/price"
 
 const BagList = () => {
   const { state, dispatch } = useContext(ContextBag)
-  const { t, i18n } = useTranslation(["component-object", "constant"])
+  const { t, i18n } = useTranslation([
+    "static-bag",
+    "component-object",
+    "constant",
+  ])
 
   return (
     <>
@@ -101,7 +105,11 @@ const BagList = () => {
           )
         })
       ) : (
-        <Row>Empty</Row>
+        <Row>
+          <Col>
+            <p>{t("static-bag:content.list.empty")}</p>
+          </Col>
+        </Row>
       )}
     </>
   )

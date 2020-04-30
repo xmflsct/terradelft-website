@@ -36,6 +36,8 @@ exports.createPages = async ({
     createPage
   )
   await buildStaticPages(["static-news", "constant"], createPage)
+  await buildStaticPages(["static-about-terra", "constant"], createPage)
+  await buildStaticPages(["static-reach-terra", "constant"], createPage)
   await buildStaticPages(
     ["static-bag", "constant", "component-object"],
     createPage
