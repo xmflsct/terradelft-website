@@ -6,7 +6,7 @@ import moment from "moment"
 import "moment/locale/nl"
 
 const EventInformation = ({ event, type }) => {
-  const { t, i18n } = useTranslation("static-events")
+  const { t, i18n } = useTranslation("component-event")
   moment.locale(i18n.language)
   type === "upcoming" && (type = "Start")
   type === "current" && (type = "End")
@@ -21,8 +21,11 @@ const EventInformation = ({ event, type }) => {
               event.datetimeAllDay ? "ll" : "lll"
             )}{" "}
             <small>
-              ({t(`content.datetime.${type}`)}{" "}
-              {moment(event[`datetime${type}`]).fromNow()})
+              (
+              {t(`datetime.${type}`, {
+                datetime: moment(event[`datetime${type}`]).fromNow(),
+              })}
+              )
             </small>
           </>
         ) : (
@@ -43,7 +46,7 @@ const EventInformation = ({ event, type }) => {
             <dl className='information-organizer'>
               <dt>
                 <FontAwesomeIcon icon={faIdBadge} size='sm' fixedWidth />{" "}
-                {t("content.organizer")}
+                {t("organizer")}
               </dt>
               {event.organizer.map((o) => (
                 <dd key={o.name}>{o.name}</dd>
@@ -54,7 +57,7 @@ const EventInformation = ({ event, type }) => {
             <dl className='information-location'>
               <dt>
                 <FontAwesomeIcon icon={faMap} size='sm' fixedWidth />{" "}
-                {t("content.location")}
+                {t("location")}
               </dt>
               {event.location.map((o) => (
                 <dd key={o.name}>{o.name}</dd>

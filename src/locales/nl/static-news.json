@@ -1,6 +1,6 @@
 {
-  "url": "nieuws",
-  "name": "Nieuws",
+  "slug": "$t(constant:slug.static.news.slug)",
+  "name": "$t(constant:slug.static.news.name)",
   "content": {
     "published": "Gepubliceerd op {{date}}"
   }

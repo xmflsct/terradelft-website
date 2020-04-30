@@ -8,10 +8,12 @@ import { find, includes } from "lodash"
 
 import * as currency from "../utils/currency"
 
-const slugify = require("slugify")
-
 const GridObjectOnlineShop = ({ nodes }) => {
-  const { t } = useTranslation(["static-online-shop", "component-object"])
+  const { t } = useTranslation([
+    "static-online-shop",
+    "component-object",
+    "constant",
+  ])
 
   const [selected, setSelected] = useState({
     price: null,
@@ -155,11 +157,12 @@ const GridObjectOnlineShop = ({ nodes }) => {
             return (
               <Col key={node.contentful_id} lg={2} className='grid-item'>
                 <Link
-                  to={`/${node.node_locale}/${slugify(node.artist.artist, {
-                    lower: true,
-                  })}/${slugify(`${node.name}-${node.contentful_id}`, {
-                    lower: true,
-                  })}`}
+                  to={t("constant:slug.dynamic.object.slug", {
+                    locale: node.node_locale,
+                    artist: node.artist.artist,
+                    object: node.name,
+                    id: node.contentful_id,
+                  })}
                 >
                   <div className='item-image'>
                     <Img fluid={node.images[0].fluid} />

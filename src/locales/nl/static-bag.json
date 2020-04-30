@@ -1,6 +1,6 @@
 {
-  "url": "winkelmandje",
-  "name": "Winkelmandje",
+  "slug": "$t(constant:slug.static.bag.slug)",
+  "name": "$t(constant:slug.static.bag.name)",
   "content": {
     "heading": "Winkelmandje",
     "checkout": {

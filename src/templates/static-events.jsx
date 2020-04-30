@@ -3,33 +3,31 @@ import { Badge, Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { graphql, Link } from "gatsby"
 import Img from "gatsby-image"
-import slugify from "slugify"
 
 import Layout from "../layouts/layout"
 import EventInformation from "../components/template-event/event-information"
 
-const StaticExhibition = ({ data }) => {
-  const { t, i18n } = useTranslation("static-events")
+const StaticExhibition = ({ pageContext, data }) => {
+  const { t } = useTranslation(["static-events", "constant"])
 
   return (
     <Layout
-      SEOtitle={t("name")}
-      SEOkeywords={[t("name"), "Terra Delft"]}
+      SEOtitle={t("static-events:name")}
+      SEOkeywords={[t("static-events:name"), "Terra Delft"]}
       containerName='static-events'
     >
       <Row>
         <Col sm={4}>
-          <h2>{t("content.heading.upcoming")}</h2>
+          <h2>{t("static-events:content.heading.upcoming")}</h2>
           {data.eventsUpcoming.nodes.map((node) => (
             <Row className='events-upcoming' key={node.contentful_id}>
               <Col sm={12}>
                 <Link
-                  to={`/${i18n.language}/${t("url")}/${slugify(
-                    `${node.name}-${node.contentful_id}`,
-                    {
-                      lower: true,
-                    }
-                  )}`}
+                  to={t("constant:slug.dynamic.event.slug", {
+                    locale: pageContext.locale,
+                    event: node.name,
+                    id: node.contentful_id,
+                  })}
                   className='upcoming-name'
                 >
                   <h5>{node.name}</h5>
@@ -40,7 +38,7 @@ const StaticExhibition = ({ data }) => {
           ))}
         </Col>
         <Col sm={8}>
-          <h2>{t("content.heading.current")}</h2>
+          <h2>{t("static-events:content.heading.current")}</h2>
           {data.eventsCurrent.nodes.map((node) => (
             <Row className='events-current' key={node.contentful_id}>
               {node.image && (
@@ -57,12 +55,11 @@ const StaticExhibition = ({ data }) => {
                   ))}
                 </div>
                 <Link
-                  to={`/${i18n.language}/${t("url")}/${slugify(
-                    `${node.name}-${node.contentful_id}`,
-                    {
-                      lower: true,
-                    }
-                  )}`}
+                  to={t("constant:slug.dynamic.event.slug", {
+                    locale: pageContext.locale,
+                    event: node.name,
+                    id: node.contentful_id,
+                  })}
                   className='current-name'
                 >
                   <h3>{node.name}</h3>
@@ -78,9 +75,9 @@ const StaticExhibition = ({ data }) => {
 }
 
 export const query = graphql`
-  query staticExhibition($language: String) {
+  query staticExhibition($locale: String) {
     eventsUpcoming: allContentfulEventsEvent(
-      filter: { isFuture: { eq: true }, node_locale: { eq: $language } }
+      filter: { isFuture: { eq: true }, node_locale: { eq: $locale } }
       sort: { order: ASC, fields: datetimeStart }
     ) {
       nodes {
@@ -102,7 +99,7 @@ export const query = graphql`
       }
     }
     eventsCurrent: allContentfulEventsEvent(
-      filter: { isCurrent: { eq: true }, node_locale: { eq: $language } }
+      filter: { isCurrent: { eq: true }, node_locale: { eq: $locale } }
       sort: { order: ASC, fields: datetimeEnd }
     ) {
       nodes {

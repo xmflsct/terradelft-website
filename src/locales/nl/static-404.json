@@ -1,4 +1,7 @@
 {
-  "url": "404",
-  "h1": "Niet gevonden wat je zoekt?"
+  "slug": "$t(constant:slug.static.404.slug)",
+  "name": "$t(constant:slug.static.404.name)",
+  "content": {
+    "heading": "404 Wat zoek je?"
+  }
 }

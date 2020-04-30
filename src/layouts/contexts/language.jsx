@@ -1,16 +1,23 @@
 import React from "react"
 import * as ReactI18next from "react-i18next"
-import LanguageDetector from "i18next-browser-languagedetector"
 import { Helmet } from "react-helmet"
 import i18next from "i18next"
+import LanguageDetector from "i18next-browser-languagedetector"
+import slugify from "slugify"
 
 export const ContextLanguage = React.createContext([])
 
 export default function ContextLanguageProvider({ element, props }) {
   const i18n = i18next
     .createInstance({
-      lng: props.pageContext.language,
-      interpolation: { escapeValue: false },
+      lng: props.pageContext.locale,
+      interpolation: {
+        escapeValue: false,
+        format: function (value, format) {
+          if (format === "slugify") return slugify(value, { lower: true })
+          return value
+        },
+      },
       initImmediate: false,
       resources: props.pageContext.i18nResources,
     })
@@ -43,13 +50,13 @@ export default function ContextLanguageProvider({ element, props }) {
       <ContextLanguage.Provider
         value={props.pageContext && props.pageContext.alternateLinks}
       >
-        <Helmet htmlAttributes={{ lang: props.pageContext.language }}>
+        <Helmet htmlAttributes={{ lang: props.pageContext.locale }}>
           {props.pageContext &&
             props.pageContext.alternateLinks &&
             props.pageContext.alternateLinks.map((link) => (
               <link
                 rel='alternate'
-                hrefLang={link.language}
+                hrefLang={link.locale}
                 href={link.path}
                 key={link.path}
               />

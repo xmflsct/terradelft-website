@@ -1,17 +1,11 @@
 {
-  "url": "expositie",
-  "name": "Expositie",
+  "slug": "$t(constant:slug.static.events.slug)",
+  "name": "$t(constant:slug.static.events.name)",
   "content": {
     "heading": {
       "current": "Nu",
       "upcoming": "Verwacht",
       "past": "Afgelopen archief"
-    },
-    "organizer": "Organisator",
-    "location": "Locatie",
-    "datetime": {
-      "Start": "Begint",
-      "End": "Eindigt"
     }
   }
 }

@@ -10,8 +10,8 @@ import "moment/locale/nl"
 import Layout from "../layouts/layout"
 import { imageFromRichText } from "../components/utils/image-from-rich-text"
 
-const DynamicNews = ({ data }) => {
-  const { t, i18n } = useTranslation("static-news")
+const DynamicNews = ({ pageContext, data }) => {
+  const { t } = useTranslation("static-news")
 
   return (
     <Layout
@@ -34,7 +34,7 @@ const DynamicNews = ({ data }) => {
           </p>
           {documentToReactComponents(
             data.news.content?.json,
-            imageFromRichText(data.imagesFromRichText, i18n.language)
+            imageFromRichText(data.imagesFromRichText, pageContext.locale)
           )}
         </Col>
       </Row>
@@ -45,12 +45,12 @@ const DynamicNews = ({ data }) => {
 export const query = graphql`
   query dynamicNews(
     $contentful_id: String
-    $language: String
+    $locale: String
     $imagesFromRichText: [String!]!
   ) {
     news: contentfulNewsNews(
       contentful_id: { eq: $contentful_id }
-      node_locale: { eq: $language }
+      node_locale: { eq: $locale }
     ) {
       title
       date
@@ -66,7 +66,7 @@ export const query = graphql`
     imagesFromRichText: allContentfulAsset(
       filter: {
         contentful_id: { in: $imagesFromRichText }
-        node_locale: { eq: $language }
+        node_locale: { eq: $locale }
       }
     ) {
       nodes {

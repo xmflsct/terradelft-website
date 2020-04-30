@@ -12,8 +12,6 @@ import ObjectSell from "../components/template-object/object-sell"
 import ObjectAttribute from "../components/template-object/object-attribute"
 import { imageFromRichText } from "../components/utils/image-from-rich-text"
 
-const slugify = require("slugify")
-
 function reducer(state, action) {
   switch (action.type) {
     case "update":
@@ -29,12 +27,16 @@ export const ContextVariationImage = React.createContext(
   initContextVariationImage
 )
 
-const DynamicObject = ({ data }) => {
-  const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
+const DynamicObject = ({ pageContext, data }) => {
+  const { t } = useTranslation([
+    "dynamic-object",
+    "component-object",
+    "constant",
+  ])
   const [state, updateImage] = useReducer(reducer, initContextVariationImage)
   const object =
     data.object.nodes[
-      findIndex(data.object.nodes, (node) => node.node_locale === i18n.language)
+      findIndex(data.object.nodes, (node) => node.node_locale === pageContext.locale)
     ]
 
   return (
@@ -51,11 +53,12 @@ const DynamicObject = ({ data }) => {
           <Col lg={6} className='object-information'>
             <h1>{object.name}</h1>
             <h4>
-              {t("component-artist:artist")}:{" "}
+              {t("component-object:artist")}:{" "}
               <Link
-                to={`/${i18n.language}/${slugify(object.artist.artist, {
-                  lower: true,
-                })}`}
+                to={t("constant:slug.dynamic.artist.slug", {
+                  locale: pageContext.locale,
+                  artist: object.artist.artist,
+                })}
               >
                 {object.artist.artist}
               </Link>
@@ -123,7 +126,7 @@ const DynamicObject = ({ data }) => {
             <div className='object-description'>
               {documentToReactComponents(
                 object.description?.json,
-                imageFromRichText(data.imagesFromRichText, i18n.language)
+                imageFromRichText(data.imagesFromRichText, pageContext.locale)
               )}
             </div>
           </Col>
@@ -146,7 +149,7 @@ export const query = graphql`
   query dynamicObject(
     $contentful_id: String
     $artist_contentful_id: String
-    $language: String
+    $locale: String
     $imagesFromRichText: [String!]!
   ) {
     object: allContentfulObjectsObjectMain(
@@ -219,7 +222,7 @@ export const query = graphql`
     imagesFromRichText: allContentfulAsset(
       filter: {
         contentful_id: { in: $imagesFromRichText }
-        node_locale: { eq: $language }
+        node_locale: { eq: $locale }
       }
     ) {
       nodes {
@@ -230,7 +233,7 @@ export const query = graphql`
       filter: {
         contentful_id: { ne: $contentful_id }
         artist: { contentful_id: { eq: $artist_contentful_id } }
-        node_locale: { eq: $language }
+        node_locale: { eq: $locale }
       }
     ) {
       nodes {

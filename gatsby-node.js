@@ -10,7 +10,7 @@ const nodeFsBackend = require("i18next-node-fs-backend")
 // Default locale in first place
 const locales = ["nl", "en"]
 
-const allObjectAttributes = ["year", "technique", "material"]
+const allObjectsAttributes = ["year", "technique", "material"]
 
 exports.createPages = async ({
   graphql,
@@ -31,7 +31,10 @@ exports.createPages = async ({
     ["static-online-shop", "constant", "component-object"],
     createPage
   )
-  await buildStaticPages(["static-events", "constant"], createPage)
+  await buildStaticPages(
+    ["static-events", "constant", "component-event"],
+    createPage
+  )
   await buildStaticPages(["static-news", "constant"], createPage)
   await buildStaticPages(
     ["static-bag", "constant", "component-object"],
@@ -73,10 +76,13 @@ exports.createPages = async ({
       )
       await buildDynamicPages(
         artist.data.artist.nodes,
-        (language, { artist, contentful_id }) => ({
-          path: `/${language}/${slugify(artist, { lower: true })}`,
+        (locale, { artist, contentful_id }, i18n) => ({
+          path: i18n.t("constant:slug.dynamic.artist.slug", {
+            locale: locale,
+            artist: artist,
+          }),
           component: templateDynamicArtist,
-          context: { contentful_id: contentful_id, language: language },
+          context: { contentful_id: contentful_id, locale: locale },
         }),
         ["constant"],
         createPage
@@ -125,17 +131,18 @@ exports.createPages = async ({
       )
       await buildDynamicPages(
         object.data.object.nodes,
-        (language, { artist, name, contentful_id, description }) => ({
-          path: `/${language}/${slugify(artist.artist, {
-            lower: true,
-          })}/${slugify(`${name}-${contentful_id}`, {
-            lower: true,
-          })}`,
+        (locale, { artist, name, contentful_id, description }, i18n) => ({
+          path: i18n.t("constant:slug.dynamic.object.slug", {
+            locale: locale,
+            artist: artist.artist,
+            object: name,
+            id: contentful_id,
+          }),
           component: templateDynamicObject,
           context: {
             contentful_id: contentful_id,
             artist_contentful_id: artist.contentful_id,
-            language: language,
+            locale: locale,
             imagesFromRichText: description
               ? getImagesFromRichText(description.json.content)
               : [],
@@ -147,15 +154,15 @@ exports.createPages = async ({
     })
   )
 
-  /* Biuld Object Attribute Page */
-  const templateDynamicObjectAttribute = path.resolve(
-    `src/templates/dynamic-object-attribute.jsx`
+  /* Biuld Objects Attribute Page */
+  const templateDynamicObjectsAttribute = path.resolve(
+    `src/templates/dynamic-objects-attribute.jsx`
   )
   await Promise.all(
-    allObjectAttributes.map(async (attribute) => {
-      const objectAttributes = await graphql(`
+    allObjectsAttributes.map(async (attribute) => {
+      const objectsAttributes = await graphql(`
       {
-        objectAttributes: allContentfulObjects${
+        objectsAttributes: allContentfulObjects${
           attribute[0].toUpperCase() + attribute.slice(1)
         }(
           filter: { node_locale: { eq: "${locales[0]}" } }
@@ -168,11 +175,11 @@ exports.createPages = async ({
       }
     `)
       await Promise.all(
-        objectAttributes.data.objectAttributes.nodes.map(async (node) => {
-          const objectAttribute = await graphql(
+        objectsAttributes.data.objectsAttributes.nodes.map(async (node) => {
+          const objectsAttribute = await graphql(
             `
               query($contentful_id: String!) {
-                objectAttribute: allContentfulObjects${
+                objectsAttribute: allContentfulObjects${
                   attribute[0].toUpperCase() + attribute.slice(1)
                 }(
                   filter: { contentful_id: { eq: $contentful_id } }
@@ -187,22 +194,23 @@ exports.createPages = async ({
             `,
             { contentful_id: node.contentful_id }
           )
-          objectAttribute.data.objectAttribute.nodes.length > 0 &&
+          objectsAttribute.data.objectsAttribute.nodes.length > 0 &&
             (await buildDynamicPages(
-              objectAttribute.data.objectAttribute.nodes,
-              (language, node, i18n) => ({
-                path: `/${language}/objects/${slugify(
-                  i18n.t(`component-object:${attribute}`),
-                  { lower: true }
-                )}/${slugify(node[attribute].toString(), { lower: true })}`,
-                component: templateDynamicObjectAttribute,
+              objectsAttribute.data.objectsAttribute.nodes,
+              (locale, node, i18n) => ({
+                path: i18n.t("constant:slug.dynamic.objects-attribute.slug", {
+                  locale: locale,
+                  type: i18n.t(`component-object:${attribute}`),
+                  value: node[attribute].toString(),
+                }),
+                component: templateDynamicObjectsAttribute,
                 context: {
                   byYear: attribute === "year",
                   byTechnique: attribute === "technique",
                   byMaterial: attribute === "material",
                   attributeValue: node[attribute].toString(),
                   contentful_id: node.contentful_id,
-                  language: language,
+                  locale: locale,
                 },
               }),
               ["constant", "dynamic-object", "component-object"],
@@ -249,17 +257,16 @@ exports.createPages = async ({
       )
       await buildDynamicPages(
         event.data.event.nodes,
-        (language, { name, contentful_id, description }, i18n) => ({
-          path: `/${language}/${i18n.t("static-events:url")}/${slugify(
-            `${name}-${contentful_id}`,
-            {
-              lower: true,
-            }
-          )}`,
+        (locale, { name, contentful_id, description }, i18n) => ({
+          path: i18n.t("constant:slug.dynamic.event.slug", {
+            locale: locale,
+            event: name,
+            id: contentful_id,
+          }),
           component: templateDynamicEvent,
           context: {
             contentful_id: contentful_id,
-            language: language,
+            locale: locale,
             imagesFromRichText: description
               ? getImagesFromRichText(description.json.content)
               : [],
@@ -271,9 +278,9 @@ exports.createPages = async ({
     })
   )
 
-    /* Biuld News Page */
-    const templateDynamicNews = path.resolve(`src/templates/dynamic-news.jsx`)
-    const news = await graphql(`
+  /* Biuld News Page */
+  const templateDynamicNews = path.resolve(`src/templates/dynamic-news.jsx`)
+  const news = await graphql(`
         {
           news: allContentfulNewsNews(
             filter: { node_locale: { eq: "${locales[0]}" } }
@@ -284,50 +291,49 @@ exports.createPages = async ({
           }
         }
       `)
-    await Promise.all(
-      news.data.news.nodes.map(async (node) => {
-        const newsPiece = await graphql(
-          `
-            query($contentful_id: String!) {
-              newsPiece: allContentfulNewsNews(
-                filter: { contentful_id: { eq: $contentful_id } }
-              ) {
-                nodes {
-                  contentful_id
-                  node_locale
-                  title
-                  content {
-                    json
-                  }
+  await Promise.all(
+    news.data.news.nodes.map(async (node) => {
+      const newsPiece = await graphql(
+        `
+          query($contentful_id: String!) {
+            newsPiece: allContentfulNewsNews(
+              filter: { contentful_id: { eq: $contentful_id } }
+            ) {
+              nodes {
+                contentful_id
+                node_locale
+                title
+                content {
+                  json
                 }
               }
             }
-          `,
-          { contentful_id: node.contentful_id }
-        )
-        await buildDynamicPages(
-          newsPiece.data.newsPiece.nodes,
-          (language, { title, contentful_id, content }, i18n) => ({
-            path: `/${language}/${i18n.t("static-news:url")}/${slugify(
-              `${title}-${contentful_id}`,
-              {
-                lower: true,
-              }
-            )}`,
-            component: templateDynamicNews,
-            context: {
-              contentful_id: contentful_id,
-              language: language,
-              imagesFromRichText: content
-                ? getImagesFromRichText(content.json.content)
-                : [],
-            },
+          }
+        `,
+        { contentful_id: node.contentful_id }
+      )
+      await buildDynamicPages(
+        newsPiece.data.newsPiece.nodes,
+        (locale, { title, contentful_id, content }, i18n) => ({
+          path: i18n.t("constant:slug.dynamic.news.slug", {
+            locale: locale,
+            news: title,
+            id: contentful_id,
           }),
-          ["constant", "static-news"],
-          createPage
-        )
-      })
-    )
+          component: templateDynamicNews,
+          context: {
+            contentful_id: contentful_id,
+            locale: locale,
+            imagesFromRichText: content
+              ? getImagesFromRichText(content.json.content)
+              : [],
+          },
+        }),
+        ["constant", "static-news"],
+        createPage
+      )
+    })
+  )
 
   /* Redirect - 404 */
   // locales.forEach((locale) =>
@@ -340,16 +346,22 @@ exports.createPages = async ({
   // createRedirect({ fromPath: "/*", toPath: "/404", statusCode: 404 })
 }
 
-const createI18nextInstance = async (language, namespaces) => {
+const createI18nextInstance = async (locale, namespaces) => {
   const i18n = i18next.createInstance()
   i18n.use(nodeFsBackend)
   await new Promise((resolve) =>
     i18n.init(
       {
-        lng: language,
+        lng: locale,
         ns: namespaces,
-        fallbackLng: language,
-        interpolation: { escapeValue: false },
+        fallbackLng: locale,
+        interpolation: {
+          escapeValue: false,
+          format: function (value, format) {
+            if (format === "slugify") return slugify(value, { lower: true })
+            return value
+          },
+        },
         backend: { loadPath: `src/locales/{{lng}}/{{ns}}.json` },
       },
       resolve
@@ -363,10 +375,10 @@ const buildStaticPages = async (namespaces, createPage) => {
     locales.map(async (locale) => {
       const i18n = await createI18nextInstance(locale, namespaces)
       const res = {
-        path: `/${locale}/${i18n.t(`${namespaces[0]}:url`)}`,
+        path: i18n.t(`${namespaces[0]}:slug`, { locale: locale }),
         component: path.resolve(`src/templates/${namespaces[0]}.jsx`),
         context: {
-          language: locale,
+          locale: locale,
           i18nResources: i18n.services.resourceStore.data,
         },
       }
@@ -375,7 +387,7 @@ const buildStaticPages = async (namespaces, createPage) => {
   )
   const alternateLinks = await Promise.all(
     definitions.map((d) => ({
-      language: d.context.language,
+      locale: d.context.locale,
       path: d.path,
     }))
   )
@@ -396,17 +408,17 @@ const buildDynamicPages = async (
 ) => {
   const definitions = await Promise.all(
     nodes.map(async (node) => {
-      const language = node.node_locale
-      const i18n = await createI18nextInstance(language, namespaces)
-      const res = pageDefinitionCallback(language, node, i18n)
-      res.context.language = language
+      const locale = node.node_locale
+      const i18n = await createI18nextInstance(locale, namespaces)
+      const res = pageDefinitionCallback(locale, node, i18n)
+      res.context.locale = locale
       res.context.i18nResources = i18n.services.resourceStore.data
       return res
     })
   )
   const alternateLinks = await Promise.all(
     definitions.map((d) => ({
-      language: d.context.language,
+      locale: d.context.locale,
       path: d.path,
     }))
   )

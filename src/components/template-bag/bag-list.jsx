@@ -10,11 +10,9 @@ import { isEmpty } from "lodash"
 import { ContextBag } from "../../layouts/contexts/bag"
 import { Price } from "../utils/price"
 
-const slugify = require("slugify")
-
 const BagList = () => {
   const { state, dispatch } = useContext(ContextBag)
-  const { t, i18n } = useTranslation("component-object")
+  const { t, i18n } = useTranslation(["component-object", "constant"])
 
   return (
     <>
@@ -28,25 +26,26 @@ const BagList = () => {
               </Col>
               <Col lg={8} className='object-details'>
                 <Link
-                  to={`/${i18n.language}/${slugify(object.artist, {
-                    lower: true,
-                  })}/${slugify(
-                    `${object.name[i18n.language]}-${object.contentful_id_url}`,
-                    { lower: true }
-                  )}`}
+                  to={t("constant:slug.dynamic.object.slug", {
+                    locale: i18n.language,
+                    artist: object.artist,
+                    object: object.name[i18n.language],
+                    id: object.contentful_id_url,
+                  })}
                   className='object-name'
                 >
                   {object.name[i18n.language]}
                 </Link>
                 <Row className='object-details'>
                   <Col xs={3} className='detail-type'>
-                    {t("artist")}
+                    {t("component-object:artist")}
                   </Col>
                   <Col xs={9} className='detail-value'>
                     <Link
-                      to={`/${i18n.language}/${slugify(object.artist, {
-                        lower: true,
-                      })}`}
+                      to={t("constant:slug.dynamic.artist.slug", {
+                        locale: i18n.language,
+                        artist: object.artist,
+                      })}
                     >
                       {object.artist}
                     </Link>
@@ -55,7 +54,7 @@ const BagList = () => {
                 {!isEmpty(object.variant) && (
                   <Row className='object-details'>
                     <Col xs={3} className='detail-type'>
-                      {t("variant")}
+                      {t("component-object:variant")}
                     </Col>
                     <Col xs={9} className='detail-value'>
                       {object.variant[i18n.language]}
@@ -65,7 +64,7 @@ const BagList = () => {
                 {!isEmpty(object.colour) && (
                   <Row className='object-details'>
                     <Col xs={3} className='detail-type'>
-                      {t("colour")}
+                      {t("component-object:colour")}
                     </Col>
                     <Col xs={9} className='detail-value'>
                       {object.colour[i18n.language]}
@@ -75,7 +74,7 @@ const BagList = () => {
                 {!isEmpty(object.size) && (
                   <Row className='object-details'>
                     <Col xs={3} className='detail-type'>
-                      {t("size")}
+                      {t("component-object:size")}
                     </Col>
                     <Col xs={9} className='detail-value'>
                       {object.size[i18n.language]}

@@ -188,7 +188,7 @@ const BagCheckout = () => {
 
   return (
     <>
-      <h2>{t("content.checkout.heading")}</h2>
+      <h2>{t("content.checkout.h2")}</h2>
       {state.bag.objects.length !== 0 && (
         <Form onSubmit={(e) => onSubmit(e)}>
           <Form.Group className='checkout-country'>

@@ -1,8 +1,8 @@
 {
-  "url": "shopping-bag",
-  "name": "Shopping Bag",
+  "slug": "$t(constant:slug.static.bag.slug)",
+  "name": "$t(constant:slug.static.bag.name)",
   "content": {
-    "heading": "Shopping Bag",
+    "h1": "Shopping Bag",
     "checkout": {
       "heading": "Summary",
       "shipping": {

@@ -33,7 +33,7 @@ export const query = graphql`
     $byTechnique: Boolean!
     $byMaterial: Boolean!
     $contentful_id: String
-    $language: String
+    $locale: String
   ) {
     ...ObjectsByYear @include(if: $byYear)
     ...ObjectsByTechnique @include(if: $byTechnique)
@@ -43,7 +43,7 @@ export const query = graphql`
     yearObjects: allContentfulObjectsObjectMain(
       filter: {
         year: { contentful_id: { eq: $contentful_id } }
-        node_locale: { eq: $language }
+        node_locale: { eq: $locale }
       }
     ) {
       nodes {
@@ -55,7 +55,7 @@ export const query = graphql`
     techniqueObjects: allContentfulObjectsObjectMain(
       filter: {
         technique: { elemMatch: { contentful_id: { eq: $contentful_id } } }
-        node_locale: { eq: $language }
+        node_locale: { eq: $locale }
       }
     ) {
       nodes {
@@ -67,7 +67,7 @@ export const query = graphql`
     materialObjects: allContentfulObjectsObjectMain(
       filter: {
         material: { elemMatch: { contentful_id: { eq: $contentful_id } } }
-        node_locale: { eq: $language }
+        node_locale: { eq: $locale }
       }
     ) {
       nodes {

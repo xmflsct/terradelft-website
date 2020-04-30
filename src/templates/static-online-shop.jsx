@@ -20,9 +20,9 @@ const StaticOnlineShop = ({ data }) => {
 }
 
 export const query = graphql`
-  query staticOnlineShop($language: String) {
+  query staticOnlineShop($locale: String) {
     objects: allContentfulObjectsObjectMain(
-      filter: { sellOnline: { eq: true }, node_locale: { eq: $language } }
+      filter: { sellOnline: { eq: true }, node_locale: { eq: $locale } }
     ) {
       nodes {
         ...ObjectOnlineShop

@@ -15,7 +15,7 @@ const StaticBag = () => {
       SEOkeywords={[t("name"),"Terra Delft"]}
       containerName='static-bag'
     >
-      <h1>{t("content.heading")}</h1>
+      <h1>{t("content.h1")}</h1>
       <Row>
         <Col lg={8} className='bag-list'>
           <BagList />
