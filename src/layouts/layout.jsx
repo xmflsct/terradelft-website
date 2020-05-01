@@ -14,7 +14,9 @@ export const ContextMobileMenu = React.createContext(initContextMobileMenu)
 
 const Layout = ({ children, SEOtitle, SEOkeywords, containerName }) => {
   const [stateMobileMenu, dispatch] = useReducer(reducer, initContextMobileMenu)
-  document.body.style.overflow = stateMobileMenu ? "hidden" : "scroll"
+  if (typeof window !== "undefined") {
+    document.body.style.overflow = stateMobileMenu ? "hidden" : "scroll"
+  }
   config.autoAddCss = false
 
   return (
