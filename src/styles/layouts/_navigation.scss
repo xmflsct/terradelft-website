@@ -20,3 +20,20 @@ nav {
     }
   }
 }
+
+@include media-breakpoint-down(sm) {
+  nav {
+    position: fixed;
+    top: 0;
+    left: -100vw;
+    width: 100vw;
+    margin: 0 !important;
+    padding: 6.5rem 1rem 50rem 1rem;
+    background: $color-background-light;
+    transition: left 0.3s ease-out;
+
+    .nav-item {
+      margin-bottom: 1rem;
+    }
+  }
+}

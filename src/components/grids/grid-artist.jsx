@@ -10,7 +10,7 @@ const GridArtist = ({ data }) => {
   return (
     <Row className='component-grid grid-artist'>
       {data.map((d) => (
-        <Col key={d.node.artist} lg={2} className='grid-item'>
+        <Col key={d.node.artist} xs={4} md={2} className='grid-item'>
           <Link
             to={t("constant:slug.dynamic.artist.slug", {
               locale: d.node.node_locale,

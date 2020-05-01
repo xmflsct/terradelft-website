@@ -155,7 +155,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
           })
           .map((node) => {
             return (
-              <Col key={node.contentful_id} lg={2} className='grid-item'>
+              <Col key={node.contentful_id} xs={4} md={2} className='grid-item'>
                 <Link
                   to={t("constant:slug.dynamic.object.slug", {
                     locale: node.node_locale,
