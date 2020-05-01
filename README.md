@@ -15,4 +15,6 @@ Built with [GatsbyJS](https://www.gatsbyjs.org/), content sourced from [Contentf
 
 4. Set up environment variables in the root folder of this project named `.env.development`
 
-5. Run `gatsby develop` in the root folder of this project
+5. Install dependencies with `npm install`
+
+6. Run `gatsby develop` in the root folder of this project
