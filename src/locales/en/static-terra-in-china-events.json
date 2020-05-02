@@ -1,0 +1,7 @@
+{
+  "slug": "$t(constant:slug.static.terra-in-china-events.slug)",
+  "name": "$t(constant:slug.static.terra-in-china-events.name)",
+  "content": {
+    "heading": "$t(name)"
+  }
+}

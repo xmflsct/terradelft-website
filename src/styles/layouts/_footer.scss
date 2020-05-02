@@ -19,4 +19,12 @@ footer {
   .footer-right {
     text-align: right;
   }
+
+  @include media-breakpoint-down(xs) {
+    .footer-center,
+    .footer-right {
+      margin-top: 1rem;
+      text-align: left;
+    }
+  }
 }

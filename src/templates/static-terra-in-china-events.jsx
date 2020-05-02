@@ -7,15 +7,20 @@ import Img from "gatsby-image"
 import Layout from "../layouts/layout"
 import EventInformation from "../components/template-event/event-information"
 
-const StaticEvents = ({ pageContext, data }) => {
-  const { t } = useTranslation(["static-events", "constant"])
+const StaticTerraInChinaEvents = ({ pageContext, data }) => {
+  const { t } = useTranslation([
+    "static-terra-in-china-events",
+    "static-events",
+    "constant",
+  ])
 
   return (
     <Layout
-      SEOtitle={t("static-events:name")}
-      SEOkeywords={[t("static-events:name"), "Terra Delft"]}
+      SEOtitle={t("static-terra-in-china-events:name")}
+      SEOkeywords={[t("static-terra-in-china-events:name"), "Terra Delft"]}
       containerName='static-events'
     >
+      <h1>{t("static-terra-in-china-events:content.heading")}</h1>
       <Row>
         <Col xs={{ span: 12, order: 2 }} md={{ span: 4, order: 1 }}>
           <h2>{t("static-events:content.heading.upcoming")}</h2>
@@ -75,9 +80,13 @@ const StaticEvents = ({ pageContext, data }) => {
 }
 
 export const query = graphql`
-  query staticEvents($locale: String) {
+  query staticTerraInChinaEvents($locale: String) {
     eventsUpcoming: allContentfulEventsEvent(
-      filter: { isFuture: { eq: true }, node_locale: { eq: $locale } }
+      filter: {
+        isFuture: { eq: true }
+        node_locale: { eq: $locale }
+        terraInChina: { eq: true }
+      }
       sort: { order: ASC, fields: datetimeStart }
     ) {
       nodes {
@@ -99,7 +108,11 @@ export const query = graphql`
       }
     }
     eventsCurrent: allContentfulEventsEvent(
-      filter: { isCurrent: { eq: true }, node_locale: { eq: $locale } }
+      filter: {
+        isCurrent: { eq: true }
+        node_locale: { eq: $locale }
+        terraInChina: { eq: true }
+      }
       sort: { order: ASC, fields: datetimeEnd }
     ) {
       nodes {
@@ -128,4 +141,4 @@ export const query = graphql`
   }
 `
 
-export default StaticEvents
+export default StaticTerraInChinaEvents

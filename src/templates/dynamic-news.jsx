@@ -22,7 +22,7 @@ const DynamicNews = ({ pageContext, data }) => {
       <h1>{data.news.title}</h1>
       <Row>
         {data.news.image && (
-          <Col sm={4}>
+          <Col sm={4} className="mb-3">
             <Img fluid={data.news.image.fluid} />
           </Col>
         )}

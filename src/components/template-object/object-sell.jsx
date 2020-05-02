@@ -14,7 +14,7 @@ const ObjectSell = ({ object }) => {
     ]
 
   return (
-    <div>
+    <div className='object-sell'>
       {objectSell.variations ? (
         <SellVariations object={object} />
       ) : objectSell.stock > 0 ? (

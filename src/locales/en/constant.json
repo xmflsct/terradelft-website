@@ -1,8 +1,8 @@
 {
   "header": {
     "language-switcher": {
-      "nl": "Nederlands",
-      "en": "English"
+      "long": { "nl": "Nederlands", "en": "English" },
+      "short": { "nl": "NL", "en": "EN" }
     }
   },
   "navigation": {
@@ -83,6 +83,14 @@
       "terra-in-china": {
         "slug": "/{{locale}}/terra-in-china",
         "name": "Terra in China"
+      },
+      "terra-in-china-news": {
+        "slug": "/{{locale}}/terra-in-china/news",
+        "name": "Terra in China News"
+      },
+      "terra-in-china-events": {
+        "slug": "/{{locale}}/terra-in-china/events",
+        "name": "Terra in China Exhibitions"
       }
     },
     "dynamic": {

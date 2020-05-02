@@ -38,8 +38,8 @@ const Header = () => {
         relativePath: { eq: "layout-header/logo-small-nl.png" }
       ) {
         childImageSharp {
-          fluid(maxWidth: 150, quality: 100) {
-            ...GatsbyImageSharpFluid_withWebp_noBase64
+          fixed(width: 100, quality: 100) {
+            ...GatsbyImageSharpFixed_withWebp_noBase64
           }
         }
       }
@@ -47,8 +47,8 @@ const Header = () => {
         relativePath: { eq: "layout-header/logo-small-en.png" }
       ) {
         childImageSharp {
-          fluid(maxWidth: 150, quality: 100) {
-            ...GatsbyImageSharpFluid_withWebp_noBase64
+          fixed(width: 100, quality: 100) {
+            ...GatsbyImageSharpFixed_withWebp_noBase64
           }
         }
       }
@@ -62,7 +62,7 @@ const Header = () => {
   return (
     <header>
       <Row>
-        <Col xs={2} className='header-hamburger'>
+        <Col xs={4} sm={3} className='header-hamburger text-left'>
           <Button
             className={`hamburger hamburger--collapse ${
               stateMobileMenu ? "is-active" : ""
@@ -75,11 +75,7 @@ const Header = () => {
             </span>
           </Button>
         </Col>
-        <Col
-          xs={{ span: 6, offset: 1 }}
-          md={{ span: 9, offset: 0 }}
-          className='header-logo'
-        >
+        <Col xs={4} sm={6} md={9} className='header-logo'>
           <Link
             to={t("constant:slug.static.index.slug", { locale: i18n.language })}
           >
@@ -91,50 +87,54 @@ const Header = () => {
               className='logo-large'
             />
             <Img
-              fluid={
+              fixed={
                 image[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp
-                  .fluid
+                  .fixed
               }
               className='logo-small'
             />
           </Link>
         </Col>
-        <Col xs={2} className='language-switcher text-right'>
+        <Col
+          xs={{ span: 2, offset: 0 }}
+          sm={{ span: 1, offset: 1 }}
+          md={{ span: 2, offset: 0 }}
+          className='language-switcher'
+        >
           {alternateLinks &&
             alternateLinks.map(
               (link) =>
                 link.locale !== i18n.language && (
-                  <Link
-                    to={link.path}
-                    className={
-                      link.locale === i18n.language ? "active" : "inactive"
-                    }
-                    hrefLang={link.locale}
-                    key={link.locale}
-                  >
+                  <Link to={link.path} hrefLang={link.locale} key={link.locale}>
                     <FontAwesomeIcon
                       icon={faGlobeEurope}
                       size='sm'
                       fixedWidth
                     />
-                    {" " +
-                      t(`constant:header.language-switcher.${link.locale}`)}
+                    <span className='long small-block'>
+                      {" " +
+                        t(
+                          `constant:header.language-switcher.long.${link.locale}`
+                        )}
+                    </span>
+                    <span className='short small-block'>
+                      {" " +
+                        t(
+                          `constant:header.language-switcher.short.${link.locale}`
+                        )}
+                    </span>
                   </Link>
                 )
             )}
         </Col>
-        <Col
-          xs={{ span: 2, offset: 1 }}
-          md={{ span: 1, offset: 0 }}
-          className='bag-link text-right'
-        >
+        <Col xs={2} sm={1} md={1} className='bag-link'>
           <Link
             to={t("constant:slug.static.bag.slug", {
               locale: i18n.language,
             })}
           >
             <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
-            {` (${state.bag.objects.length})`}
+            <span className='small-block'>{` (${state.bag.objects.length})`}</span>
           </Link>
         </Col>
       </Row>

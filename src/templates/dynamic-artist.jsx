@@ -15,7 +15,7 @@ const DynamicArtist = ({ data }) => (
   >
     <h1>{data.artist.artist}</h1>
     <Row className="artist-section">
-      <Col lg={4}>
+      <Col lg={4} className="mb-3">
         <Img fluid={data.artist.image.fluid} />
       </Col>
       <Col lg={8}>

@@ -151,7 +151,7 @@ const SellVariations = ({ object }) => {
   }
 
   return (
-    <>
+    <div className="sell-variations">
       {Object.keys(options).length > 0 && (
         <Form onSubmit={handleSubmit(onSubmit)}>
           {Object.keys(options).map((type) => (
@@ -214,7 +214,7 @@ const SellVariations = ({ object }) => {
           </Button>
         </Form>
       )}
-    </>
+    </div>
   )
 }
 

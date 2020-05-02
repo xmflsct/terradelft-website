@@ -1,4 +1,14 @@
 {
   "slug": "$t(constant:slug.static.terra-in-china.slug)",
-  "name": "$t(constant:slug.static.terra-in-china.name)"
+  "name": "$t(constant:slug.static.terra-in-china.name)",
+  "content": {
+    "heading": {
+      "events": "$t(static-events:name)",
+      "news": "$t(static-news:name)"
+    },
+    "view-all": {
+      "events": "View all events of $t(name) →",
+      "news": "View all news of $t(name) →"
+    }
+  }
 }

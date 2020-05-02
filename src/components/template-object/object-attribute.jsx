@@ -7,17 +7,17 @@ const ObjectAttribute = ({ type, value, dimension }) => {
   const { t, i18n } = useTranslation("constant")
   return (
     <Row className='object-attribute'>
-      <Col md={3} className='attribute-type'>
+      <Col xs={4} sm={3} className='attribute-type'>
         {type}
       </Col>
       {!Array.isArray(value) ? (
-        <Col md={9} className='attribute-value'>
+        <Col xs={8} sm={9} className='attribute-value'>
           {typeof value === "object"
             ? value[Object.keys(value)[0]]
             : value + (dimension && " cm")}
         </Col>
       ) : (
-        <Col md={9} className='attribute-value'>
+        <Col xs={8} sm={9} className='attribute-value'>
           {value.map((d, i) => (
             <span key={i}>
               <Link

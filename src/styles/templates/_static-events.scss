@@ -18,6 +18,11 @@
       line-height: 0;
       margin-bottom: 0.3rem;
     }
+    @include media-breakpoint-down(xs) {
+      .current-type {
+        margin-top: 0.5rem;
+      }
+    }
     .current-name {
       h3 {
         margin: 0;

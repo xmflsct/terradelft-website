@@ -37,9 +37,9 @@ const StaticAboutTerra = ({ pageContext, data }) => {
           <h2>{t("static-about-terra:content.staff")}</h2>
           {data.aboutTerra.staff.map((s) => (
             <Row key={s.name} className='staff-member'>
-              <Col sm={2}>
-                <Img fluid={s.avatar.fluid} />
-                <figcaption>{s.name}</figcaption>
+              <Col xs={{ span: 6, offset: 3 }} sm={{ span: 2, offset: 0 }}>
+                <Img fluid={s.avatar.fluid} className='mb-2' />
+                <h4 className='text-center'>{s.name}</h4>
               </Col>
               <Col sm={10}>{documentToReactComponents(s.biography.json)}</Col>
             </Row>

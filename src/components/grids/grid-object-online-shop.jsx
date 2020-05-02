@@ -68,7 +68,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
     <>
       <h4>{t("static-online-shop:content.filters.heading")}</h4>
       <Row className='filter-grid mb-3'>
-        <Col md={4}>
+        <Col sm={4} className="mb-3">
           <Select
             name='prices'
             isClearable
@@ -80,7 +80,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
             }
           />
         </Col>
-        <Col md={4}>
+        <Col sm={4} className="mb-3">
           <Select
             name='artists'
             isClearable
@@ -92,7 +92,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
             }
           />
         </Col>
-        <Col md={4}>
+        <Col sm={4} className="mb-3">
           <Select
             name='variants'
             isClearable

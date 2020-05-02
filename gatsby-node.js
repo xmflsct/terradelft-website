@@ -33,6 +33,18 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     createPage
   )
   await buildStaticPages(["static-news", "constant"], createPage)
+  await buildStaticPages(
+    ["static-terra-in-china", "static-events", "static-news", "constant"],
+    createPage
+  )
+  await buildStaticPages(
+    ["static-terra-in-china-events", "static-events", "constant"],
+    createPage
+  )
+  await buildStaticPages(
+    ["static-terra-in-china-news", "static-news", "constant"],
+    createPage
+  )
   const aboutTerra = await graphql(`
     {
       aboutTerra: allContentfulInformationAboutTerra {
