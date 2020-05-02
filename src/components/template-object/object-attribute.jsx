@@ -3,29 +3,29 @@ import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { Link } from "gatsby"
 
-const slugify = require("slugify")
-
 const ObjectAttribute = ({ type, value, dimension }) => {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation("constant")
   return (
     <Row className='object-attribute'>
-      <Col md={3} className='attribute-type'>
+      <Col xs={4} sm={3} className='attribute-type'>
         {type}
       </Col>
       {!Array.isArray(value) ? (
-        <Col md={9} className='attribute-value'>
+        <Col xs={8} sm={9} className='attribute-value'>
           {typeof value === "object"
             ? value[Object.keys(value)[0]]
             : value + (dimension && " cm")}
         </Col>
       ) : (
-        <Col md={9} className='attribute-value'>
+        <Col xs={8} sm={9} className='attribute-value'>
           {value.map((d, i) => (
             <span key={i}>
               <Link
-                to={`/${i18n.language}/objects/${slugify(type, {
-                  lower: true,
-                })}/${slugify(Object.values(d)[0], { lower: true })}`}
+                to={t("constant:slug.dynamic.objects-attribute.slug", {
+                  locale: i18n.language,
+                  type: type,
+                  value: Object.values(d)[0],
+                })}
               >
                 {Object.values(d)[0]}
               </Link>

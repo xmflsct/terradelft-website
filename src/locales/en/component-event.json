@@ -1,0 +1,8 @@
+{
+  "datetime": {
+    "Start": "Starts {{datetime}}",
+    "End": "Ends {{datetime}}"
+  },
+  "organizer": "Organizer",
+  "location": "Location"
+}

@@ -7,20 +7,29 @@
   padding: 1.5rem;
 
   border: 1px solid $color-secondary-light;
-  animation: slideUp 0.9s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
-  transform: translate3d(0, 3vh, 0);
 
   main {
     margin: 1em 0;
     padding: 0 !important;
   }
 }
-
-@keyframes slideUp {
-  0% {
-    transform: translate3d(0, 3vh, 0);
+@include media-breakpoint-down(sm) {
+  body:has(.site-wrapper.mobile-menu-open) {
+    overflow: hidden;
   }
-  100% {
-    transform: translate3d(0, 0, 0);
+  .site-wrapper {
+    margin: 0;
+    padding-top: 0;
+    border: none;
+
+    &.mobile-menu-open {
+      margin: 0;
+
+      header {
+        nav {
+          left: 0;
+        }
+      }
+    }
   }
 }

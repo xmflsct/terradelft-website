@@ -1,37 +1,34 @@
 {
   "header": {
     "language-switcher": {
-      "nl": "Nederlands",
-      "en": "English"
-    },
-    "bag": {
-      "url": "winkelmandje"
+      "long": { "nl": "Nederlands", "en": "English" },
+      "short": { "nl": "NL", "en": "EN" }
     }
   },
   "navigation": {
     "1": {
-      "url": "",
-      "name": "Collectie"
+      "url": "$t(slug.static.index.slug)",
+      "name": "$t(slug.static.index.name)"
     },
     "2": {
-      "url": "web-winkel",
-      "name": "Web Winkel"
+      "url": "$t(slug.static.online-shop.slug)",
+      "name": "$t(slug.static.online-shop.name)"
     },
     "3": {
-      "url": "expositie",
-      "name": "Expositie"
+      "url": "$t(slug.static.events.slug)",
+      "name": "$t(slug.static.events.name)"
     },
     "4": {
-      "url": "",
-      "name": "Nieuws"
+      "url": "$t(slug.static.news.slug)",
+      "name": "$t(slug.static.news.name)"
     },
     "5": {
-      "url": "",
-      "name": "Terra in China"
+      "url": "$t(slug.static.terra-in-china.slug)",
+      "name": "$t(slug.static.terra-in-china.name)"
     },
     "6": {
-      "url": "",
-      "name": "Over Terra"
+      "url": "$t(slug.static.about-terra.slug)",
+      "name": "$t(slug.static.about-terra.name)"
     }
   },
   "footer": {
@@ -47,6 +44,76 @@
       "address": "Nieuwstraat 7, 2611 HK Delft",
       "phone": "Tel/Fax: 015-2147072",
       "email": "Email: info@terra-delft.nl"
+    }
+  },
+  "slug": {
+    "static": {
+      "404": {
+        "slug": "/{{locale}}/404",
+        "name": "404 niet gevonden"
+      },
+      "about-terra": {
+        "slug": "/{{locale}}/over-terra",
+        "name": "Over Terra"
+      },
+      "bag": {
+        "slug": "/{{locale}}/winkelmandje",
+        "name": "Winkelmandje"
+      },
+      "events": {
+        "slug": "/{{locale}}/evenementen",
+        "name": "Expositie"
+      },
+      "index": {
+        "slug": "/{{locale}}",
+        "name": "Collectie"
+      },
+      "news": {
+        "slug": "/{{locale}}/nieuws",
+        "name": "Nieuws"
+      },
+      "online-shop": {
+        "slug": "/{{locale}}/web-winkel",
+        "name": "Web Winkel"
+      },
+      "reach-terra": {
+        "slug": "/{{locale}}/bezoek-terra",
+        "name": "Bezoek Terra"
+      },
+      "terra-in-china": {
+        "slug": "/{{locale}}/terra-in-china",
+        "name": "Terra in China"
+      },
+      "terra-in-china-news": {
+        "slug": "/{{locale}}/terra-in-china/nieuws",
+        "name": "Terra in China Nieuws"
+      },
+      "terra-in-china-events": {
+        "slug": "/{{locale}}/terra-in-china/evenementen",
+        "name": "Terra in China Expositie"
+      }
+    },
+    "dynamic": {
+      "artist": {
+        "slug": "/{{locale}}/kunstenaar/{{artist, slugify}}",
+        "name": "{{artist}}"
+      },
+      "event": {
+        "slug": "/{{locale}}/evenement/{{event, slugify}}-{{id, slugify}}",
+        "name": "{{event}}"
+      },
+      "news": {
+        "slug": "/{{locale}}/nieuwsbericht/{{news, slugify}}-{{id, slugify}}",
+        "name": "{{news}}"
+      },
+      "object": {
+        "slug": "/{{locale}}/kunstenaar/{{artist, slugify}}/object/{{object, slugify}}-{{id, slugify}}",
+        "name": "{{object}} bij {{artist}}"
+      },
+      "objects-attribute": {
+        "slug": "/{{locale}}/objecten/attribuut/{{type, slugify}}/{{value, slugify}}",
+        "name": "Objecten met {{type}} over {{value}}"
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 {
-  "url": "online-shop",
-  "name": "Online Shop",
+  "slug": "$t(constant:slug.static.online-shop.slug)",
+  "name": "$t(constant:slug.static.online-shop.name)",
   "content": {
     "filters": {
       "heading": "Filters",

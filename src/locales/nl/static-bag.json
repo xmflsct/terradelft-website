@@ -1,8 +1,11 @@
 {
-  "url": "winkelmandje",
-  "name": "Winkelmandje",
+  "slug": "$t(constant:slug.static.bag.slug)",
+  "name": "$t(constant:slug.static.bag.name)",
   "content": {
     "heading": "Winkelmandje",
+    "list": {
+      "empty": "Het lijkt erop dat je boodschappentas leeg is."
+    },
     "checkout": {
       "heading": "Overzicht",
       "shipping": {

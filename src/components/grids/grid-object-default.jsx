@@ -5,10 +5,8 @@ import { graphql, Link } from "gatsby"
 import Img from "gatsby-image"
 import { shuffle } from "lodash"
 
-const slugify = require("slugify")
-
 const GridObjectDefault = ({ nodes, randomize, limit }) => {
-  const { t } = useTranslation("component-object")
+  const { t } = useTranslation(["component-object", "constant"])
 
   randomize && (nodes = shuffle(nodes))
   limit && (nodes = nodes.slice(0, limit))
@@ -17,13 +15,14 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
     <Row className='component-grid grid-object-default'>
       {nodes.map((node) => {
         return (
-          <Col key={node.name} lg={2} className='grid-item'>
+          <Col key={node.contentful_id} xs={4} md={2} className='grid-item'>
             <Link
-              to={`/${node.node_locale}/${slugify(node.artist.artist, {
-                lower: true,
-              })}/${slugify(`${node.name}-${node.contentful_id}`, {
-                lower: true,
-              })}`}
+              to={t("constant:slug.dynamic.object.slug", {
+                locale: node.node_locale,
+                artist: node.artist.artist,
+                object: node.name,
+                id: node.contentful_id,
+              })}
             >
               <div className='item-image'>
                 {node.images[0].fixed ? (
@@ -35,7 +34,7 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
               <p className='item-name'>{node.name}</p>
             </Link>
             <span className='item-sale'>
-              {node.fields.object_sale && t("on-sale")}
+              {node.fields.object_sale && t("component-object:on-sale")}
             </span>
           </Col>
         )

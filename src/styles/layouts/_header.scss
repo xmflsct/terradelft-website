@@ -1,6 +1,45 @@
+$hamburger-padding-x: 0;
+$hamburger-padding-y: 0;
+$hamburger-layer-width: 25px;
+$hamburger-layer-height: 2px;
+$hamburger-layer-spacing: 4px;
+$hamburger-layer-color: $black;
+$hamburger-types: (collapse);
+
 header {
+  z-index: 999;
+  background-color: $color-background-light;
+
+  & > div > div {
+    z-index: 9999;
+  }
+
+  .header-hamburger {
+    display: none;
+  }
+  @include media-breakpoint-down(sm) {
+    .header-hamburger {
+      display: block;
+    }
+  }
+  .header-logo {
+    .logo-small {
+      display: none !important;
+    }
+    @include media-breakpoint-down(xs) {
+      .logo-large {
+        display: none !important;
+      }
+      .logo-small {
+        display: block !important;
+        margin: 0 calc(50% - 50px);
+      }
+    }
+  }
   .language-switcher,
   .bag-link {
+    text-align: right;
+
     a {
       color: $black;
       transition: $transition-base;
@@ -9,6 +48,37 @@ header {
         color: $red;
         text-decoration: none;
       }
+      .short {
+        display: none;
+      }
+      @include media-breakpoint-down(sm) {
+        .small-block {
+          display: block;
+        }
+      }
+    }
+  }
+  .language-switcher {
+    @include media-breakpoint-down(md) {
+      .long {
+        display: none !important;
+      }
+      .short {
+        display: contents;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  header {
+    position: sticky;
+    top: 0;
+    padding: 1.5rem 0 0.5rem 0;
+    border-bottom: 2px $red solid;
+
+    .header-logo {
+      transition: opacity 0.35s ease-in-out;
     }
   }
 }

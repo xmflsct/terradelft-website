@@ -5,9 +5,17 @@
 @import "layouts/header";
 @import "layouts/navigation";
 @import "layouts/footer";
+@import "hamburgers/_sass/hamburgers/hamburgers";
 
 @import "templates/dynamic-artist";
 @import "templates/dynamic-object";
+@import "templates/static-about-terra";
 @import "templates/static-bag";
+@import "templates/static-events";
+@import "templates/static-news";
+@import "templates/static-reach-terra";
+
+@import "components/event-information";
 @import "components/grid";
+@import "components/media-from-rich-text";
 @import "components/price";

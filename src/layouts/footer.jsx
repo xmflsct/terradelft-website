@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <Row as='footer'>
-      <Col lg={4} className='footer-left'>
+      <Col sm={4} className='footer-left'>
         <p>
           {t("footer.left.copyright")}
           <br />
@@ -18,7 +18,7 @@ const Footer = () => {
           {t("footer.left.opening.3")}
         </p>
       </Col>
-      <Col lg={4} className='footer-center'>
+      <Col sm={4} className='footer-center'>
         <p>
           {t("footer.center.address")}
           <br />
@@ -27,7 +27,7 @@ const Footer = () => {
           {t("footer.center.email")}
         </p>
       </Col>
-      <Col lg={4} className='footer-right'>
+      <Col sm={4} className='footer-right'>
         <p>
           Made with ♥ by{" "}
           <a

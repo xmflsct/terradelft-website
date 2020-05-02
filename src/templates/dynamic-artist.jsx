@@ -15,7 +15,7 @@ const DynamicArtist = ({ data }) => (
   >
     <h1>{data.artist.artist}</h1>
     <Row className="artist-section">
-      <Col lg={4}>
+      <Col lg={4} className="mb-3">
         <Img fluid={data.artist.image.fluid} />
       </Col>
       <Col lg={8}>
@@ -28,10 +28,10 @@ const DynamicArtist = ({ data }) => (
 )
 
 export const query = graphql`
-  query dynamicArtist($contentful_id: String, $language: String) {
+  query dynamicArtist($contentful_id: String, $locale: String) {
     artist: contentfulObjectsArtist(
       contentful_id: { eq: $contentful_id }
-      node_locale: { eq: $language }
+      node_locale: { eq: $locale }
     ) {
       artist
       image {
@@ -46,7 +46,7 @@ export const query = graphql`
     objects: allContentfulObjectsObjectMain(
       filter: {
         artist: { contentful_id: { eq: $contentful_id } }
-        node_locale: { eq: $language }
+        node_locale: { eq: $locale }
       }
     ) {
       nodes {

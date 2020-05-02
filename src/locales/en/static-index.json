@@ -1,5 +1,6 @@
 {
-  "url": "",
+  "slug": "$t(constant:slug.static.index.slug)",
+  "name": "$t(constant:slug.static.index.name)",
   "content": {
     "section": {
       "online-shop": "Online Shop",

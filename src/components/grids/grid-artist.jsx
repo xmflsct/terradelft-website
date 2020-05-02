@@ -1,22 +1,21 @@
 import React from "react"
 import { Col, Row } from "react-bootstrap"
+import { useTranslation } from "react-i18next"
 import { Link } from "gatsby"
 import Img from "gatsby-image"
 
-const slugify = require("slugify")
+const GridArtist = ({ data }) => {
+  const { t } = useTranslation("constant")
 
-const GridArtist = ({ data }) => (
-  <Row className='component-grid grid-artist'>
-    {data
-      .map((d) => (
-        <Col key={d.node.artist} lg={2} className='grid-item'>
+  return (
+    <Row className='component-grid grid-artist'>
+      {data.map((d) => (
+        <Col key={d.node.artist} xs={4} md={2} className='grid-item'>
           <Link
-            to={
-              "/" +
-              d.node.node_locale +
-              "/" +
-              slugify(d.node.artist, { lower: true })
-            }
+            to={t("constant:slug.dynamic.artist.slug", {
+              locale: d.node.node_locale,
+              artist: d.node.artist,
+            })}
           >
             <div className='item-image'>
               {d.node.image.fixed ? (
@@ -29,7 +28,8 @@ const GridArtist = ({ data }) => (
           </Link>
         </Col>
       ))}
-  </Row>
-)
+    </Row>
+  )
+}
 
 export default GridArtist

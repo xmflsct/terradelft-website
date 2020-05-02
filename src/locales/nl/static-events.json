@@ -1,6 +1,6 @@
 {
-  "url": "expositie",
-  "name": "Expositie",
+  "slug": "$t(constant:slug.static.events.slug)",
+  "name": "$t(constant:slug.static.events.name)",
   "content": {
     "heading": {
       "current": "Nu",

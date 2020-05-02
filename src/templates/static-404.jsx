@@ -21,11 +21,11 @@ const Static404 = () => {
 
   return (
     <Layout
-      SEOtitle={`404 ${t("title")}`}
+      SEOtitle={t("name")}
       SEOkeywords={["Terra", "Delft", "Terra Delft"]}
       containerName='static-404'
     >
-      <h1>404 {t("h1")}</h1>
+      <h1>{t("content.heading")}</h1>
       <Img fluid={image.file.childImageSharp.fluid} />
     </Layout>
   )

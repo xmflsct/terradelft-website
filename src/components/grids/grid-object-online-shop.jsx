@@ -8,10 +8,12 @@ import { find, includes } from "lodash"
 
 import * as currency from "../utils/currency"
 
-const slugify = require("slugify")
-
 const GridObjectOnlineShop = ({ nodes }) => {
-  const { t } = useTranslation(["static-online-shop", "component-object"])
+  const { t } = useTranslation([
+    "static-online-shop",
+    "component-object",
+    "constant",
+  ])
 
   const [selected, setSelected] = useState({
     price: null,
@@ -66,7 +68,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
     <>
       <h4>{t("static-online-shop:content.filters.heading")}</h4>
       <Row className='filter-grid mb-3'>
-        <Col md={4}>
+        <Col sm={4} className="mb-3">
           <Select
             name='prices'
             isClearable
@@ -78,7 +80,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
             }
           />
         </Col>
-        <Col md={4}>
+        <Col sm={4} className="mb-3">
           <Select
             name='artists'
             isClearable
@@ -90,7 +92,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
             }
           />
         </Col>
-        <Col md={4}>
+        <Col sm={4} className="mb-3">
           <Select
             name='variants'
             isClearable
@@ -153,13 +155,14 @@ const GridObjectOnlineShop = ({ nodes }) => {
           })
           .map((node) => {
             return (
-              <Col key={node.contentful_id} lg={2} className='grid-item'>
+              <Col key={node.contentful_id} xs={4} md={2} className='grid-item'>
                 <Link
-                  to={`/${node.node_locale}/${slugify(node.artist.artist, {
-                    lower: true,
-                  })}/${slugify(`${node.name}-${node.contentful_id}`, {
-                    lower: true,
-                  })}`}
+                  to={t("constant:slug.dynamic.object.slug", {
+                    locale: node.node_locale,
+                    artist: node.artist.artist,
+                    object: node.name,
+                    id: node.contentful_id,
+                  })}
                 >
                   <div className='item-image'>
                     <Img fluid={node.images[0].fluid} />

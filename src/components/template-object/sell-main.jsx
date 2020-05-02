@@ -39,7 +39,7 @@ const SellMain = ({ object }) => {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)} className='sell-main'>
       <InputGroup>
         <InputGroup.Prepend>
           <InputGroup.Text>{t("amount")}</InputGroup.Text>

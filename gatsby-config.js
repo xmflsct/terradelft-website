@@ -14,7 +14,6 @@ module.exports = {
       },
     },
     `gatsby-plugin-lodash`,
-    `gatsby-plugin-preact`,
     {
       resolve: `gatsby-plugin-prefetch-google-fonts`,
       options: {

@@ -1,13 +1,15 @@
 import React, { useContext } from "react"
-import { Col, Row } from "react-bootstrap"
+import { Button, Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGlobeEurope, faShoppingBag } from "@fortawesome/free-solid-svg-icons"
 import { useStaticQuery, graphql, Link } from "gatsby"
 import Img from "gatsby-image"
 
+import Navigation from "./navigation"
 import { ContextLanguage } from "./contexts/language"
 import { ContextBag } from "./contexts/bag"
+import { ContextMobileMenu } from "./layout"
 
 import "../../node_modules/@fortawesome/fontawesome-svg-core/styles.css"
 
@@ -15,69 +17,129 @@ const Header = () => {
   const image = useStaticQuery(graphql`
     {
       logoLargeNL: file(
-        relativePath: { eq: "layout-header/logo-large.nl.png" }
+        relativePath: { eq: "layout-header/logo-large-nl.png" }
       ) {
         childImageSharp {
-          fluid(maxWidth: 700) {
+          fluid(maxWidth: 700, quality: 100) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }
       }
       logoLargeEN: file(
-        relativePath: { eq: "layout-header/logo-large.en.png" }
+        relativePath: { eq: "layout-header/logo-large-en.png" }
       ) {
         childImageSharp {
-          fluid(maxWidth: 700) {
+          fluid(maxWidth: 700, quality: 100) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
+          }
+        }
+      }
+      logoSmallNL: file(
+        relativePath: { eq: "layout-header/logo-small-nl.png" }
+      ) {
+        childImageSharp {
+          fixed(width: 100, quality: 100) {
+            ...GatsbyImageSharpFixed_withWebp_noBase64
+          }
+        }
+      }
+      logoSmallEN: file(
+        relativePath: { eq: "layout-header/logo-small-en.png" }
+      ) {
+        childImageSharp {
+          fixed(width: 100, quality: 100) {
+            ...GatsbyImageSharpFixed_withWebp_noBase64
           }
         }
       }
     }
   `)
-  const { t, i18n } = useTranslation(["constant"])
+  const { t, i18n } = useTranslation("constant")
   const alternateLinks = useContext(ContextLanguage)
   const { state } = useContext(ContextBag)
+  const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
 
   return (
-    <Row as='header'>
-      <Col lg={9} md={12} className='header-left'>
-        <Link to={`/${i18n.language}`}>
-          <Img
-            fluid={
-              i18n.language === "nl"
-                ? image.logoLargeNL.childImageSharp.fluid
-                : image.logoLargeEN.childImageSharp.fluid
-            }
-          />
-        </Link>
-      </Col>
-      <Col lg={2} className='language-switcher text-right'>
-        {alternateLinks &&
-          alternateLinks.map(
-            (link) =>
-              link.language !== i18n.language && (
-                <Link
-                  to={link.path}
-                  className={
-                    link.language === i18n.language ? "active" : "inactive"
-                  }
-                  hrefLang={link.language}
-                  key={link.language}
-                >
-                  <FontAwesomeIcon icon={faGlobeEurope} size="sm" />
-                  {" " +
-                    t(`constant:header.language-switcher.${link.language}`)}
-                </Link>
-              )
-          )}
-      </Col>
-      <Col lg={1} className='bag-link text-right'>
-        <Link to={`/${i18n.language}/${t("constant:header.bag.url")}`}>
-          <FontAwesomeIcon icon={faShoppingBag} size="sm" />
-          {` (${state.bag.objects.length})`}
-        </Link>
-      </Col>
-    </Row>
+    <header>
+      <Row>
+        <Col xs={4} sm={3} className='header-hamburger text-left'>
+          <Button
+            className={`hamburger hamburger--collapse ${
+              stateMobileMenu ? "is-active" : ""
+            }`}
+            variant='link'
+            onClick={() => dispatch()}
+          >
+            <span className='hamburger-box'>
+              <span className='hamburger-inner'></span>
+            </span>
+          </Button>
+        </Col>
+        <Col xs={4} sm={6} md={9} className='header-logo'>
+          <Link
+            to={t("constant:slug.static.index.slug", { locale: i18n.language })}
+          >
+            <Img
+              fluid={
+                image[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp
+                  .fluid
+              }
+              className='logo-large'
+            />
+            <Img
+              fixed={
+                image[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp
+                  .fixed
+              }
+              className='logo-small'
+            />
+          </Link>
+        </Col>
+        <Col
+          xs={{ span: 2, offset: 0 }}
+          sm={{ span: 1, offset: 1 }}
+          md={{ span: 2, offset: 0 }}
+          className='language-switcher'
+        >
+          {alternateLinks &&
+            alternateLinks.map(
+              (link) =>
+                link.locale !== i18n.language && (
+                  <Link to={link.path} hrefLang={link.locale} key={link.locale}>
+                    <FontAwesomeIcon
+                      icon={faGlobeEurope}
+                      size='sm'
+                      fixedWidth
+                    />
+                    <span className='long small-block'>
+                      {" " +
+                        t(
+                          `constant:header.language-switcher.long.${link.locale}`
+                        )}
+                    </span>
+                    <span className='short small-block'>
+                      {" " +
+                        t(
+                          `constant:header.language-switcher.short.${link.locale}`
+                        )}
+                    </span>
+                  </Link>
+                )
+            )}
+        </Col>
+        <Col xs={2} sm={1} md={1} className='bag-link'>
+          <Link
+            to={t("constant:slug.static.bag.slug", {
+              locale: i18n.language,
+            })}
+          >
+            <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
+            <span className='small-block'>{` (${state.bag.objects.length})`}</span>
+          </Link>
+        </Col>
+      </Row>
+      <Navigation />
+    </header>
   )
 }
 
