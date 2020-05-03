@@ -5,6 +5,7 @@ import { graphql } from "gatsby"
 import Layout from "../layouts/layout"
 import GridArtist from "../components/grids/grid-artist"
 import GridObjectDefault from "../components/grids/grid-object-default"
+import NewsletterPopup from "../components/newsletter-popup"
 
 const StaticIndex = ({ data }) => {
   const { t } = useTranslation("static-index")
@@ -27,6 +28,7 @@ const StaticIndex = ({ data }) => {
         <h1>{t("content.section.collection")}</h1>
         <GridArtist data={data.artists.edges} />
       </div>
+      <NewsletterPopup />
     </Layout>
   )
 }
