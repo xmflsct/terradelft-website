@@ -9,15 +9,13 @@ const Header = () => {
   return (
     <Row as='nav'>
       <Col xs={12} sm={4} md={2} className='nav-item'>
-        <Link
-          to={t("constant:slug.static.index.slug", { locale: i18n.language })}
-        >
+        <Link to={t("constant:navigation.1.slug", { locale: i18n.language })}>
           {t("constant:navigation.1.name")}
         </Link>
       </Col>
       <Col xs={12} sm={4} md={2} className='nav-item'>
         <Link
-          to={t("constant:slug.static.online-shop.slug", {
+          to={t("constant:navigation.2.slug", {
             locale: i18n.language,
           })}
         >
@@ -26,7 +24,7 @@ const Header = () => {
       </Col>
       <Col xs={12} sm={4} md={2} className='nav-item'>
         <Link
-          to={t("constant:slug.static.events.slug", {
+          to={t("constant:navigation.3.slug", {
             locale: i18n.language,
           })}
         >
@@ -34,15 +32,13 @@ const Header = () => {
         </Link>
       </Col>
       <Col xs={12} sm={4} md={2} className='nav-item'>
-        <Link
-          to={t("constant:slug.static.news.slug", { locale: i18n.language })}
-        >
+        <Link to={t("constant:navigation.4.slug", { locale: i18n.language })}>
           {t("constant:navigation.4.name")}
         </Link>
       </Col>
       <Col xs={12} sm={4} md={2} className='nav-item'>
         <Link
-          to={t("constant:slug.static.terra-in-china.slug", {
+          to={t("constant:navigation.5.slug", {
             locale: i18n.language,
           })}
         >
@@ -51,12 +47,28 @@ const Header = () => {
       </Col>
       <Col xs={12} sm={4} md={2} className='nav-item'>
         <Link
-          to={t("constant:slug.static.about-terra.slug", {
+          to={t("constant:navigation.6.slug", {
             locale: i18n.language,
           })}
         >
           {t("constant:navigation.6.name")}
         </Link>
+        <div className='sub-nav'>
+          <Link
+            to={t("constant:navigation.6.1.slug", {
+              locale: i18n.language,
+            })}
+          >
+            {t("constant:navigation.6.1.name")}
+          </Link>
+          <Link
+            to={t("constant:navigation.6.2.slug", {
+              locale: i18n.language,
+            })}
+          >
+            {t("constant:navigation.6.2.name")}
+          </Link>
+        </div>
       </Col>
     </Row>
   )

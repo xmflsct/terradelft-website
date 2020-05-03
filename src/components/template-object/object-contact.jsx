@@ -15,7 +15,7 @@ const ObjectContact = ({ object }) => {
   const formSubmit = async (token, d) => {
     const data = {
       name: d.name,
-      email: "info@terra-delft.nl",
+      email: d.email,
       type: "[Object inquiry]",
       subject: t("contact.form.subject.value", {
         name: object.name,

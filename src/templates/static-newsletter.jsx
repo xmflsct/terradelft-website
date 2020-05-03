@@ -26,7 +26,7 @@ const StaticNewsletter = ({ pageContext }) => {
   const formSubmit = async (t, d) => {
     const data = {
       name: d.firstName + " " + d.lastName,
-      email: "info@terra-delft.nl",
+      email: d.email,
       type: "[Subscribe to newsletter]",
       subject: `from ${d.firstName} ${d.lastName}`,
       html: `<p>First name: ${d.firstName}</p>
