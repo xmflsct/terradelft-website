@@ -7,28 +7,36 @@
   },
   "navigation": {
     "1": {
-      "url": "$t(slug.static.index.slug)",
+      "slug": "$t(slug.static.index.slug)",
       "name": "$t(slug.static.index.name)"
     },
     "2": {
-      "url": "$t(slug.static.online-shop.slug)",
+      "slug": "$t(slug.static.online-shop.slug)",
       "name": "$t(slug.static.online-shop.name)"
     },
     "3": {
-      "url": "$t(slug.static.events.slug)",
+      "slug": "$t(slug.static.events.slug)",
       "name": "$t(slug.static.events.name)"
     },
     "4": {
-      "url": "$t(slug.static.news.slug)",
+      "slug": "$t(slug.static.news.slug)",
       "name": "$t(slug.static.news.name)"
     },
     "5": {
-      "url": "$t(slug.static.terra-in-china.slug)",
+      "slug": "$t(slug.static.terra-in-china.slug)",
       "name": "$t(slug.static.terra-in-china.name)"
     },
     "6": {
-      "url": "$t(slug.static.about-terra.slug)",
-      "name": "$t(slug.static.about-terra.name)"
+      "slug": "$t(slug.static.about-terra.slug)",
+      "name": "$t(slug.static.about-terra.name)",
+      "1": {
+        "slug": "$t(slug.static.reach-terra.slug)",
+        "name": "$t(slug.static.reach-terra.name)"
+      },
+      "2": {
+        "slug": "$t(slug.static.newsletter.slug)",
+        "name": "$t(slug.static.newsletter.name)"
+      }
     }
   },
   "footer": {
@@ -71,6 +79,10 @@
       "news": {
         "slug": "/{{locale}}/news",
         "name": "News"
+      },
+      "newsletter": {
+        "slug": "/{{locale}}/newsletter",
+        "name": "Newsletter"
       },
       "online-shop": {
         "slug": "/{{locale}}/online-shop",

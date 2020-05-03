@@ -1,5 +1,5 @@
-import React, { useReducer } from "react"
-import { Col, Row } from "react-bootstrap"
+import React, { useReducer, useState } from "react"
+import { Button, Col, Collapse, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { graphql, Link } from "gatsby"
 import { findIndex } from "lodash"
@@ -10,6 +10,7 @@ import GridObjectDefault from "../components/grids/grid-object-default"
 import ObjectImages from "../components/template-object/object-images"
 import ObjectSell from "../components/template-object/object-sell"
 import ObjectAttribute from "../components/template-object/object-attribute"
+import ObjectContact from "../components/template-object/object-contact"
 import { mediaFromRichText } from "../components/utils/media-from-rich-text"
 
 function reducer(state, action) {
@@ -34,6 +35,7 @@ const DynamicObject = ({ pageContext, data }) => {
     "constant",
   ])
   const [state, updateImage] = useReducer(reducer, initContextVariationImage)
+  const [toggleContact, setToggleContact] = useState(false)
   const object =
     data.object.nodes[
       findIndex(
@@ -131,6 +133,26 @@ const DynamicObject = ({ pageContext, data }) => {
                 object.description?.json,
                 mediaFromRichText(data.imagesFromRichText, pageContext.locale)
               )}
+            </div>
+            <div className='object-contact'>
+              <Button
+                onClick={() => setToggleContact(!toggleContact)}
+                aria-expanded={toggleContact}
+                className={toggleContact ? "d-none" : ""}
+              >
+                {t("dynamic-object:contact.button")}
+              </Button>
+              <Collapse in={toggleContact}>
+                <div>
+                  {toggleContact && (
+                    <ObjectContact
+                      object={{
+                        name: object.name,
+                      }}
+                    />
+                  )}
+                </div>
+              </Collapse>
             </div>
           </Col>
         </Row>

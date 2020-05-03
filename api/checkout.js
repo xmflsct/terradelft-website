@@ -2,23 +2,7 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const ky = require("ky-universal")
 var _ = require("lodash")
 
-async function checkRecaptcha(req) {
-  if (!req.body.token)
-    return {
-      success: false,
-      error: "[checkout - checkRecaptcha] No token is provided",
-    }
-
-  return await ky
-    .get("https://www.google.com/recaptcha/api/siteverify", {
-      searchParams: {
-        secret: process.env.RECAPTCHA_PRIVATE_KEY,
-        response: req.body.token,
-        remoteip: req.connection.remoteAddress,
-      },
-    })
-    .json()
-}
+const recaptcha = require("./utils/_recaptcha")
 
 async function checkContentful(req) {
   if (
@@ -202,11 +186,11 @@ async function stripeSession(req) {
           ? object.name[locale]
           : object.name[locale] +
             " | " +
-            (object.variant[locale] || "N/A") +
+            (object.variant ? object.variant[locale] : "N/A") +
             ", " +
-            (object.colour[locale] || "N/A") +
+            (object.colour ? object.colour[locale] : "N/A") +
             ", " +
-            (object.size[locale] || "N/A")
+            (object.size ? object.size[locale] : "N/A")
       const images = [`https:${object.image.fluid.src}`]
       line_items.push({
         name: name,
@@ -280,7 +264,10 @@ export default async (req, res) => {
   }
 
   console.log("[checkout - checkRecaptcha] Start")
-  const resRecaptcha = await checkRecaptcha(req)
+  const resRecaptcha = await recaptcha.check(
+    process.env.RECAPTCHA_PRIVATE_KEY,
+    req
+  )
   console.log("[checkout - checkRecaptcha] End")
   if (!resRecaptcha.success) {
     res.status(400).json({ error: resRecaptcha.error })

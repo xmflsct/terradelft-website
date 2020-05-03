@@ -1,0 +1,31 @@
+{
+  "slug": "$t(constant:slug.static.newsletter.slug)",
+  "name": "$t(constant:slug.static.newsletter.name)",
+  "content": {
+    "heading": "Schrijf je in voor de nieuwsbrief van Terra Delft",
+    "description": "Bedankt voor het abonneren op onze nieuwsbrief. Vul dan onderstaand formulier in.",
+    "form": {
+      "first-name": {
+        "label": "Voornaam"
+      },
+      "last-name": {
+        "label": "Achternaam"
+      },
+      "email": {
+        "label": "E-mailadres"
+      },
+      "country": {
+        "label": "Land/Regio"
+      },
+      "GDPR": {
+        "label": "Ja, ik accepteer dat Terra Delft met mijn gegevens omgaat"
+      },
+      "button": {
+        "default": "Inschrijven",
+        "submitting": "Wacht alsjeblieft",
+        "success": "Heel hartelijk bedankt!",
+        "fail": "Probeer het opnieuw of neem contact met ons op"
+      }
+    }
+  }
+}

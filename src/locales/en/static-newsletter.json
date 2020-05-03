@@ -1,0 +1,31 @@
+{
+  "slug": "$t(constant:slug.static.newsletter.slug)",
+  "name": "$t(constant:slug.static.newsletter.name)",
+  "content": {
+    "heading": "Subscribe to Terra Delft's newsletter",
+    "description": "Thank you for subscribing to our newsletter. Please fill out the form below.",
+    "form": {
+      "first-name": {
+        "label": "First name"
+      },
+      "last-name": {
+        "label": "Last name"
+      },
+      "email": {
+        "label": "Email address"
+      },
+      "country": {
+        "label": "Country/region"
+      },
+      "GDPR": {
+        "label": "Yes, I accept that Terra Delft handles my information"
+      },
+      "button": {
+        "default": "Subscribe",
+        "submitting": "Please wait",
+        "success": "Thank you!",
+        "fail": "Please try again or contact us"
+      }
+    }
+  }
+}
