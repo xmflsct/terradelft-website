@@ -68,6 +68,7 @@ const Header = () => {
               stateMobileMenu ? "is-active" : ""
             }`}
             variant='link'
+            aria-label='Menu'
             onClick={() => dispatch()}
           >
             <span className='hamburger-box'>
