@@ -145,7 +145,7 @@ const BagCheckout = () => {
       handleCorrection(res.corrections)
       return false
     } else {
-      console.log(res)
+      console.log(res.error)
       return false
     }
   }
