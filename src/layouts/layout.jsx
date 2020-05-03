@@ -22,7 +22,7 @@ const Layout = ({ children, SEOtitle, SEOkeywords, containerName }) => {
   return (
     <Container
       className={`site-wrapper ${stateMobileMenu ? "mobile-menu-open" : ""}`}
-      scroll={!stateMobileMenu}
+      scroll={(!stateMobileMenu).toString()}
     >
       <SEO title={SEOtitle} keywords={SEOkeywords} />
       <ContextMobileMenu.Provider value={{ stateMobileMenu, dispatch }}>
