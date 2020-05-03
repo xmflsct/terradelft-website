@@ -6,5 +6,33 @@
     "select-variation": "Selecteer opties",
     "out-of-stock": "Verkocht"
   },
+  "contact": {
+    "button": "Vraag over dit object?",
+    "heading": "Stuur ons uw vraag hieronder",
+    "form": {
+      "subject": {
+        "label": "Onderwerpen",
+        "value": "Vraag over {{name}}"
+      },
+      "name": {
+        "label": "Naam"
+      },
+      "email": {
+        "label": "E-mailadres"
+      },
+      "question": {
+        "label": "Vraag"
+      },
+      "GDPR": {
+        "label": "Ja, ik accepteer dat Terra Delft met mijn gegevens omgaat"
+      },
+      "button": {
+        "default": "Sturen",
+        "submitting": "Wacht alsjeblieft",
+        "success": "Dank u! We nemen spoedig contact met u op",
+        "fail": "Probeer het opnieuw of neem contact met ons op"
+      }
+    }
+  },
   "related": "Andere objecten uit "
 }
