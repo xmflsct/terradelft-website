@@ -2,7 +2,7 @@ const sgMail = require("@sendgrid/mail")
 const ky = require("ky-universal")
 
 const recaptcha = require("./utils/_recaptcha")
-const terraEmail = "xmflsct@gmail.com"
+const terraEmail = "shop@terra-delft.nl"
 
 async function sendGrid(req) {
   sgMail.setApiKey(process.env.SENDGRID_KEY)
@@ -11,7 +11,7 @@ async function sendGrid(req) {
     ? terraEmail
     : req.body.data.email
   let message = {
-    from: `${req.body.data.name} <${req.body.data.email}>`,
+    from: `${req.body.data.name} <${email}>`,
     to: terraEmail,
     // replyTo: req.body.data.email,
     subject: `${req.body.data.type} - ${req.body.data.subject}`,
