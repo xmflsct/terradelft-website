@@ -72,6 +72,10 @@
         "slug": "/{{locale}}/news",
         "name": "News"
       },
+      "newsletter": {
+        "slug": "/{{locale}}/newsletter",
+        "name": "Newsletter"
+      },
       "online-shop": {
         "slug": "/{{locale}}/online-shop",
         "name": "Online Shop"

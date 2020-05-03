@@ -72,6 +72,10 @@
         "slug": "/{{locale}}/nieuws",
         "name": "Nieuws"
       },
+      "newsletter": {
+        "slug": "/{{locale}}/nieuwsbrief",
+        "name": "Nieuwsbrief"
+      },
       "online-shop": {
         "slug": "/{{locale}}/web-winkel",
         "name": "Web Winkel"

@@ -33,6 +33,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     createPage
   )
   await buildStaticPages(["static-news", "constant"], createPage)
+  await buildStaticPages(["static-newsletter", "constant"], createPage)
   await buildStaticPages(
     ["static-terra-in-china", "static-events", "static-news", "constant"],
     createPage
