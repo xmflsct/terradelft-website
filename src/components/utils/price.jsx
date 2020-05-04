@@ -17,29 +17,37 @@ export function Price(priceSale, priceOriginal, kunstKoop) {
     }
   `)
   return (
-    <div className='object-price'>
-      {priceSale ? (
-        <p>
-          <span className='price-sale'>{currency.full(priceSale)}</span>
-          <span className='price-original'>
-            <strike>{currency.full(priceOriginal)}</strike>
-          </span>
-        </p>
+    <>
+      {!(priceSale > 0) && !(priceOriginal > 0) ? (
+        ""
       ) : (
-        <p>
-          <span className='price-original'>{currency.full(priceOriginal)}</span>
-        </p>
+        <div className='object-price'>
+          {priceSale ? (
+            <p>
+              <span className='price-sale'>{currency.full(priceSale)}</span>
+              <span className='price-original'>
+                <strike>{currency.full(priceOriginal)}</strike>
+              </span>
+            </p>
+          ) : (
+            <p>
+              <span className='price-original'>
+                {currency.full(priceOriginal)}
+              </span>
+            </p>
+          )}
+          {kunstKoop && (
+            <a
+              href='https://kunstkoop.nl/'
+              className='object-kunstkoop'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <Img fixed={image.file.childImageSharp.fixed} />
+            </a>
+          )}
+        </div>
       )}
-      {kunstKoop && (
-        <a
-          href='https://kunstkoop.nl/'
-          className='object-kunstkoop'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <Img fixed={image.file.childImageSharp.fixed} />
-        </a>
-      )}
-    </div>
+    </>
   )
 }

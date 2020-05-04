@@ -27,10 +27,12 @@ const ObjectSell = ({ object }) => {
             objectSell.kunstKoop
           )
         )
-      ) : (
+      ) : objectSell.stock === 0 ? (
         <div className='object-sold'>
           <span>{t("out-of-stock")}</span>
         </div>
+      ) : (
+        ""
       )}
     </div>
   )
