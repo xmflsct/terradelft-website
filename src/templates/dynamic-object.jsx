@@ -189,7 +189,13 @@ export const query = graphql`
           json
         }
         images {
-          fluid(maxWidth: 1600, quality: 80) {
+          fluid(maxWidth: 427, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp
+          }
+          fluidThumbnail: fluid(maxWidth: 132, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp
+          }
+          fluidZoom: fluid(maxWidth: 2000, quality: 80) {
             ...GatsbyContentfulFluid_withWebp
           }
         }
@@ -218,7 +224,10 @@ export const query = graphql`
           sellOnline
           stock
           image {
-            fluid(quality: 80) {
+            fluid(maxWidth: 427, quality: 80) {
+              ...GatsbyContentfulFluid_withWebp
+            }
+            fluidZoom: fluid(maxWidth: 2000, quality: 80) {
               ...GatsbyContentfulFluid_withWebp
             }
           }
