@@ -14,18 +14,23 @@
           width: 100%;
           height: 100%;
         }
+        span.item-sale {
+          position: absolute;
+          left: 50%;
+          bottom: 0;
+          transform: translate(-50%, 0);
+          font-size: $font-size-base * 0.8;
+          padding: 0.25rem 0.5rem;
+          background: $red;
+          color: $color-background-light;
+          font-weight: $font-weight-bold;
+        }
       }
       p.item-name {
         text-align: center;
         font-size: $font-size-base * 0.9;
         margin-bottom: 0.25rem;
       }
-    }
-    span.item-sale {
-      display: block;
-      text-align: center;
-      font-size: $font-size-base * 0.9;
-      text-transform: uppercase;
     }
   }
 }

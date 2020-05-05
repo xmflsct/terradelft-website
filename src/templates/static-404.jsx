@@ -10,7 +10,7 @@ const Static404 = () => {
     {
       file(relativePath: { eq: "static-404/404.jpg" }) {
         childImageSharp {
-          fluid(maxWidth: 800) {
+          fluid(maxWidth: 870, quality: 80) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }

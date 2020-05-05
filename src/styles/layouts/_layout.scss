@@ -33,3 +33,20 @@
     }
   }
 }
+
+body.modal-open {
+  .modal-backdrop {
+    background-color: black;
+    opacity: 0.8;
+    z-index: 9999;
+  }
+  .modal {
+    z-index: 9999;
+
+    .modal-close {
+      position: fixed;
+      top: 0;
+      right: 0;
+    }
+  }
+}

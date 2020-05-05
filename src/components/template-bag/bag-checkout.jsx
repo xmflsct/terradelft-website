@@ -10,7 +10,7 @@ import { loadStripe } from "@stripe/stripe-js"
 
 import { ContextBag } from "../../layouts/contexts/bag"
 import { checkout } from "../../api/checkout"
-import * as currency from "../utils/currency"
+import * as formatNumber from "../utils/format-number"
 
 var countries = require("i18n-iso-countries")
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"))
@@ -232,7 +232,7 @@ const BagCheckout = () => {
                           <Form.Text>
                             {`${t(
                               "content.checkout.shipping.free-for-total"
-                            )} ${currency.full(d.freeForTotal)}`}
+                            )} ${formatNumber.currency(d.freeForTotal, i18n.language)}`}
                           </Form.Text>
                         )}
                       </FormCheck>
@@ -242,7 +242,7 @@ const BagCheckout = () => {
                       (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
                         t("content.checkout.shipping.free-fee")
                       ) : (
-                        <>{currency.full(d.price)}</>
+                        <>{formatNumber.currency(d.price, i18n.language)}</>
                       )}
                     </Col>
                   </Form.Row>
@@ -254,9 +254,9 @@ const BagCheckout = () => {
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.subtotal && (
-                  <strike>{currency.full(corrections.subtotal)}</strike>
+                  <strike>{formatNumber.currency(corrections.subtotal, i18n.language)}</strike>
                 )}{" "}
-                {currency.full(pay.objects)}
+                {formatNumber.currency(pay.objects, i18n.language)}
               </Form.Label>
             </Form.Row>
             {pay.discount > 0 && (
@@ -265,7 +265,7 @@ const BagCheckout = () => {
                   {t("content.checkout.sum.discount")}
                 </Form.Label>
                 <Form.Label column md='7'>
-                  {currency.full(pay.discount)}
+                  {formatNumber.currency(pay.discount, i18n.language)}
                 </Form.Label>
               </Form.Row>
             )}
@@ -275,12 +275,12 @@ const BagCheckout = () => {
               </Form.Label>
               <Form.Label column md='7'>
                 {(corrections.shipping > 0 && (
-                  <strike>{currency.full(corrections.shipping)}</strike>
+                  <strike>{formatNumber.currency(corrections.shipping, i18n.language)}</strike>
                 )) ||
                   (corrections.shipping === 0 && (
                     <strike>{t("content.checkout.shipping.free-fee")}</strike>
                   ))}{" "}
-                {(pay.shipping > 0 && currency.full(pay.shipping)) ||
+                {(pay.shipping > 0 && formatNumber.currency(pay.shipping, i18n.language)) ||
                   (pay.shipping === 0 && "Free")}
               </Form.Label>
             </Form.Row>
@@ -290,10 +290,10 @@ const BagCheckout = () => {
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.required && (
-                  <strike>{currency.full(corrections.total)}</strike>
+                  <strike>{formatNumber.currency(corrections.total, i18n.language)}</strike>
                 )}{" "}
                 {pay.shipping !== null &&
-                  currency.full((pay.objects * 10 + pay.shipping * 10) / 10)}
+                  formatNumber.currency((pay.objects * 10 + pay.shipping * 10) / 10, i18n.language)}
               </Form.Label>
             </Form.Row>
             <Button

@@ -16,7 +16,7 @@ import {
 import { ContextBag } from "../../layouts/contexts/bag"
 import { ContextVariationImage } from "../../templates/dynamic-object"
 import { Price } from "../utils/price"
-import * as currency from "../utils/currency"
+import * as formatNumber from "../utils/format-number"
 
 const SellVariations = ({ object }) => {
   const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
@@ -151,7 +151,7 @@ const SellVariations = ({ object }) => {
   }
 
   return (
-    <div className="sell-variations">
+    <div className='sell-variations'>
       {Object.keys(options).length > 0 && (
         <Form onSubmit={handleSubmit(onSubmit)}>
           {Object.keys(options).map((type) => (
@@ -186,18 +186,21 @@ const SellVariations = ({ object }) => {
             </div>
           </InputGroup>
           {variantChosen ? (
-            Price(variantChosen.priceSale, variantChosen.priceOriginal)
+            Price(i18n.language, variantChosen.priceSale, variantChosen.priceOriginal)
           ) : (
             <p className='object-price'>
               {variationsMain.fields.variations_price_range.lowest ===
               variationsMain.fields.variations_price_range.highest
-                ? currency.full(
-                    variationsMain.fields.variations_price_range.highest
+                ? formatNumber.currency(
+                    variationsMain.fields.variations_price_range.highest,
+                    i18n.language
                   )
-                : `${currency.full(
-                    variationsMain.fields.variations_price_range.lowest
-                  )} - ${currency.full(
-                    variationsMain.fields.variations_price_range.highest
+                : `${formatNumber.currency(
+                    variationsMain.fields.variations_price_range.lowest,
+                    i18n.language
+                  )} - ${formatNumber.currency(
+                    variationsMain.fields.variations_price_range.highest,
+                    i18n.language
                   )}`}
             </p>
           )}

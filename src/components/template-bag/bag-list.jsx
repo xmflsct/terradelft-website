@@ -85,7 +85,7 @@ const BagList = () => {
                     </Col>
                   </Row>
                 )}
-                {Price(object.priceSale, object.priceOriginal)}
+                {Price(i18n.language, object.priceSale, object.priceOriginal)}
                 <Button
                   variant='link'
                   onClick={() =>

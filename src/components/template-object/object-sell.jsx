@@ -1,5 +1,7 @@
 import React from "react"
 import { useTranslation } from "react-i18next"
+import { useStaticQuery, graphql } from "gatsby"
+import Img from "gatsby-image"
 import { findIndex } from "lodash"
 
 import SellVariations from "./sell-variations"
@@ -7,6 +9,17 @@ import SellMain from "./sell-main"
 import { Price } from "../utils/price"
 
 const ObjectSell = ({ object }) => {
+  const image = useStaticQuery(graphql`
+    {
+      file(relativePath: { eq: "dynamic-object/kunstkoop.jpg" }) {
+        childImageSharp {
+          fixed(width: 70, quality: 90) {
+            ...GatsbyImageSharpFixed_withWebp_noBase64
+          }
+        }
+      }
+    }
+  `)
   const { t, i18n } = useTranslation("component-object")
   const objectSell =
     object.nodes[
@@ -21,16 +34,24 @@ const ObjectSell = ({ object }) => {
         objectSell.sellOnline ? (
           <SellMain object={object} />
         ) : (
-          Price(
-            objectSell.priceSale,
-            objectSell.priceOriginal,
-            objectSell.kunstKoop
-          )
+          Price(i18n.language, objectSell.priceSale, objectSell.priceOriginal)
         )
-      ) : (
+      ) : objectSell.stock === 0 ? (
         <div className='object-sold'>
           <span>{t("out-of-stock")}</span>
         </div>
+      ) : (
+        ""
+      )}
+      {objectSell.kunstKoop && (
+        <a
+          href='https://kunstkoop.nl/'
+          className='object-kunstkoop'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          <Img fixed={image.file.childImageSharp.fixed} />
+        </a>
       )}
     </div>
   )

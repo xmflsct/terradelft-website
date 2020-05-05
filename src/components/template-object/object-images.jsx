@@ -1,41 +1,56 @@
-import React, { useContext } from "react"
-import { Col, Row } from "react-bootstrap"
+import React, { useContext, useState } from "react"
+import { Button, Col, Modal, Row } from "react-bootstrap"
 import Img from "gatsby-image"
-import mediumZoom from "medium-zoom"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTimes } from "@fortawesome/free-solid-svg-icons"
 
 import { ContextVariationImage } from "../../templates/dynamic-object"
 
-const ObjectImages = (images) => {
+const ObjectImages = ({ images }) => {
   const { state } = useContext(ContextVariationImage)
+  const [zoom, setZoom] = useState({ show: false })
 
-  if (typeof window !== "undefined") {
-    mediumZoom(".image-zoom > picture > img", {
-      margin: 50,
-      background: "rgba(0, 0, 0, 0.88)",
-      scrollOffset: 50,
-      container: null,
-      template: null,
-      zIndex: 99999,
-      excludedSelector: null,
-    })
-  }
   return (
-    <Row>
-      {state.image && (
-        <Col xs={12} className='mb-3'>
-          <Img className='image-zoom' fluid={state.image.fluid} />
-        </Col>
-      )}
-      {images.images.map((image, index) => (
-        <Col
-          xs={!state.image && index === 0 ? 12 : 4}
-          className='mb-3'
-          key={index}
+    <>
+      <Row>
+        {state.image && (
+          <Col xs={12} className='mb-3'>
+            <Img fluid={state.image.fluid} />
+          </Col>
+        )}
+        {images.map((image, index) => (
+          <Col
+            xs={!state.image && index === 0 ? 12 : 4}
+            className='mb-3'
+            key={index}
+            onClick={() => setZoom({ show: true, fluid: image.fluidZoom })}
+          >
+            <Img
+              fluid={
+                !state.image && index === 0 ? image.fluid : image.fluidThumbnail
+              }
+            />
+          </Col>
+        ))}
+      </Row>
+      <Modal
+        size='xl'
+        show={zoom.show}
+        centered
+        dialogClassName='test'
+        onHide={() => setZoom({ show: false })}
+        aria-labelledby='Image'
+      >
+        <Img fluid={zoom.fluid} />
+        <Button
+          className='modal-close'
+          variant='link'
+          onClick={() => setZoom({ show: false })}
         >
-          <Img className='image-zoom' fluid={image.fluid} />
-        </Col>
-      ))}
-    </Row>
+          <FontAwesomeIcon icon={faTimes} size="2x" inverse fixedWidth />
+        </Button>
+      </Modal>
+    </>
   )
 }
 

@@ -3,7 +3,9 @@ import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { Link } from "gatsby"
 
-const ObjectAttribute = ({ type, value, dimension }) => {
+import * as formatNumber from "../utils/format-number"
+
+const ObjectAttribute = ({ type, value }) => {
   const { t, i18n } = useTranslation("constant")
   return (
     <Row className='object-attribute'>
@@ -13,10 +15,13 @@ const ObjectAttribute = ({ type, value, dimension }) => {
       {!Array.isArray(value) ? (
         <Col xs={8} sm={9} className='attribute-value'>
           {typeof value === "object"
-            ? value[Object.keys(value)[0]]
-            : value + (dimension && " cm")}
+            ? // Year only
+              value[Object.keys(value)[0]]
+            : // Dimensions only
+              formatNumber.dimension(value, i18n.language)}
         </Col>
       ) : (
+        // Technique and material, many references
         <Col xs={8} sm={9} className='attribute-value'>
           {value.map((d, i) => (
             <span key={i}>

@@ -97,35 +97,30 @@ const DynamicObject = ({ pageContext, data }) => {
               <ObjectAttribute
                 type={t("component-object:dimensionWidth")}
                 value={object.dimensionWidth}
-                dimension
               />
             )}
             {object.dimensionLength && (
               <ObjectAttribute
                 type={t("component-object:dimensionLength")}
                 value={object.dimensionLength}
-                dimension
               />
             )}
             {object.dimensionHeight && (
               <ObjectAttribute
                 type={t("component-object:dimensionHeight")}
                 value={object.dimensionHeight}
-                dimension
               />
             )}
             {object.dimensionDiameter && (
               <ObjectAttribute
                 type={t("component-object:dimensionDiameter")}
                 value={object.dimensionDiameter}
-                dimension
               />
             )}
             {object.dimensionDepth && (
               <ObjectAttribute
                 type={t("component-object:dimensionDepth")}
                 value={object.dimensionDepth}
-                dimension
               />
             )}
             <div className='object-description'>
@@ -194,7 +189,13 @@ export const query = graphql`
           json
         }
         images {
-          fluid(maxWidth: 1600, quality: 80) {
+          fluid(maxWidth: 427, quality: 85) {
+            ...GatsbyContentfulFluid_withWebp
+          }
+          fluidThumbnail: fluid(maxWidth: 132, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp
+          }
+          fluidZoom: fluid(maxWidth: 2000, quality: 85) {
             ...GatsbyContentfulFluid_withWebp
           }
         }
@@ -223,7 +224,10 @@ export const query = graphql`
           sellOnline
           stock
           image {
-            fluid(quality: 80) {
+            fluid(maxWidth: 427, quality: 80) {
+              ...GatsbyContentfulFluid_withWebp
+            }
+            fluidZoom: fluid(maxWidth: 2000, quality: 80) {
               ...GatsbyContentfulFluid_withWebp
             }
           }

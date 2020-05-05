@@ -52,7 +52,7 @@ const SellMain = ({ object }) => {
           />
         </div>
       </InputGroup>
-      {Price(sellMain.priceSale, sellMain.priceOriginal)}
+      {Price(i18n.language, sellMain.priceSale, sellMain.priceOriginal)}
       <Button variant='primary' type='submit'>
         {t("add-button.add-to-bag")}
       </Button>

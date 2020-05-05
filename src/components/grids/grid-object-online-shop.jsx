@@ -6,10 +6,10 @@ import { Link, graphql } from "gatsby"
 import Img from "gatsby-image"
 import { find, includes } from "lodash"
 
-import * as currency from "../utils/currency"
+import * as formatNumber from "../utils/format-number"
 
 const GridObjectOnlineShop = ({ nodes }) => {
-  const { t } = useTranslation([
+  const { t, i18n } = useTranslation([
     "static-online-shop",
     "component-object",
     "constant",
@@ -22,25 +22,40 @@ const GridObjectOnlineShop = ({ nodes }) => {
   })
   const options = {
     prices: [
-      { label: `< ${currency.full(50)}`, value: { minimum: 0, maximum: 50 } },
       {
-        label: `${currency.full(50)} - ${currency.full(100)}`,
+        label: `< ${formatNumber.currency(50, i18n.language, true)}`,
+        value: { minimum: 0, maximum: 50 },
+      },
+      {
+        label: `${formatNumber.currency(
+          50,
+          i18n.language
+        )} - ${formatNumber.currency(100, i18n.language)}`,
         value: { minimum: 50, maximum: 100 },
       },
       {
-        label: `${currency.full(100)} - ${currency.full(200)}`,
+        label: `${formatNumber.currency(
+          100,
+          i18n.language
+        )} - ${formatNumber.currency(200, i18n.language)}`,
         value: { minimum: 100, maximum: 200 },
       },
       {
-        label: `${currency.full(200)} - ${currency.full(300)}`,
+        label: `${formatNumber.currency(
+          200,
+          i18n.language
+        )} - ${formatNumber.currency(300, i18n.language)}`,
         value: { minimum: 200, maximum: 300 },
       },
       {
-        label: `${currency.full(300)} - ${currency.full(500)}`,
+        label: `${formatNumber.currency(
+          300,
+          i18n.language
+        )} - ${formatNumber.currency(500, i18n.language)}`,
         value: { minimum: 300, maximum: 500 },
       },
       {
-        label: `> ${currency.full(500)}`,
+        label: `> ${formatNumber.currency(500, i18n.language)}`,
         value: { minimum: 500, maximum: 99999 },
       },
     ],
@@ -68,7 +83,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
     <>
       <h4>{t("static-online-shop:content.filters.heading")}</h4>
       <Row className='filter-grid mb-3'>
-        <Col sm={4} className="mb-3">
+        <Col sm={4} className='mb-3'>
           <Select
             name='prices'
             isClearable
@@ -80,7 +95,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
             }
           />
         </Col>
-        <Col sm={4} className="mb-3">
+        <Col sm={4} className='mb-3'>
           <Select
             name='artists'
             isClearable
@@ -92,7 +107,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
             }
           />
         </Col>
-        <Col sm={4} className="mb-3">
+        <Col sm={4} className='mb-3'>
           <Select
             name='variants'
             isClearable
@@ -166,12 +181,14 @@ const GridObjectOnlineShop = ({ nodes }) => {
                 >
                   <div className='item-image'>
                     <Img fluid={node.images[0].fluid} />
+                    {node.fields.object_sale && (
+                      <span className='item-sale'>
+                        {t("component-object:on-sale")}
+                      </span>
+                    )}
                   </div>
                   <p className='item-name'>{node.name}</p>
                 </Link>
-                <span className='item-sale'>
-                  {node.fields.object_sale && t("component-object:on-sale")}
-                </span>
               </Col>
             )
           })}
@@ -189,7 +206,7 @@ export const query = graphql`
       artist
     }
     images {
-      fluid(maxWidth: 800) {
+      fluid(maxWidth: 140, quality: 85) {
         ...GatsbyContentfulFluid_withWebp
       }
     }

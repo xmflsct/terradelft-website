@@ -34,7 +34,6 @@
     "ky": "^0.19.1",
     "ky-universal": "^0.6.0",
     "lodash": "^4.17.15",
-    "medium-zoom": "^1.0.5",
     "node-sass": "^4.14.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
