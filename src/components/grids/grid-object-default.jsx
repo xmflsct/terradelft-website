@@ -25,17 +25,15 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
               })}
             >
               <div className='item-image'>
-                {node.images[0].fixed ? (
-                  <Img fluid={node.images[0].fixed} />
-                ) : (
-                  <Img fluid={node.images[0].fluid} />
+                <Img fluid={node.images[0].fluid} />
+                {node.fields.object_sale && (
+                  <span className='item-sale'>
+                    {t("component-object:on-sale")}
+                  </span>
                 )}
               </div>
               <p className='item-name'>{node.name}</p>
             </Link>
-            <span className='item-sale'>
-              {node.fields.object_sale && t("component-object:on-sale")}
-            </span>
           </Col>
         )
       })}
