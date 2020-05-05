@@ -189,13 +189,13 @@ export const query = graphql`
           json
         }
         images {
-          fluid(maxWidth: 427, quality: 80) {
+          fluid(maxWidth: 427, quality: 85) {
             ...GatsbyContentfulFluid_withWebp
           }
           fluidThumbnail: fluid(maxWidth: 132, quality: 80) {
             ...GatsbyContentfulFluid_withWebp
           }
-          fluidZoom: fluid(maxWidth: 2000, quality: 80) {
+          fluidZoom: fluid(maxWidth: 2000, quality: 85) {
             ...GatsbyContentfulFluid_withWebp
           }
         }

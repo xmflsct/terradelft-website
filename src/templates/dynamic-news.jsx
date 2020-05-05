@@ -55,7 +55,7 @@ export const query = graphql`
       title
       date
       image {
-        fluid(maxWidth: 800) {
+        fluid(maxWidth: 280, quality: 85) {
           ...GatsbyContentfulFluid_withWebp
         }
       }

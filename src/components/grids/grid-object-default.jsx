@@ -50,7 +50,7 @@ export const query = graphql`
       artist
     }
     images {
-      fluid(maxWidth: 140) {
+      fluid(maxWidth: 140, quality: 85) {
         ...GatsbyContentfulFluid_withWebp
       }
     }

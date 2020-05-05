@@ -108,7 +108,7 @@ export const query = graphql`
       nodes {
         contentful_id
         image {
-          fluid(maxWidth: 600) {
+          fluid(maxWidth: 427, quality: 80) {
             ...GatsbyContentfulFluid_withWebp
           }
         }
@@ -138,7 +138,7 @@ export const query = graphql`
         title
         date
         image {
-          fluid(maxWidth: 600) {
+          fluid(maxWidth: 427, quality: 80) {
             ...GatsbyContentfulFluid_withWebp
           }
         }
