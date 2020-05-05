@@ -21,20 +21,20 @@ const NonStretchedImage = (props) => {
   return <Img {...normalizedProps} />
 }
 
-export const mediaFromRichText = (data, locale) => ({
+export const mediaFromRichText = (images, locale) => ({
   renderNode: {
     [BLOCKS.EMBEDDED_ASSET]: (node) => {
       const contentful_id = node.data.target.sys.contentful_id
       const description = node.data.target.fields.description
       const imageIndex = findIndex(
-        data.nodes,
+        images.nodes,
         (node) => node.contentful_id === contentful_id
       )
       if (imageIndex !== -1) {
         return (
           <div className='image-rich-text'>
             <>
-              {NonStretchedImage(data.nodes[imageIndex])}
+              {NonStretchedImage(images.nodes[imageIndex])}
               {description && <figcaption>{description[locale]}</figcaption>}
             </>
           </div>
