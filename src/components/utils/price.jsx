@@ -1,6 +1,6 @@
 import React from "react"
 
-import * as formatNumber from "./formatNumber"
+import * as formatNumber from "./format-number"
 
 export function Price(locale, priceSale, priceOriginal) {
   return (

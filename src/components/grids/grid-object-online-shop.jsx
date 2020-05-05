@@ -6,7 +6,7 @@ import { Link, graphql } from "gatsby"
 import Img from "gatsby-image"
 import { find, includes } from "lodash"
 
-import * as formatNumber from "../utils/formatNumber"
+import * as formatNumber from "../utils/format-number"
 
 const GridObjectOnlineShop = ({ nodes }) => {
   const { t, i18n } = useTranslation([

@@ -16,7 +16,7 @@ import {
 import { ContextBag } from "../../layouts/contexts/bag"
 import { ContextVariationImage } from "../../templates/dynamic-object"
 import { Price } from "../utils/price"
-import * as formatNumber from "../utils/formatNumber"
+import * as formatNumber from "../utils/format-number"
 
 const SellVariations = ({ object }) => {
   const { t, i18n } = useTranslation(["dynamic-object", "component-object"])

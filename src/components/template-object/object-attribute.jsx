@@ -3,7 +3,7 @@ import { Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { Link } from "gatsby"
 
-import * as formatNumber from "../utils/formatNumber"
+import * as formatNumber from "../utils/format-number"
 
 const ObjectAttribute = ({ type, value }) => {
   const { t, i18n } = useTranslation("constant")

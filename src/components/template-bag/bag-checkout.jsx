@@ -10,7 +10,7 @@ import { loadStripe } from "@stripe/stripe-js"
 
 import { ContextBag } from "../../layouts/contexts/bag"
 import { checkout } from "../../api/checkout"
-import * as formatNumber from "../utils/formatNumber"
+import * as formatNumber from "../utils/format-number"
 
 var countries = require("i18n-iso-countries")
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"))
