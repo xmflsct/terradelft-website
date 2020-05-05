@@ -8,7 +8,8 @@
   "navigation": {
     "1": {
       "slug": "$t(slug.static.index.slug)",
-      "name": "$t(slug.static.index.name)"
+      "name": "$t(slug.static.index.name)",
+      "children": "$t(slug.dynamic.artist.slug-children)"
     },
     "2": {
       "slug": "$t(slug.static.online-shop.slug)",
@@ -16,24 +17,30 @@
     },
     "3": {
       "slug": "$t(slug.static.events.slug)",
-      "name": "$t(slug.static.events.name)"
+      "name": "$t(slug.static.events.name)",
+      "children": "$t(slug.dynamic.event.slug-children)"
     },
     "4": {
       "slug": "$t(slug.static.news.slug)",
-      "name": "$t(slug.static.news.name)"
+      "name": "$t(slug.static.news.name)",
+      "children": "$t(slug.dynamic.news.slug-children)"
     },
     "5": {
       "slug": "$t(slug.static.terra-in-china.slug)",
-      "name": "$t(slug.static.terra-in-china.name)"
+      "name": "$t(slug.static.terra-in-china.name)",
+      "children": "/{{locale}}/terra-in-china"
     },
     "6": {
-      "slug": "$t(slug.static.about-terra.slug)",
-      "name": "$t(slug.static.about-terra.name)",
+      "name": "Over ons",
       "1": {
+        "slug": "$t(slug.static.about-terra.slug)",
+        "name": "$t(slug.static.about-terra.name)"
+      },
+      "2": {
         "slug": "$t(slug.static.reach-terra.slug)",
         "name": "$t(slug.static.reach-terra.name)"
       },
-      "2": {
+      "3": {
         "slug": "$t(slug.static.newsletter.slug)",
         "name": "$t(slug.static.newsletter.name)"
       }
@@ -108,14 +115,17 @@
     "dynamic": {
       "artist": {
         "slug": "/{{locale}}/kunstenaar/{{artist, slugify}}",
+        "slug-children": "/{{locale}}/kunstenaar/",
         "name": "{{artist}}"
       },
       "event": {
         "slug": "/{{locale}}/evenement/{{event, slugify}}-{{id, slugify}}",
+        "slug-children": "/{{locale}}/evenement/",
         "name": "{{event}}"
       },
       "news": {
         "slug": "/{{locale}}/nieuwsbericht/{{news, slugify}}-{{id, slugify}}",
+        "slug-children": "/{{locale}}/nieuwsbericht/",
         "name": "{{news}}"
       },
       "object": {
