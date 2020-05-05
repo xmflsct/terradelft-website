@@ -23,7 +23,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     component: path.resolve(`src/templates/static-404.jsx`),
     context: {},
   })
-  await buildStaticPages(["static-index", "constant"], createPage)
+  await buildStaticPages(["static-index", "constant", "component-object"], createPage)
   await buildStaticPages(
     ["static-online-shop", "constant", "component-object"],
     createPage
@@ -124,7 +124,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           component: templateDynamicArtist,
           context: { contentful_id: contentful_id, locale: locale },
         }),
-        ["constant"],
+        ["constant", "component-object"],
         createPage
       )
     })
