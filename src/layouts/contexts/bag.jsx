@@ -5,11 +5,13 @@ import * as storage from "../../components/utils/storage"
 function reducer(state, action) {
   switch (action.type) {
     case "add":
-      return {...state, bag: storage.add(action.data)}
+      return { ...state, bag: storage.add(action.data) }
     case "update":
-      return {...state, bag: storage.update(action.data)}
+      return { ...state, bag: storage.update(action.data) }
     case "remove":
-      return {...state, bag: storage.remove(action.data)}
+      return { ...state, bag: storage.remove(action.data) }
+    case "clear":
+      return { ...state, bag: storage.clear() }
     default:
       throw new Error()
   }

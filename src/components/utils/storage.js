@@ -45,6 +45,13 @@ export function remove(data) {
   return storageData
 }
 
+export function clear() {
+  const timestamp = new Date().getTime()
+  storageData = { objects: [], timestamp: timestamp }
+  store(storageKey, storageData)
+  return storageData
+}
+
 export function check() {
   const timestamp = new Date().getTime()
 

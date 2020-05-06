@@ -301,7 +301,8 @@ const BagCheckout = () => {
                   ))}{" "}
                 {(pay.shipping > 0 &&
                   formatNumber.currency(pay.shipping, i18n.language)) ||
-                  (pay.shipping === 0 && "Free")}
+                  (pay.shipping === 0 &&
+                    t("content.checkout.shipping.free-fee"))}
               </Form.Label>
             </Form.Row>
             <Form.Row className='checkout-sum sum-total'>

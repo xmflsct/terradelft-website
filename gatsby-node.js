@@ -80,6 +80,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     ["static-bag", "constant", "component-object"],
     createPage
   )
+  await buildStaticPages(["static-thank-you", "constant"], createPage)
   await buildStaticPages(["static-404", "constant"], createPage)
 
   /* Biuld Artist Page */

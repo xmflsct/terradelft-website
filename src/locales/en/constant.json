@@ -100,6 +100,10 @@
         "slug": "/{{locale}}/reach-terra",
         "name": "Reach Terra"
       },
+      "thank-you": {
+        "slug": "/{{locale}}/thank-you",
+        "name": "Thank you for your order!"
+      },
       "terra-in-china": {
         "slug": "/{{locale}}/terra-in-china",
         "name": "Terra in China"

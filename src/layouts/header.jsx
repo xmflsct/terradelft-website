@@ -14,7 +14,7 @@ import { ContextMobileMenu } from "./layout"
 
 import "../../node_modules/@fortawesome/fontawesome-svg-core/styles.css"
 
-const Header = () => {
+const Header = ({ useMiniBag }) => {
   const image = useStaticQuery(graphql`
     {
       logoLargeNL: file(
@@ -63,12 +63,14 @@ const Header = () => {
   const firstMount = useRef(true)
 
   useEffect(() => {
-    if (firstMount.current) {
-      firstMount.current = false
-    } else {
-      setMiniBag(true)
+    if (useMiniBag) {
+      if (firstMount.current) {
+        firstMount.current = false
+      } else {
+        setMiniBag(true)
+      }
     }
-  }, [state])
+  }, [state, useMiniBag])
 
   return (
     <header>
