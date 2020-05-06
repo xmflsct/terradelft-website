@@ -82,6 +82,7 @@ const BagCheckout = () => {
     let index = findIndex(rates[i18n.language].rates, (d) => {
       return includes(d.countryCode, selectedCountry.value)
     })
+    // Needed when "other countries" which does not have a country code
     index = index !== -1 ? index : rates[i18n.language].rates.length - 1
     options.shipping = rates[i18n.language].rates[index].rates
   }
@@ -106,7 +107,7 @@ const BagCheckout = () => {
   if (selectedShipping) {
     if (
       options.shipping[selectedShipping].freeForTotal &&
-      pay.objects > options.shipping[selectedShipping].freeForTotal
+      pay.objects >= options.shipping[selectedShipping].freeForTotal
     ) {
       pay.shipping = 0
     } else {
@@ -188,7 +189,7 @@ const BagCheckout = () => {
 
   return (
     <>
-      {state.bag.objects.length !== 0 && (
+      {state.bag.objects.length > 0 && (
         <>
           <h2>{t("content.checkout.heading")}</h2>
           <Form onSubmit={(e) => onSubmit(e)}>
@@ -209,52 +210,54 @@ const BagCheckout = () => {
                 rules={{ required: true }}
               />
             </Form.Group>
-            {options.shipping &&
-              options.shipping.map((d, i) => {
-                return (
-                  <Form.Row className='checkout-shipping mb-2' key={i}>
-                    <Col xs={9}>
-                      <FormCheck>
-                        <Controller
-                          as={<FormCheck.Input />}
-                          type='radio'
-                          name='selectedShipping'
-                          value={i}
-                          valueName='id'
-                          control={control}
-                          required
-                        />
-                        <FormCheck.Label>{d.method}</FormCheck.Label>
-                        {d.description && (
-                          <Form.Text>{d.description}</Form.Text>
-                        )}
-                        {d.freeForTotal && (
-                          <Form.Text>
-                            {`${t(
-                              "content.checkout.shipping.free-for-total"
-                            )} ${formatNumber.currency(d.freeForTotal, i18n.language)}`}
-                          </Form.Text>
-                        )}
-                      </FormCheck>
-                    </Col>
-                    <Col xs={3} className='text-right'>
-                      {d.price === 0 ||
-                      (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
-                        t("content.checkout.shipping.free-fee")
-                      ) : (
-                        <>{formatNumber.currency(d.price, i18n.language)}</>
+            {options.shipping?.map((d, i) => {
+              return (
+                <Form.Row className='checkout-shipping mb-2' key={i}>
+                  <Col xs={9}>
+                    <FormCheck>
+                      <Controller
+                        as={<FormCheck.Input />}
+                        type='radio'
+                        name='selectedShipping'
+                        value={i}
+                        valueName='id'
+                        control={control}
+                        required
+                      />
+                      <FormCheck.Label>{d.method}</FormCheck.Label>
+                      {d.description && <Form.Text>{d.description}</Form.Text>}
+                      {d.freeForTotal && (
+                        <Form.Text>
+                          {`${t(
+                            "content.checkout.shipping.free-for-total"
+                          )} ${formatNumber.currency(
+                            d.freeForTotal,
+                            i18n.language
+                          )}`}
+                        </Form.Text>
                       )}
-                    </Col>
-                  </Form.Row>
-                )
-              })}
+                    </FormCheck>
+                  </Col>
+                  <Col xs={3} className='text-right'>
+                    {d.price === 0 ||
+                    (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
+                      t("content.checkout.shipping.free-fee")
+                    ) : (
+                      <>{formatNumber.currency(d.price, i18n.language)}</>
+                    )}
+                  </Col>
+                </Form.Row>
+              )
+            })}
             <Form.Row className='checkout-sum sum-subtotal'>
               <Form.Label column md='5'>
                 {t("content.checkout.sum.subtotal")}
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.subtotal && (
-                  <strike>{formatNumber.currency(corrections.subtotal, i18n.language)}</strike>
+                  <strike>
+                    {formatNumber.currency(corrections.subtotal, i18n.language)}
+                  </strike>
                 )}{" "}
                 {formatNumber.currency(pay.objects, i18n.language)}
               </Form.Label>
@@ -275,12 +278,15 @@ const BagCheckout = () => {
               </Form.Label>
               <Form.Label column md='7'>
                 {(corrections.shipping > 0 && (
-                  <strike>{formatNumber.currency(corrections.shipping, i18n.language)}</strike>
+                  <strike>
+                    {formatNumber.currency(corrections.shipping, i18n.language)}
+                  </strike>
                 )) ||
                   (corrections.shipping === 0 && (
                     <strike>{t("content.checkout.shipping.free-fee")}</strike>
                   ))}{" "}
-                {(pay.shipping > 0 && formatNumber.currency(pay.shipping, i18n.language)) ||
+                {(pay.shipping > 0 &&
+                  formatNumber.currency(pay.shipping, i18n.language)) ||
                   (pay.shipping === 0 && "Free")}
               </Form.Label>
             </Form.Row>
@@ -290,10 +296,15 @@ const BagCheckout = () => {
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.required && (
-                  <strike>{formatNumber.currency(corrections.total, i18n.language)}</strike>
+                  <strike>
+                    {formatNumber.currency(corrections.total, i18n.language)}
+                  </strike>
                 )}{" "}
                 {pay.shipping !== null &&
-                  formatNumber.currency((pay.objects * 10 + pay.shipping * 10) / 10, i18n.language)}
+                  formatNumber.currency(
+                    (pay.objects * 10 + pay.shipping * 10) / 10,
+                    i18n.language
+                  )}
               </Form.Label>
             </Form.Row>
             <Button
