@@ -222,6 +222,7 @@ const BagCheckout = () => {
                   return e[0]
                 }}
                 rules={{ required: true }}
+                isDisabled={formState.isSubmitting}
               />
             </Form.Group>
             {options.shipping?.map((d, i) => {
@@ -237,6 +238,7 @@ const BagCheckout = () => {
                         valueName='id'
                         control={control}
                         required
+                        disabled={formState.isSubmitting}
                       />
                       <FormCheck.Label>{d.method}</FormCheck.Label>
                       {d.description && <Form.Text>{d.description}</Form.Text>}
