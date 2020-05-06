@@ -1,6 +1,7 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { Button, Col, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
+import { CSSTransition } from "react-transition-group"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGlobeEurope, faShoppingBag } from "@fortawesome/free-solid-svg-icons"
 import { useStaticQuery, graphql, Link } from "gatsby"
@@ -58,6 +59,16 @@ const Header = () => {
   const alternateLinks = useContext(ContextLanguage)
   const { state } = useContext(ContextBag)
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
+  const [miniBag, setMiniBag] = useState(false)
+  const firstMount = useRef(true)
+
+  useEffect(() => {
+    if (firstMount.current) {
+      firstMount.current = false
+    } else {
+      setMiniBag(true)
+    }
+  }, [state])
 
   return (
     <header>
@@ -139,6 +150,19 @@ const Header = () => {
           </Link>
         </Col>
       </Row>
+      <CSSTransition
+        in={miniBag}
+        onEnter={() =>
+          setTimeout(() => {
+            setMiniBag(false)
+          }, 3000)
+        }
+        timeout={350}
+        className='mini-bag'
+        classNames='mini-bag'
+      >
+        <div>{t("constant:header.mini-bag")}</div>
+      </CSSTransition>
       <Navigation />
     </header>
   )

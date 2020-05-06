@@ -3,7 +3,8 @@
     "language-switcher": {
       "long": { "nl": "Nederlands", "en": "English" },
       "short": { "nl": "NL", "en": "EN" }
-    }
+    },
+    "mini-bag": "Added to shopping bag"
   },
   "navigation": {
     "1": {
