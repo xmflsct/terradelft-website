@@ -155,7 +155,7 @@ const SellVariations = ({ object }) => {
       {Object.keys(options).length > 0 && (
         <Form onSubmit={handleSubmit(onSubmit)}>
           {Object.keys(options).map((type) => (
-            <InputGroup>
+            <InputGroup key={type}>
               <InputGroup.Prepend>
                 <InputGroup.Text>
                   {t(`component-object:${type}`)}
@@ -186,7 +186,11 @@ const SellVariations = ({ object }) => {
             </div>
           </InputGroup>
           {variantChosen ? (
-            Price(i18n.language, variantChosen.priceSale, variantChosen.priceOriginal)
+            Price(
+              i18n.language,
+              variantChosen.priceSale,
+              variantChosen.priceOriginal
+            )
           ) : (
             <p className='object-price'>
               {variationsMain.fields.variations_price_range.lowest ===
