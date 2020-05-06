@@ -12,7 +12,13 @@ function reducer(stateMobileMenu) {
 const initContextMobileMenu = false
 export const ContextMobileMenu = React.createContext(initContextMobileMenu)
 
-const Layout = ({ children, SEOtitle, SEOkeywords, containerName }) => {
+const Layout = ({
+  children,
+  SEOtitle,
+  SEOkeywords,
+  containerName,
+  useMiniBag,
+}) => {
   const [stateMobileMenu, dispatch] = useReducer(reducer, initContextMobileMenu)
   if (typeof window !== "undefined") {
     document.body.style.overflow = stateMobileMenu ? "hidden" : "scroll"
@@ -26,7 +32,7 @@ const Layout = ({ children, SEOtitle, SEOkeywords, containerName }) => {
     >
       <SEO title={SEOtitle} keywords={SEOkeywords} />
       <ContextMobileMenu.Provider value={{ stateMobileMenu, dispatch }}>
-        <Header />
+        <Header useMiniBag={useMiniBag} />
       </ContextMobileMenu.Provider>
       <main className={containerName}>{children}</main>
       <Footer />

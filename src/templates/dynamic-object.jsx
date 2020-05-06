@@ -49,6 +49,7 @@ const DynamicObject = ({ pageContext, data }) => {
       SEOtitle={object.name}
       SEOkeywords={[object.name, "Terra Delft"]}
       containerName='dynamic-object'
+      useMiniBag={true}
     >
       <ContextVariationImage.Provider value={{ state, updateImage }}>
         <Row>

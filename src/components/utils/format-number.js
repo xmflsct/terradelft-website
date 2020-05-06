@@ -11,7 +11,7 @@ export function dimension(number, locale) {
   locale = locale === "nl" ? "nl-NL" : "en-Intl"
 
   return new Intl.NumberFormat(locale, {
-    style: "unit",
+    style: "decimal",
     unit: "centimeter",
   }).format(number)
 }

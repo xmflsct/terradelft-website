@@ -7,7 +7,7 @@ export async function checkout(token, data) {
         json: {
           token: token,
           data: data
-        }
+        },
       })
       .json()
   } catch (error) {

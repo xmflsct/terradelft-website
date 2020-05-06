@@ -186,11 +186,19 @@ async function stripeSession(req) {
           ? object.name[locale]
           : object.name[locale] +
             " | " +
-            (object.variant ? object.variant[locale] : "N/A") +
-            ", " +
-            (object.colour ? object.colour[locale] : "N/A") +
-            ", " +
-            (object.size ? object.size[locale] : "N/A")
+            _.join(
+              [
+                object.variant ? object.variant[locale] : undefined,
+                object.colour ? object.colour[locale] : undefined,
+                object.size ? object.size[locale] : undefined,
+              ],
+              ", "
+            )
+      // (object.variant ? object.variant[locale] : "N/A") +
+      // ", " +
+      // (object.colour ? object.colour[locale] : "N/A") +
+      // ", " +
+      // (object.size ? object.size[locale] : "N/A")
       const images = [`https:${object.image.fluid.src}`]
       line_items.push({
         name: name,
@@ -213,33 +221,21 @@ async function stripeSession(req) {
 
     req.body.data.pay.shipping
       ? (sessionData = {
-          payment_method_types: ["ideal"],
+          payment_method_types: ["ideal", "card"],
           line_items: line_items,
           shipping_address_collection: {
             allowed_countries: [req.body.data.shipping.countryA2],
           },
           locale: req.body.data.locale,
-          success_url:
-            "https://terradelft-website.now.sh/" +
-            req.body.data.locale +
-            "/thank-you?session_id={CHECKOUT_SESSION_ID}",
-          cancel_url:
-            "https://terradelft-website.now.sh/" +
-            req.body.data.locale +
-            "/bag",
+          success_url: req.body.data.url.success + "?session_id={CHECKOUT_SESSION_ID}",
+          cancel_url: req.body.data.url.cancel,
         })
       : (sessionData = {
-          payment_method_types: ["ideal"],
+          payment_method_types: ["ideal", "card"],
           line_items: line_items,
           locale: req.body.data.locale,
-          success_url:
-            "https://terradelft-website.now.sh/" +
-            req.body.data.locale +
-            "/thank-you?session_id={CHECKOUT_SESSION_ID}",
-          cancel_url:
-            "https://terradelft-website.now.sh/" +
-            req.body.data.locale +
-            "/bag",
+          success_url: req.body.data.url.success + "?session_id={CHECKOUT_SESSION_ID}",
+          cancel_url: req.body.data.url.cancel,
         })
   } catch (err) {
     return { success: false, error: err }
