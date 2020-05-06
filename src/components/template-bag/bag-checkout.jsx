@@ -118,7 +118,7 @@ const BagCheckout = () => {
   const userVerified = (token) => {
     handleSubmit((data) => formSubmit(data, token))()
   }
-  const formSubmit = async (d, t) => {
+  const formSubmit = async (d, token) => {
     const data = {
       objects: state.bag.objects,
       shipping: {
@@ -130,9 +130,23 @@ const BagCheckout = () => {
         subtotal: pay.objects,
         shipping: pay.shipping,
       },
+      url: {
+        success: `${window.location.origin}/${t(
+          "constant:slug.static.thank-you.slug",
+          {
+            locale: i18n.language,
+          }
+        )}`,
+        cancel: `${window.location.origin}/${t(
+          "constant:slug.static.bag.slug",
+          {
+            locale: i18n.language,
+          }
+        )}`,
+      },
       locale: i18n.language,
     }
-    const res = await checkout(t, data)
+    const res = await checkout(token, data)
     if (res.sessionId) {
       const stripe = await stripePromise
       setCorrections({ required: false })

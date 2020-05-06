@@ -14,7 +14,13 @@ const ObjectImages = ({ images }) => {
     <>
       <Row>
         {state.image && (
-          <Col xs={12} className='mb-3'>
+          <Col
+            xs={12}
+            className='mb-3'
+            onClick={() =>
+              setZoom({ show: true, fluid: state.image.fluidZoom })
+            }
+          >
             <Img fluid={state.image.fluid} />
           </Col>
         )}
@@ -40,6 +46,7 @@ const ObjectImages = ({ images }) => {
         dialogClassName='test'
         onHide={() => setZoom({ show: false })}
         aria-labelledby='Image'
+        animation={false}
       >
         <Img fluid={zoom.fluid} />
         <Button
@@ -47,7 +54,7 @@ const ObjectImages = ({ images }) => {
           variant='link'
           onClick={() => setZoom({ show: false })}
         >
-          <FontAwesomeIcon icon={faTimes} size="2x" inverse fixedWidth />
+          <FontAwesomeIcon icon={faTimes} size='2x' inverse fixedWidth />
         </Button>
       </Modal>
     </>
