@@ -1,5 +1,5 @@
 import React from "react"
-import { Col, Row } from "react-bootstrap"
+import { Col, Pagination, Row } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { graphql, Link } from "gatsby"
 import Img from "gatsby-image"
@@ -12,6 +12,8 @@ const StaticNews = ({ pageContext, data }) => {
   const { t } = useTranslation(["static-news", "constant"])
   moment.locale(pageContext.locale)
 
+  const { numPages, currentPage } = pageContext
+
   return (
     <Layout
       SEOtitle={t("static-news:name")}
@@ -19,37 +21,57 @@ const StaticNews = ({ pageContext, data }) => {
       containerName='static-news'
     >
       <Row>
-        {data.news.nodes?.map((node) => (
-          <Col sm={4} key={node.contentful_id} className='news-item'>
-            <Link
-              to={t("constant:slug.dynamic.news.slug", {
-                locale: pageContext.locale,
-                news: node.title,
-                id: node.contentful_id,
-              })}
-            >
-              {node.image && (
-                <Img fluid={node.image.fluid} className='news-image' />
-              )}
-              <h4>{node.title}</h4>
-            </Link>
-            <p>
-              {t("static-news:content.published", {
-                date: moment(node.date).format("ll"),
-              })}
-            </p>
-          </Col>
-        ))}
+        {data.news.nodes?.map((node) => {
+          if (!node.title) return
+          return (
+            <Col sm={4} key={node.contentful_id} className='news-item'>
+              <Link
+                to={t("constant:slug.dynamic.news.slug", {
+                  locale: pageContext.locale,
+                  news: node.title,
+                  id: node.contentful_id,
+                })}
+              >
+                {node.image && (
+                  <Img fluid={node.image.fluid} className='news-image' />
+                )}
+                <h4>{node.title}</h4>
+              </Link>
+              <p>
+                {t("static-news:content.published", {
+                  date: moment(node.date).format("ll"),
+                })}
+              </p>
+            </Col>
+          )
+        })}
       </Row>
+      <Pagination>
+        {Array.from({ length: numPages }).map((_, i) => (
+          <Pagination.Item
+            key={i}
+            href={
+              t("static-news:slug", {
+                locale: pageContext.locale,
+              }) + (i === 0 ? `` : `/page/${i + 1}`)
+            }
+            active={i === currentPage - 1}
+          >
+            {i + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
     </Layout>
   )
 }
 
 export const query = graphql`
-  query staticNews($locale: String) {
+  query staticNews($locale: String, $limit: Int!, $skip: Int!) {
     news: allContentfulNewsNews(
       filter: { node_locale: { eq: $locale } }
       sort: { order: DESC, fields: date }
+      limit: $limit
+      skip: $skip
     ) {
       nodes {
         contentful_id

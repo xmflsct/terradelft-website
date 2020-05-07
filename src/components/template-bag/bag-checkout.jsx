@@ -208,7 +208,9 @@ const BagCheckout = () => {
           <h2>{t("content.checkout.heading")}</h2>
           <Form onSubmit={(e) => onSubmit(e)}>
             <Form.Group className='checkout-country'>
-              <Form.Label>{t("content.checkout.shipping.heading")}</Form.Label>
+              <Form.Label>
+                <strong>{t("content.checkout.shipping.heading")}</strong>
+              </Form.Label>
               <Controller
                 as={<ReactSelect />}
                 name='selectedCountry'
@@ -267,7 +269,7 @@ const BagCheckout = () => {
             })}
             <Form.Row className='checkout-sum sum-subtotal'>
               <Form.Label column md='5'>
-                {t("content.checkout.sum.subtotal")}
+                <strong>{t("content.checkout.sum.subtotal")}</strong>
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.subtotal && (
@@ -281,7 +283,7 @@ const BagCheckout = () => {
             {pay.discount > 0 && (
               <Form.Row className='checkout-sum sum-discount'>
                 <Form.Label column md='5'>
-                  {t("content.checkout.sum.discount")}
+                  <strong>{t("content.checkout.sum.discount")}</strong>
                 </Form.Label>
                 <Form.Label column md='7'>
                   {formatNumber.currency(pay.discount, i18n.language)}
@@ -290,7 +292,7 @@ const BagCheckout = () => {
             )}
             <Form.Row className='checkout-sum sum-shipping'>
               <Form.Label column md='5'>
-                {t("content.checkout.sum.shipping")}
+                <strong>{t("content.checkout.sum.shipping")}</strong>
               </Form.Label>
               <Form.Label column md='7'>
                 {(corrections.shipping > 0 && (
@@ -309,7 +311,7 @@ const BagCheckout = () => {
             </Form.Row>
             <Form.Row className='checkout-sum sum-total'>
               <Form.Label column md='5'>
-                {t("content.checkout.sum.total")}
+                <strong>{t("content.checkout.sum.total")}</strong>
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.required && (

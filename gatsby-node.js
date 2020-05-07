@@ -23,7 +23,10 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     component: path.resolve(`src/templates/static-404.jsx`),
     context: {},
   })
-  await buildStaticPages(["static-index", "constant", "component-object"], createPage)
+  await buildStaticPages(
+    ["static-index", "constant", "component-object"],
+    createPage
+  )
   await buildStaticPages(
     ["static-online-shop", "constant", "component-object"],
     createPage
@@ -32,7 +35,18 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     ["static-events", "constant", "component-event"],
     createPage
   )
-  await buildStaticPages(["static-news", "constant"], createPage)
+  const newsTotal = await graphql(`
+    {
+      newsTotal: allContentfulNewsNews {
+        totalCount
+      }
+    }
+  `)
+  await buildStaticPagesWithPagination(
+    ["static-news", "constant"],
+    createPage,
+    parseInt(newsTotal.data.newsTotal.totalCount / locales.length)
+  )
   await buildStaticPages(["static-newsletter", "constant"], createPage)
   await buildStaticPages(
     ["static-terra-in-china", "static-events", "static-news", "constant"],
@@ -355,21 +369,26 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       )
       await buildDynamicPages(
         newsPiece.data.newsPiece.nodes,
-        (locale, { title, contentful_id, content }, i18n) => ({
-          path: i18n.t("constant:slug.dynamic.news.slug", {
-            locale: locale,
-            news: title,
-            id: contentful_id,
-          }),
-          component: templateDynamicNews,
-          context: {
-            contentful_id: contentful_id,
-            locale: locale,
-            imagesFromRichText: content
-              ? getImagesFromRichText(content.json.content)
-              : [],
-          },
-        }),
+        (locale, { title, contentful_id, content }, i18n) => {
+          if (!title) {
+            return
+          }
+          return {
+            path: i18n.t("constant:slug.dynamic.news.slug", {
+              locale: locale,
+              news: title,
+              id: contentful_id,
+            }),
+            component: templateDynamicNews,
+            context: {
+              contentful_id: contentful_id,
+              locale: locale,
+              imagesFromRichText: content
+                ? getImagesFromRichText(content.json.content)
+                : [],
+            },
+          }
+        },
         ["constant", "static-news"],
         createPage
       )
@@ -438,6 +457,54 @@ const buildStaticPages = async (namespaces, createPage, images) => {
     definitions.map((d) => {
       d.context.alternateLinks = alternateLinks
       createPage(d)
+    })
+  )
+}
+
+const buildStaticPagesWithPagination = async (
+  namespaces,
+  createPage,
+  total
+) => {
+  const perPage = 9
+  const numPages = Math.ceil(total / perPage)
+  await Promise.all(
+    Array.from({ length: numPages }).map(async (_, i) => {
+      const definitions = await Promise.all(
+        locales.map(async (locale) => {
+          const i18n = await createI18nextInstance(locale, namespaces)
+          const res = {
+            path:
+              i === 0
+                ? i18n.t(`${namespaces[0]}:slug`, { locale: locale })
+                : i18n.t(`${namespaces[0]}:slug`, { locale: locale }) +
+                  `/page/${i + 1}`,
+            component: path.resolve(`src/templates/${namespaces[0]}.jsx`),
+            context: {
+              locale: locale,
+              i18nResources: i18n.services.resourceStore.data,
+              limit: perPage,
+              skip: i * perPage,
+              numPages,
+              currentPage: i + 1,
+            },
+          }
+          return res
+        })
+      )
+      const alternateLinks = await Promise.all(
+        definitions.map((d) => ({
+          locale: d.context.locale,
+          path: d.path,
+        }))
+      )
+
+      await Promise.all(
+        definitions.map((d) => {
+          d.context.alternateLinks = alternateLinks
+          createPage(d)
+        })
+      )
     })
   )
 }

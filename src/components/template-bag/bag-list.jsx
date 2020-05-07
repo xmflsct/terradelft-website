@@ -25,10 +25,10 @@ const BagList = () => {
           const object = state.bag.objects[i]
           return (
             <Row key={i} className='list-object mb-3'>
-              <Col lg={4} className='object-image'>
+              <Col xs={4} className='object-image'>
                 <Img fluid={object.image.fluid} />
               </Col>
-              <Col lg={8} className='object-details'>
+              <Col xs={8} className='object-details'>
                 <Link
                   to={t("constant:slug.dynamic.object.slug", {
                     locale: i18n.language,
@@ -41,10 +41,10 @@ const BagList = () => {
                   {object.name[i18n.language]}
                 </Link>
                 <Row className='object-details'>
-                  <Col xs={3} className='detail-type'>
+                  <Col xs={5} sm={3} className='detail-type'>
                     {t("component-object:artist")}
                   </Col>
-                  <Col xs={9} className='detail-value'>
+                  <Col xs={5} sm={3} className='detail-value'>
                     <Link
                       to={t("constant:slug.dynamic.artist.slug", {
                         locale: i18n.language,
@@ -57,30 +57,30 @@ const BagList = () => {
                 </Row>
                 {!isEmpty(object.variant) && (
                   <Row className='object-details'>
-                    <Col xs={3} className='detail-type'>
+                    <Col xs={5} sm={3} className='detail-type'>
                       {t("component-object:variant")}
                     </Col>
-                    <Col xs={9} className='detail-value'>
+                    <Col xs={5} sm={9} className='detail-value'>
                       {object.variant[i18n.language]}
                     </Col>
                   </Row>
                 )}
                 {!isEmpty(object.colour) && (
                   <Row className='object-details'>
-                    <Col xs={3} className='detail-type'>
+                    <Col xs={5} sm={3} className='detail-type'>
                       {t("component-object:colour")}
                     </Col>
-                    <Col xs={9} className='detail-value'>
+                    <Col xs={5} sm={9} className='detail-value'>
                       {object.colour[i18n.language]}
                     </Col>
                   </Row>
                 )}
                 {!isEmpty(object.size) && (
                   <Row className='object-details'>
-                    <Col xs={3} className='detail-type'>
+                    <Col xs={5} sm={3} className='detail-type'>
                       {t("component-object:size")}
                     </Col>
-                    <Col xs={9} className='detail-value'>
+                    <Col xs={5} sm={9} className='detail-value'>
                       {object.size[i18n.language]}
                     </Col>
                   </Row>
