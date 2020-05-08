@@ -44,7 +44,7 @@ const BagList = () => {
                   <Col xs={5} sm={3} className='detail-type'>
                     {t("component-object:artist")}
                   </Col>
-                  <Col xs={5} sm={3} className='detail-value'>
+                  <Col xs={5} sm={9} className='detail-value'>
                     <Link
                       to={t("constant:slug.dynamic.artist.slug", {
                         locale: i18n.language,
