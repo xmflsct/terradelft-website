@@ -33,7 +33,7 @@ const DynamicArtist = ({ pageContext, data }) => (
 
 export const query = graphql`
   query dynamicArtist($contentful_id: String, $locale: String) {
-    artist: contentfulObjectsArtist(
+    artist: contentfulObjectArtist(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $locale }
     ) {
@@ -47,7 +47,7 @@ export const query = graphql`
         json
       }
     }
-    objects: allContentfulObjectsObjectMain(
+    objects: allContentfulObject(
       filter: {
         artist: { contentful_id: { eq: $contentful_id } }
         node_locale: { eq: $locale }

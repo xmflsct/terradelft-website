@@ -40,7 +40,7 @@ export const query = graphql`
     ...ObjectsByMaterial @include(if: $byMaterial)
   }
   fragment ObjectsByYear on Query {
-    yearObjects: allContentfulObjectsObjectMain(
+    yearObjects: allContentfulObject(
       filter: {
         year: { contentful_id: { eq: $contentful_id } }
         node_locale: { eq: $locale }
@@ -52,7 +52,7 @@ export const query = graphql`
     }
   }
   fragment ObjectsByTechnique on Query {
-    techniqueObjects: allContentfulObjectsObjectMain(
+    techniqueObjects: allContentfulObject(
       filter: {
         technique: { elemMatch: { contentful_id: { eq: $contentful_id } } }
         node_locale: { eq: $locale }
@@ -64,7 +64,7 @@ export const query = graphql`
     }
   }
   fragment ObjectsByMaterial on Query {
-    materialObjects: allContentfulObjectsObjectMain(
+    materialObjects: allContentfulObject(
       filter: {
         material: { elemMatch: { contentful_id: { eq: $contentful_id } } }
         node_locale: { eq: $locale }

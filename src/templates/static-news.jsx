@@ -67,7 +67,7 @@ const StaticNews = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticNews($locale: String, $limit: Int!, $skip: Int!) {
-    news: allContentfulNewsNews(
+    news: allContentfulNews(
       filter: { node_locale: { eq: $locale } }
       sort: { order: DESC, fields: date }
       limit: $limit

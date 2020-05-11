@@ -198,7 +198,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
 }
 
 export const query = graphql`
-  fragment ObjectOnlineShop on ContentfulObjectsObjectMain {
+  fragment ObjectOnlineShop on ContentfulObject {
     contentful_id
     node_locale
     name

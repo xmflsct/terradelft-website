@@ -81,7 +81,7 @@ const StaticTerraInChinaEvents = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticTerraInChinaEvents($locale: String) {
-    eventsUpcoming: allContentfulEventsEvent(
+    eventsUpcoming: allContentfulEvent(
       filter: {
         isFuture: { eq: true }
         node_locale: { eq: $locale }
@@ -107,7 +107,7 @@ export const query = graphql`
         }
       }
     }
-    eventsCurrent: allContentfulEventsEvent(
+    eventsCurrent: allContentfulEvent(
       filter: {
         isCurrent: { eq: true }
         node_locale: { eq: $locale }

@@ -40,7 +40,7 @@ export const query = graphql`
     $locale: String
     $imagesFromRichText: [String!]!
   ) {
-    event: contentfulEventsEvent(
+    event: contentfulEvent(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $locale }
     ) {

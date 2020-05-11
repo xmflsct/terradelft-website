@@ -76,7 +76,7 @@ const StaticEvents = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticEvents($locale: String) {
-    eventsUpcoming: allContentfulEventsEvent(
+    eventsUpcoming: allContentfulEvent(
       filter: { isFuture: { eq: true }, node_locale: { eq: $locale } }
       sort: { order: ASC, fields: datetimeStart }
     ) {
@@ -98,7 +98,7 @@ export const query = graphql`
         }
       }
     }
-    eventsCurrent: allContentfulEventsEvent(
+    eventsCurrent: allContentfulEvent(
       filter: { isCurrent: { eq: true }, node_locale: { eq: $locale } }
       sort: { order: ASC, fields: datetimeEnd }
     ) {
