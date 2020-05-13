@@ -37,16 +37,6 @@ module.exports = {
         includePaths: [require("path").resolve(__dirname, "node_modules")],
       },
     },
-    {
-      resolve: "gatsby-plugin-sentry",
-      options: {
-        dsn: process.env.SENTRY_DSN,
-        // Optional settings, see https://docs.sentry.io/clients/node/config/#optional-settings
-        environment: process.env.NODE_ENV,
-        enabled: (() =>
-          ["production", "preview"].indexOf(process.env.NODE_ENV) !== -1)(),
-      },
-    },
     `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-source-contentful`, // Space - Objects
