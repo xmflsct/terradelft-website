@@ -62,11 +62,19 @@ jobs:
           GATSBY_STRIPE_PUBLIC_KEY: ${{ secrets.GATSBY_STRIPE_PUBLIC_KEY_PREVIEW }}
           STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_PRIVATE_KEY_PREVIEW }}
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
+      # - name: -- Step 9 -- Deploy to Netlify
+      #   uses: netlify/actions/cli@master
+      #   with:
+      #     args: deploy --dir=public --prod
+      #     secrets: '["NETLIFY_SITE_ID", "NETLIFY_AUTH_TOKEN"]'
+      #   env:
+      #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       - name: -- Step 9 -- Deploy to Netlify
-        uses: netlify/actions/cli@master
+        uses: nwtgck/actions-netlify@v1.1
         with:
-          args: deploy --dir=public --prod
-          secrets: '["NETLIFY_SITE_ID", "NETLIFY_AUTH_TOKEN"]'
+          publish-dir: './public'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
