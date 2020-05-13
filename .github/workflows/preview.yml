@@ -44,7 +44,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gatsby-public-dir
       - name: -- Step 7 -- Install dependencies
-        # if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
+        if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
         run: yarn install --pure-lockfile
       - name: -- Step 8 -- Build static site
         run: yarn build
@@ -72,5 +72,4 @@ jobs:
           local_dir: "./public/"
           remote_dir: "/www/preview/"
         run: |
-          sudo apt-get install -y sshpass
-          sshpass -p "${remote_pass}" rsync -avzrn -e "ssh -o StrictHostKeyChecking=no" ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
+          sshpass -p "${remote_pass}" rsync -avzr --delete --exclude "not-delete" --exclude "archive" -e "ssh -o StrictHostKeyChecking=no" ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
