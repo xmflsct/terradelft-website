@@ -38,7 +38,7 @@ const StaticAboutTerra = ({ pageContext, data }) => {
           {data.aboutTerra.staff.map((s) => (
             <Row key={s.name} className='staff-member'>
               <Col xs={{ span: 6, offset: 3 }} sm={{ span: 2, offset: 0 }}>
-                <Img fluid={s.avatar.fluid} className='mb-2' />
+                <Img fluid={s.avatar.fluid} className='mb-2' backgroundColor="#e8e8e8" />
                 <h4 className='text-center'>{s.name}</h4>
               </Col>
               <Col sm={10}>{documentToReactComponents(s.biography.json)}</Col>
@@ -63,7 +63,7 @@ export const query = graphql`
         name
         avatar {
           fluid(maxWidth: 200) {
-            ...GatsbyContentfulFluid_withWebp
+            ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
         biography {

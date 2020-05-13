@@ -194,10 +194,10 @@ export const query = graphql`
             ...GatsbyContentfulFluid_withWebp
           }
           fluidThumbnail: fluid(maxWidth: 132, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp
+            ...GatsbyContentfulFluid_withWebp_noBase64
           }
           fluidZoom: fluid(maxWidth: 2000, quality: 85) {
-            ...GatsbyContentfulFluid_withWebp
+            ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
         artist {
@@ -226,10 +226,10 @@ export const query = graphql`
           stock
           image {
             fluid(maxWidth: 427, quality: 80) {
-              ...GatsbyContentfulFluid_withWebp
+              ...GatsbyContentfulFluid_withWebp_noBase64
             }
             fluidZoom: fluid(maxWidth: 2000, quality: 80) {
-              ...GatsbyContentfulFluid_withWebp
+              ...GatsbyContentfulFluid_withWebp_noBase64
             }
           }
         }

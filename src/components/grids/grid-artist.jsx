@@ -18,11 +18,7 @@ const GridArtist = ({ data }) => {
             })}
           >
             <div className='item-image'>
-              {d.node.image.fixed ? (
-                <Img fluid={d.node.image.fixed} />
-              ) : (
-                <Img fluid={d.node.image.fluid} />
-              )}
+              <Img fluid={d.node.image.fluid} backgroundColor="#e8e8e8" />
             </div>
             <p className='item-name'>{d.node.artist}</p>
           </Link>

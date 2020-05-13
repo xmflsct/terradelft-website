@@ -26,7 +26,7 @@ const BagList = () => {
           return (
             <Row key={i} className='list-object mb-3'>
               <Col xs={4} className='object-image'>
-                <Img fluid={object.image.fluid} />
+                <Img fluid={object.image.fluid} backgroundColor="#e8e8e8" />
               </Col>
               <Col xs={8} className='object-details'>
                 <Link
