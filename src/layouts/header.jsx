@@ -21,8 +21,8 @@ const Header = ({ useMiniBag }) => {
         relativePath: { eq: "layout-header/logo-large-nl.png" }
       ) {
         childImageSharp {
-          fluid(maxWidth: 700, quality: 100) {
-            ...GatsbyImageSharpFluid_withWebp_noBase64
+          fluid(maxWidth: 700, quality: 90) {
+            ...GatsbyImageSharpFluid_noBase64
           }
         }
       }
@@ -30,8 +30,8 @@ const Header = ({ useMiniBag }) => {
         relativePath: { eq: "layout-header/logo-large-en.png" }
       ) {
         childImageSharp {
-          fluid(maxWidth: 700, quality: 100) {
-            ...GatsbyImageSharpFluid_withWebp_noBase64
+          fluid(maxWidth: 700, quality: 90) {
+            ...GatsbyImageSharpFluid_noBase64
           }
         }
       }
@@ -39,8 +39,8 @@ const Header = ({ useMiniBag }) => {
         relativePath: { eq: "layout-header/logo-small-nl.png" }
       ) {
         childImageSharp {
-          fixed(width: 100, quality: 100) {
-            ...GatsbyImageSharpFixed_withWebp_noBase64
+          fixed(width: 100, quality: 90) {
+            ...GatsbyImageSharpFixed_noBase64
           }
         }
       }
@@ -48,8 +48,8 @@ const Header = ({ useMiniBag }) => {
         relativePath: { eq: "layout-header/logo-small-en.png" }
       ) {
         childImageSharp {
-          fixed(width: 100, quality: 100) {
-            ...GatsbyImageSharpFixed_withWebp_noBase64
+          fixed(width: 100, quality: 90) {
+            ...GatsbyImageSharpFixed_noBase64
           }
         }
       }

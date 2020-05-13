@@ -35,6 +35,7 @@ const ObjectImages = ({ images }) => {
               fluid={
                 !state.image && index === 0 ? image.fluid : image.fluidThumbnail
               }
+              backgroundColor="#e8e8e8"
             />
           </Col>
         ))}
@@ -48,7 +49,7 @@ const ObjectImages = ({ images }) => {
         aria-labelledby='Image'
         animation={false}
       >
-        <Img fluid={zoom.fluid} />
+        <Img fluid={zoom.fluid} backgroundColor="#e8e8e8" />
         <Button
           className='modal-close'
           variant='link'

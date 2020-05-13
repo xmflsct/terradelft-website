@@ -14,7 +14,7 @@ const ObjectSell = ({ object }) => {
       file(relativePath: { eq: "dynamic-object/kunstkoop.jpg" }) {
         childImageSharp {
           fixed(width: 70, quality: 90) {
-            ...GatsbyImageSharpFixed_withWebp_noBase64
+            ...GatsbyImageSharpFixed_noBase64
           }
         }
       }
