@@ -30,7 +30,7 @@ const StaticTerraInChina = ({ pageContext, data }) => {
           {data.events.nodes.map((node) => (
             <Row className='mb-3' key={node.contentful_id}>
               <Col>
-                {node.image && <Img fluid={node.image.fluid} />}
+                {node.image && <Img fluid={node.image.fluid} backgroundColor="#e8e8e8" />}
                 <div className='current-type'>
                   {node.type.map((t) => (
                     <Badge variant='info' key={t.name}>
@@ -73,7 +73,7 @@ const StaticTerraInChina = ({ pageContext, data }) => {
                   })}
                 >
                   {node.image && (
-                    <Img fluid={node.image.fluid} className='news-image mb-2' />
+                    <Img fluid={node.image.fluid} className='news-image mb-2' backgroundColor="#e8e8e8" />
                   )}
                   <h4>{node.title}</h4>
                 </Link>
@@ -100,7 +100,7 @@ const StaticTerraInChina = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticTerraInChina($locale: String) {
-    events: allContentfulEventsEvent(
+    events: allContentfulEvent(
       filter: { node_locale: { eq: $locale }, terraInChina: { eq: true } }
       sort: { order: DESC, fields: datetimeEnd }
       limit: 8
@@ -109,7 +109,7 @@ export const query = graphql`
         contentful_id
         image {
           fluid(maxWidth: 427, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp
+            ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
         name
@@ -128,7 +128,7 @@ export const query = graphql`
         }
       }
     }
-    news: allContentfulNewsNews(
+    news: allContentfulNews(
       filter: { node_locale: { eq: $locale }, terraInChina: { eq: true } }
       sort: { order: DESC, fields: date }
       limit: 8
@@ -139,7 +139,7 @@ export const query = graphql`
         date
         image {
           fluid(maxWidth: 427, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp
+            ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
         content {

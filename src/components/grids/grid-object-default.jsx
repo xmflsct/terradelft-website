@@ -25,7 +25,7 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
               })}
             >
               <div className='item-image'>
-                <Img fluid={node.images[0].fluid} />
+                <Img fluid={node.images[0].fluid} backgroundColor="#e8e8e8" />
                 {node.fields.object_sale && (
                   <span className='item-sale'>
                     {t("component-object:on-sale")}
@@ -42,7 +42,7 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
 }
 
 export const query = graphql`
-  fragment ObjectDefault on ContentfulObjectsObjectMain {
+  fragment ObjectDefault on ContentfulObject {
     contentful_id
     node_locale
     name
@@ -51,7 +51,7 @@ export const query = graphql`
     }
     images {
       fluid(maxWidth: 140, quality: 85) {
-        ...GatsbyContentfulFluid_withWebp
+        ...GatsbyContentfulFluid_withWebp_noBase64
       }
     }
     fields {

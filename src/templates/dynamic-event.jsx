@@ -19,7 +19,7 @@ const DynamicEvent = ({ pageContext, data }) => {
       <Row>
         {data.event.image && (
           <Col sm={4}>
-            <Img fluid={data.event.image.fluid} />
+            <Img fluid={data.event.image.fluid} backgroundColor="#e8e8e8" />
           </Col>
         )}
         <Col sm={data.event.image ? 8 : 12}>
@@ -40,7 +40,7 @@ export const query = graphql`
     $locale: String
     $imagesFromRichText: [String!]!
   ) {
-    event: contentfulEventsEvent(
+    event: contentfulEvent(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $locale }
     ) {
@@ -61,7 +61,7 @@ export const query = graphql`
       }
       image {
         fluid(maxWidth: 280, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp
+          ...GatsbyContentfulFluid_withWebp_noBase64
         }
       }
       description {

@@ -35,7 +35,7 @@ const StaticIndex = ({ data }) => {
 
 export const query = graphql`
   query staticIndex($locale: String) {
-    objects: allContentfulObjectsObjectMain(
+    objects: allContentfulObject(
       filter: { sellOnline: { eq: true }, node_locale: { eq: $locale } }
       limit: 36
     ) {
@@ -43,7 +43,7 @@ export const query = graphql`
         ...ObjectDefault
       }
     }
-    artists: allContentfulObjectsArtist(
+    artists: allContentfulObjectArtist(
       filter: { node_locale: { eq: $locale } }
       sort: { fields: fields___artist_lastname, order: ASC }
     ) {
@@ -53,7 +53,7 @@ export const query = graphql`
           artist
           image {
             fluid(maxWidth: 140) {
-              ...GatsbyContentfulFluid_withWebp
+              ...GatsbyContentfulFluid_withWebp_noBase64
             }
           }
           fields {

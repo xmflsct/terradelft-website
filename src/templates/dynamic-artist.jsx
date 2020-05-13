@@ -17,7 +17,7 @@ const DynamicArtist = ({ pageContext, data }) => (
     <h1>{data.artist.artist}</h1>
     <Row className='artist-section'>
       <Col lg={4} className='mb-3'>
-        <Img fluid={data.artist.image.fluid} />
+        <Img fluid={data.artist.image.fluid} backgroundColor="#e8e8e8" />
       </Col>
       <Col lg={8}>
         {documentToReactComponents(
@@ -33,21 +33,21 @@ const DynamicArtist = ({ pageContext, data }) => (
 
 export const query = graphql`
   query dynamicArtist($contentful_id: String, $locale: String) {
-    artist: contentfulObjectsArtist(
+    artist: contentfulObjectArtist(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $locale }
     ) {
       artist
       image {
         fluid(maxWidth: 280, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp
+          ...GatsbyContentfulFluid_withWebp_noBase64
         }
       }
       biography {
         json
       }
     }
-    objects: allContentfulObjectsObjectMain(
+    objects: allContentfulObject(
       filter: {
         artist: { contentful_id: { eq: $contentful_id } }
         node_locale: { eq: $locale }

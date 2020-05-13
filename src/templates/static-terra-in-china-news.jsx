@@ -34,7 +34,7 @@ const StaticTerraInChinaNews = ({ pageContext, data }) => {
               })}
             >
               {node.image && (
-                <Img fluid={node.image.fluid} className='news-image' />
+                <Img fluid={node.image.fluid} className='news-image' backgroundColor="#e8e8e8" />
               )}
               <h4>{node.title}</h4>
             </Link>
@@ -52,7 +52,7 @@ const StaticTerraInChinaNews = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticTerraInChinaNews($locale: String) {
-    news: allContentfulNewsNews(
+    news: allContentfulNews(
       filter: { node_locale: { eq: $locale }, terraInChina: { eq: true } }
       sort: { order: DESC, fields: date }
     ) {
@@ -62,7 +62,7 @@ export const query = graphql`
         date
         image {
           fluid(maxWidth: 280, quality: 80 ) {
-            ...GatsbyContentfulFluid_withWebp
+            ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
         content {

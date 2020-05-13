@@ -48,7 +48,7 @@ const StaticTerraInChinaEvents = ({ pageContext, data }) => {
             <Row className='events-current' key={node.contentful_id}>
               {node.image && (
                 <Col sm={6}>
-                  <Img fluid={node.image.fluid} />
+                  <Img fluid={node.image.fluid} backgroundColor="#e8e8e8" />
                 </Col>
               )}
               <Col sm={6}>
@@ -81,7 +81,7 @@ const StaticTerraInChinaEvents = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticTerraInChinaEvents($locale: String) {
-    eventsUpcoming: allContentfulEventsEvent(
+    eventsUpcoming: allContentfulEvent(
       filter: {
         isFuture: { eq: true }
         node_locale: { eq: $locale }
@@ -107,7 +107,7 @@ export const query = graphql`
         }
       }
     }
-    eventsCurrent: allContentfulEventsEvent(
+    eventsCurrent: allContentfulEvent(
       filter: {
         isCurrent: { eq: true }
         node_locale: { eq: $locale }
@@ -119,7 +119,7 @@ export const query = graphql`
         contentful_id
         image {
           fluid(maxWidth: 600, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp
+            ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
         name
