@@ -42,7 +42,7 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
 }
 
 export const query = graphql`
-  fragment ObjectDefault on ContentfulObjectsObjectMain {
+  fragment ObjectDefault on ContentfulObject {
     contentful_id
     node_locale
     name

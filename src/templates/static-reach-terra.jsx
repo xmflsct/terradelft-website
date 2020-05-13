@@ -36,7 +36,7 @@ const StaticReachTerra = ({ data }) => {
 
 export const query = graphql`
   query staticReachTerra($locale: String) {
-    reachTerra: contentfulInformationReachTerra(node_locale: { eq: $locale }) {
+    reachTerra: contentfulPageReachTerra(node_locale: { eq: $locale }) {
       description {
         json
       }

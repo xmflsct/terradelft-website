@@ -173,7 +173,7 @@ export const query = graphql`
     $locale: String
     $imagesFromRichText: [String!]!
   ) {
-    object: allContentfulObjectsObjectMain(
+    object: allContentfulObject(
       filter: { contentful_id: { eq: $contentful_id } }
     ) {
       nodes {
@@ -259,7 +259,7 @@ export const query = graphql`
         ...ImageFromRichText
       }
     }
-    objects: allContentfulObjectsObjectMain(
+    objects: allContentfulObject(
       filter: {
         contentful_id: { ne: $contentful_id }
         artist: { contentful_id: { eq: $artist_contentful_id } }

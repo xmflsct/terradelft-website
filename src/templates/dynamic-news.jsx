@@ -48,7 +48,7 @@ export const query = graphql`
     $locale: String
     $imagesFromRichText: [String!]!
   ) {
-    news: contentfulNewsNews(
+    news: contentfulNews(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $locale }
     ) {

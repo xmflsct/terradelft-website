@@ -52,7 +52,7 @@ const StaticAboutTerra = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticAboutTerra($locale: String, $imagesFromRichText: [String!]!) {
-    aboutTerra: contentfulInformationAboutTerra(node_locale: { eq: $locale }) {
+    aboutTerra: contentfulPageAboutTerra(node_locale: { eq: $locale }) {
       columnLeft {
         json
       }

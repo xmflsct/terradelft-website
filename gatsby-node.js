@@ -37,7 +37,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   )
   const newsTotal = await graphql(`
     {
-      newsTotal: allContentfulNewsNews {
+      newsTotal: allContentfulNews {
         totalCount
       }
     }
@@ -62,7 +62,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   )
   const aboutTerra = await graphql(`
     {
-      aboutTerra: allContentfulInformationAboutTerra {
+      aboutTerra: allContentfulPageAboutTerra {
         nodes {
           node_locale
           columnLeft {
@@ -101,7 +101,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const templateDynamicArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
   const artists = await graphql(`
     {
-      artists: allContentfulObjectsArtist(
+      artists: allContentfulObjectArtist(
         filter: { node_locale: { eq: "${locales[0]}" } }
       ) {
         nodes {
@@ -116,7 +116,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       const artist = await graphql(
         `
           query($contentful_id: String!) {
-            artist: allContentfulObjectsArtist(
+            artist: allContentfulObjectArtist(
               filter: { contentful_id: { eq: $contentful_id } }
             ) {
               nodes {
@@ -149,7 +149,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const templateDynamicObject = path.resolve(`src/templates/dynamic-object.jsx`)
   const objects = await graphql(`
     {
-      objects: allContentfulObjectsObjectMain(
+      objects: allContentfulObject(
         filter: { node_locale: { eq: "${locales[0]}" } }
       ) {
         nodes {
@@ -164,7 +164,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       const object = await graphql(
         `
           query($contentful_id: String!) {
-            object: allContentfulObjectsObjectMain(
+            object: allContentfulObject(
               filter: { contentful_id: { eq: $contentful_id } }
             ) {
               nodes {
@@ -217,7 +217,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     allObjectsAttributes.map(async (attribute) => {
       const objectsAttributes = await graphql(`
       {
-        objectsAttributes: allContentfulObjects${
+        objectsAttributes: allContentfulObject${
           attribute[0].toUpperCase() + attribute.slice(1)
         }(
           filter: { node_locale: { eq: "${locales[0]}" } }
@@ -234,7 +234,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           const objectsAttribute = await graphql(
             `
               query($contentful_id: String!) {
-                objectsAttribute: allContentfulObjects${
+                objectsAttribute: allContentfulObject${
                   attribute[0].toUpperCase() + attribute.slice(1)
                 }(
                   filter: { contentful_id: { eq: $contentful_id } }
@@ -280,7 +280,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const templateDynamicEvent = path.resolve(`src/templates/dynamic-event.jsx`)
   const events = await graphql(`
       {
-        events: allContentfulEventsEvent(
+        events: allContentfulEvent(
           filter: { node_locale: { eq: "${locales[0]}" } }
         ) {
           nodes {
@@ -294,7 +294,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       const event = await graphql(
         `
           query($contentful_id: String!) {
-            event: allContentfulEventsEvent(
+            event: allContentfulEvent(
               filter: { contentful_id: { eq: $contentful_id } }
             ) {
               nodes {
@@ -337,7 +337,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const templateDynamicNews = path.resolve(`src/templates/dynamic-news.jsx`)
   const news = await graphql(`
         {
-          news: allContentfulNewsNews(
+          news: allContentfulNews(
             filter: { node_locale: { eq: "${locales[0]}" } }
           ) {
             nodes {
@@ -351,7 +351,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       const newsPiece = await graphql(
         `
           query($contentful_id: String!) {
-            newsPiece: allContentfulNewsNews(
+            newsPiece: allContentfulNews(
               filter: { contentful_id: { eq: $contentful_id } }
             ) {
               nodes {
@@ -560,7 +560,7 @@ exports.onCreateNode = ({ actions, getNode, node }) => {
   const { createNodeField } = actions
   switch (node.internal.type) {
     // For sorting by artists' last name
-    case "ContentfulObjectsArtist":
+    case "ContentfulObjectArtist":
       createNodeField({
         node,
         name: "artist_lastname",
@@ -568,7 +568,7 @@ exports.onCreateNode = ({ actions, getNode, node }) => {
       })
       break
     // For adding fields to main object, such as variations' discounts
-    case "ContentfulObjectsObjectMain":
+    case "ContentfulObject":
       if (node.variations___NODE) {
         let sale = false
         let variants = []
@@ -630,7 +630,7 @@ exports.createSchemaCustomization = ({ actions, schema }) => {
   // Custom date filter for events
   actions.createTypes([
     schema.buildObjectType({
-      name: "ContentfulEventsEvent",
+      name: "ContentfulEvent",
       interfaces: ["Node"],
       fields: {
         isCurrent: {

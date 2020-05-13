@@ -52,7 +52,7 @@ const StaticTerraInChinaNews = ({ pageContext, data }) => {
 
 export const query = graphql`
   query staticTerraInChinaNews($locale: String) {
-    news: allContentfulNewsNews(
+    news: allContentfulNews(
       filter: { node_locale: { eq: $locale }, terraInChina: { eq: true } }
       sort: { order: DESC, fields: date }
     ) {
