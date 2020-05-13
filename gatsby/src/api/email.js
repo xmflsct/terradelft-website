@@ -3,7 +3,7 @@ import ky from "ky-universal"
 export async function sendEmail(token, data) {
   try {
     return await ky
-      .post("https://api.terra-delft.nl/api/email", {
+      .post(`https://${process.env.GATSBY_API_ENDPOINT}/api/email`, {
         json: {
           token: token,
           data: data,

@@ -2,8 +2,8 @@ name: Preview development
 
 on:
   push:
-    # branches:
-    #   - preview
+    branches:
+      - preview
 
 jobs:
   deploy:
@@ -19,7 +19,7 @@ jobs:
       # - name: -- Step 3 -- Get yarn cache directory path
       #   id: yarn-cache-dir-path
       #   run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: -- Step 4 -- Cache node_modules dir
+      - name: -- Step 3 -- Cache node_modules dir
         uses: actions/cache@v1
         id: nodeModules-cache
         with:
@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-nodeModules-${{ hashFiles('./gatsby/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-nodeModules-
-      - name: -- Step 5 -- Gatsby Cache dir
+      - name: -- Step 4 -- Gatsby Cache dir
         uses: actions/cache@v1
         id: gatsby-cache-dir
         with:
@@ -35,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-gatsby-cache-dir
           restore-keys: |
             ${{ runner.os }}-gatsby-cache-dir
-      - name: -- Step 6 -- Gatsby Public dir
+      - name: -- Step 5 -- Gatsby Public dir
         uses: actions/cache@v1
         id: gatsby-public-dir
         with:
@@ -43,11 +43,11 @@ jobs:
           key: ${{ runner.os }}-gatsby-public-dir
           restore-keys: |
             ${{ runner.os }}-gatsby-public-dir
-      - name: -- Step 7 -- Install dependencies
+      - name: -- Step 6 -- Install dependencies
         if: steps.nodeModules-cache.outputs.cache-hit != 'true'
         working-directory: ./gatsby
         run: yarn install --pure-lockfile
-      - name: -- Step 8 -- Build static site
+      - name: -- Step 7 -- Build static site
         working-directory: ./gatsby
         run: yarn build
         env:
@@ -65,7 +65,8 @@ jobs:
           GATSBY_STRIPE_PUBLIC_KEY: ${{ secrets.GATSBY_STRIPE_PUBLIC_KEY_PREVIEW }}
           STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_PRIVATE_KEY_PREVIEW }}
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
-      - name: -- Step 9 -- Deploy to one.com
+          GATSBY_API_ENDPOINT: preview.api.terra-delft.nl
+      - name: -- Step 8 -- Deploy to one.com
         working-directory: ./gatsby
         env:
           remote_host: ${{ secrets.DEPLOY_HOST }}
