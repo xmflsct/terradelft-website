@@ -1,0 +1,14 @@
+{
+  "routes": [
+    {
+      "src": "/api/checkout",
+      "headers": { "Access-Control-Allow-Origin": "*" }
+    },
+    { "src": "/api/email", "headers": { "Access-Control-Allow-Origin": "*" } },
+    {
+      "src": "/(.*)",
+      "status": 308,
+      "headers": { "Location": "https://terra-delft.nl" }
+    }
+  ]
+}

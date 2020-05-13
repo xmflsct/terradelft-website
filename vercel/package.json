@@ -1,0 +1,20 @@
+{
+  "name": "terradelft-website-api",
+  "description": "Terra Delft Website - API",
+  "version": "0.1.0",
+  "author": "Zhiyuan Zheng <me@xmflsct.com>",
+  "private": true,
+  "license": "UNLICENSED",
+  "dependencies": {
+    "ky": "^0.19.1",
+    "ky-universal": "^0.6.0",
+    "lodash": "^4.17.15",
+    "@sendgrid/mail": "^7.1.0",
+    "stripe": "^8.52.0"
+  },
+  "homepage": "https://terra-delft.nl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xmflsct/terradelft-website.git"
+  }
+}

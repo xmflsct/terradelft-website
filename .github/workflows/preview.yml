@@ -2,8 +2,8 @@ name: Preview development
 
 on:
   push:
-    branches:
-      - preview
+    # branches:
+    #   - preview
 
 jobs:
   deploy:
@@ -18,10 +18,12 @@ jobs:
           node-version: 12.x
       - name: -- Step 3 -- Get yarn cache directory path
         id: yarn-cache-dir-path
+        working-directory: ./gatsby
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: -- Step 4 -- Cache yarn dir
         uses: actions/cache@v1
         id: yarn-cache
+        working-directory: ./gatsby
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -30,6 +32,7 @@ jobs:
       - name: -- Step 5 -- Gatsby Cache dir
         uses: actions/cache@v1
         id: gatsby-cache-dir
+        working-directory: ./gatsby
         with:
           path: .cache
           key: ${{ runner.os }}-gatsby-cache-dir
@@ -38,14 +41,17 @@ jobs:
       - name: -- Step 6 -- Gatsby Public dir
         uses: actions/cache@v1
         id: gatsby-public-dir
+        working-directory: ./gatsby
         with:
           path: public
           key: ${{ runner.os }}-gatsby-public-dir
           restore-keys: |
             ${{ runner.os }}-gatsby-public-dir
       - name: -- Step 7 -- Install dependencies
+        working-directory: ./gatsby
         run: yarn install --pure-lockfile
       - name: -- Step 8 -- Build static site
+        working-directory: ./gatsby
         run: yarn build
         env:
           CI: true
@@ -63,12 +69,13 @@ jobs:
           STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_PRIVATE_KEY_PREVIEW }}
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
       - name: -- Step 9 -- Deploy to one.com
+        working-directory: ./gatsby
         env:
           remote_host: ${{ secrets.DEPLOY_HOST }}
           remote_port: ${{ secrets.DEPLOY_PORT }}
           remote_user: ${{ secrets.DEPLOY_USER }}
           remote_pass: ${{ secrets.DEPLOY_PASS }}
-          local_dir: "./public/"
+          local_dir: "../public/"
           remote_dir: "/www/preview/"
         run: |
-          sshpass -p "${remote_pass}" rsync -avzr --delete --exclude "not-delete" --exclude "archive" -e "ssh -o StrictHostKeyChecking=no" ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
+          sh ./scripts/rsync.sh
