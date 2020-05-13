@@ -1,3 +1,5 @@
+import microCors from "micro-cors"
+const cors = microCors({ origin: process.env.REQUEST_ORIGIN })
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const ky = require("ky-universal")
 var _ = require("lodash")
@@ -227,14 +229,16 @@ async function stripeSession(req) {
             allowed_countries: [req.body.data.shipping.countryA2],
           },
           locale: req.body.data.locale,
-          success_url: req.body.data.url.success + "?session_id={CHECKOUT_SESSION_ID}",
+          success_url:
+            req.body.data.url.success + "?session_id={CHECKOUT_SESSION_ID}",
           cancel_url: req.body.data.url.cancel,
         })
       : (sessionData = {
           payment_method_types: ["ideal", "card"],
           line_items: line_items,
           locale: req.body.data.locale,
-          success_url: req.body.data.url.success + "?session_id={CHECKOUT_SESSION_ID}",
+          success_url:
+            req.body.data.url.success + "?session_id={CHECKOUT_SESSION_ID}",
           cancel_url: req.body.data.url.cancel,
         })
   } catch (err) {
@@ -252,7 +256,11 @@ async function stripeSession(req) {
   }
 }
 
-export default async (req, res) => {
+async function checkout(req, res) {
+  if (req.method === "OPTIONS") {
+    return res.status(200).end()
+  }
+
   console.log("[app] Start")
   if (!req.body || Object.keys(req.body).length === 0) {
     res.status(400).json({ error: "[app] Content error" })
@@ -290,3 +298,5 @@ export default async (req, res) => {
   }
   console.log("[app] End")
 }
+
+export default cors(checkout)
