@@ -1,3 +1,7 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `Terra Delft`,
@@ -35,16 +39,6 @@ module.exports = {
       options: {
         precision: 6,
         includePaths: [require("path").resolve(__dirname, "node_modules")],
-      },
-    },
-    {
-      resolve: "gatsby-plugin-sentry",
-      options: {
-        dsn: process.env.SENTRY_DSN,
-        // Optional settings, see https://docs.sentry.io/clients/node/config/#optional-settings
-        environment: process.env.NODE_ENV,
-        enabled: (() =>
-          ["production", "preview"].indexOf(process.env.NODE_ENV) !== -1)(),
       },
     },
     `gatsby-plugin-sharp`,

@@ -70,3 +70,5 @@ yarn-error.log
 
 .now
 .vercel
+# Local Netlify folder
+.netlify
