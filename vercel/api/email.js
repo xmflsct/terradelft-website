@@ -1,3 +1,5 @@
+import micro from "micro-cors"
+const cors = micro()
 const sgMail = require("@sendgrid/mail")
 const ky = require("ky-universal")
 
@@ -30,7 +32,11 @@ async function sendGrid(req) {
   return response
 }
 
-export default async (req, res) => {
+async function email(req, res) {
+  if (req.method === "OPTIONS") {
+    return res.status(200).end()
+  }
+
   console.log("[app] Start")
   if (!req.body || Object.keys(req.body).length === 0) {
     res.status(400).send({ error: "[app] Content error" })
@@ -60,3 +66,5 @@ export default async (req, res) => {
 
   console.log("[app] End")
 }
+
+export default cors(email)

@@ -2,9 +2,24 @@
   "routes": [
     {
       "src": "/api/checkout",
-      "headers": { "Access-Control-Allow-Origin": "*" }
+      "dest": "/api/checkout",
+      "methods": ["GET", "POST", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Credentials": "true"
+      }
     },
-    { "src": "/api/email", "headers": { "Access-Control-Allow-Origin": "*" } },
+    {
+      "src": "/api/email",
+      "dest": "/api/email",
+      "methods": ["GET", "POST", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Credentials": "true"
+      }
+    },
     {
       "src": "/(.*)",
       "status": 308,

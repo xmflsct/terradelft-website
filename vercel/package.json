@@ -6,10 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
+    "@sendgrid/mail": "^7.1.0",
     "ky": "^0.19.1",
     "ky-universal": "^0.6.0",
     "lodash": "^4.17.15",
-    "@sendgrid/mail": "^7.1.0",
+    "micro-cors": "^0.1.1",
     "stripe": "^8.52.0"
   },
   "homepage": "https://terra-delft.nl",
