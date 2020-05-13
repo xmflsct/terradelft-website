@@ -19,15 +19,15 @@ jobs:
       - name: -- Step 3 -- Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: -- Step 4 -- Use actions/cache
+      - name: -- Step 4 -- Cache yarn dir
         uses: actions/cache@v1
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: -- Step 5 -- Gatsby Cache Folder
+      - name: -- Step 5 -- Gatsby Cache dir
         uses: actions/cache@v1
         id: gatsby-cache-dir
         with:
@@ -35,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-gatsby-cache-dir
           restore-keys: |
             ${{ runner.os }}-gatsby-cache-dir
-      - name: -- Step 6 -- Gatsby Public Folder
+      - name: -- Step 6 -- Gatsby Public dir
         uses: actions/cache@v1
         id: gatsby-public-dir
         with:
@@ -44,6 +44,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gatsby-public-dir
       - name: -- Step 7 -- Install dependencies
+        if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
         run: yarn install --pure-lockfile
       - name: -- Step 8 -- Build static site
         run: yarn build
@@ -72,5 +73,4 @@ jobs:
           remote_dir: "/www/preview/"
         run: |
           sudo apt-get install -y sshpass
-          sshpass -p ${remote_pass} rsync -avzrn -e ssh ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
- 
+          sshpass -p "${remote_pass}"" rsync -avzrn -e ssh ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
