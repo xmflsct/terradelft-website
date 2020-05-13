@@ -9,7 +9,10 @@ do
         exit
     else
         echo "Rsync failure. Backing off and retrying..."
-        n=$((n+1)) 
+        n=$((n+1))
+        if [ "$n" -eq 10 ] ; then
+            exit 1
+        fi
         sleep 10
     fi
 done
