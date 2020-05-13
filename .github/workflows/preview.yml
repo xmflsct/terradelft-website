@@ -18,32 +18,28 @@ jobs:
           node-version: 12.x
       - name: -- Step 3 -- Get yarn cache directory path
         id: yarn-cache-dir-path
-        working-directory: ./gatsby
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: -- Step 4 -- Cache yarn dir
         uses: actions/cache@v1
         id: yarn-cache
-        working-directory: ./gatsby
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./gatsby/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: -- Step 5 -- Gatsby Cache dir
         uses: actions/cache@v1
         id: gatsby-cache-dir
-        working-directory: ./gatsby
         with:
-          path: .cache
+          path: ./gatsby/cache
           key: ${{ runner.os }}-gatsby-cache-dir
           restore-keys: |
             ${{ runner.os }}-gatsby-cache-dir
       - name: -- Step 6 -- Gatsby Public dir
         uses: actions/cache@v1
         id: gatsby-public-dir
-        working-directory: ./gatsby
         with:
-          path: public
+          path: ./gatsby/public
           key: ${{ runner.os }}-gatsby-public-dir
           restore-keys: |
             ${{ runner.os }}-gatsby-public-dir
