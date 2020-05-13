@@ -18,7 +18,7 @@ const NonStretchedImage = (props) => {
     }
   }
 
-  return <Img {...normalizedProps} />
+  return <Img {...normalizedProps} backgroundColor="#e8e8e8" />
 }
 
 export const mediaFromRichText = (images, locale) => ({
@@ -80,7 +80,7 @@ export const query = graphql`
       }
     }
     fluid(maxWidth: 600, quality: 85) {
-      ...GatsbyContentfulFluid_withWebp
+      ...GatsbyContentfulFluid_withWebp_noBase64
     }
   }
 `

@@ -17,7 +17,7 @@ const DynamicArtist = ({ pageContext, data }) => (
     <h1>{data.artist.artist}</h1>
     <Row className='artist-section'>
       <Col lg={4} className='mb-3'>
-        <Img fluid={data.artist.image.fluid} />
+        <Img fluid={data.artist.image.fluid} backgroundColor="#e8e8e8" />
       </Col>
       <Col lg={8}>
         {documentToReactComponents(
@@ -40,7 +40,7 @@ export const query = graphql`
       artist
       image {
         fluid(maxWidth: 280, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp
+          ...GatsbyContentfulFluid_withWebp_noBase64
         }
       }
       biography {

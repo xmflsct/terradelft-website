@@ -23,7 +23,7 @@ const DynamicNews = ({ pageContext, data }) => {
       <Row>
         {data.news.image && (
           <Col sm={4} className="mb-3">
-            <Img fluid={data.news.image.fluid} />
+            <Img fluid={data.news.image.fluid} backgroundColor="#e8e8e8" />
           </Col>
         )}
         <Col sm={data.news.image ? 8 : 12}>
@@ -56,7 +56,7 @@ export const query = graphql`
       date
       image {
         fluid(maxWidth: 280, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp
+          ...GatsbyContentfulFluid_withWebp_noBase64
         }
       }
       content {
