@@ -1,9 +1,11 @@
-name: Preview deployment
+name: Production deployment
 
 on:
   push:
     branches:
-      - preview
+      - master
+  repository_dispatch:
+    types: [edited]
 
 jobs:
   deploy:
@@ -52,20 +54,20 @@ jobs:
         run: yarn build
         env:
           CI: true
-          CONTENTFUL_HOST: preview.contentful.com
+          CONTENTFUL_HOST: cdn.contentful.com
           CONTENTFUL_OBJECTS_SPACE: ${{ secrets.CONTENTFUL_OBJECTS_SPACE }}
           CONTENTFUL_OBJECTS_ENVIRONMENT: master
-          CONTENTFUL_OBJECTS_KEY_GATSBY: ${{ secrets.CONTENTFUL_OBJECTS_KEY_GATSBY_PREVIEW }}
-          CONTENTFUL_OBJECTS_KEY_CHECKOUT: ${{ secrets.CONTENTFUL_OBJECTS_KEY_CHECKOUT_PREVIEW }}
+          CONTENTFUL_OBJECTS_KEY_GATSBY: ${{ secrets.CONTENTFUL_OBJECTS_KEY_GATSBY_PRODUCTION }}
+          CONTENTFUL_OBJECTS_KEY_CHECKOUT: ${{ secrets.CONTENTFUL_OBJECTS_KEY_CHECKOUT_PRODUCTION }}
           CONTENTFUL_CONTENTS_SPACE: ${{ secrets.CONTENTFUL_CONTENTS_SPACE }}
           CONTENTFUL_CONTENTS_ENVIRONMENT: master
-          CONTENTFUL_CONTENTS_KEY: ${{ secrets.CONTENTFUL_CONTENTS_KEY_PREVIEW }}
-          GATSBY_RECAPTCHA_PUBLIC_KEY: ${{ secrets.GATSBY_RECAPTCHA_PUBLIC_KEY_PREVIEW }}
-          RECAPTCHA_PRIVATE_KEY: ${{ secrets.RECAPTCHA_PRIVATE_KEY_PREVIEW }}
-          GATSBY_STRIPE_PUBLIC_KEY: ${{ secrets.GATSBY_STRIPE_PUBLIC_KEY_PREVIEW }}
-          STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_PRIVATE_KEY_PREVIEW }}
+          CONTENTFUL_CONTENTS_KEY: ${{ secrets.CONTENTFUL_CONTENTS_KEY_PRODUCTION }}
+          GATSBY_RECAPTCHA_PUBLIC_KEY: ${{ secrets.GATSBY_RECAPTCHA_PUBLIC_KEY_PRODUCTION }}
+          RECAPTCHA_PRIVATE_KEY: ${{ secrets.RECAPTCHA_PRIVATE_KEY_PRODUCTION }}
+          GATSBY_STRIPE_PUBLIC_KEY: ${{ secrets.GATSBY_STRIPE_PUBLIC_KEY_PRODUCTION }}
+          STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_PRIVATE_KEY_PRODUCTION }}
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
-          GATSBY_API_ENDPOINT: preview.api.terra-delft.nl
+          GATSBY_API_ENDPOINT: api.terra-delft.nl
       - name: -- Step 8 -- Deploy to one.com
         working-directory: ./gatsby
         env:
@@ -74,6 +76,6 @@ jobs:
           remote_user: ${{ secrets.DEPLOY_USER }}
           remote_pass: ${{ secrets.DEPLOY_PASS }}
           local_dir: "public/"
-          remote_dir: "/www/preview/"
+          remote_dir: "/www/production/"
         run: |
-          sh ./scripts/rsync-preview.sh
+          sh ./scripts/rsync-production.sh
