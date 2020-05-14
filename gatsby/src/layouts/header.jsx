@@ -171,7 +171,7 @@ const Header = ({ useMiniBag }) => {
 }
 
 Header.propTypes = {
-  useMiniBag: PropTypes.bool.isRequired
+  useMiniBag: PropTypes.bool
 }
 
 export default Header

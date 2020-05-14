@@ -44,7 +44,7 @@ export const mediaFromRichText = (images, locale) => ({
     [INLINES.HYPERLINK]: node => {
       if (node.data.uri.includes('youtube.com')) {
         return (
-          <div className='iframe-container youtube-video'>
+          <span className='iframe-container youtube-video'>
             <iframe
               src={`https://www.youtube.com/embed/${getYouTubeID(
                 node.data.uri
@@ -54,7 +54,7 @@ export const mediaFromRichText = (images, locale) => ({
               frameBorder='0'
               allowFullScreen
             />
-          </div>
+          </span>
         )
       } else if (node.data.uri.includes('terra-delft.nl')) {
         return <a href={node.data.uri}>{node.content[0].value}</a>

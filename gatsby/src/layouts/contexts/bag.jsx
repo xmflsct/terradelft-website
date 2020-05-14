@@ -30,5 +30,5 @@ export default function ContextBagProvider ({ children }) {
 }
 
 ContextBagProvider.propTypes = {
-  children: PropTypes.elementType.isRequired
+  children: PropTypes.object.isRequired
 }

@@ -46,7 +46,7 @@ const ObjectAttribute = ({ type, value }) => {
 
 ObjectAttribute.propTypes = {
   type: PropTypes.string.isRequired,
-  value: PropTypes.node.isRequired
+  value: PropTypes.any.isRequired
 }
 
 export default ObjectAttribute

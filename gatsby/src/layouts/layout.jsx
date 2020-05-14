@@ -42,11 +42,11 @@ const Layout = ({
 }
 
 Layout.propTypes = {
-  children: PropTypes.elementType.isRequired,
+  children: PropTypes.node.isRequired,
   SEOtitle: PropTypes.string.isRequired,
-  SEOkeywords: PropTypes.string.isRequired,
+  SEOkeywords: PropTypes.array.isRequired,
   containerName: PropTypes.string.isRequired,
-  useMiniBag: PropTypes.bool.isRequired
+  useMiniBag: PropTypes.bool
 }
 
 export default Layout

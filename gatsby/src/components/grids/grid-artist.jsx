@@ -30,7 +30,7 @@ const GridArtist = ({ data }) => {
 }
 
 GridArtist.propTypes = {
-  data: PropTypes.object.isRequired
+  data: PropTypes.array.isRequired
 }
 
 export default GridArtist
