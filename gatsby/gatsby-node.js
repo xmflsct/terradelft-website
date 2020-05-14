@@ -1,38 +1,38 @@
-const realFs = require("fs")
-const gracefulFs = require("graceful-fs")
+const realFs = require('fs')
+const gracefulFs = require('graceful-fs')
 gracefulFs.gracefulify(realFs)
-const _ = require("lodash")
-const path = require(`path`)
-const slugify = require("slugify")
-const i18next = require("i18next")
-const nodeFsBackend = require("i18next-node-fs-backend")
+const _ = require('lodash')
+const path = require('path')
+const slugify = require('slugify')
+const i18next = require('i18next')
+const nodeFsBackend = require('i18next-node-fs-backend')
 
 // Default locale in first place
-const locales = ["nl", "en"]
+const locales = ['nl', 'en']
 
-const allObjectsAttributes = ["year", "technique", "material"]
+const allObjectsAttributes = ['year', 'technique', 'material']
 
 exports.createPages = async ({ graphql, actions: { createPage } }) => {
   createPage({
-    path: "/",
-    component: path.resolve(`src/templates/static-landing.jsx`),
-    context: {},
+    path: '/',
+    component: path.resolve('src/templates/static-landing.jsx'),
+    context: {}
   })
   createPage({
-    path: "/404",
-    component: path.resolve(`src/templates/static-404.jsx`),
-    context: {},
+    path: '/404',
+    component: path.resolve('src/templates/static-404.jsx'),
+    context: {}
   })
   await buildStaticPages(
-    ["static-index", "constant", "component-object"],
+    ['static-index', 'constant', 'component-object'],
     createPage
   )
   await buildStaticPages(
-    ["static-online-shop", "constant", "component-object"],
+    ['static-online-shop', 'constant', 'component-object'],
     createPage
   )
   await buildStaticPages(
-    ["static-events", "constant", "component-event"],
+    ['static-events', 'constant', 'component-event'],
     createPage
   )
   const newsTotal = await graphql(`
@@ -43,21 +43,21 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     }
   `)
   await buildStaticPagesWithPagination(
-    ["static-news", "constant"],
+    ['static-news', 'constant'],
     createPage,
     parseInt(newsTotal.data.newsTotal.totalCount / locales.length)
   )
-  await buildStaticPages(["static-newsletter", "constant"], createPage)
+  await buildStaticPages(['static-newsletter', 'constant'], createPage)
   await buildStaticPages(
-    ["static-terra-in-china", "static-events", "static-news", "constant"],
+    ['static-terra-in-china', 'static-events', 'static-news', 'constant'],
     createPage
   )
   await buildStaticPages(
-    ["static-terra-in-china-events", "static-events", "constant"],
+    ['static-terra-in-china-events', 'static-events', 'constant'],
     createPage
   )
   await buildStaticPages(
-    ["static-terra-in-china-news", "static-news", "constant"],
+    ['static-terra-in-china-news', 'static-news', 'constant'],
     createPage
   )
   const aboutTerra = await graphql(`
@@ -77,28 +77,28 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   `)
   const aboutTerraImages = {}
   await Promise.all(
-    aboutTerra.data.aboutTerra.nodes.map((node) => {
+    aboutTerra.data.aboutTerra.nodes.map(node => {
       aboutTerraImages[node.node_locale] = [
         ...getImagesFromRichText(node.columnLeft.json.content),
-        ...getImagesFromRichText(node.columnRight.json.content),
+        ...getImagesFromRichText(node.columnRight.json.content)
       ]
     })
   )
   await buildStaticPages(
-    ["static-about-terra", "constant"],
+    ['static-about-terra', 'constant'],
     createPage,
     aboutTerraImages
   )
-  await buildStaticPages(["static-reach-terra", "constant"], createPage)
+  await buildStaticPages(['static-reach-terra', 'constant'], createPage)
   await buildStaticPages(
-    ["static-bag", "constant", "component-object"],
+    ['static-bag', 'constant', 'component-object'],
     createPage
   )
-  await buildStaticPages(["static-thank-you", "constant"], createPage)
-  await buildStaticPages(["static-404", "constant"], createPage)
+  await buildStaticPages(['static-thank-you', 'constant'], createPage)
+  await buildStaticPages(['static-404', 'constant'], createPage)
 
   /* Biuld Artist Page */
-  const templateDynamicArtist = path.resolve(`src/templates/dynamic-artist.jsx`)
+  const templateDynamicArtist = path.resolve('src/templates/dynamic-artist.jsx')
   const artists = await graphql(`
     {
       artists: allContentfulObjectArtist(
@@ -112,7 +112,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     }
   `)
   await Promise.all(
-    artists.data.artists.nodes.map(async (node) => {
+    artists.data.artists.nodes.map(async node => {
       const artist = await graphql(
         `
           query($contentful_id: String!) {
@@ -131,22 +131,23 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       )
       await buildDynamicPages(
         artist.data.artist.nodes,
+        // eslint-disable-next-line camelcase
         (locale, { artist, contentful_id }, i18n) => ({
-          path: i18n.t("constant:slug.dynamic.artist.slug", {
+          path: i18n.t('constant:slug.dynamic.artist.slug', {
             locale: locale,
-            artist: artist,
+            artist: artist
           }),
           component: templateDynamicArtist,
-          context: { contentful_id: contentful_id, locale: locale },
+          context: { contentful_id: contentful_id, locale: locale }
         }),
-        ["constant", "component-object"],
+        ['constant', 'component-object'],
         createPage
       )
     })
   )
 
   /* Biuld Object Page */
-  const templateDynamicObject = path.resolve(`src/templates/dynamic-object.jsx`)
+  const templateDynamicObject = path.resolve('src/templates/dynamic-object.jsx')
   const objects = await graphql(`
     {
       objects: allContentfulObject(
@@ -160,7 +161,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     }
   `)
   await Promise.all(
-    objects.data.objects.nodes.map(async (node) => {
+    objects.data.objects.nodes.map(async node => {
       const object = await graphql(
         `
           query($contentful_id: String!) {
@@ -186,12 +187,13 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       )
       await buildDynamicPages(
         object.data.object.nodes,
+        // eslint-disable-next-line camelcase
         (locale, { artist, name, contentful_id, description }, i18n) => ({
-          path: i18n.t("constant:slug.dynamic.object.slug", {
+          path: i18n.t('constant:slug.dynamic.object.slug', {
             locale: locale,
             artist: artist.artist,
             object: name,
-            id: contentful_id,
+            id: contentful_id
           }),
           component: templateDynamicObject,
           context: {
@@ -200,10 +202,10 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             locale: locale,
             imagesFromRichText: description
               ? getImagesFromRichText(description.json.content)
-              : [],
-          },
+              : []
+          }
         }),
-        ["constant", "dynamic-object", "component-object"],
+        ['constant', 'dynamic-object', 'component-object'],
         createPage
       )
     })
@@ -211,15 +213,14 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
 
   /* Biuld Objects Attribute Page */
   const templateDynamicObjectsAttribute = path.resolve(
-    `src/templates/dynamic-objects-attribute.jsx`
+    'src/templates/dynamic-objects-attribute.jsx'
   )
   await Promise.all(
-    allObjectsAttributes.map(async (attribute) => {
+    allObjectsAttributes.map(async attribute => {
       const objectsAttributes = await graphql(`
       {
-        objectsAttributes: allContentfulObject${
-          attribute[0].toUpperCase() + attribute.slice(1)
-        }(
+        objectsAttributes: allContentfulObject${attribute[0].toUpperCase() +
+          attribute.slice(1)}(
           filter: { node_locale: { eq: "${locales[0]}" } }
         ) {
           nodes {
@@ -230,13 +231,12 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       }
     `)
       await Promise.all(
-        objectsAttributes.data.objectsAttributes.nodes.map(async (node) => {
+        objectsAttributes.data.objectsAttributes.nodes.map(async node => {
           const objectsAttribute = await graphql(
             `
               query($contentful_id: String!) {
-                objectsAttribute: allContentfulObject${
-                  attribute[0].toUpperCase() + attribute.slice(1)
-                }(
+                objectsAttribute: allContentfulObject${attribute[0].toUpperCase() +
+                  attribute.slice(1)}(
                   filter: { contentful_id: { eq: $contentful_id } }
                 ) {
                   nodes {
@@ -253,22 +253,22 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             (await buildDynamicPages(
               objectsAttribute.data.objectsAttribute.nodes,
               (locale, node, i18n) => ({
-                path: i18n.t("constant:slug.dynamic.objects-attribute.slug", {
+                path: i18n.t('constant:slug.dynamic.objects-attribute.slug', {
                   locale: locale,
                   type: i18n.t(`component-object:${attribute}`),
-                  value: node[attribute].toString(),
+                  value: node[attribute].toString()
                 }),
                 component: templateDynamicObjectsAttribute,
                 context: {
-                  byYear: attribute === "year",
-                  byTechnique: attribute === "technique",
-                  byMaterial: attribute === "material",
+                  byYear: attribute === 'year',
+                  byTechnique: attribute === 'technique',
+                  byMaterial: attribute === 'material',
                   attributeValue: node[attribute].toString(),
                   contentful_id: node.contentful_id,
-                  locale: locale,
-                },
+                  locale: locale
+                }
               }),
-              ["constant", "dynamic-object", "component-object"],
+              ['constant', 'dynamic-object', 'component-object'],
               createPage
             ))
         })
@@ -277,7 +277,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   )
 
   /* Biuld Event Page */
-  const templateDynamicEvent = path.resolve(`src/templates/dynamic-event.jsx`)
+  const templateDynamicEvent = path.resolve('src/templates/dynamic-event.jsx')
   const events = await graphql(`
       {
         events: allContentfulEvent(
@@ -290,7 +290,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       }
     `)
   await Promise.all(
-    events.data.events.nodes.map(async (node) => {
+    events.data.events.nodes.map(async node => {
       const event = await graphql(
         `
           query($contentful_id: String!) {
@@ -312,11 +312,12 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       )
       await buildDynamicPages(
         event.data.event.nodes,
+        // eslint-disable-next-line camelcase
         (locale, { name, contentful_id, description }, i18n) => ({
-          path: i18n.t("constant:slug.dynamic.event.slug", {
+          path: i18n.t('constant:slug.dynamic.event.slug', {
             locale: locale,
             event: name,
-            id: contentful_id,
+            id: contentful_id
           }),
           component: templateDynamicEvent,
           context: {
@@ -324,17 +325,17 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             locale: locale,
             imagesFromRichText: description
               ? getImagesFromRichText(description.json.content)
-              : [],
-          },
+              : []
+          }
         }),
-        ["constant", "static-events"],
+        ['constant', 'static-events'],
         createPage
       )
     })
   )
 
   /* Biuld News Page */
-  const templateDynamicNews = path.resolve(`src/templates/dynamic-news.jsx`)
+  const templateDynamicNews = path.resolve('src/templates/dynamic-news.jsx')
   const news = await graphql(`
         {
           news: allContentfulNews(
@@ -347,7 +348,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         }
       `)
   await Promise.all(
-    news.data.news.nodes.map(async (node) => {
+    news.data.news.nodes.map(async node => {
       const newsPiece = await graphql(
         `
           query($contentful_id: String!) {
@@ -369,15 +370,16 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       )
       await buildDynamicPages(
         newsPiece.data.newsPiece.nodes,
+        // eslint-disable-next-line camelcase
         (locale, { title, contentful_id, content }, i18n) => {
           if (!title) {
             return
           }
           return {
-            path: i18n.t("constant:slug.dynamic.news.slug", {
+            path: i18n.t('constant:slug.dynamic.news.slug', {
               locale: locale,
               news: title,
-              id: contentful_id,
+              id: contentful_id
             }),
             component: templateDynamicNews,
             context: {
@@ -385,11 +387,11 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
               locale: locale,
               imagesFromRichText: content
                 ? getImagesFromRichText(content.json.content)
-                : [],
-            },
+                : []
+            }
           }
         },
-        ["constant", "static-news"],
+        ['constant', 'static-news'],
         createPage
       )
     })
@@ -409,7 +411,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
 const createI18nextInstance = async (locale, namespaces) => {
   const i18n = i18next.createInstance()
   i18n.use(nodeFsBackend)
-  await new Promise((resolve) =>
+  await new Promise(resolve =>
     i18n.init(
       {
         lng: locale,
@@ -418,11 +420,11 @@ const createI18nextInstance = async (locale, namespaces) => {
         interpolation: {
           escapeValue: false,
           format: function (value, format) {
-            if (format === "slugify") return slugify(value, { lower: true })
+            if (format === 'slugify') return slugify(value, { lower: true })
             return value
-          },
+          }
         },
-        backend: { loadPath: `src/locales/{{lng}}/{{ns}}.json` },
+        backend: { loadPath: 'src/locales/{{lng}}/{{ns}}.json' }
       },
       resolve
     )
@@ -432,29 +434,29 @@ const createI18nextInstance = async (locale, namespaces) => {
 
 const buildStaticPages = async (namespaces, createPage, images) => {
   const definitions = await Promise.all(
-    locales.map(async (locale) => {
+    locales.map(async locale => {
       const i18n = await createI18nextInstance(locale, namespaces)
       const res = {
         path: i18n.t(`${namespaces[0]}:slug`, { locale: locale }),
         component: path.resolve(`src/templates/${namespaces[0]}.jsx`),
         context: {
           locale: locale,
-          i18nResources: i18n.services.resourceStore.data,
-        },
+          i18nResources: i18n.services.resourceStore.data
+        }
       }
       images && (res.context.imagesFromRichText = images[locale])
       return res
     })
   )
   const alternateLinks = await Promise.all(
-    definitions.map((d) => ({
+    definitions.map(d => ({
       locale: d.context.locale,
-      path: d.path,
+      path: d.path
     }))
   )
 
   await Promise.all(
-    definitions.map((d) => {
+    definitions.map(d => {
       d.context.alternateLinks = alternateLinks
       createPage(d)
     })
@@ -471,7 +473,7 @@ const buildStaticPagesWithPagination = async (
   await Promise.all(
     Array.from({ length: numPages }).map(async (_, i) => {
       const definitions = await Promise.all(
-        locales.map(async (locale) => {
+        locales.map(async locale => {
           const i18n = await createI18nextInstance(locale, namespaces)
           const res = {
             path:
@@ -486,21 +488,21 @@ const buildStaticPagesWithPagination = async (
               limit: perPage,
               skip: i * perPage,
               numPages,
-              currentPage: i + 1,
-            },
+              currentPage: i + 1
+            }
           }
           return res
         })
       )
       const alternateLinks = await Promise.all(
-        definitions.map((d) => ({
+        definitions.map(d => ({
           locale: d.context.locale,
-          path: d.path,
+          path: d.path
         }))
       )
 
       await Promise.all(
-        definitions.map((d) => {
+        definitions.map(d => {
           d.context.alternateLinks = alternateLinks
           createPage(d)
         })
@@ -516,7 +518,7 @@ const buildDynamicPages = async (
   createPage
 ) => {
   const definitions = await Promise.all(
-    nodes.map(async (node) => {
+    nodes.map(async node => {
       const locale = node.node_locale
       const i18n = await createI18nextInstance(locale, namespaces)
       const res = pageDefinitionCallback(locale, node, i18n)
@@ -526,26 +528,29 @@ const buildDynamicPages = async (
     })
   )
   const alternateLinks = await Promise.all(
-    definitions.map((d) => ({
+    definitions.map(d => ({
       locale: d.context.locale,
-      path: d.path,
+      path: d.path
     }))
   )
 
   await Promise.all(
-    definitions.map((d) => {
+    definitions.map(d => {
       d.context.alternateLinks = alternateLinks
       createPage(d)
     })
   )
 }
 
-const getImagesFromRichText = (content) => {
+const getImagesFromRichText = content => {
   return (
     content &&
     content.reduce((acc, c) => {
-      const contentful_id = _.get(c, "data.target.sys.contentful_id")
-      if (c.nodeType == "embedded-asset-block" && contentful_id) {
+      // eslint-disable-next-line camelcase
+      const contentful_id = _.get(c, 'data.target.sys.contentful_id')
+      // eslint-disable-next-line camelcase
+      if (c.nodeType === 'embedded-asset-block' && contentful_id) {
+        // eslint-disable-next-line camelcase
         return [...acc, contentful_id]
       }
       return acc
@@ -554,27 +559,27 @@ const getImagesFromRichText = (content) => {
 }
 
 exports.onCreateNode = ({ actions, getNode, node }) => {
-  if (node.internal.owner !== "gatsby-source-contentful") {
+  if (node.internal.owner !== 'gatsby-source-contentful') {
     return
   }
   const { createNodeField } = actions
   switch (node.internal.type) {
     // For sorting by artists' last name
-    case "ContentfulObjectArtist":
+    case 'ContentfulObjectArtist':
       createNodeField({
         node,
-        name: "artist_lastname",
-        value: node.artist.split(" ")[node.artist.split(" ").length - 1],
+        name: 'artist_lastname',
+        value: node.artist.split(' ')[node.artist.split(' ').length - 1]
       })
       break
     // For adding fields to main object, such as variations' discounts
-    case "ContentfulObject":
+    case 'ContentfulObject':
       if (node.variations___NODE) {
         let sale = false
-        let variants = []
-        let priceRange = {
+        const variants = []
+        const priceRange = {
           lowest: 99999,
-          highest: 0,
+          highest: 0
         }
         for (const vNode of node.variations___NODE) {
           const variation = getNode(vNode)
@@ -594,31 +599,31 @@ exports.onCreateNode = ({ actions, getNode, node }) => {
 
         createNodeField({
           node,
-          name: "object_sale",
-          value: sale,
+          name: 'object_sale',
+          value: sale
         })
         createNodeField({
           node,
-          name: "object_variants",
-          value: variants,
+          name: 'object_variants',
+          value: variants
         })
         createNodeField({
           node,
-          name: "variations_price_range",
-          value: priceRange,
+          name: 'variations_price_range',
+          value: priceRange
         })
       } else {
         if (node.priceSale) {
           createNodeField({
             node,
-            name: "object_sale",
-            value: true,
+            name: 'object_sale',
+            value: true
           })
         } else {
           createNodeField({
             node,
-            name: "object_sale",
-            value: false,
+            name: 'object_sale',
+            value: false
           })
         }
       }
@@ -630,20 +635,20 @@ exports.createSchemaCustomization = ({ actions, schema }) => {
   // Custom date filter for events
   actions.createTypes([
     schema.buildObjectType({
-      name: "ContentfulEvent",
-      interfaces: ["Node"],
+      name: 'ContentfulEvent',
+      interfaces: ['Node'],
       fields: {
         isCurrent: {
-          type: "Boolean!",
-          resolve: (source) =>
+          type: 'Boolean!',
+          resolve: source =>
             new Date(source.datetimeEnd) >= new Date() &&
-            new Date(source.datetimeStart) <= new Date(),
+            new Date(source.datetimeStart) <= new Date()
         },
         isFuture: {
-          type: "Boolean!",
-          resolve: (source) => new Date(source.datetimeStart) > new Date(),
-        },
-      },
-    }),
+          type: 'Boolean!',
+          resolve: source => new Date(source.datetimeStart) > new Date()
+        }
+      }
+    })
   ])
 }

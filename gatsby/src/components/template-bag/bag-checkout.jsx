@@ -1,20 +1,20 @@
-import React, { useContext, useState } from "react"
-import { Button, Col, Form, FormCheck, Spinner } from "react-bootstrap"
-import ReCAPTCHA from "react-google-recaptcha"
-import { Controller, useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import ReactSelect from "react-select"
-import { useStaticQuery, graphql } from "gatsby"
-import { findIndex, forIn, includes, sumBy } from "lodash"
-import { loadStripe } from "@stripe/stripe-js"
+import React, { useContext, useState } from 'react'
+import { Button, Col, Form, FormCheck, Spinner } from 'react-bootstrap'
+import ReCAPTCHA from 'react-google-recaptcha'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import ReactSelect from 'react-select'
+import { useStaticQuery, graphql } from 'gatsby'
+import { findIndex, forIn, includes, sumBy } from 'lodash'
+import { loadStripe } from '@stripe/stripe-js'
 
-import { ContextBag } from "../../layouts/contexts/bag"
-import { checkout } from "../../api/checkout"
-import * as formatNumber from "../utils/format-number"
+import { ContextBag } from '../../layouts/contexts/bag'
+import { checkout } from '../../api/checkout'
+import * as formatNumber from '../utils/format-number'
 
-var countries = require("i18n-iso-countries")
-countries.registerLocale(require("i18n-iso-countries/langs/en.json"))
-countries.registerLocale(require("i18n-iso-countries/langs/nl.json"))
+var countries = require('i18n-iso-countries')
+countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
+countries.registerLocale(require('i18n-iso-countries/langs/nl.json'))
 
 const BagCheckout = () => {
   const rates = useStaticQuery(graphql`
@@ -51,7 +51,7 @@ const BagCheckout = () => {
       }
     }
   `)
-  const { t, i18n } = useTranslation("static-bag")
+  const { t, i18n } = useTranslation('static-bag')
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
   const recaptchaRef = React.createRef()
@@ -62,24 +62,24 @@ const BagCheckout = () => {
     getValues,
     handleSubmit,
     setValue,
-    watch,
+    watch
   } = useForm({
-    mode: "onChange",
+    mode: 'onChange'
   })
 
   const options = {
     countries: [],
-    shipping: [],
+    shipping: []
   }
   forIn(countries.getNames(i18n.language), (v, k) => {
     options.countries.push({
       value: countries.alpha2ToNumeric(k),
-      label: v,
+      label: v
     })
   })
-  const selectedCountry = watch("selectedCountry")
+  const selectedCountry = watch('selectedCountry')
   if (selectedCountry) {
-    let index = findIndex(rates[i18n.language].rates, (d) => {
+    let index = findIndex(rates[i18n.language].rates, d => {
       return includes(d.countryCode, selectedCountry.value)
     })
     // Needed when "other countries" which does not have a country code
@@ -88,25 +88,25 @@ const BagCheckout = () => {
   }
 
   const pay = {
-    objects: sumBy(state.bag.objects, (d) => {
+    objects: sumBy(state.bag.objects, d => {
       if (d.priceSale) {
         return d.priceSale
       } else {
         return d.priceOriginal
       }
     }),
-    discount: sumBy(state.bag.objects, (d) => {
+    discount: sumBy(state.bag.objects, d => {
       if (d.priceSale) {
         return (d.priceOriginal * 10 - d.priceSale * 10) / 10
       }
     }),
-    shipping: null,
+    shipping: null
   }
 
-  const selectedShipping = watch("selectedShipping")
+  const selectedShipping = watch('selectedShipping')
   if (selectedShipping) {
     if (
-      options.shipping[selectedShipping].freeForTotal &&
+      options.shipping[selectedShipping].freeForTotal > 0 &&
       pay.objects >= options.shipping[selectedShipping].freeForTotal
     ) {
       pay.shipping = 0
@@ -115,8 +115,8 @@ const BagCheckout = () => {
     }
   }
 
-  const userVerified = (token) => {
-    handleSubmit((data) => formSubmit(data, token))()
+  const userVerified = token => {
+    handleSubmit(data => formSubmit(data, token))()
   }
   const formSubmit = async (d, token) => {
     const data = {
@@ -124,34 +124,34 @@ const BagCheckout = () => {
       shipping: {
         countryCode: d.selectedCountry.value,
         countryA2: countries.numericToAlpha2(d.selectedCountry.value),
-        methodIndex: d.selectedShipping,
+        methodIndex: d.selectedShipping
       },
       pay: {
         subtotal: pay.objects,
-        shipping: pay.shipping,
+        shipping: pay.shipping
       },
       url: {
         success: `${window.location.origin}/${t(
-          "constant:slug.static.thank-you.slug",
+          'constant:slug.static.thank-you.slug',
           {
-            locale: i18n.language,
+            locale: i18n.language
           }
         )}`,
         cancel: `${window.location.origin}/${t(
-          "constant:slug.static.bag.slug",
+          'constant:slug.static.bag.slug',
           {
-            locale: i18n.language,
+            locale: i18n.language
           }
-        )}`,
+        )}`
       },
-      locale: i18n.language,
+      locale: i18n.language
     }
     const res = await checkout(token, data)
     if (res.sessionId) {
       const stripe = await stripePromise
       setCorrections({ required: false })
       const { error } = await stripe.redirectToCheckout({
-        sessionId: res.sessionId,
+        sessionId: res.sessionId
       })
       if (error) {
         return false
@@ -164,31 +164,31 @@ const BagCheckout = () => {
       return false
     }
   }
-  const onSubmit = async (e) => {
+  const onSubmit = async e => {
     e.preventDefault()
     formState.isSubmitted && (await recaptchaRef.current.reset())
     recaptchaRef.current.execute()
   }
 
-  const handleCorrection = (d) => {
+  const handleCorrection = d => {
     setCorrections({
       required: true,
       subtotal: d.objects.length ? pay.objects : null,
       shipping: d.shipping ? pay.shipping : null,
-      total: (pay.objects * 10 + pay.shipping * 10) / 10,
+      total: (pay.objects * 10 + pay.shipping * 10) / 10
     })
     if (d.objects.length) {
       for (const object of d.objects) {
         object.stock === 0
           ? dispatch({
               // Remove out of stock
-              type: "remove",
-              data: object,
+              type: 'remove',
+              data: object
             })
           : dispatch({
               // Update prices
-              type: "update",
-              data: object,
+              type: 'update',
+              data: object
             })
       }
     }
@@ -197,7 +197,7 @@ const BagCheckout = () => {
       options.shipping[tempShippingIndex].price = d.shipping
     }
     if (d.subtotal) {
-      console.log("subtotal wrong")
+      console.log('subtotal wrong')
     }
   }
 
@@ -205,85 +205,87 @@ const BagCheckout = () => {
     <>
       {state.bag.objects.length > 0 && (
         <>
-          <h2>{t("content.checkout.heading")}</h2>
-          <Form onSubmit={(e) => onSubmit(e)}>
+          <h2>{t('content.checkout.heading')}</h2>
+          <Form onSubmit={e => onSubmit(e)}>
             <Form.Group className='checkout-country'>
               <Form.Label>
-                <strong>{t("content.checkout.shipping.heading")}</strong>
+                <strong>{t('content.checkout.shipping.heading')}</strong>
               </Form.Label>
               <Controller
                 as={<ReactSelect />}
                 name='selectedCountry'
                 options={options.countries}
-                placeholder={t("content.checkout.shipping.selection")}
+                placeholder={t('content.checkout.shipping.selection')}
                 defaultValue={null}
                 isSearchable
                 control={control}
                 onChange={(e, i) => {
-                  setValue("selectedShipping", null)
+                  setValue('selectedShipping', null)
                   return e[0]
                 }}
                 rules={{ required: true }}
                 isDisabled={formState.isSubmitting}
               />
             </Form.Group>
-            {options.shipping?.map((d, i) => {
-              return (
-                <Form.Row className='checkout-shipping mb-2' key={i}>
-                  <Col xs={9}>
-                    <FormCheck>
-                      <Controller
-                        as={<FormCheck.Input />}
-                        type='radio'
-                        name='selectedShipping'
-                        value={i}
-                        valueName='id'
-                        control={control}
-                        required
-                        disabled={formState.isSubmitting}
-                      />
-                      <FormCheck.Label>{d.method}</FormCheck.Label>
-                      {d.description && <Form.Text>{d.description}</Form.Text>}
-                      {d.freeForTotal && (
-                        <Form.Text>
-                          {`${t(
-                            "content.checkout.shipping.free-for-total"
-                          )} ${formatNumber.currency(
-                            d.freeForTotal,
-                            i18n.language
-                          )}`}
-                        </Form.Text>
+            {options.shipping &&
+              options.shipping.map((d, i) => {
+                return (
+                  <Form.Row className='checkout-shipping mb-2' key={i}>
+                    <Col xs={9}>
+                      <FormCheck>
+                        <Controller
+                          as={<FormCheck.Input />}
+                          type='radio'
+                          name='selectedShipping'
+                          value={i}
+                          valueName='id'
+                          control={control}
+                          required
+                          disabled={formState.isSubmitting}
+                        />
+                        <FormCheck.Label>{d.method}</FormCheck.Label>
+                        {d.description && (
+                          <Form.Text>{d.description}</Form.Text>
+                        )}
+                        {d.freeForTotal > 0 && (
+                          <Form.Text>
+                            {t('content.checkout.shipping.free-for-total')}{' '}
+                            {formatNumber.currency(
+                              d.freeForTotal,
+                              i18n.language
+                            )}
+                          </Form.Text>
+                        )}
+                      </FormCheck>
+                    </Col>
+                    <Col xs={3} className='text-right'>
+                      {d.price === 0 ||
+                      (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
+                        t('content.checkout.shipping.free-fee')
+                      ) : (
+                        <>{formatNumber.currency(d.price, i18n.language)}</>
                       )}
-                    </FormCheck>
-                  </Col>
-                  <Col xs={3} className='text-right'>
-                    {d.price === 0 ||
-                    (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
-                      t("content.checkout.shipping.free-fee")
-                    ) : (
-                      <>{formatNumber.currency(d.price, i18n.language)}</>
-                    )}
-                  </Col>
-                </Form.Row>
-              )
-            })}
+                    </Col>
+                  </Form.Row>
+                )
+              })}
             <Form.Row className='checkout-sum sum-subtotal'>
               <Form.Label column md='5'>
-                <strong>{t("content.checkout.sum.subtotal")}</strong>
+                <strong>{t('content.checkout.sum.subtotal')}</strong>
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.subtotal && (
                   <strike>
                     {formatNumber.currency(corrections.subtotal, i18n.language)}
                   </strike>
-                )}{" "}
+                )}{' '}
                 {formatNumber.currency(pay.objects, i18n.language)}
               </Form.Label>
             </Form.Row>
             {pay.discount > 0 && (
               <Form.Row className='checkout-sum sum-discount'>
                 <Form.Label column md='5'>
-                  <strong>{t("content.checkout.sum.discount")}</strong>
+                  <strong>{t('content.checkout.sum.discount')}</strong>
                 </Form.Label>
                 <Form.Label column md='7'>
                   {formatNumber.currency(pay.discount, i18n.language)}
@@ -292,7 +294,7 @@ const BagCheckout = () => {
             )}
             <Form.Row className='checkout-sum sum-shipping'>
               <Form.Label column md='5'>
-                <strong>{t("content.checkout.sum.shipping")}</strong>
+                <strong>{t('content.checkout.sum.shipping')}</strong>
               </Form.Label>
               <Form.Label column md='7'>
                 {(corrections.shipping > 0 && (
@@ -301,24 +303,24 @@ const BagCheckout = () => {
                   </strike>
                 )) ||
                   (corrections.shipping === 0 && (
-                    <strike>{t("content.checkout.shipping.free-fee")}</strike>
-                  ))}{" "}
+                    <strike>{t('content.checkout.shipping.free-fee')}</strike>
+                  ))}{' '}
                 {(pay.shipping > 0 &&
                   formatNumber.currency(pay.shipping, i18n.language)) ||
                   (pay.shipping === 0 &&
-                    t("content.checkout.shipping.free-fee"))}
+                    t('content.checkout.shipping.free-fee'))}
               </Form.Label>
             </Form.Row>
             <Form.Row className='checkout-sum sum-total'>
               <Form.Label column md='5'>
-                <strong>{t("content.checkout.sum.total")}</strong>
+                <strong>{t('content.checkout.sum.total')}</strong>
               </Form.Label>
               <Form.Label column md='7'>
                 {corrections.required && (
                   <strike>
                     {formatNumber.currency(corrections.total, i18n.language)}
                   </strike>
-                )}{" "}
+                )}{' '}
                 {pay.shipping !== null &&
                   formatNumber.currency(
                     (pay.objects * 10 + pay.shipping * 10) / 10,
@@ -341,19 +343,19 @@ const BagCheckout = () => {
                     role='status'
                     aria-hidden='true'
                   />
-                  {` ${t("content.checkout.button.wait")}`}
+                  {` ${t('content.checkout.button.wait')}`}
                 </>
               )) ||
                 (formState.submitCount !== 0 &&
-                  t("content.checkout.button.retry")) ||
-                t("content.checkout.button.submit")}
+                  t('content.checkout.button.retry')) ||
+                t('content.checkout.button.submit')}
             </Button>
             {corrections.required ? (
               <p className='checkout-correction'>
-                {t("content.checkout.correction")}
+                {t('content.checkout.correction')}
               </p>
             ) : (
-              ""
+              ''
             )}
             <div className='mt-3'>
               <ReCAPTCHA

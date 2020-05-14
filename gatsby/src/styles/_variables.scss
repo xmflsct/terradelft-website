@@ -24,7 +24,7 @@ $white: $color-background-light;
 $black: $color-primary-light;
 $grey: grey;
 
-$blue:  #0d6efd !default;
+$blue: #0d6efd !default;
 $red: $color-secondary-light;
 
 $primary: $red;
@@ -41,7 +41,7 @@ $color-contrast-light: $white;
 
 // $enable-rounded: true;
 
-$transition-base: all .2s ease-in-out;
+$transition-base: all 0.2s ease-in-out;
 // $transition-fade:             opacity .15s linear !default;
 // $transition-collapse:         height .35s ease !default;
 
@@ -57,7 +57,7 @@ $grid-gutter-width: 1rem;
 
 $font-family-sans-serif: $font-sans-serif;
 $font-family-heading-sans-serif: $font-heading-sans-serif;
-$font-family-base:  $font-family-sans-serif;
+$font-family-base: $font-family-sans-serif;
 
 $font-size-base: 1rem;
 $h1-font-size: $font-size-base * 1.8;

@@ -1,13 +1,13 @@
-import ky from "ky-universal"
+import ky from 'ky-universal'
 
-export async function sendEmail(token, data) {
+export async function sendEmail (token, data) {
   try {
     return await ky
       .post(`https://${process.env.GATSBY_API_ENDPOINT}/api/email`, {
         json: {
           token: token,
-          data: data,
-        },
+          data: data
+        }
       })
       .json()
   } catch (error) {

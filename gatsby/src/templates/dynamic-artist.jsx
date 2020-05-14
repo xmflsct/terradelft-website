@@ -1,35 +1,41 @@
-import React from "react"
-import { Col, Row } from "react-bootstrap"
-import { graphql } from "gatsby"
-import Img from "gatsby-image"
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
-import { mediaFromRichText } from "../components/utils/media-from-rich-text"
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Col, Row } from 'react-bootstrap'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
+import { mediaFromRichText } from '../components/utils/media-from-rich-text'
 
-import Layout from "../layouts/layout"
-import GridObjectDefault from "../components/grids/grid-object-default"
+import Layout from '../layouts/layout'
+import GridObjectDefault from '../components/grids/grid-object-default'
 
-const DynamicArtist = ({ pageContext, data }) => (
+const DynamicArtist = ({ data }) => (
   <Layout
     SEOtitle={data.artist.artist}
-    SEOkeywords={[data.artist.artist, "Terra Delft"]}
+    SEOkeywords={[data.artist.artist, 'Terra Delft']}
     containerName='dynamic-artist'
   >
     <h1>{data.artist.artist}</h1>
     <Row className='artist-section'>
       <Col lg={4} className='mb-3'>
-        <Img fluid={data.artist.image.fluid} backgroundColor="#e8e8e8" />
+        <Img fluid={data.artist.image.fluid} backgroundColor='#e8e8e8' />
       </Col>
       <Col lg={8}>
-        {documentToReactComponents(
-          data.artist?.biography?.json,
-          mediaFromRichText()
-        )}
+        {data.artist.biography &&
+          documentToReactComponents(
+            data.artist.biography.json,
+            mediaFromRichText()
+          )}
       </Col>
     </Row>
     <h2>Objects by {data.artist.artist}</h2>
     <GridObjectDefault nodes={data.objects.nodes} />
   </Layout>
 )
+
+DynamicArtist.propTypes = {
+  data: PropTypes.object.isRequired
+}
 
 export const query = graphql`
   query dynamicArtist($contentful_id: String, $locale: String) {

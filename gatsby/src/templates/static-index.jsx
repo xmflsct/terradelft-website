@@ -1,23 +1,24 @@
-import React from "react"
-import { useTranslation } from "react-i18next"
-import { graphql } from "gatsby"
+import PropTypes from 'prop-types'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { graphql } from 'gatsby'
 
-import Layout from "../layouts/layout"
-import GridArtist from "../components/grids/grid-artist"
-import GridObjectDefault from "../components/grids/grid-object-default"
-import NewsletterPopup from "../components/newsletter-popup"
+import Layout from '../layouts/layout'
+import GridArtist from '../components/grids/grid-artist'
+import GridObjectDefault from '../components/grids/grid-object-default'
+import NewsletterPopup from '../components/newsletter-popup'
 
 const StaticIndex = ({ data }) => {
-  const { t } = useTranslation("static-index")
+  const { t } = useTranslation('static-index')
 
   return (
     <Layout
       SEOtitle='Terra Delft'
-      SEOkeywords={["Terra", "Delft", "Terra Delft"]}
+      SEOkeywords={['Terra', 'Delft', 'Terra Delft']}
       containerName='static-index'
     >
       <div className='section-online-shop mb-3'>
-        <h2>{t("content.section.online-shop")}</h2>
+        <h2>{t('content.section.online-shop')}</h2>
         <GridObjectDefault
           nodes={data.objects.nodes}
           randomize={true}
@@ -25,12 +26,16 @@ const StaticIndex = ({ data }) => {
         />
       </div>
       <div className='section-collection'>
-        <h1>{t("content.section.collection")}</h1>
+        <h1>{t('content.section.collection')}</h1>
         <GridArtist data={data.artists.edges} />
       </div>
       <NewsletterPopup />
     </Layout>
   )
+}
+
+StaticIndex.propTypes = {
+  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

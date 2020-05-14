@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react"
-import { Button, Col, Modal, Row } from "react-bootstrap"
-import Img from "gatsby-image"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faTimes } from "@fortawesome/free-solid-svg-icons"
+import PropTypes from 'prop-types'
+import React, { useContext, useState } from 'react'
+import { Button, Col, Modal, Row } from 'react-bootstrap'
+import Img from 'gatsby-image'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import { ContextVariationImage } from "../../templates/dynamic-object"
+import { ContextVariationImage } from '../../templates/dynamic-object'
 
 const ObjectImages = ({ images }) => {
   const { state } = useContext(ContextVariationImage)
@@ -18,8 +19,7 @@ const ObjectImages = ({ images }) => {
             xs={12}
             className='mb-3'
             onClick={() =>
-              setZoom({ show: true, fluid: state.image.fluidZoom })
-            }
+              setZoom({ show: true, fluid: state.image.fluidZoom })}
           >
             <Img fluid={state.image.fluid} />
           </Col>
@@ -35,7 +35,7 @@ const ObjectImages = ({ images }) => {
               fluid={
                 !state.image && index === 0 ? image.fluid : image.fluidThumbnail
               }
-              backgroundColor="#e8e8e8"
+              backgroundColor='#e8e8e8'
             />
           </Col>
         ))}
@@ -49,7 +49,7 @@ const ObjectImages = ({ images }) => {
         aria-labelledby='Image'
         animation={false}
       >
-        <Img fluid={zoom.fluid} backgroundColor="#e8e8e8" />
+        <Img fluid={zoom.fluid} backgroundColor='#e8e8e8' />
         <Button
           className='modal-close'
           variant='link'
@@ -60,6 +60,10 @@ const ObjectImages = ({ images }) => {
       </Modal>
     </>
   )
+}
+
+ObjectImages.propTypes = {
+  images: PropTypes.array.isRequired
 }
 
 export default ObjectImages

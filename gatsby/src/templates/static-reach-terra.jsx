@@ -1,18 +1,19 @@
-import React from "react"
-import { Col, Row } from "react-bootstrap"
-import { useTranslation } from "react-i18next"
-import { graphql } from "gatsby"
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Col, Row } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import { graphql } from 'gatsby'
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
-import Layout from "../layouts/layout"
+import Layout from '../layouts/layout'
 
 const StaticReachTerra = ({ data }) => {
-  const { t } = useTranslation("static-reach-terra")
+  const { t } = useTranslation('static-reach-terra')
 
   return (
     <Layout
-      SEOtitle={t("static-reach-terra:name")}
-      SEOkeywords={[t("static-reach-terra:name"), "Terra Delft"]}
+      SEOtitle={t('static-reach-terra:name')}
+      SEOkeywords={[t('static-reach-terra:name'), 'Terra Delft']}
       containerName='static-reach-terra'
     >
       <Row>
@@ -23,7 +24,7 @@ const StaticReachTerra = ({ data }) => {
               title='Google Maps'
               frameBorder='0'
               allowFullScreen
-            ></iframe>
+            />
           </div>
         </Col>
         <Col sm={6}>
@@ -32,6 +33,10 @@ const StaticReachTerra = ({ data }) => {
       </Row>
     </Layout>
   )
+}
+
+StaticReachTerra.propTypes = {
+  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

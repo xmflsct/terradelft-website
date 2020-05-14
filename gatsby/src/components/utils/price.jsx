@@ -1,12 +1,12 @@
-import React from "react"
+import React from 'react'
 
-import * as formatNumber from "./format-number"
+import * as formatNumber from './format-number'
 
-export function Price(locale, priceSale, priceOriginal) {
+export function Price (locale, priceSale, priceOriginal) {
   return (
     <>
       {!(priceSale > 0) && !(priceOriginal > 0) ? (
-        ""
+        ''
       ) : (
         <div className='object-price'>
           {priceSale ? (

@@ -1,32 +1,33 @@
-import React from "react"
-import { Badge, Col, Row } from "react-bootstrap"
-import { useTranslation } from "react-i18next"
-import { graphql, Link } from "gatsby"
-import Img from "gatsby-image"
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Badge, Col, Row } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import { graphql, Link } from 'gatsby'
+import Img from 'gatsby-image'
 
-import Layout from "../layouts/layout"
-import EventInformation from "../components/template-event/event-information"
+import Layout from '../layouts/layout'
+import EventInformation from '../components/template-event/event-information'
 
 const StaticEvents = ({ pageContext, data }) => {
-  const { t } = useTranslation(["static-events", "constant"])
+  const { t } = useTranslation(['static-events', 'constant'])
 
   return (
     <Layout
-      SEOtitle={t("static-events:name")}
-      SEOkeywords={[t("static-events:name"), "Terra Delft"]}
+      SEOtitle={t('static-events:name')}
+      SEOkeywords={[t('static-events:name'), 'Terra Delft']}
       containerName='static-events'
     >
       <Row>
         <Col xs={{ span: 12, order: 2 }} md={{ span: 4, order: 1 }}>
-          <h2>{t("static-events:content.heading.upcoming")}</h2>
-          {data.eventsUpcoming.nodes.map((node) => (
+          <h2>{t('static-events:content.heading.upcoming')}</h2>
+          {data.eventsUpcoming.nodes.map(node => (
             <Row className='events-upcoming' key={node.contentful_id}>
               <Col sm={12}>
                 <Link
-                  to={t("constant:slug.dynamic.event.slug", {
+                  to={t('constant:slug.dynamic.event.slug', {
                     locale: pageContext.locale,
                     event: node.name,
-                    id: node.contentful_id,
+                    id: node.contentful_id
                   })}
                   className='upcoming-name'
                 >
@@ -38,27 +39,27 @@ const StaticEvents = ({ pageContext, data }) => {
           ))}
         </Col>
         <Col xs={{ span: 12, order: 1 }} md={{ span: 8, order: 2 }}>
-          <h2>{t("static-events:content.heading.current")}</h2>
-          {data.eventsCurrent.nodes.map((node) => (
+          <h2>{t('static-events:content.heading.current')}</h2>
+          {data.eventsCurrent.nodes.map(node => (
             <Row className='events-current' key={node.contentful_id}>
               {node.image && (
                 <Col sm={6}>
-                  <Img fluid={node.image.fluid} backgroundColor="#e8e8e8" />
+                  <Img fluid={node.image.fluid} backgroundColor='#e8e8e8' />
                 </Col>
               )}
               <Col sm={6}>
                 <div className='current-type'>
-                  {node.type.map((t) => (
+                  {node.type.map(t => (
                     <Badge variant='info' key={t.name}>
                       {t.name}
                     </Badge>
                   ))}
                 </div>
                 <Link
-                  to={t("constant:slug.dynamic.event.slug", {
+                  to={t('constant:slug.dynamic.event.slug', {
                     locale: pageContext.locale,
                     event: node.name,
-                    id: node.contentful_id,
+                    id: node.contentful_id
                   })}
                   className='current-name'
                 >
@@ -72,6 +73,11 @@ const StaticEvents = ({ pageContext, data }) => {
       </Row>
     </Layout>
   )
+}
+
+StaticEvents.propTypes = {
+  pageContext: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

@@ -1,37 +1,44 @@
-import React from "react"
-import { Col, Row } from "react-bootstrap"
-import { graphql } from "gatsby"
-import Img from "gatsby-image"
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Col, Row } from 'react-bootstrap'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
-import Layout from "../layouts/layout"
-import EventInformation from "../components/template-event/event-information"
-import { mediaFromRichText } from "../components/utils/media-from-rich-text"
+import Layout from '../layouts/layout'
+import EventInformation from '../components/template-event/event-information'
+import { mediaFromRichText } from '../components/utils/media-from-rich-text'
 
 const DynamicEvent = ({ pageContext, data }) => {
   return (
     <Layout
       SEOtitle={data.event.name}
-      SEOkeywords={[data.event.name, "Terra Delft"]}
+      SEOkeywords={[data.event.name, 'Terra Delft']}
       containerName='dynamic-event'
     >
       <h1>{data.event.name}</h1>
       <Row>
         {data.event.image && (
           <Col sm={4}>
-            <Img fluid={data.event.image.fluid} backgroundColor="#e8e8e8" />
+            <Img fluid={data.event.image.fluid} backgroundColor='#e8e8e8' />
           </Col>
         )}
         <Col sm={data.event.image ? 8 : 12}>
           <EventInformation event={data.event} />
-          {documentToReactComponents(
-            data.event.description?.json,
-            mediaFromRichText(data.imagesFromRichText, pageContext.locale)
-          )}
+          {data.event.description &&
+            documentToReactComponents(
+              data.event.description.json,
+              mediaFromRichText(data.imagesFromRichText, pageContext.locale)
+            )}
         </Col>
       </Row>
     </Layout>
   )
+}
+
+DynamicEvent.propTypes = {
+  pageContext: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`
