@@ -106,7 +106,7 @@ const BagCheckout = () => {
   const selectedShipping = watch('selectedShipping')
   if (selectedShipping) {
     if (
-      options.shipping[selectedShipping].freeForTotal &&
+      options.shipping[selectedShipping].freeForTotal > 0 &&
       pay.objects >= options.shipping[selectedShipping].freeForTotal
     ) {
       pay.shipping = 0
@@ -247,14 +247,13 @@ const BagCheckout = () => {
                         {d.description && (
                           <Form.Text>{d.description}</Form.Text>
                         )}
-                        {d.freeForTotal && (
+                        {d.freeForTotal > 0 && (
                           <Form.Text>
-                            {`${t(
-                              'content.checkout.shipping.free-for-total'
-                            )} ${formatNumber.currency(
+                            {t('content.checkout.shipping.free-for-total')}{' '}
+                            {formatNumber.currency(
                               d.freeForTotal,
                               i18n.language
-                            )}`}
+                            )}
                           </Form.Text>
                         )}
                       </FormCheck>
