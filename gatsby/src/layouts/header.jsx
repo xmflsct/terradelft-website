@@ -1,18 +1,19 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
-import { Button, Col, Row } from "react-bootstrap"
-import { useTranslation } from "react-i18next"
-import { CSSTransition } from "react-transition-group"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faGlobeEurope, faShoppingBag } from "@fortawesome/free-solid-svg-icons"
-import { useStaticQuery, graphql, Link } from "gatsby"
-import Img from "gatsby-image"
+import PropTypes from 'prop-types'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { Button, Col, Row } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import { CSSTransition } from 'react-transition-group'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGlobeEurope, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
+import { useStaticQuery, graphql, Link } from 'gatsby'
+import Img from 'gatsby-image'
 
-import Navigation from "./navigation"
-import { ContextLanguage } from "./contexts/language"
-import { ContextBag } from "./contexts/bag"
-import { ContextMobileMenu } from "./layout"
+import Navigation from './navigation'
+import { ContextLanguage } from './contexts/language'
+import { ContextBag } from './contexts/bag'
+import { ContextMobileMenu } from './layout'
 
-import "../../node_modules/@fortawesome/fontawesome-svg-core/styles.css"
+import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
 
 const Header = ({ useMiniBag }) => {
   const image = useStaticQuery(graphql`
@@ -55,7 +56,7 @@ const Header = ({ useMiniBag }) => {
       }
     }
   `)
-  const { t, i18n } = useTranslation("constant")
+  const { t, i18n } = useTranslation('constant')
   const alternateLinks = useContext(ContextLanguage)
   const { state } = useContext(ContextBag)
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
@@ -78,20 +79,20 @@ const Header = ({ useMiniBag }) => {
         <Col xs={4} sm={3} className='header-hamburger text-left'>
           <Button
             className={`hamburger hamburger--collapse ${
-              stateMobileMenu ? "is-active" : ""
+              stateMobileMenu ? 'is-active' : ''
             }`}
             variant='link'
             aria-label='Menu'
             onClick={() => dispatch()}
           >
             <span className='hamburger-box'>
-              <span className='hamburger-inner'></span>
+              <span className='hamburger-inner' />
             </span>
           </Button>
         </Col>
         <Col xs={4} sm={6} md={9} className='header-logo'>
           <Link
-            to={t("constant:slug.static.index.slug", { locale: i18n.language })}
+            to={t('constant:slug.static.index.slug', { locale: i18n.language })}
           >
             <Img
               fluid={
@@ -117,7 +118,7 @@ const Header = ({ useMiniBag }) => {
         >
           {alternateLinks &&
             alternateLinks.map(
-              (link) =>
+              link =>
                 link.locale !== i18n.language && (
                   <Link to={link.path} hrefLang={link.locale} key={link.locale}>
                     <FontAwesomeIcon
@@ -126,13 +127,13 @@ const Header = ({ useMiniBag }) => {
                       fixedWidth
                     />
                     <span className='long small-block'>
-                      {" " +
+                      {' ' +
                         t(
                           `constant:header.language-switcher.long.${link.locale}`
                         )}
                     </span>
                     <span className='short small-block'>
-                      {" " +
+                      {' ' +
                         t(
                           `constant:header.language-switcher.short.${link.locale}`
                         )}
@@ -143,8 +144,8 @@ const Header = ({ useMiniBag }) => {
         </Col>
         <Col xs={2} sm={1} md={1} className='bag-link'>
           <Link
-            to={t("constant:slug.static.bag.slug", {
-              locale: i18n.language,
+            to={t('constant:slug.static.bag.slug', {
+              locale: i18n.language
             })}
           >
             <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
@@ -157,17 +158,20 @@ const Header = ({ useMiniBag }) => {
         onEnter={() =>
           setTimeout(() => {
             setMiniBag(false)
-          }, 3000)
-        }
+          }, 3000)}
         timeout={350}
         className='mini-bag'
         classNames='mini-bag'
       >
-        <div>{t("constant:header.mini-bag")}</div>
+        <div>{t('constant:header.mini-bag')}</div>
       </CSSTransition>
       <Navigation />
     </header>
   )
+}
+
+Header.propTypes = {
+  useMiniBag: PropTypes.bool.isRequired
 }
 
 export default Header

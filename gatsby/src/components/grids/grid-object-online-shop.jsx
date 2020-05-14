@@ -1,87 +1,88 @@
-import React, { useState } from "react"
-import { Col, Row } from "react-bootstrap"
-import { useTranslation } from "react-i18next"
-import Select from "react-select"
-import { Link, graphql } from "gatsby"
-import Img from "gatsby-image"
-import { find, includes } from "lodash"
+import PropTypes from 'prop-types'
+import React, { useState } from 'react'
+import { Col, Row } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import Select from 'react-select'
+import { Link, graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { find, includes } from 'lodash'
 
-import * as formatNumber from "../utils/format-number"
+import * as formatNumber from '../utils/format-number'
 
 const GridObjectOnlineShop = ({ nodes }) => {
   const { t, i18n } = useTranslation([
-    "static-online-shop",
-    "component-object",
-    "constant",
+    'static-online-shop',
+    'component-object',
+    'constant'
   ])
 
   const [selected, setSelected] = useState({
     price: null,
     artist: null,
-    variant: null,
+    variant: null
   })
   const options = {
     prices: [
       {
         label: `< ${formatNumber.currency(50, i18n.language, true)}`,
-        value: { minimum: 0, maximum: 50 },
+        value: { minimum: 0, maximum: 50 }
       },
       {
         label: `${formatNumber.currency(
           50,
           i18n.language
         )} - ${formatNumber.currency(100, i18n.language)}`,
-        value: { minimum: 50, maximum: 100 },
+        value: { minimum: 50, maximum: 100 }
       },
       {
         label: `${formatNumber.currency(
           100,
           i18n.language
         )} - ${formatNumber.currency(200, i18n.language)}`,
-        value: { minimum: 100, maximum: 200 },
+        value: { minimum: 100, maximum: 200 }
       },
       {
         label: `${formatNumber.currency(
           200,
           i18n.language
         )} - ${formatNumber.currency(300, i18n.language)}`,
-        value: { minimum: 200, maximum: 300 },
+        value: { minimum: 200, maximum: 300 }
       },
       {
         label: `${formatNumber.currency(
           300,
           i18n.language
         )} - ${formatNumber.currency(500, i18n.language)}`,
-        value: { minimum: 300, maximum: 500 },
+        value: { minimum: 300, maximum: 500 }
       },
       {
         label: `> ${formatNumber.currency(500, i18n.language)}`,
-        value: { minimum: 500, maximum: 99999 },
-      },
+        value: { minimum: 500, maximum: 99999 }
+      }
     ],
     artists: [],
-    variants: [],
+    variants: []
   }
-  nodes.forEach((node) => {
-    find(options.artists, ["label", node.artist.artist]) ||
+  nodes.forEach(node => {
+    find(options.artists, ['label', node.artist.artist]) ||
       options.artists.push({
         label: node.artist.artist,
-        value: node.artist.artist,
+        value: node.artist.artist
       })
 
     node.fields.object_variants &&
-      node.fields.object_variants.forEach((v) => {
-        find(options.variants, ["label", v]) ||
+      node.fields.object_variants.forEach(v => {
+        find(options.variants, ['label', v]) ||
           options.variants.push({
             label: v,
-            value: v,
+            value: v
           })
       })
   })
 
   return (
     <>
-      <h4>{t("static-online-shop:content.filters.heading")}</h4>
+      <h4>{t('static-online-shop:content.filters.heading')}</h4>
       <Row className='filter-grid mb-3'>
         <Col sm={4} className='mb-3'>
           <Select
@@ -89,10 +90,9 @@ const GridObjectOnlineShop = ({ nodes }) => {
             isClearable
             isSearchable
             options={options.prices}
-            placeholder={t("static-online-shop:content.filters.prices")}
-            onChange={(d) =>
-              setSelected({ ...selected, price: d ? d.value : null })
-            }
+            placeholder={t('static-online-shop:content.filters.prices')}
+            onChange={d =>
+              setSelected({ ...selected, price: d ? d.value : null })}
           />
         </Col>
         <Col sm={4} className='mb-3'>
@@ -101,10 +101,9 @@ const GridObjectOnlineShop = ({ nodes }) => {
             isClearable
             isSearchable
             options={options.artists}
-            placeholder={t("static-online-shop:content.filters.artists")}
-            onChange={(d) =>
-              setSelected({ ...selected, artist: d ? d.value : null })
-            }
+            placeholder={t('static-online-shop:content.filters.artists')}
+            onChange={d =>
+              setSelected({ ...selected, artist: d ? d.value : null })}
           />
         </Col>
         <Col sm={4} className='mb-3'>
@@ -113,20 +112,19 @@ const GridObjectOnlineShop = ({ nodes }) => {
             isClearable
             isSearchable
             options={options.variants}
-            placeholder={t("static-online-shop:content.filters.variants")}
-            onChange={(d) =>
-              setSelected({ ...selected, variant: d ? d.value : null })
-            }
+            placeholder={t('static-online-shop:content.filters.variants')}
+            onChange={d =>
+              setSelected({ ...selected, variant: d ? d.value : null })}
           />
         </Col>
       </Row>
       <Row className='component-grid grid-object'>
         {nodes
-          .filter((node) => {
+          .filter(node => {
             let objectMatch = {
               prices: null,
               artists: null,
-              variants: null,
+              variants: null
             }
             for (const match in selected) {
               const selectedValue = selected[match]
@@ -134,7 +132,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
                 continue
               }
               switch (match) {
-                case "price":
+                case 'price':
                   objectMatch.prices = node.fields.object_variants
                     ? !(
                         node.fields.variations_price_range.highest <
@@ -149,10 +147,10 @@ const GridObjectOnlineShop = ({ nodes }) => {
                         node.priceOriginal > selectedValue.maximum
                       )
                   break
-                case "artist":
+                case 'artist':
                   objectMatch.artists = selectedValue === node.artist.artist
                   break
-                case "variant":
+                case 'variant':
                   objectMatch.variants = node.fields.object_variants
                     ? includes(node.fields.object_variants, selectedValue)
                     : false
@@ -168,22 +166,25 @@ const GridObjectOnlineShop = ({ nodes }) => {
               objectMatch.variants !== false
             )
           })
-          .map((node) => {
+          .map(node => {
             return (
               <Col key={node.contentful_id} xs={4} md={2} className='grid-item'>
                 <Link
-                  to={t("constant:slug.dynamic.object.slug", {
+                  to={t('constant:slug.dynamic.object.slug', {
                     locale: node.node_locale,
                     artist: node.artist.artist,
                     object: node.name,
-                    id: node.contentful_id,
+                    id: node.contentful_id
                   })}
                 >
                   <div className='item-image'>
-                    <Img fluid={node.images[0].fluid} backgroundColor="#e8e8e8" />
+                    <Img
+                      fluid={node.images[0].fluid}
+                      backgroundColor='#e8e8e8'
+                    />
                     {node.fields.object_sale && (
                       <span className='item-sale'>
-                        {t("component-object:on-sale")}
+                        {t('component-object:on-sale')}
                       </span>
                     )}
                   </div>
@@ -195,6 +196,10 @@ const GridObjectOnlineShop = ({ nodes }) => {
       </Row>
     </>
   )
+}
+
+GridObjectOnlineShop.propTypes = {
+  nodes: PropTypes.array.isRequired
 }
 
 export const query = graphql`

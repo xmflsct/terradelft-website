@@ -1,16 +1,17 @@
-import React from "react"
-import { graphql } from "gatsby"
-import { useTranslation } from "react-i18next"
+import PropTypes from 'prop-types'
+import React from 'react'
+import { graphql } from 'gatsby'
+import { useTranslation } from 'react-i18next'
 
-import Layout from "../layouts/layout"
-import GridObjectDefault from "../components/grids/grid-object-default"
+import Layout from '../layouts/layout'
+import GridObjectDefault from '../components/grids/grid-object-default'
 
 const DynamicObjectAttribute = ({ pageContext, data }) => {
-  const { t } = useTranslation("component-object")
+  const { t } = useTranslation('component-object')
   const attributeType =
-    (pageContext.byYear && "year") ||
-    (pageContext.byTechnique && "technique") ||
-    (pageContext.byMaterial && "material")
+    (pageContext.byYear && 'year') ||
+    (pageContext.byTechnique && 'technique') ||
+    (pageContext.byMaterial && 'material')
   const headline = `Objects of ${t(attributeType)} in ${
     pageContext.attributeValue
   }`
@@ -18,13 +19,18 @@ const DynamicObjectAttribute = ({ pageContext, data }) => {
   return (
     <Layout
       SEOtitle={headline}
-      SEOkeywords={[headline, "Terra Delft"]}
+      SEOkeywords={[headline, 'Terra Delft']}
       containerName='dynamic-object-attribute'
     >
       <h1>{headline}</h1>
       <GridObjectDefault nodes={data[`${attributeType}Objects`].nodes} />
     </Layout>
   )
+}
+
+DynamicObjectAttribute.propTypes = {
+  pageContext: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

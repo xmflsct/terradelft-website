@@ -1,21 +1,21 @@
-import React, { useContext } from "react"
-import { Button, Col, Row } from "react-bootstrap"
-import { useTranslation } from "react-i18next"
-import { Link } from "gatsby"
-import Img from "gatsby-image"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faTimes } from "@fortawesome/free-solid-svg-icons"
-import { isEmpty } from "lodash"
+import React, { useContext } from 'react'
+import { Button, Col, Row } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'gatsby'
+import Img from 'gatsby-image'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { isEmpty } from 'lodash'
 
-import { ContextBag } from "../../layouts/contexts/bag"
-import { Price } from "../utils/price"
+import { ContextBag } from '../../layouts/contexts/bag'
+import { Price } from '../utils/price'
 
 const BagList = () => {
   const { state, dispatch } = useContext(ContextBag)
   const { t, i18n } = useTranslation([
-    "static-bag",
-    "component-object",
-    "constant",
+    'static-bag',
+    'component-object',
+    'constant'
   ])
 
   return (
@@ -26,15 +26,15 @@ const BagList = () => {
           return (
             <Row key={i} className='list-object mb-3'>
               <Col xs={4} className='object-image'>
-                <Img fluid={object.image.fluid} backgroundColor="#e8e8e8" />
+                <Img fluid={object.image.fluid} backgroundColor='#e8e8e8' />
               </Col>
               <Col xs={8} className='object-details'>
                 <Link
-                  to={t("constant:slug.dynamic.object.slug", {
+                  to={t('constant:slug.dynamic.object.slug', {
                     locale: i18n.language,
                     artist: object.artist,
                     object: object.name[i18n.language],
-                    id: object.contentful_id_url,
+                    id: object.contentful_id_url
                   })}
                   className='object-name'
                 >
@@ -42,13 +42,13 @@ const BagList = () => {
                 </Link>
                 <Row className='object-details'>
                   <Col xs={5} sm={3} className='detail-type'>
-                    {t("component-object:artist")}
+                    {t('component-object:artist')}
                   </Col>
                   <Col xs={5} sm={9} className='detail-value'>
                     <Link
-                      to={t("constant:slug.dynamic.artist.slug", {
+                      to={t('constant:slug.dynamic.artist.slug', {
                         locale: i18n.language,
-                        artist: object.artist,
+                        artist: object.artist
                       })}
                     >
                       {object.artist}
@@ -58,7 +58,7 @@ const BagList = () => {
                 {!isEmpty(object.variant) && (
                   <Row className='object-details'>
                     <Col xs={5} sm={3} className='detail-type'>
-                      {t("component-object:variant")}
+                      {t('component-object:variant')}
                     </Col>
                     <Col xs={5} sm={9} className='detail-value'>
                       {object.variant[i18n.language]}
@@ -68,7 +68,7 @@ const BagList = () => {
                 {!isEmpty(object.colour) && (
                   <Row className='object-details'>
                     <Col xs={5} sm={3} className='detail-type'>
-                      {t("component-object:colour")}
+                      {t('component-object:colour')}
                     </Col>
                     <Col xs={5} sm={9} className='detail-value'>
                       {object.colour[i18n.language]}
@@ -78,7 +78,7 @@ const BagList = () => {
                 {!isEmpty(object.size) && (
                   <Row className='object-details'>
                     <Col xs={5} sm={3} className='detail-type'>
-                      {t("component-object:size")}
+                      {t('component-object:size')}
                     </Col>
                     <Col xs={5} sm={9} className='detail-value'>
                       {object.size[i18n.language]}
@@ -90,12 +90,11 @@ const BagList = () => {
                   variant='link'
                   onClick={() =>
                     dispatch({
-                      type: "remove",
+                      type: 'remove',
                       data: {
-                        contentful_id: object.contentful_id,
-                      },
-                    })
-                  }
+                        contentful_id: object.contentful_id
+                      }
+                    })}
                   className='object-remove'
                 >
                   <FontAwesomeIcon icon={faTimes} />
@@ -107,7 +106,7 @@ const BagList = () => {
       ) : (
         <Row>
           <Col>
-            <p>{t("static-bag:content.list.empty")}</p>
+            <p>{t('static-bag:content.list.empty')}</p>
           </Col>
         </Row>
       )}

@@ -1,45 +1,52 @@
-import React from "react"
-import { Col, Row } from "react-bootstrap"
-import { useTranslation } from "react-i18next"
-import { graphql } from "gatsby"
-import Img from "gatsby-image"
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
-import moment from "moment"
-import "moment/locale/nl"
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Col, Row } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
+import moment from 'moment'
+import 'moment/locale/nl'
 
-import Layout from "../layouts/layout"
-import { mediaFromRichText } from "../components/utils/media-from-rich-text"
+import Layout from '../layouts/layout'
+import { mediaFromRichText } from '../components/utils/media-from-rich-text'
 
 const DynamicNews = ({ pageContext, data }) => {
-  const { t } = useTranslation("static-news")
+  const { t } = useTranslation('static-news')
 
   return (
     <Layout
       SEOtitle={data.news.title}
-      SEOkeywords={[data.news.title, "Terra Delft"]}
+      SEOkeywords={[data.news.title, 'Terra Delft']}
       containerName='dynamic-event'
     >
       <h1>{data.news.title}</h1>
       <Row>
         {data.news.image && (
-          <Col sm={4} className="mb-3">
-            <Img fluid={data.news.image.fluid} backgroundColor="#e8e8e8" />
+          <Col sm={4} className='mb-3'>
+            <Img fluid={data.news.image.fluid} backgroundColor='#e8e8e8' />
           </Col>
         )}
         <Col sm={data.news.image ? 8 : 12}>
           <p>
-            {t("content.published", {
-              date: moment(data.news.date).format("ll"),
+            {t('content.published', {
+              date: moment(data.news.date).format('ll')
             })}
           </p>
-          {documentToReactComponents(
-            data.news.content?.json,
-            mediaFromRichText(data.imagesFromRichText, pageContext.locale)
-          )}
+          {data.news.content &&
+            documentToReactComponents(
+              data.news.content.json,
+              mediaFromRichText(data.imagesFromRichText, pageContext.locale)
+            )}
         </Col>
       </Row>
     </Layout>
   )
+}
+
+DynamicNews.propTypes = {
+  pageContext: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

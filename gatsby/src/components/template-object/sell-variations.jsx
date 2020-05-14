@@ -1,8 +1,9 @@
-import React, { useContext, useEffect } from "react"
-import { Button, Form, InputGroup } from "react-bootstrap"
-import { Controller, useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import ReactSelect from "react-select"
+import PropTypes from 'prop-types'
+import React, { useContext, useEffect } from 'react'
+import { Button, Form, InputGroup } from 'react-bootstrap'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import ReactSelect from 'react-select'
 import {
   findIndex,
   identity,
@@ -10,43 +11,43 @@ import {
   isEmpty,
   keys,
   map,
-  pickBy,
-} from "lodash"
+  pickBy
+} from 'lodash'
 
-import { ContextBag } from "../../layouts/contexts/bag"
-import { ContextVariationImage } from "../../templates/dynamic-object"
-import { Price } from "../utils/price"
-import * as formatNumber from "../utils/format-number"
+import { ContextBag } from '../../layouts/contexts/bag'
+import { ContextVariationImage } from '../../templates/dynamic-object'
+import { Price } from '../utils/price'
+import * as formatNumber from '../utils/format-number'
 
 const SellVariations = ({ object }) => {
-  const { t, i18n } = useTranslation(["dynamic-object", "component-object"])
+  const { t, i18n } = useTranslation(['dynamic-object', 'component-object'])
   const { dispatch } = useContext(ContextBag)
   const { updateImage } = useContext(ContextVariationImage)
   const { control, handleSubmit, watch } = useForm()
   const variationsMain =
     object.nodes[
-      findIndex(object.nodes, (node) => node.node_locale === i18n.language)
+      findIndex(object.nodes, node => node.node_locale === i18n.language)
     ]
-  const sellVariations = variationsMain.variations.filter((v) => v.sellOnline)
+  const sellVariations = variationsMain.variations.filter(v => v.sellOnline)
 
   const options = {
     variant: [],
     colour: [],
-    size: [],
+    size: []
   }
 
   // Create variations availability mapping
   sellVariations.forEach((d, i) => {
     keys(d)
-      .filter((k) => ["variant", "colour", "size"].includes(k))
-      .forEach((k) => {
-        const option = d[k] ? d[k][k] : t("component-object:option-default")
-        const index = findIndex(options[k], ["label", option])
+      .filter(k => ['variant', 'colour', 'size'].includes(k))
+      .forEach(k => {
+        const option = d[k] ? d[k][k] : t('component-object:option-default')
+        const index = findIndex(options[k], ['label', option])
         index === -1
           ? options[k].push({
               label: option,
               value: [i],
-              isDisabled: false,
+              isDisabled: false
             })
           : options[k][index].value.push(i)
       })
@@ -55,7 +56,7 @@ const SellVariations = ({ object }) => {
   for (const type in options) {
     if (
       options[type].length === 1 &&
-      options[type][0].label === t("component-object:option-default")
+      options[type][0].label === t('component-object:option-default')
     ) {
       delete options[type]
     }
@@ -63,10 +64,10 @@ const SellVariations = ({ object }) => {
 
   const optionsChosen = watch()
   // Disable not available option
-  keys(optionsChosen).forEach((k) => {
+  keys(optionsChosen).forEach(k => {
     options[k].forEach((_, i) => {
       const optionsCheck = keys(optionsChosen).filter(
-        (fk) => fk !== k && optionsChosen[fk] !== null
+        fk => fk !== k && optionsChosen[fk] !== null
       )
       switch (optionsCheck.length) {
         case 0:
@@ -97,7 +98,7 @@ const SellVariations = ({ object }) => {
 
   let variantChosen = null
   let optionsCombined = intersection(
-    ...map(pickBy(optionsChosen, identity), "value")
+    ...map(pickBy(optionsChosen, identity), 'value')
   )
   if (optionsCombined.length === 1) {
     variantChosen = sellVariations[optionsCombined[0]]
@@ -108,19 +109,19 @@ const SellVariations = ({ object }) => {
   useEffect(() => {
     if (variantChosen) {
       updateImage({
-        type: "update",
-        image: variantChosen.image,
+        type: 'update',
+        image: variantChosen.image
       })
     } else {
       updateImage({
-        type: "clear",
+        type: 'clear'
       })
     }
   }, [variantChosen, updateImage])
 
   const onSubmit = () => {
     const data = {
-      type: "variation",
+      type: 'variation',
       contentful_id: variantChosen.contentful_id,
       contentful_id_url: object.nodes[0].contentful_id,
       artist: object.nodes[0].artist.artist,
@@ -128,7 +129,7 @@ const SellVariations = ({ object }) => {
       priceOriginal: variantChosen.priceOriginal,
       priceSale: variantChosen.priceSale,
       // Locale dependent
-      name: {},
+      name: {}
     }
     for (const type in options) {
       data[type] = {}
@@ -141,12 +142,12 @@ const SellVariations = ({ object }) => {
       for (const type in options) {
         data[type][l] = v[type]
           ? v[type][type]
-          : t("component-object:option-default")
+          : t('component-object:option-default')
       }
     }
     dispatch({
-      type: "add",
-      data: data,
+      type: 'add',
+      data: data
     })
   }
 
@@ -154,7 +155,7 @@ const SellVariations = ({ object }) => {
     <div className='sell-variations'>
       {Object.keys(options).length > 0 && (
         <Form onSubmit={handleSubmit(onSubmit)}>
-          {Object.keys(options).map((type) => (
+          {Object.keys(options).map(type => (
             <InputGroup key={type}>
               <InputGroup.Prepend>
                 <InputGroup.Text>
@@ -175,7 +176,7 @@ const SellVariations = ({ object }) => {
           ))}
           <InputGroup>
             <InputGroup.Prepend>
-              <InputGroup.Text>{t("dynamic-object:amount")}</InputGroup.Text>
+              <InputGroup.Text>{t('dynamic-object:amount')}</InputGroup.Text>
             </InputGroup.Prepend>
             <div className='form-selection'>
               <ReactSelect
@@ -215,14 +216,18 @@ const SellVariations = ({ object }) => {
           >
             {variantChosen
               ? variantChosen.stock > 0
-                ? t("add-button.add-to-bag")
-                : t("add-button.out-of-stock")
-              : t("add-button.select-variation")}
+                ? t('add-button.add-to-bag')
+                : t('add-button.out-of-stock')
+              : t('add-button.select-variation')}
           </Button>
         </Form>
       )}
     </div>
   )
+}
+
+SellVariations.propTypes = {
+  object: PropTypes.object.isRequired
 }
 
 export default SellVariations

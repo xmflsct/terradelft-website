@@ -1,17 +1,17 @@
-export function currency(number, locale) {
-  locale = locale === "nl" ? "nl-NL" : "en-Intl"
+export function currency (number, locale) {
+  locale = locale === 'nl' ? 'nl-NL' : 'en-Intl'
 
   return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: "EUR",
+    style: 'currency',
+    currency: 'EUR'
   }).format(number)
 }
 
-export function dimension(number, locale) {
-  locale = locale === "nl" ? "nl-NL" : "en-Intl"
+export function dimension (number, locale) {
+  locale = locale === 'nl' ? 'nl-NL' : 'en-Intl'
 
   return new Intl.NumberFormat(locale, {
-    style: "decimal",
-    unit: "centimeter",
+    style: 'decimal',
+    unit: 'centimeter'
   }).format(number)
 }

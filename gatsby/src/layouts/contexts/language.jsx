@@ -1,48 +1,49 @@
-import React from "react"
-import * as ReactI18next from "react-i18next"
-import { Helmet } from "react-helmet"
-import i18next from "i18next"
-import LanguageDetector from "i18next-browser-languagedetector"
-import slugify from "slugify"
+import PropTypes from 'prop-types'
+import React from 'react'
+import * as ReactI18next from 'react-i18next'
+import { Helmet } from 'react-helmet'
+import i18next from 'i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import slugify from 'slugify'
 
 export const ContextLanguage = React.createContext([])
 
-export default function ContextLanguageProvider({ element, props }) {
+export default function ContextLanguageProvider ({ element, props }) {
   const i18n = i18next
     .createInstance({
       lng: props.pageContext.locale,
       interpolation: {
         escapeValue: false,
         format: function (value, format) {
-          if (format === "slugify") return slugify(value, { lower: true })
+          if (format === 'slugify') return slugify(value, { lower: true })
           return value
-        },
+        }
       },
       initImmediate: false,
-      resources: props.pageContext.i18nResources,
+      resources: props.pageContext.i18nResources
     })
     .use(ReactI18next.initReactI18next)
     .use(LanguageDetector)
   // noinspection JSIgnoredPromiseFromCall
   i18n.init({
-    load: "languageOnly",
-    whitelist: ["nl", "en"],
+    load: 'languageOnly',
+    whitelist: ['nl', 'en'],
     nonExplicitWhitelist: true,
-    fallbackLng: ["en"],
+    fallbackLng: ['en'],
     detection: {
-      order: ["localStorage", "cookie", "navigator", "path"],
+      order: ['localStorage', 'cookie', 'navigator', 'path'],
 
-      lookupLocalStorage: "terradelft_i18n",
-      lookupCookie: "terradelft_i18n",
+      lookupLocalStorage: 'terradelft_i18n',
+      lookupCookie: 'terradelft_i18n',
       lookupFromPathIndex: 0,
 
-      caches: ["localStorage", "cookie"],
-      excludeCacheFor: ["cimode"],
+      caches: ['localStorage', 'cookie'],
+      excludeCacheFor: ['cimode'],
 
-      cookieDomain: "terra-delft.nl",
+      cookieDomain: 'terra-delft.nl',
 
-      checkWhitelist: true,
-    },
+      checkWhitelist: true
+    }
   })
 
   return (
@@ -53,7 +54,7 @@ export default function ContextLanguageProvider({ element, props }) {
         <Helmet htmlAttributes={{ lang: props.pageContext.locale }}>
           {props.pageContext &&
             props.pageContext.alternateLinks &&
-            props.pageContext.alternateLinks.map((link) => (
+            props.pageContext.alternateLinks.map(link => (
               <link
                 rel='alternate'
                 hrefLang={link.locale}
@@ -66,4 +67,9 @@ export default function ContextLanguageProvider({ element, props }) {
       </ContextLanguage.Provider>
     </ReactI18next.I18nextProvider>
   )
+}
+
+ContextLanguageProvider.propTypes = {
+  element: PropTypes.elementType.isRequired,
+  props: PropTypes.object.isRequired
 }

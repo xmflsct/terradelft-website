@@ -1,13 +1,13 @@
-import store from "store2"
-import { findIndex } from "lodash"
+import store from 'store2'
+import { findIndex } from 'lodash'
 
-const storageKey = "terradelft_bag"
+const storageKey = 'terradelft_bag'
 let storageData = store(storageKey)
 
-export function add(data) {
+export function add (data) {
   const objectIndex = findIndex(storageData.objects, [
-    "contentful_id",
-    data.contentful_id,
+    'contentful_id',
+    data.contentful_id
   ])
   if (objectIndex === -1) {
     storageData.objects.push(data)
@@ -18,14 +18,14 @@ export function add(data) {
   return storageData
 }
 
-export function update(data) {
+export function update (data) {
   const objectIndex = findIndex(storageData.objects, [
-    "contentful_id",
-    data.contentful_id,
+    'contentful_id',
+    data.contentful_id
   ])
   if (objectIndex !== -1) {
     for (const key in data) {
-      key !== "contentful_id" &&
+      key !== 'contentful_id' &&
         (storageData.objects[objectIndex][key] = data[key])
     }
   }
@@ -33,10 +33,10 @@ export function update(data) {
   return storageData
 }
 
-export function remove(data) {
+export function remove (data) {
   const objectIndex = findIndex(storageData.objects, [
-    "contentful_id",
-    data.contentful_id,
+    'contentful_id',
+    data.contentful_id
   ])
   if (objectIndex !== -1) {
     storageData.objects.splice(objectIndex, 1)
@@ -45,14 +45,14 @@ export function remove(data) {
   return storageData
 }
 
-export function clear() {
+export function clear () {
   const timestamp = new Date().getTime()
   storageData = { objects: [], timestamp: timestamp }
   store(storageKey, storageData)
   return storageData
 }
 
-export function check() {
+export function check () {
   const timestamp = new Date().getTime()
 
   if (storageData) {

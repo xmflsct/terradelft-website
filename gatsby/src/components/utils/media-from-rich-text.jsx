@@ -1,11 +1,11 @@
-import React from "react"
-import { graphql } from "gatsby"
-import Img from "gatsby-image"
-import { BLOCKS, INLINES } from "@contentful/rich-text-types"
-import getYouTubeID from "get-youtube-id"
-import { findIndex } from "lodash"
+import React from 'react'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
+import getYouTubeID from 'get-youtube-id'
+import { findIndex } from 'lodash'
 
-const NonStretchedImage = (props) => {
+const NonStretchedImage = props => {
   let normalizedProps = props
   if (props.fluid && props.file.details.image.width) {
     normalizedProps = {
@@ -13,22 +13,22 @@ const NonStretchedImage = (props) => {
       style: {
         ...(props.style || {}),
         maxWidth: props.file.details.image.width,
-        margin: "0 auto", // Used to center the image
-      },
+        margin: '0 auto' // Used to center the image
+      }
     }
   }
 
-  return <Img {...normalizedProps} backgroundColor="#e8e8e8" />
+  return <Img {...normalizedProps} backgroundColor='#e8e8e8' />
 }
 
 export const mediaFromRichText = (images, locale) => ({
   renderNode: {
-    [BLOCKS.EMBEDDED_ASSET]: (node) => {
+    [BLOCKS.EMBEDDED_ASSET]: node => {
       const contentful_id = node.data.target.sys.contentful_id
       const description = node.data.target.fields.description
       const imageIndex = findIndex(
         images.nodes,
-        (node) => node.contentful_id === contentful_id
+        node => node.contentful_id === contentful_id
       )
       if (imageIndex !== -1) {
         return (
@@ -41,8 +41,8 @@ export const mediaFromRichText = (images, locale) => ({
         )
       }
     },
-    [INLINES.HYPERLINK]: (node) => {
-      if (node.data.uri.includes("youtube.com")) {
+    [INLINES.HYPERLINK]: node => {
+      if (node.data.uri.includes('youtube.com')) {
         return (
           <div className='iframe-container youtube-video'>
             <iframe
@@ -53,10 +53,10 @@ export const mediaFromRichText = (images, locale) => ({
               allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
               frameBorder='0'
               allowFullScreen
-            ></iframe>
+            />
           </div>
         )
-      } else if (node.data.uri.includes("terra-delft.nl")) {
+      } else if (node.data.uri.includes('terra-delft.nl')) {
         return <a href={node.data.uri}>{node.content[0].value}</a>
       } else {
         return (
@@ -65,8 +65,8 @@ export const mediaFromRichText = (images, locale) => ({
           </a>
         )
       }
-    },
-  },
+    }
+  }
 })
 
 export const query = graphql`
