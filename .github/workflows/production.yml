@@ -1,0 +1,81 @@
+name: Production deployment
+
+on:
+  push:
+    branches:
+      - master
+  repository_dispatch:
+    types: [edited]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: -- Step 1 -- Checkout code
+        uses: actions/checkout@v2
+      - name: -- Step 2 -- Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      # - name: -- Step 3 -- Get yarn cache directory path
+      #   id: yarn-cache-dir-path
+      #   run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: -- Step 3 -- Cache node_modules dir
+        uses: actions/cache@v1
+        id: nodeModules-cache
+        with:
+          path: ./gatsby/node_modules
+          key: ${{ runner.os }}-nodeModules-${{ hashFiles('./gatsby/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-nodeModules-
+      - name: -- Step 4 -- Gatsby Cache dir
+        uses: actions/cache@v1
+        id: gatsby-cache-dir
+        with:
+          path: ./gatsby/.cache
+          key: ${{ runner.os }}-gatsby-cache-dir
+          restore-keys: |
+            ${{ runner.os }}-gatsby-cache-dir
+      - name: -- Step 5 -- Gatsby Public dir
+        uses: actions/cache@v1
+        id: gatsby-public-dir
+        with:
+          path: ./gatsby/public
+          key: ${{ runner.os }}-gatsby-public-dir
+          restore-keys: |
+            ${{ runner.os }}-gatsby-public-dir
+      - name: -- Step 6 -- Install dependencies
+        if: steps.nodeModules-cache.outputs.cache-hit != 'true'
+        working-directory: ./gatsby
+        run: yarn install --pure-lockfile
+      - name: -- Step 7 -- Build static site
+        working-directory: ./gatsby
+        run: yarn build
+        env:
+          CI: true
+          CONTENTFUL_HOST: cdn.contentful.com
+          CONTENTFUL_OBJECTS_SPACE: ${{ secrets.CONTENTFUL_OBJECTS_SPACE }}
+          CONTENTFUL_OBJECTS_ENVIRONMENT: master
+          CONTENTFUL_OBJECTS_KEY_GATSBY: ${{ secrets.CONTENTFUL_OBJECTS_KEY_GATSBY_PRODUCTION }}
+          CONTENTFUL_OBJECTS_KEY_CHECKOUT: ${{ secrets.CONTENTFUL_OBJECTS_KEY_CHECKOUT_PRODUCTION }}
+          CONTENTFUL_CONTENTS_SPACE: ${{ secrets.CONTENTFUL_CONTENTS_SPACE }}
+          CONTENTFUL_CONTENTS_ENVIRONMENT: master
+          CONTENTFUL_CONTENTS_KEY: ${{ secrets.CONTENTFUL_CONTENTS_KEY_PRODUCTION }}
+          GATSBY_RECAPTCHA_PUBLIC_KEY: ${{ secrets.GATSBY_RECAPTCHA_PUBLIC_KEY_PRODUCTION }}
+          RECAPTCHA_PRIVATE_KEY: ${{ secrets.RECAPTCHA_PRIVATE_KEY_PRODUCTION }}
+          GATSBY_STRIPE_PUBLIC_KEY: ${{ secrets.GATSBY_STRIPE_PUBLIC_KEY_PRODUCTION }}
+          STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_PRIVATE_KEY_PRODUCTION }}
+          SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
+          GATSBY_API_ENDPOINT: api.terra-delft.nl
+      - name: -- Step 8 -- Deploy to one.com
+        working-directory: ./gatsby
+        env:
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_port: ${{ secrets.DEPLOY_PORT }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_pass: ${{ secrets.DEPLOY_PASS }}
+          local_dir: "public/"
+          remote_dir: "/www/production/"
+        run: |
+          sh ./scripts/rsync-production.sh
