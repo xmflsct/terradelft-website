@@ -15,15 +15,12 @@ const StaticIndex = ({ data }) => {
     <Layout
       SEOtitle='Terra Delft'
       SEOkeywords={['Terra', 'Delft', 'Terra Delft']}
+      SEOdescription='Terra Delft Website'
       containerName='static-index'
     >
       <div className='section-online-shop mb-3'>
         <h2>{t('content.section.online-shop')}</h2>
-        <GridObjectDefault
-          nodes={data.objects.nodes}
-          randomize={true}
-          limit={6}
-        />
+        <GridObjectDefault nodes={data.objects.nodes} randomize limit={6} />
       </div>
       <div className='section-collection'>
         <h1>{t('content.section.collection')}</h1>

@@ -17,6 +17,7 @@ const Layout = ({
   children,
   SEOtitle,
   SEOkeywords,
+  SEOdescription,
   containerName,
   useMiniBag
 }) => {
@@ -31,7 +32,11 @@ const Layout = ({
       className={`site-wrapper ${stateMobileMenu ? 'mobile-menu-open' : ''}`}
       scroll={(!stateMobileMenu).toString()}
     >
-      <Seo title={SEOtitle} keywords={SEOkeywords} />
+      <Seo
+        title={SEOtitle}
+        keywords={SEOkeywords}
+        description={SEOdescription}
+      />
       <ContextMobileMenu.Provider value={{ stateMobileMenu, dispatch }}>
         <Header useMiniBag={useMiniBag} />
       </ContextMobileMenu.Provider>
@@ -44,7 +49,8 @@ const Layout = ({
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
   SEOtitle: PropTypes.string.isRequired,
-  SEOkeywords: PropTypes.array.isRequired,
+  SEOkeywords: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  SEOdescription: PropTypes.string.isRequired,
   containerName: PropTypes.string.isRequired,
   useMiniBag: PropTypes.bool
 }

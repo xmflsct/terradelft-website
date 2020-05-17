@@ -14,6 +14,7 @@ const StaticReachTerra = ({ data }) => {
     <Layout
       SEOtitle={t('static-reach-terra:name')}
       SEOkeywords={[t('static-reach-terra:name'), 'Terra Delft']}
+      SEOdescription={t('static-reach-terra:name')}
       containerName='static-reach-terra'
     >
       <Row>

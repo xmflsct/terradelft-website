@@ -3,6 +3,7 @@ import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { graphql } from 'gatsby'
 import Img from 'gatsby-image'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
 import Layout from '../layouts/layout'
@@ -14,6 +15,10 @@ const DynamicEvent = ({ pageContext, data }) => {
     <Layout
       SEOtitle={data.event.name}
       SEOkeywords={[data.event.name, 'Terra Delft']}
+      SEOdescription={
+        data.event.description &&
+        documentToPlainTextString(data.event.description.json).substring(0, 199)
+      }
       containerName='dynamic-event'
     >
       <h1>{data.event.name}</h1>

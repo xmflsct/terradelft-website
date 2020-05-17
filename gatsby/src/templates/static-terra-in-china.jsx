@@ -23,6 +23,7 @@ const StaticTerraInChina = ({ pageContext, data }) => {
     <Layout
       SEOtitle={t('static-terra-in-china:name')}
       SEOkeywords={[t('static-terra-in-china:name'), 'Terra Delft']}
+      SEOdescription={t('static-terra-in-china:name')}
       containerName='static-terra-in-china'
     >
       <Row>

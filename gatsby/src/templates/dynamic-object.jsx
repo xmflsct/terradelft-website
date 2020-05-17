@@ -4,6 +4,7 @@ import { Button, Col, Collapse, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql, Link } from 'gatsby'
 import { findIndex } from 'lodash'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
 import Layout from '../layouts/layout'
@@ -49,6 +50,10 @@ const DynamicObject = ({ pageContext, data }) => {
     <Layout
       SEOtitle={object.name}
       SEOkeywords={[object.name, 'Terra Delft']}
+      SEOdescription={
+        object.description &&
+        documentToPlainTextString(object.description.json).substring(0, 199)
+      }
       containerName='dynamic-object'
       useMiniBag
     >

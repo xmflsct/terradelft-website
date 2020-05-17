@@ -13,6 +13,7 @@ const StaticOnlineShop = ({ data }) => {
     <Layout
       SEOtitle={t('name')}
       SEOkeywords={[t('name'), 'Terra Delft']}
+      SEOdescription={t('name')}
       containerName='static-online-shop'
     >
       <GridObjectOnlineShop nodes={data.objects.nodes} />

@@ -638,15 +638,9 @@ exports.createSchemaCustomization = ({ actions, schema }) => {
       name: 'ContentfulEvent',
       interfaces: ['Node'],
       fields: {
-        isCurrent: {
+        isCurrentAndFuture: {
           type: 'Boolean!',
-          resolve: source =>
-            new Date(source.datetimeEnd) >= new Date() &&
-            new Date(source.datetimeStart) <= new Date()
-        },
-        isFuture: {
-          type: 'Boolean!',
-          resolve: source => new Date(source.datetimeStart) > new Date()
+          resolve: source => new Date(source.datetimeEnd) >= new Date()
         }
       }
     })

@@ -19,6 +19,7 @@ const StaticNews = ({ pageContext, data }) => {
     <Layout
       SEOtitle={t('static-news:name')}
       SEOkeywords={[t('static-news:name'), 'Terra Delft']}
+      SEOdescription={t('static-news:name')}
       containerName='static-news'
     >
       <Row>

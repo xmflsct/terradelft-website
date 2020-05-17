@@ -23,6 +23,7 @@ const Static404 = () => {
     <Layout
       SEOtitle={t('name')}
       SEOkeywords={['Terra', 'Delft', 'Terra Delft']}
+      SEOdescription='404'
       containerName='static-404'
     >
       <h1>{t('content.heading')}</h1>

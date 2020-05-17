@@ -5,12 +5,21 @@ require('dotenv').config({
 module.exports = {
   siteMetadata: {
     title: 'Terra Delft',
-    description: 'Terra Delft Website',
     author: '@xmflsct',
     siteUrl: 'https://terra-delft.nl',
     image: './static/favicon.png'
   },
   plugins: [
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: 'UA-72011350-1',
+        head: true,
+        anonymize: true,
+        respectDNT: true,
+        pageTransitionDelay: 0
+      }
+    },
     {
       resolve: 'gatsby-plugin-layout',
       options: {
@@ -42,6 +51,12 @@ module.exports = {
       }
     },
     'gatsby-plugin-sharp',
+    {
+      resolve: 'gatsby-plugin-sitemap',
+      options: {
+        exclude: ['/en/thank-you', '/nl/bedankt']
+      }
+    },
     {
       resolve: 'gatsby-source-contentful', // Space - Objects
       options: {
