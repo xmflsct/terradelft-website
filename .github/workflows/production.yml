@@ -5,7 +5,7 @@ on:
     branches:
       - master
   repository_dispatch:
-    types: [edited]
+    types: [production]
 
 jobs:
   deploy:
