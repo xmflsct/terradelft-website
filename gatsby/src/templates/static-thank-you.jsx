@@ -22,6 +22,7 @@ const StaticThankYou = () => {
     <Layout
       SEOtitle={t('name')}
       SEOkeywords={[t('name'), 'Terra Delft']}
+      SEOdescription={t('name')}
       containerName='static-thank-you'
     >
       {session_id && (

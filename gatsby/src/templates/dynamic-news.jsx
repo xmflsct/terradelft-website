@@ -4,6 +4,7 @@ import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql } from 'gatsby'
 import Img from 'gatsby-image'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import moment from 'moment'
 import 'moment/locale/nl'
@@ -18,6 +19,10 @@ const DynamicNews = ({ pageContext, data }) => {
     <Layout
       SEOtitle={data.news.title}
       SEOkeywords={[data.news.title, 'Terra Delft']}
+      SEOdescription={
+        data.news.content &&
+        documentToPlainTextString(data.news.content.json).substring(0, 199)
+      }
       containerName='dynamic-event'
     >
       <h1>{data.news.title}</h1>

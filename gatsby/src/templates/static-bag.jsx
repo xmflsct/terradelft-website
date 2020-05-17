@@ -13,6 +13,7 @@ const StaticBag = () => {
     <Layout
       SEOtitle={t('name')}
       SEOkeywords={[t('name'), 'Terra Delft']}
+      SEOdescription={t('content.heading')}
       containerName='static-bag'
     >
       <h1>{t('content.heading')}</h1>

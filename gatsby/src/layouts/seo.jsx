@@ -1,33 +1,31 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Helmet } from 'react-helmet'
+import { useTranslation } from 'react-i18next'
 import { useStaticQuery, graphql } from 'gatsby'
 
-function Seo ({ description, lang, meta, keywords, title }) {
+function Seo ({ title, keywords, description }) {
   const { site } = useStaticQuery(
     graphql`
       query {
         site {
           siteMetadata {
             title
-            description
           }
         }
       }
     `
   )
-
-  const metaDescription = description || site.siteMetadata.description
-
+  const { i18n } = useTranslation()
   return (
     <Helmet
-      htmlAttributes={{ lang }}
+      htmlAttributes={{ lang: i18n.language }}
       title={title}
       titleTemplate={`%s | ${site.siteMetadata.title}`}
       meta={[
         {
           name: 'description',
-          content: metaDescription
+          content: description
         },
         {
           property: 'og:title',
@@ -35,39 +33,25 @@ function Seo ({ description, lang, meta, keywords, title }) {
         },
         {
           property: 'og:description',
-          content: metaDescription
+          content: description
         },
         {
           property: 'og:type',
           content: 'website'
+        },
+        {
+          name: 'keywords',
+          content: keywords.join(', ')
         }
-      ]
-        .concat(
-          keywords.length > 0
-            ? {
-                name: 'keywords',
-                content: keywords.join(', ')
-              }
-            : []
-        )
-        .concat(meta)}
+      ]}
     />
   )
 }
 
-Seo.defaultProps = {
-  lang: 'nl',
-  meta: [],
-  keywords: [],
-  description: ''
-}
-
 Seo.propTypes = {
-  description: PropTypes.string,
-  lang: PropTypes.string,
-  meta: PropTypes.arrayOf(PropTypes.object),
+  title: PropTypes.string.isRequired,
   keywords: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string.isRequired
+  description: PropTypes.string
 }
 
 export default Seo

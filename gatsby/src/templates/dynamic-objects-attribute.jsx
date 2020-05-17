@@ -20,6 +20,7 @@ const DynamicObjectAttribute = ({ pageContext, data }) => {
     <Layout
       SEOtitle={headline}
       SEOkeywords={[headline, 'Terra Delft']}
+      SEOdescription=''
       containerName='dynamic-object-attribute'
     >
       <h1>{headline}</h1>

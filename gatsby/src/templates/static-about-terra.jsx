@@ -4,6 +4,7 @@ import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql } from 'gatsby'
 import Img from 'gatsby-image'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
 import Layout from '../layouts/layout'
@@ -16,6 +17,9 @@ const StaticAboutTerra = ({ pageContext, data }) => {
     <Layout
       SEOtitle={t('static-about-terra:name')}
       SEOkeywords={[t('static-about-terra:name'), 'Terra Delft']}
+      SEOdescription={documentToPlainTextString(
+        data.aboutTerra.columnLeft.json
+      ).substring(0, 199)}
       containerName='static-about-terra'
     >
       <h1>{t('static-about-terra:name')}</h1>

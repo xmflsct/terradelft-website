@@ -3,6 +3,7 @@ import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { graphql } from 'gatsby'
 import Img from 'gatsby-image'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { mediaFromRichText } from '../components/utils/media-from-rich-text'
 
@@ -13,6 +14,10 @@ const DynamicArtist = ({ data }) => (
   <Layout
     SEOtitle={data.artist.artist}
     SEOkeywords={[data.artist.artist, 'Terra Delft']}
+    SEOdescription={
+      data.artist.biography &&
+      documentToPlainTextString(data.artist.biography.json).substring(0, 199)
+    }
     containerName='dynamic-artist'
   >
     <h1>{data.artist.artist}</h1>

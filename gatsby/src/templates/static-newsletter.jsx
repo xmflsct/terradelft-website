@@ -55,6 +55,7 @@ const StaticNewsletter = ({ pageContext }) => {
     <Layout
       SEOtitle={t('name')}
       SEOkeywords={[t('name'), 'Terra', 'Delft', 'Terra Delft']}
+      SEOdescription={t('name')}
       containerName='static-newsletter'
     >
       <h1>{t('content.heading')}</h1>
@@ -146,7 +147,8 @@ const StaticNewsletter = ({ pageContext }) => {
                 badge='inline'
                 sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
                 onChange={value =>
-                  handleSubmit(data => formSubmit(value, data))()}
+                  handleSubmit(data => formSubmit(value, data))()
+                }
                 hl={pageContext.locale}
               />
             </div>

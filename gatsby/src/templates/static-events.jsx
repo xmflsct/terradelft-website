@@ -15,6 +15,7 @@ const StaticEvents = ({ pageContext, data }) => {
     <Layout
       SEOtitle={t('static-events:name')}
       SEOkeywords={[t('static-events:name'), 'Terra Delft']}
+      SEOdescription='Events'
       containerName='static-events'
     >
       <Row>
