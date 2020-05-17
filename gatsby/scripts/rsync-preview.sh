@@ -3,7 +3,7 @@
 n=0
 until [ "$n" -ge 10 ]
 do
-    sshpass -p "${remote_pass}" rsync -azr --partial --checksum --delete --exclude "not-delete" --exclude "archive" -e "ssh -o StrictHostKeyChecking=no" ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
+    sshpass -p "${remote_pass}" rsync -azr --partial --checksum --delete --exclude ".htaccess" --exclude ".htpasswd" --exclude "robots.txt" -e "ssh -o StrictHostKeyChecking=no" ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
     if [ "$?" = "0" ] ; then
         echo "rsync completed normally"
         exit

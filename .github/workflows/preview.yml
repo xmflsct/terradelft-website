@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - preview
+  repository_dispatch:
+    types: [preview]
 
 jobs:
   deploy:
@@ -73,7 +75,7 @@ jobs:
           remote_port: ${{ secrets.DEPLOY_PORT }}
           remote_user: ${{ secrets.DEPLOY_USER }}
           remote_pass: ${{ secrets.DEPLOY_PASS }}
-          local_dir: "public/"
-          remote_dir: "/www/preview/"
+          local_dir: 'public/'
+          remote_dir: '/www/preview/'
         run: |
           sh ./scripts/rsync-preview.sh
