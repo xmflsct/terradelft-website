@@ -52,6 +52,12 @@ module.exports = {
     },
     'gatsby-plugin-sharp',
     {
+      resolve: 'gatsby-plugin-sitemap',
+      options: {
+        exclude: ['/en/thank-you', '/nl/bedankt']
+      }
+    },
+    {
       resolve: 'gatsby-source-contentful', // Space - Objects
       options: {
         host: process.env.CONTENTFUL_HOST,
