@@ -5,6 +5,15 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { useStaticQuery, graphql } from 'gatsby'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faApplePay,
+  faCcAmex,
+  faGoogleWallet,
+  faCcMastercard,
+  faCcVisa,
+  faIdeal
+} from '@fortawesome/free-brands-svg-icons'
 import { findIndex, forIn, includes, sumBy } from 'lodash'
 import { loadStripe } from '@stripe/stripe-js'
 
@@ -357,6 +366,14 @@ const BagCheckout = () => {
             ) : (
               ''
             )}
+            <div className='mt-3'>
+              <FontAwesomeIcon icon={faIdeal} size='2x' />{' '}
+              <FontAwesomeIcon icon={faApplePay} size='2x' />{' '}
+              <FontAwesomeIcon icon={faGoogleWallet} size='2x' />{' '}
+              <FontAwesomeIcon icon={faCcVisa} size='2x' />{' '}
+              <FontAwesomeIcon icon={faCcMastercard} size='2x' />{' '}
+              <FontAwesomeIcon icon={faCcAmex} size='2x' />
+            </div>
             <div className='mt-3'>
               <ReCAPTCHA
                 ref={recaptchaRef}
