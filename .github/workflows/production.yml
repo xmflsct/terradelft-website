@@ -77,6 +77,6 @@ jobs:
           remote_user: ${{ secrets.DEPLOY_USER }}
           remote_pass: ${{ secrets.DEPLOY_PASS }}
           local_dir: 'public/'
-          remote_dir: '/www/production/'
+          remote_dir: '/www/'
         run: |
           sh ./scripts/rsync-production.sh
