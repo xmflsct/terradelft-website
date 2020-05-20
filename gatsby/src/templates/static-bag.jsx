@@ -19,13 +19,6 @@ const StaticBag = () => {
       SEOdescription={t('content.heading')}
       containerName='static-bag'
     >
-      <button
-        onClick={() => {
-          throw '500'
-        }}
-      >
-        Break the world
-      </button>
       <h1>{t('content.heading')}</h1>
       <Row>
         <Col lg={8} className='bag-list'>
