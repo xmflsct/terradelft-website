@@ -14,6 +14,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.13.0",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/react-fontawesome": "^0.1.9",
+    "@sentry/browser": "^5.15.5",
     "@stripe/stripe-js": "^1.5.0",
     "bootstrap": "^4.5.0",
     "gatsby": "^2.21.26",
