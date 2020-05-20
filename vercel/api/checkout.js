@@ -213,34 +213,34 @@ async function stripeSession (req) {
       })
     }
     // Don't skip pick-up in shop
-    // req.body.data.pay.shipping &&
-    line_items.push({
-      name: `Shipping to ${req.body.data.shipping.countryA2}`,
-      amount: req.body.data.pay.shipping * 10 * 10,
-      currency: 'eur',
-      quantity: 1
-    })
+    req.body.data.pay.shipping &&
+      line_items.push({
+        name: `Shipping to ${req.body.data.shipping.countryA2}`,
+        amount: req.body.data.pay.shipping * 10 * 10,
+        currency: 'eur',
+        quantity: 1
+      })
 
-    req.body.data.pay.shipping
-      ? (sessionData = {
-          payment_method_types: ['ideal', 'card'],
-          line_items: line_items,
-          shipping_address_collection: {
-            allowed_countries: [req.body.data.shipping.countryA2]
-          },
-          locale: req.body.data.locale,
-          success_url:
-            req.body.data.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-          cancel_url: req.body.data.url.cancel
-        })
-      : (sessionData = {
-          payment_method_types: ['ideal', 'card'],
-          line_items: line_items,
-          locale: req.body.data.locale,
-          success_url:
-            req.body.data.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-          cancel_url: req.body.data.url.cancel
-        })
+    // req.body.data.pay.shipping?
+    sessionData = {
+      payment_method_types: ['ideal', 'card'],
+      line_items: line_items,
+      shipping_address_collection: {
+        allowed_countries: [req.body.data.shipping.countryA2]
+      },
+      locale: req.body.data.locale,
+      success_url:
+        req.body.data.url.success + '?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: req.body.data.url.cancel
+    }
+    // : (sessionData = {
+    //     payment_method_types: ['ideal', 'card'],
+    //     line_items: line_items,
+    //     locale: req.body.data.locale,
+    //     success_url:
+    //       req.body.data.url.success + '?session_id={CHECKOUT_SESSION_ID}',
+    //     cancel_url: req.body.data.url.cancel
+    //   })
   } catch (err) {
     return { success: false, error: err }
   }
