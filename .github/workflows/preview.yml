@@ -22,7 +22,7 @@ jobs:
       #   id: yarn-cache-dir-path
       #   run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: -- Step 3 -- Cache node_modules dir
-        uses: actions/cache@v1
+        uses: actions/cache@master
         id: nodeModules-cache
         with:
           path: ./gatsby/node_modules
@@ -30,7 +30,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nodeModules-
       - name: -- Step 4 -- Gatsby Cache dir
-        uses: actions/cache@v1
+        uses: actions/cache@master
         id: gatsby-cache-dir
         with:
           path: ./gatsby/.cache
@@ -38,7 +38,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gatsby-cache-dir
       - name: -- Step 5 -- Gatsby Public dir
-        uses: actions/cache@v1
+        uses: actions/cache@master
         id: gatsby-public-dir
         with:
           path: ./gatsby/public
@@ -67,6 +67,7 @@ jobs:
           GATSBY_STRIPE_PUBLIC_KEY: ${{ secrets.GATSBY_STRIPE_PUBLIC_KEY_PREVIEW }}
           STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_PRIVATE_KEY_PREVIEW }}
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
+          GATSBY_SENTRY_DSN: ${{ secrets.GATSBY_SENTRY_DSN }}
           GATSBY_API_ENDPOINT: preview.api.terra-delft.nl
       - name: -- Step 8 -- Deploy to one.com
         working-directory: ./gatsby
