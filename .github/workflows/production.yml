@@ -80,3 +80,15 @@ jobs:
           remote_dir: '/www/'
         run: |
           sh ./scripts/rsync-production.sh
+      - name: -- Step 9 -- Email notification
+        if: github.event_name == 'repository_dispatch'
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: send.one.com
+          server_port: 465
+          username: ${{secrets.EMAIL_USERNAME}}
+          password: ${{secrets.EMAIL_PASSWORD}}
+          subject: Production deployment succeed
+          body: The website is live at https://terra-delft.nl
+          to: shop@terra-delft.nl,xmflsct@gmail.com
+          from: no-reply@terra-delft.nl

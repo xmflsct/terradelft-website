@@ -90,5 +90,5 @@ jobs:
           password: ${{secrets.EMAIL_PASSWORD}}
           subject: Preview deployment succeed
           body: The website is live at https://preview.terra-delft.nl
-          to: xmflsct@gmail.com
+          to: shop@terra-delft.nl,xmflsct@gmail.com
           from: no-reply@terra-delft.nl
