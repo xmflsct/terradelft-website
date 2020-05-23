@@ -25,7 +25,7 @@ export const mediaFromRichText = (images, locale) => ({
   renderNode: {
     [BLOCKS.EMBEDDED_ASSET]: node => {
       const contentful_id = node.data.target.sys.contentful_id
-      const description = node.data.target.fields.description
+      const description = node.data.target.fields && node.data.target.fields.description
       const imageIndex = findIndex(
         images.nodes,
         node => node.contentful_id === contentful_id
