@@ -68,6 +68,7 @@ const ObjectImages = ({ images }) => {
             }}
           >
             <Img fluid={state.image.fluid} />
+            <MouseZoom image={state.image.mouseFluid.src} />
           </Col>
         )}
         {images.map((image, index) => (
@@ -87,7 +88,13 @@ const ObjectImages = ({ images }) => {
               }
               backgroundColor='#e8e8e8'
             />
-            <MouseZoom image={image.fluidZoom.src} />
+            <MouseZoom
+              image={
+                !state.image && index === 0
+                  ? image.mouseFluid.src
+                  : image.mouseFluidThumbnail.src
+              }
+            />
           </Col>
         ))}
       </Row>
