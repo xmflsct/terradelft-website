@@ -202,13 +202,19 @@ export const query = graphql`
           json
         }
         images {
-          fluid(maxWidth: 427, quality: 85) {
+          fluid(maxWidth: 427, quality: 80) {
             ...GatsbyContentfulFluid_withWebp
           }
-          fluidThumbnail: fluid(maxWidth: 132, quality: 80) {
+          fluidThumbnail: fluid(maxWidth: 132, quality: 70) {
             ...GatsbyContentfulFluid_withWebp_noBase64
           }
-          fluidZoom: fluid(maxWidth: 2000, quality: 85) {
+          fluidZoom: fluid(maxWidth: 1280, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
+          mouseFluid: fluid(maxWidth: 1280, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
+          mouseFluidThumbnail: fluid(maxWidth: 396, quality: 70) {
             ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
@@ -241,6 +247,9 @@ export const query = graphql`
               ...GatsbyContentfulFluid_withWebp_noBase64
             }
             fluidZoom: fluid(maxWidth: 2000, quality: 80) {
+              ...GatsbyContentfulFluid_withWebp_noBase64
+            }
+            mouseFluid: fluid(maxWidth: 1280, quality: 80) {
               ...GatsbyContentfulFluid_withWebp_noBase64
             }
           }
