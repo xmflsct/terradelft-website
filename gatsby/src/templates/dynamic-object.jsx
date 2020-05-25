@@ -205,10 +205,10 @@ export const query = graphql`
           fluid(maxWidth: 427, quality: 85) {
             ...GatsbyContentfulFluid_withWebp
           }
-          fluidThumbnail: fluid(maxWidth: 132, quality: 80) {
+          fluidThumbnail: fluid(maxWidth: 132, quality: 70) {
             ...GatsbyContentfulFluid_withWebp_noBase64
           }
-          fluidZoom: fluid(maxWidth: 2000, quality: 85) {
+          fluidZoom: fluid(maxWidth: 1280, quality: 85) {
             ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
