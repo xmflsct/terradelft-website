@@ -53,6 +53,9 @@ const MouseZoom = ({ image }) => {
 const ObjectImages = ({ images }) => {
   const { state } = useContext(ContextVariationImage)
   const [zoomIndex, setZoomIndex] = useState(0)
+  const handleCarousel = (selectedIndex, e) => {
+    setZoomIndex(selectedIndex);
+  };
   const [zoom, setZoom] = useState({ show: false })
 
   return (
@@ -105,7 +108,7 @@ const ObjectImages = ({ images }) => {
         onHide={() => setZoom({ show: false })}
         aria-labelledby='Image'
       >
-        <Carousel activeIndex={zoomIndex}>
+        <Carousel activeIndex={zoomIndex} onSelect={handleCarousel} interval={null}>
           {state.image && (
             <Carousel.Item>
               <Img fluid={state.image.fluidZoom} />
