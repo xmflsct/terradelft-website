@@ -140,13 +140,13 @@ const BagCheckout = () => {
         shipping: pay.shipping
       },
       url: {
-        success: `${window.location.origin}/${t(
+        success: `${window.location.origin}${t(
           'constant:slug.static.thank-you.slug',
           {
             locale: i18n.language
           }
         )}`,
-        cancel: `${window.location.origin}/${t(
+        cancel: `${window.location.origin}${t(
           'constant:slug.static.bag.slug',
           {
             locale: i18n.language

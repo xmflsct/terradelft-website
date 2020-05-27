@@ -1,14 +1,22 @@
 import ky from 'ky-universal'
 
+const urlDevelopment = 'http://localhost:3000'
+const urlProduction = `https://${process.env.GATSBY_API_ENDPOINT}`
+
 export async function checkout (token, data) {
   try {
     return await ky
-      .post(`https://${process.env.GATSBY_API_ENDPOINT}/api/checkout`, {
-        json: {
-          token: token,
-          data: data
+      .post(
+        `${
+          process.env.NODE_ENV === 'production' ? urlProduction : urlDevelopment
+        }/api/checkout`,
+        {
+          json: {
+            token: token,
+            data: data
+          }
         }
-      })
+      )
       .json()
   } catch (error) {
     return error.response.json()
