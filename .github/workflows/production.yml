@@ -22,34 +22,28 @@ jobs:
       #   id: yarn-cache-dir-path
       #   run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: -- Step 3 -- Cache node_modules dir
-        uses: actions/cache@master
+        uses: actions/cache@2
         id: nodeModules-cache
         with:
           path: ./gatsby/node_modules
           key: ${{ runner.os }}-nodeModules-${{ hashFiles('./gatsby/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-nodeModules-
-      - name: -- Step 4 -- Gatsby Cache dir
-        uses: actions/cache@master
+      - name: -- Step 4 -- Gatsby Cache dirs
+        uses: actions/cache@2
         id: gatsby-cache-dir
         with:
-          path: ./gatsby/.cache
+          path: |
+            ./gatsby/.cache
+            ./gatsby/public
           key: ${{ runner.os }}-gatsby-cache-dir
           restore-keys: |
             ${{ runner.os }}-gatsby-cache-dir
-      - name: -- Step 5 -- Gatsby Public dir
-        uses: actions/cache@master
-        id: gatsby-public-dir
-        with:
-          path: ./gatsby/public
-          key: ${{ runner.os }}-gatsby-public-dir
-          restore-keys: |
-            ${{ runner.os }}-gatsby-public-dir
-      - name: -- Step 6 -- Install dependencies
+      - name: -- Step 5 -- Install dependencies
         if: steps.nodeModules-cache.outputs.cache-hit != 'true'
         working-directory: ./gatsby
         run: yarn install --pure-lockfile
-      - name: -- Step 7 -- Build static site
+      - name: -- Step 6 -- Build static site
         working-directory: ./gatsby
         run: yarn build
         env:
@@ -69,7 +63,7 @@ jobs:
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
           GATSBY_SENTRY_DSN: ${{ secrets.GATSBY_SENTRY_DSN }}
           GATSBY_API_ENDPOINT: api.terra-delft.nl
-      - name: -- Step 8 -- Deploy to one.com
+      - name: -- Step 7 -- Deploy to one.com
         working-directory: ./gatsby
         env:
           remote_host: ${{ secrets.DEPLOY_HOST }}
@@ -80,7 +74,7 @@ jobs:
           remote_dir: '/www/'
         run: |
           sh ./scripts/rsync-production.sh
-      - name: -- Step 9 -- Email notification
+      - name: -- Step 8 -- Email notification
         if: github.event_name == 'repository_dispatch'
         uses: dawidd6/action-send-mail@v2
         with:
