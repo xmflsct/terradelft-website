@@ -12,9 +12,9 @@ import { Price } from '../utils/price'
 const ObjectSell = ({ object }) => {
   const image = useStaticQuery(graphql`
     {
-      file(relativePath: { eq: "dynamic-object/kunstkoop.jpg" }) {
+      file(relativePath: { eq: "dynamic-object/kunstkoop.png" }) {
         childImageSharp {
-          fixed(width: 70, quality: 90) {
+          fixed(width: 70) {
             ...GatsbyImageSharpFixed_noBase64
           }
         }
