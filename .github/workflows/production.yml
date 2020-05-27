@@ -22,7 +22,7 @@ jobs:
       #   id: yarn-cache-dir-path
       #   run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: -- Step 3 -- Cache node_modules dir
-        uses: actions/cache@2
+        uses: actions/cache@v2
         id: nodeModules-cache
         with:
           path: ./gatsby/node_modules
@@ -30,7 +30,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nodeModules-
       - name: -- Step 4 -- Gatsby Cache dirs
-        uses: actions/cache@2
+        uses: actions/cache@v2
         id: gatsby-cache-dir
         with:
           path: |
