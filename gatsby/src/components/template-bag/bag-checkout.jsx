@@ -115,7 +115,7 @@ const BagCheckout = () => {
   const selectedShipping = watch('selectedShipping')
   if (selectedShipping) {
     if (
-      options.shipping[selectedShipping].freeForTotal > 0 &&
+      isFinite(options.shipping[selectedShipping].freeForTotal) &&
       pay.objects >= options.shipping[selectedShipping].freeForTotal
     ) {
       pay.shipping = 0
@@ -256,7 +256,7 @@ const BagCheckout = () => {
                         {d.description && (
                           <Form.Text>{d.description}</Form.Text>
                         )}
-                        {d.freeForTotal > 0 && (
+                        {isFinite(d.freeForTotal) && (
                           <Form.Text>
                             {t('content.checkout.shipping.free-for-total')}{' '}
                             {formatNumber.currency(
@@ -269,7 +269,7 @@ const BagCheckout = () => {
                     </Col>
                     <Col xs={3} className='text-right'>
                       {d.price === 0 ||
-                      (d.freeForTotal && pay.objects >= d.freeForTotal) ? (
+                      (isFinite(d.freeForTotal) && pay.objects >= d.freeForTotal) ? (
                         t('content.checkout.shipping.free-fee')
                       ) : (
                         <>{formatNumber.currency(d.price, i18n.language)}</>
