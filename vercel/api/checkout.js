@@ -1,5 +1,5 @@
 import microCors from 'micro-cors'
-const cors = microCors({ origin: process.env.REQUEST_ORIGIN })
+const cors = microCors({ origin: '*' })
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const ky = require('ky-universal')
 var _ = require('lodash')
