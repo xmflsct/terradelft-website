@@ -1,4 +1,4 @@
-nav {
+header > nav {
   margin-top: $font-size-base;
 
   .nav-item {
@@ -44,7 +44,7 @@ nav {
 }
 
 @include media-breakpoint-down(sm) {
-  nav {
+  header > nav {
     position: fixed;
     top: 0;
     left: -100vw;
