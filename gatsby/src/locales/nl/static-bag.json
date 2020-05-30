@@ -7,17 +7,27 @@
       "empty": "Het lijkt erop dat je boodschappentas leeg is."
     },
     "checkout": {
-      "heading": "Overzicht",
-      "shipping": {
-        "heading": "Verzend naar",
-        "selection": "Selecteer land",
-        "free-for-total": "Gratis voor boven ",
-        "free-fee": "Gratis"
+      "heading": {
+        "delivery": "Leveringsmethode",
+        "summary": "Samenvatting"
       },
-      "sum": {
+      "delivery": {
+        "pickup": {
+          "heading": "Afhalen",
+          "name": "Galerie Terra Delft",
+          "address": "Nieuwstraat 7, 2611 HK Delft"
+        },
+        "shipment": {
+          "heading": "Verzending",
+          "selection": "Selecteer land",
+          "free-for-total": "Gratis voor boven "
+        },
+        "free": "Gratis"
+      },
+      "summary": {
         "subtotal": "Subtotaal",
         "discount": "Korting",
-        "shipping": "Verzendkosten",
+        "delivery": "Verzendkosten",
         "total": "Totaal"
       },
       "button": {
