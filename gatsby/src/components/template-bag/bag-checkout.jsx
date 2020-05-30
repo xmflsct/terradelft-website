@@ -1,7 +1,16 @@
-import React, { useContext, useState } from 'react'
-import { Button, Col, Form, FormCheck, Spinner } from 'react-bootstrap'
+import React, { useContext, useLayoutEffect, useReducer, useState } from 'react'
+import {
+  Button,
+  Col,
+  Form,
+  FormCheck,
+  Row,
+  Spinner,
+  Tab,
+  Tabs
+} from 'react-bootstrap'
 import ReCAPTCHA from 'react-google-recaptcha'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { useStaticQuery, graphql } from 'gatsby'
@@ -21,9 +30,94 @@ import { ContextBag } from '../../layouts/contexts/bag'
 import { checkout } from '../../api/checkout'
 import * as formatNumber from '../utils/format-number'
 
-var countries = require('i18n-iso-countries')
-countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
-countries.registerLocale(require('i18n-iso-countries/langs/nl.json'))
+function initBagCheckout ({ i18n, state, countries }) {
+  const bagCheckout = {
+    delivery: {
+      shipment: {
+        countries: { options: [], selectedCountryCode: null },
+        methods: { options: [], selectedIndex: null }
+      },
+      selected: 'pickup'
+    },
+    amounts: {
+      subtotal: sumBy(state.bag.objects, d => {
+        // if (d.priceSale) {
+        //   return d.priceSale
+        // } else {
+        return d.priceOriginal
+        // }
+      }),
+      discount: sumBy(state.bag.objects, d => {
+        if (d.priceSale) {
+          return (d.priceOriginal * 10 - d.priceSale * 10) / 10
+        }
+      }),
+      delivery: 0
+    }
+  }
+
+  forIn(countries.getNames(i18n.language), (v, k) => {
+    bagCheckout.delivery.shipment.countries.options.push({
+      value: countries.alpha2ToNumeric(k),
+      label: v
+    })
+  })
+
+  return bagCheckout
+}
+
+function reducerBagCheckout (bagCheckout, action) {
+  switch (action.type) {
+    case 'pickup':
+      bagCheckout.delivery.selected = action.data
+      if (action.data === 'pickup') {
+        bagCheckout.amounts.delivery = 0
+      } else {
+        bagCheckout.delivery.shipment.methods.selectedIndex = null
+        bagCheckout.amounts.delivery = null
+      }
+      break
+    case 'country':
+      bagCheckout.delivery.shipment.methods.selectedIndex = null
+      bagCheckout.amounts.delivery = null
+      bagCheckout.delivery.shipment.countries.selectedCountryCode =
+        action.data.countryCode
+      let rateIndex = findIndex(action.data.rates, d => {
+        return includes(d.countryCode, action.data.countryCode)
+      })
+      // Needed when "other countries" which does not have a country code
+      rateIndex = rateIndex !== -1 ? rateIndex : action.data.rates.length - 1
+      bagCheckout.delivery.shipment.methods.options =
+        action.data.rates[rateIndex].rates
+      break
+    case 'method':
+      bagCheckout.delivery.shipment.methods.selectedIndex = action.data
+      if (
+        Number.isFinite(
+          bagCheckout.delivery.shipment.methods.options[action.data]
+            .freeForTotal
+        ) &&
+        bagCheckout.amounts.subtotal >=
+          bagCheckout.delivery.shipment.methods.options[action.data]
+            .freeForTotal
+      ) {
+        bagCheckout.amounts.delivery = 0
+      } else {
+        bagCheckout.amounts.delivery =
+          bagCheckout.delivery.shipment.methods.options[action.data].price
+      }
+      break
+    case 'reset':
+      bagCheckout = initBagCheckout({
+        i18n: action.data.i18n,
+        state: action.data.state,
+        countries: action.data.countries
+      })
+      break
+  }
+
+  return { ...bagCheckout }
+}
 
 const BagCheckout = () => {
   const rates = useStaticQuery(graphql`
@@ -61,83 +155,59 @@ const BagCheckout = () => {
     }
   `)
   const { t, i18n } = useTranslation('static-bag')
+  var countries = require('i18n-iso-countries')
+  countries.registerLocale(
+    require(`i18n-iso-countries/langs/${i18n.language}.json`)
+  )
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
   const recaptchaRef = React.createRef()
+  const [bagCheckout, updateBagCheckout] = useReducer(
+    reducerBagCheckout,
+    { i18n, state, countries },
+    initBagCheckout
+  )
+  useLayoutEffect(() => {
+    updateBagCheckout({
+      type: 'reset',
+      data: {
+        i18n: i18n,
+        state: state,
+        countries: countries
+      }
+    })
+  }, [state])
   const [corrections, setCorrections] = useState({ required: false })
-  const {
-    control,
-    formState,
-    getValues,
-    handleSubmit,
-    setValue,
-    watch
-  } = useForm({
-    mode: 'onChange'
-  })
-
-  const options = {
-    countries: [],
-    shipping: []
-  }
-  forIn(countries.getNames(i18n.language), (v, k) => {
-    options.countries.push({
-      value: countries.alpha2ToNumeric(k),
-      label: v
-    })
-  })
-  const selectedCountry = watch('selectedCountry')
-  if (selectedCountry) {
-    let index = findIndex(rates[i18n.language].rates, d => {
-      return includes(d.countryCode, selectedCountry.value)
-    })
-    // Needed when "other countries" which does not have a country code
-    index = index !== -1 ? index : rates[i18n.language].rates.length - 1
-    options.shipping = rates[i18n.language].rates[index].rates
-  }
-
-  const pay = {
-    objects: sumBy(state.bag.objects, d => {
-      if (d.priceSale) {
-        return d.priceSale
-      } else {
-        return d.priceOriginal
-      }
-    }),
-    discount: sumBy(state.bag.objects, d => {
-      if (d.priceSale) {
-        return (d.priceOriginal * 10 - d.priceSale * 10) / 10
-      }
-    }),
-    shipping: null
-  }
-
-  const selectedShipping = watch('selectedShipping')
-  if (selectedShipping) {
-    if (
-      isFinite(options.shipping[selectedShipping].freeForTotal) &&
-      pay.objects >= options.shipping[selectedShipping].freeForTotal
-    ) {
-      pay.shipping = 0
-    } else {
-      pay.shipping = options.shipping[selectedShipping].price
-    }
-  }
+  const { formState, handleSubmit } = useForm()
 
   const userVerified = token => {
-    handleSubmit(data => formSubmit(data, token))()
+    handleSubmit(() => formSubmit(token))()
   }
-  const formSubmit = async (d, token) => {
+  const formSubmit = async token => {
     const data = {
       objects: state.bag.objects,
-      shipping: {
-        countryCode: d.selectedCountry.value,
-        countryA2: countries.numericToAlpha2(d.selectedCountry.value),
-        methodIndex: d.selectedShipping
+      delivery: {
+        type: bagCheckout.delivery.selected,
+        name:
+          bagCheckout.delivery.selected === 'pickup'
+            ? `${t('content.checkout.delivery.pickup.heading')} ${t(
+                'content.checkout.delivery.pickup.name'
+              )}`
+            : bagCheckout.delivery.shipment.methods.options[
+                bagCheckout.delivery.shipment.methods.selectedIndex
+              ].method,
+        ...(bagCheckout.delivery.selected === 'shipment' && {
+          countryCode:
+            bagCheckout.delivery.shipment.countries.selectedCountryCode,
+          countryA2: countries.numericToAlpha2(
+            bagCheckout.delivery.shipment.countries.selectedCountryCode
+          ),
+          methodIndex: bagCheckout.delivery.shipment.methods.selectedIndex
+        })
       },
-      pay: {
-        subtotal: pay.objects,
-        shipping: pay.shipping
+      amounts: {
+        subtotal: bagCheckout.amounts.subtotal,
+        delivery: bagCheckout.amounts.delivery
       },
       url: {
         success: `${window.location.origin}${t(
@@ -146,12 +216,9 @@ const BagCheckout = () => {
             locale: i18n.language
           }
         )}`,
-        cancel: `${window.location.origin}${t(
-          'constant:slug.static.bag.slug',
-          {
-            locale: i18n.language
-          }
-        )}`
+        cancel: `${window.location.origin}${t('constant:slug.static.bag.slug', {
+          locale: i18n.language
+        })}`
       },
       locale: i18n.language
     }
@@ -180,11 +247,15 @@ const BagCheckout = () => {
   }
 
   const handleCorrection = d => {
+    console.log(d)
     setCorrections({
       required: true,
-      subtotal: d.objects.length ? pay.objects : null,
-      shipping: d.shipping ? pay.shipping : null,
-      total: (pay.objects * 10 + pay.shipping * 10) / 10
+      subtotal: d.objects.length ? bagCheckout.amounts.subtotal : null,
+      delivery: d.shipping ? bagCheckout.amounts.delivery : null,
+      total:
+        (bagCheckout.amounts.subtotal * 10 +
+          bagCheckout.amounts.delivery * 10) /
+        10
     })
     if (d.objects.length) {
       for (const object of d.objects) {
@@ -201,12 +272,11 @@ const BagCheckout = () => {
             })
       }
     }
-    if (d.shipping) {
-      const tempShippingIndex = getValues().selectedShipping
-      options.shipping[tempShippingIndex].price = d.shipping
+    if (d.delivery) {
+      console.error('shipping wrong')
     }
     if (d.subtotal) {
-      console.log('subtotal wrong')
+      console.error('subtotal wrong')
     }
   }
 
@@ -214,41 +284,87 @@ const BagCheckout = () => {
     <>
       {state.bag.objects.length > 0 && (
         <>
-          <h2>{t('content.checkout.heading')}</h2>
-          <Form onSubmit={e => onSubmit(e)}>
-            <Form.Group className='checkout-country'>
-              <Form.Label>
-                <strong>{t('content.checkout.shipping.heading')}</strong>
-              </Form.Label>
-              <Controller
-                as={<ReactSelect />}
-                name='selectedCountry'
-                options={options.countries}
-                placeholder={t('content.checkout.shipping.selection')}
-                defaultValue={null}
-                isSearchable
-                control={control}
-                onChange={(e, i) => {
-                  setValue('selectedShipping', null)
-                  return e[0]
+          <h3>{t('content.checkout.heading.delivery')}</h3>
+          <Tabs
+            id='delivery-methods'
+            activeKey={bagCheckout.delivery.selected}
+            variant='pills'
+            fill
+            onSelect={e => {
+              updateBagCheckout({
+                type: 'pickup',
+                data: e
+              })
+            }}
+          >
+            <Tab
+              eventKey='pickup'
+              title={t('content.checkout.delivery.pickup.heading')}
+              className='p-3'
+            >
+              <Row className='checkout-shipping'>
+                <Col xs={9}>
+                  <FormCheck>
+                    <FormCheck.Input
+                      type='radio'
+                      defaultChecked
+                      disabled={formState.isSubmitting}
+                    />
+                    <FormCheck.Label>
+                      {t('content.checkout.delivery.pickup.name')}
+                    </FormCheck.Label>
+                    <Form.Text>
+                      {t('content.checkout.delivery.pickup.address')}
+                    </Form.Text>
+                  </FormCheck>
+                </Col>
+                <Col xs={3} className='text-right'>
+                  {t('content.checkout.delivery.free')}
+                </Col>
+              </Row>
+            </Tab>
+            <Tab
+              eventKey='shipment'
+              title={t('content.checkout.delivery.shipment.heading')}
+              className='p-3'
+            >
+              <ReactSelect
+                name='optionCountries'
+                className='mb-3'
+                options={bagCheckout.delivery.shipment.countries.options}
+                placeholder={t('content.checkout.delivery.shipment.selection')}
+                onChange={e => {
+                  updateBagCheckout({
+                    type: 'country',
+                    data: {
+                      countryCode: e.value,
+                      rates: rates[i18n.language].rates
+                    }
+                  })
                 }}
-                rules={{ required: true }}
+                isSearchable
                 isDisabled={formState.isSubmitting}
               />
-            </Form.Group>
-            {options.shipping &&
-              options.shipping.map((d, i) => {
+              {bagCheckout.delivery.shipment.methods.options.map((d, i) => {
                 return (
-                  <Form.Row className='checkout-shipping mb-2' key={i}>
+                  <Row className='checkout-shipping mb-2' key={i}>
                     <Col xs={9}>
                       <FormCheck>
-                        <Controller
-                          as={<FormCheck.Input />}
+                        <FormCheck.Input
                           type='radio'
-                          name='selectedShipping'
+                          checked={
+                            bagCheckout.delivery.shipment.methods
+                              .selectedIndex == i
+                              ? true
+                              : false
+                          }
                           value={i}
-                          valueName='id'
-                          control={control}
+                          onChange={e => {
+                            updateBagCheckout({
+                              type: 'method',
+                              data: e.target.value
+                            })
+                          }}
                           required
                           disabled={formState.isSubmitting}
                         />
@@ -256,9 +372,11 @@ const BagCheckout = () => {
                         {d.description && (
                           <Form.Text>{d.description}</Form.Text>
                         )}
-                        {isFinite(d.freeForTotal) && (
+                        {Number.isFinite(d.freeForTotal) && (
                           <Form.Text>
-                            {t('content.checkout.shipping.free-for-total')}{' '}
+                            {t(
+                              'content.checkout.delivery.shipment.free-for-total'
+                            )}{' '}
                             {formatNumber.currency(
                               d.freeForTotal,
                               i18n.language
@@ -269,79 +387,101 @@ const BagCheckout = () => {
                     </Col>
                     <Col xs={3} className='text-right'>
                       {d.price === 0 ||
-                      (isFinite(d.freeForTotal) && pay.objects >= d.freeForTotal) ? (
-                        t('content.checkout.shipping.free-fee')
-                      ) : (
-                        <>{formatNumber.currency(d.price, i18n.language)}</>
-                      )}
+                        (Number.isFinite(d.freeForTotal) &&
+                        bagCheckout.amounts.subtotal >= d.freeForTotal ? (
+                          t('content.checkout.delivery.free')
+                        ) : (
+                          <>{formatNumber.currency(d.price, i18n.language)}</>
+                        ))}
                     </Col>
-                  </Form.Row>
+                  </Row>
                 )
               })}
-            <Form.Row className='checkout-sum sum-subtotal'>
-              <Form.Label column md='5'>
-                <strong>{t('content.checkout.sum.subtotal')}</strong>
-              </Form.Label>
-              <Form.Label column md='7'>
-                {corrections.subtotal && (
-                  <strike>
-                    {formatNumber.currency(corrections.subtotal, i18n.language)}
-                  </strike>
-                )}{' '}
-                {formatNumber.currency(pay.objects, i18n.language)}
-              </Form.Label>
-            </Form.Row>
-            {pay.discount > 0 && (
-              <Form.Row className='checkout-sum sum-discount'>
-                <Form.Label column md='5'>
-                  <strong>{t('content.checkout.sum.discount')}</strong>
-                </Form.Label>
-                <Form.Label column md='7'>
-                  {formatNumber.currency(pay.discount, i18n.language)}
-                </Form.Label>
-              </Form.Row>
-            )}
-            <Form.Row className='checkout-sum sum-shipping'>
-              <Form.Label column md='5'>
-                <strong>{t('content.checkout.sum.shipping')}</strong>
-              </Form.Label>
-              <Form.Label column md='7'>
-                {(corrections.shipping > 0 && (
-                  <strike>
-                    {formatNumber.currency(corrections.shipping, i18n.language)}
-                  </strike>
+            </Tab>
+          </Tabs>
+          <hr />
+          <h3>{t('content.checkout.heading.summary')}</h3>
+          <Row className='checkout-sum sum-subtotal'>
+            <Col md='5'>
+              <strong>{t('content.checkout.summary.subtotal')}</strong>
+            </Col>
+            <Col md='7'>
+              {corrections.subtotal && (
+                <strike>
+                  {formatNumber.currency(corrections.subtotal, i18n.language)}
+                </strike>
+              )}{' '}
+              {formatNumber.currency(
+                bagCheckout.amounts.subtotal,
+                i18n.language
+              )}
+            </Col>
+          </Row>
+          {bagCheckout.amounts.discount > 0 && (
+            <Row className='checkout-sum sum-discount'>
+              <Col md='5'>
+                <strong>{t('content.checkout.summary.discount')}</strong>
+              </Col>
+              <Col md='7'>
+                -{' '}
+                {formatNumber.currency(
+                  bagCheckout.amounts.discount,
+                  i18n.language
+                )}
+              </Col>
+            </Row>
+          )}
+          <Row className='checkout-sum sum-shipping mb-2'>
+            <Col md='5'>
+              <strong>{t('content.checkout.summary.delivery')}</strong>
+            </Col>
+            <Col md='7'>
+              {(corrections.shipping > 0 && (
+                <strike>
+                  {formatNumber.currency(corrections.shipping, i18n.language)}
+                </strike>
+              )) ||
+                (corrections.shipping === 0 && (
+                  <strike>{t('content.checkout.delivery.free')}</strike>
+                ))}{' '}
+              {(bagCheckout.amounts.delivery > 0 &&
+                formatNumber.currency(
+                  bagCheckout.amounts.delivery,
+                  i18n.language
                 )) ||
-                  (corrections.shipping === 0 && (
-                    <strike>{t('content.checkout.shipping.free-fee')}</strike>
-                  ))}{' '}
-                {(pay.shipping > 0 &&
-                  formatNumber.currency(pay.shipping, i18n.language)) ||
-                  (pay.shipping === 0 &&
-                    t('content.checkout.shipping.free-fee'))}
-              </Form.Label>
-            </Form.Row>
-            <Form.Row className='checkout-sum sum-total'>
-              <Form.Label column md='5'>
-                <strong>{t('content.checkout.sum.total')}</strong>
-              </Form.Label>
-              <Form.Label column md='7'>
-                {corrections.required && (
-                  <strike>
-                    {formatNumber.currency(corrections.total, i18n.language)}
-                  </strike>
-                )}{' '}
-                {pay.shipping !== null &&
-                  formatNumber.currency(
-                    (pay.objects * 10 + pay.shipping * 10) / 10,
-                    i18n.language
-                  )}
-              </Form.Label>
-            </Form.Row>
+                (bagCheckout.amounts.delivery === 0 &&
+                  t('content.checkout.delivery.free'))}
+            </Col>
+          </Row>
+          <Row className='checkout-sum sum-total'>
+            <Col md='5'>
+              <strong>{t('content.checkout.summary.total')}</strong>
+            </Col>
+            <Col md='7'>
+              {corrections.required && (
+                <strike>
+                  {formatNumber.currency(corrections.total, i18n.language)}
+                </strike>
+              )}{' '}
+              {bagCheckout.amounts.delivery !== null &&
+                formatNumber.currency(
+                  (bagCheckout.amounts.subtotal * 10 -
+                    (bagCheckout.amounts.discount || 0) * 10 +
+                    bagCheckout.amounts.delivery * 10) /
+                    10,
+                  i18n.language
+                )}
+            </Col>
+          </Row>
+          <Form className='mt-3' onSubmit={e => onSubmit(e)}>
             <Button
               variant='primary'
               type='submit'
               className='mb-2'
-              disabled={!selectedShipping || formState.isSubmitting}
+              disabled={
+                !Number.isFinite(bagCheckout.amounts.delivery) ||
+                formState.isSubmitting
+              }
             >
               {(formState.isSubmitting && (
                 <>

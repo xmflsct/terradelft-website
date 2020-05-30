@@ -21,10 +21,10 @@ const StaticBag = () => {
     >
       <h1>{t('content.heading')}</h1>
       <Row>
-        <Col lg={8} className='bag-list'>
+        <Col lg={7} className='bag-list'>
           <BagList />
         </Col>
-        <Col lg={4} className='bag-checkout'>
+        <Col lg={5} className='bag-checkout'>
           <BagCheckout />
         </Col>
       </Row>

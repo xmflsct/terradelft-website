@@ -9,8 +9,8 @@ const recaptcha = require('./utils/_recaptcha')
 async function checkContentful (req) {
   if (
     req.body.data.objects.length === 0 ||
-    Object.keys(req.body.data.shipping).length === 0 ||
-    Object.keys(req.body.data.pay).length === 0
+    Object.keys(req.body.data.delivery).length === 0 ||
+    Object.keys(req.body.data.amounts).length === 0
   ) {
     return {
       success: false,
@@ -19,11 +19,11 @@ async function checkContentful (req) {
   }
 
   const objects = req.body.data.objects
-  const shipping = req.body.data.shipping
-  const pay = req.body.data.pay
+  const delivery = req.body.data.delivery
+  const amounts = req.body.data.amounts
   const locale = req.body.data.locale
 
-  let corrections = { objects: [], shipping: null, subtotal: null }
+  let corrections = { objects: [], delivery: null, amounts: null }
   let url = null
   const space = process.env.CONTENTFUL_OBJECTS_SPACE
   const secret = process.env.CONTENTFUL_OBJECTS_KEY_CHECKOUT
@@ -31,7 +31,7 @@ async function checkContentful (req) {
   const contentType = {
     main: 'objectsObject',
     variation: 'objectsObjectVariation',
-    shipping: 'shippingRates'
+    delivery: 'shippingRates'
   }
 
   // Check objects
@@ -105,70 +105,80 @@ async function checkContentful (req) {
     }
   }
 
-  // Check shipping
-  url =
-    'https://' +
-    process.env.CONTENTFUL_HOST +
-    '/spaces/' +
-    space +
-    '/environments/' +
-    environment +
-    '/entries/'
+  // Check delivery
+  if (delivery.type !== 'pickup') {
+    url =
+      'https://' +
+      process.env.CONTENTFUL_HOST +
+      '/spaces/' +
+      space +
+      '/environments/' +
+      environment +
+      '/entries/'
 
-  const response = await ky(url, {
-    searchParams: {
-      access_token: secret,
-      content_type: contentType.shipping,
-      select: 'fields.rates',
-      'fields.year[eq]': '2020',
-      locale: locale
+    const response = await ky(url, {
+      searchParams: {
+        access_token: secret,
+        content_type: contentType.delivery,
+        select: 'fields.rates',
+        'fields.year[eq]': '2020',
+        locale: locale
+      }
+    }).json()
+
+    if (!response.hasOwnProperty('items')) {
+      return {
+        success: false,
+        error: '[checkout - checkContentful] Content error'
+      }
     }
-  }).json()
 
-  if (!response.hasOwnProperty('items')) {
-    return {
-      success: false,
-      error: '[checkout - checkContentful] Content error'
-    }
-  }
-
-  const rates = response.items[0].fields.rates
-  let countryCode = _.findIndex(rates, r => {
-    return _.includes(r.countryCode, shipping.countryCode)
-  })
-  countryCode = countryCode !== -1 ? countryCode : rates.length - 1
-  if (rates[countryCode].rates[shipping.methodIndex].freeForTotal) {
+    const rates = response.items[0].fields.rates
+    let countryCode = _.findIndex(rates, r => {
+      return _.includes(r.countryCode, delivery.countryCode)
+    })
+    countryCode = countryCode !== -1 ? countryCode : rates.length - 1
     if (
-      pay.subtotal >=
-        rates[countryCode].rates[shipping.methodIndex].freeForTotal &&
-      !(pay.shipping === 0)
+      Number.isFinite(
+        rates[countryCode].rates[delivery.methodIndex].freeForTotal
+      )
     ) {
-      corrections.shipping = 0
-    }
-  } else {
-    if (
-      !(pay.shipping === rates[countryCode].rates[shipping.methodIndex].price)
-    ) {
-      corrections.shipping =
-        rates[countryCode].rates[shipping.methodIndex].price
+      if (
+        amounts.subtotal <
+          rates[countryCode].rates[delivery.methodIndex].freeForTotal &&
+        amounts.delivery === 0
+      ) {
+        corrections.delivery =
+          rates[countryCode].rates[delivery.methodIndex].price
+      }
+    } else {
+      if (
+        !(
+          amounts.delivery ===
+          rates[countryCode].rates[delivery.methodIndex].price
+        )
+      ) {
+        corrections.delivery =
+          rates[countryCode].rates[delivery.methodIndex].price
+      }
     }
   }
 
   // Check subtotal
   const subtotal = _.sumBy(objects, o => {
-    if (o.priceSale) {
-      return o.priceSale
-    } else {
-      return o.priceOriginal
-    }
+    // if (o.priceSale) {
+    //   return o.priceSale
+    // } else {
+    return o.priceOriginal
+    // }
   })
-  if (!(subtotal === pay.subtotal)) {
+  if (!(subtotal === amounts.subtotal)) {
     corrections.subtotal = subtotal
   }
 
   if (
     corrections.objects.length ||
-    corrections.shipping ||
+    corrections.delivery ||
     corrections.subtotal
   ) {
     return { success: false, corrections: corrections }
@@ -183,64 +193,66 @@ async function stripeSession (req) {
     let line_items = []
     const locale = req.body.data.locale
     for (const object of req.body.data.objects) {
-      const name =
-        object.type === 'main'
-          ? object.name[locale]
-          : object.name[locale] +
-            ' | ' +
-            _.join(
-              [
-                object.variant ? object.variant[locale] : undefined,
-                object.colour ? object.colour[locale] : undefined,
-                object.size ? object.size[locale] : undefined
-              ],
-              ', '
-            )
-      // (object.variant ? object.variant[locale] : "N/A") +
-      // ", " +
-      // (object.colour ? object.colour[locale] : "N/A") +
-      // ", " +
-      // (object.size ? object.size[locale] : "N/A")
       const images = [`https:${object.image.fluid.src}`]
       line_items.push({
-        name: name,
-        amount: object.priceSale
-          ? object.priceSale * 10 * 10
-          : object.priceOriginal * 10 * 10,
-        currency: 'eur',
-        quantity: 1,
-        images: images
+        price_data: {
+          currency: 'eur',
+          unit_amount: object.priceSale
+            ? object.priceSale * 10 * 10
+            : object.priceOriginal * 10 * 10,
+          product_data: {
+            name:
+              object.name[locale] +
+              ((object.variant || object.colour || object.size) &&
+                `(${_.join(
+                  [
+                    object.variant && object.variant[locale],
+                    object.colour && object.colour[locale],
+                    object.size && object.size[locale]
+                  ].filter(f => f),
+                  ', '
+                )})`),
+            ...((object.variant || object.colour || object.size) && {
+              description: _.join(
+                [
+                  object.variant && object.variant[locale],
+                  object.colour && object.colour[locale],
+                  object.size && object.size[locale]
+                ].filter(f => f)
+              )
+            }),
+            images: images
+          }
+        },
+        quantity: 1
       })
     }
-    // Don't skip pick-up in shop
-    req.body.data.pay.shipping &&
+    req.body.data.amounts.delivery > 0 &&
       line_items.push({
-        name: `Shipping to ${req.body.data.shipping.countryA2}`,
-        amount: req.body.data.pay.shipping * 10 * 10,
-        currency: 'eur',
+        price_data: {
+          currency: 'eur',
+          unit_amount: req.body.data.amounts.delivery * 10 * 10,
+          product_data: {
+            name: req.body.data.delivery.name
+          }
+        },
         quantity: 1
       })
 
-    // req.body.data.pay.shipping?
     sessionData = {
       payment_method_types: ['ideal', 'card'],
+      mode: 'payment',
       line_items: line_items,
-      shipping_address_collection: {
-        allowed_countries: [req.body.data.shipping.countryA2]
-      },
+      ...(req.body.data.delivery.type === 'shipment' && {
+        shipping_address_collection: {
+          allowed_countries: [req.body.data.delivery.countryA2]
+        }
+      }),
       locale: req.body.data.locale,
       success_url:
         req.body.data.url.success + '?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: req.body.data.url.cancel
     }
-    // : (sessionData = {
-    //     payment_method_types: ['ideal', 'card'],
-    //     line_items: line_items,
-    //     locale: req.body.data.locale,
-    //     success_url:
-    //       req.body.data.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-    //     cancel_url: req.body.data.url.cancel
-    //   })
   } catch (err) {
     return { success: false, error: err }
   }
