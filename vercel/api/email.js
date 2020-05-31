@@ -1,5 +1,5 @@
 import microCors from "micro-cors"
-const cors = microCors({ origin: process.env.REQUEST_ORIGIN })
+const cors = microCors({ origin: '*' })
 const sgMail = require("@sendgrid/mail")
 const ky = require("ky-universal")
 
