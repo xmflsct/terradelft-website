@@ -43,7 +43,7 @@ const DynamicArtist = ({ data }) => (
       </Col>
     </Row>
     <h2>Objects by {data.artist.artist}</h2>
-    <GridObjectDefault nodes={data.objects.nodes} />
+    <GridObjectDefault nodes={data.artist.object} />
   </Layout>
 )
 
@@ -66,14 +66,7 @@ export const query = graphql`
       biography {
         json
       }
-    }
-    objects: allContentfulObject(
-      filter: {
-        artist: { contentful_id: { eq: $contentful_id } }
-        node_locale: { eq: $locale }
-      }
-    ) {
-      nodes {
+      object {
         ...ObjectDefault
       }
     }

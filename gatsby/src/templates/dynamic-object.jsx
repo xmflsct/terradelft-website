@@ -85,8 +85,8 @@ const DynamicObject = ({ pageContext, data }) => {
         ...(object.dimensionHeight && { height: object.dimensionHeight }),
         ...(object.dimensionWidth && { width: object.dimensionWidth }),
         // Below for related objects
-        ...(data.objects.nodes.length > 0 && {
-          isRelatedTo: data.objects.nodes.map(node => ({
+        ...(object.artist.object.length > 0 && {
+          isRelatedTo: object.artist.object.map(node => ({
             '@context': 'http://schema.org',
             '@type': 'VisualArtwork',
             url:
@@ -229,13 +229,15 @@ const DynamicObject = ({ pageContext, data }) => {
             </div>
           </Col>
         </Row>
-        {data.objects.nodes.length > 0 && (
+        {object.artist.object.length > 0 && (
           <div className='related-objects'>
             <h2>
               {t('dynamic-object:related')}
               {object.artist.artist}
             </h2>
-            <GridObjectDefault nodes={data.objects.nodes} />
+            <GridObjectDefault
+              nodes={object.artist.object.filter(f => f.name != object.name)}
+            />
           </div>
         )}
       </ContextVariationImage.Provider>
@@ -251,7 +253,6 @@ DynamicObject.propTypes = {
 export const query = graphql`
   query dynamicObject(
     $contentful_id: String
-    $artist_contentful_id: String
     $locale: String
     $imagesFromRichText: [String!]!
   ) {
@@ -290,6 +291,9 @@ export const query = graphql`
         }
         artist {
           artist
+          object {
+            ...ObjectDefault
+          }
         }
         kunstKoop
         priceOriginal
@@ -348,17 +352,6 @@ export const query = graphql`
     ) {
       nodes {
         ...ImageFromRichText
-      }
-    }
-    objects: allContentfulObject(
-      filter: {
-        contentful_id: { ne: $contentful_id }
-        artist: { contentful_id: { eq: $artist_contentful_id } }
-        node_locale: { eq: $locale }
-      }
-    ) {
-      nodes {
-        ...ObjectDefault
       }
     }
   }
