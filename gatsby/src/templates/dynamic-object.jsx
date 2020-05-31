@@ -68,7 +68,8 @@ const DynamicObject = ({ pageContext, data }) => {
             ? object.fields.variations_price_range.highest
             : object.priceSale
             ? object.priceSale
-            : object.priceOriginal
+            : object.priceOriginal,
+          priceCurrency: 'EUR'
         },
         subjectOf: {
           '@type': 'CreativeWork',
@@ -104,7 +105,8 @@ const DynamicObject = ({ pageContext, data }) => {
                 ? node.fields.variations_price_range.highest
                 : node.priceSale
                 ? node.priceSale
-                : node.priceOriginal
+                : node.priceOriginal,
+              priceCurrency: 'EUR'
             },
             subjectOf: {
               '@type': 'CreativeWork',

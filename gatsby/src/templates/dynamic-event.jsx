@@ -42,6 +42,7 @@ const DynamicEvent = ({ pageContext, data }) => {
             data.event.location.map(location => ({
               '@type': 'Place',
               name: location.name,
+              address: location.address,
               latitude: location.location.lat,
               longitude: location.location.lon
             }))
@@ -103,6 +104,7 @@ export const query = graphql`
           lat
           lon
         }
+        address
       }
       image {
         fluid(maxWidth: 280, quality: 85) {
