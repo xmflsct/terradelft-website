@@ -18,6 +18,15 @@ const DynamicArtist = ({ data }) => (
       data.artist.biography &&
       documentToPlainTextString(data.artist.biography.json).substring(0, 199)
     }
+    SEOschema={{
+      '@context': 'http://schema.org',
+      '@type': 'Person',
+      name: data.artist.artist,
+      image: data.artist.image.fluid.src,
+      description:
+        data.artist.biography &&
+        documentToPlainTextString(data.artist.biography.json)
+    }}
     containerName='dynamic-artist'
   >
     <h1>{data.artist.artist}</h1>
@@ -34,7 +43,7 @@ const DynamicArtist = ({ data }) => (
       </Col>
     </Row>
     <h2>Objects by {data.artist.artist}</h2>
-    <GridObjectDefault nodes={data.objects.nodes} />
+    <GridObjectDefault nodes={data.artist.object} />
   </Layout>
 )
 
@@ -57,14 +66,7 @@ export const query = graphql`
       biography {
         json
       }
-    }
-    objects: allContentfulObject(
-      filter: {
-        artist: { contentful_id: { eq: $contentful_id } }
-        node_locale: { eq: $locale }
-      }
-    ) {
-      nodes {
+      object {
         ...ObjectDefault
       }
     }

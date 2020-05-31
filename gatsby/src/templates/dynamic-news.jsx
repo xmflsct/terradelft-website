@@ -23,6 +23,15 @@ const DynamicNews = ({ pageContext, data }) => {
         data.news.content &&
         documentToPlainTextString(data.news.content.json).substring(0, 199)
       }
+      SEOschema={{
+        '@context': 'http://schema.org',
+        '@type': 'Article',
+        name: data.news.title,
+        datePublished: data.news.date,
+        ...(data.news.image && { image: data.news.image.fluid.src }),
+        articleBody:
+          data.news.content && documentToPlainTextString(data.news.content.json)
+      }}
       containerName='dynamic-event'
     >
       <h1>{data.news.title}</h1>

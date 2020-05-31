@@ -101,36 +101,21 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const templateDynamicArtist = path.resolve('src/templates/dynamic-artist.jsx')
   const artists = await graphql(`
     {
-      artists: allContentfulObjectArtist(
-        filter: { node_locale: { eq: "${locales[0]}" } }
-      ) {
-        nodes {
-          contentful_id
-          artist
+      artists: allContentfulObjectArtist {
+        group(field: contentful_id) {
+          nodes {
+            contentful_id
+            node_locale
+            artist
+          }
         }
       }
     }
   `)
   await Promise.all(
-    artists.data.artists.nodes.map(async node => {
-      const artist = await graphql(
-        `
-          query($contentful_id: String!) {
-            artist: allContentfulObjectArtist(
-              filter: { contentful_id: { eq: $contentful_id } }
-            ) {
-              nodes {
-                contentful_id
-                node_locale
-                artist
-              }
-            }
-          }
-        `,
-        { contentful_id: node.contentful_id }
-      )
+    artists.data.artists.group.map(async ({ nodes }) => {
       await buildDynamicPages(
-        artist.data.artist.nodes,
+        nodes,
         // eslint-disable-next-line camelcase
         (locale, { artist, contentful_id }, i18n) => ({
           path: i18n.t('constant:slug.dynamic.artist.slug', {
@@ -150,43 +135,27 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const templateDynamicObject = path.resolve('src/templates/dynamic-object.jsx')
   const objects = await graphql(`
     {
-      objects: allContentfulObject(
-        filter: { node_locale: { eq: "${locales[0]}" } }
-      ) {
-        nodes {
-          contentful_id
-          name
+      objects: allContentfulObject {
+        group(field: contentful_id) {
+          nodes {
+            contentful_id
+            node_locale
+            name
+            artist {
+              artist
+            }
+            description {
+              json
+            }
+          }
         }
       }
     }
   `)
   await Promise.all(
-    objects.data.objects.nodes.map(async node => {
-      const object = await graphql(
-        `
-          query($contentful_id: String!) {
-            object: allContentfulObject(
-              filter: { contentful_id: { eq: $contentful_id } }
-            ) {
-              nodes {
-                contentful_id
-                node_locale
-                name
-                artist {
-                  contentful_id
-                  artist
-                }
-                description {
-                  json
-                }
-              }
-            }
-          }
-        `,
-        { contentful_id: node.contentful_id }
-      )
+    objects.data.objects.group.map(async ({ nodes }) => {
       await buildDynamicPages(
-        object.data.object.nodes,
+        nodes,
         // eslint-disable-next-line camelcase
         (locale, { artist, name, contentful_id, description }, i18n) => ({
           path: i18n.t('constant:slug.dynamic.object.slug', {
@@ -198,7 +167,6 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           component: templateDynamicObject,
           context: {
             contentful_id: contentful_id,
-            artist_contentful_id: artist.contentful_id,
             locale: locale,
             imagesFromRichText: description
               ? getImagesFromRichText(description.json.content)
@@ -220,58 +188,44 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       const objectsAttributes = await graphql(`
       {
         objectsAttributes: allContentfulObject${attribute[0].toUpperCase() +
-          attribute.slice(1)}(
-          filter: { node_locale: { eq: "${locales[0]}" } }
-        ) {
-          nodes {
-            contentful_id
-            ${attribute}
+          attribute.slice(1)} {
+          group(field: contentful_id) {
+            nodes {
+              contentful_id
+              node_locale
+              ${attribute}
+            }
           }
         }
       }
     `)
       await Promise.all(
-        objectsAttributes.data.objectsAttributes.nodes.map(async node => {
-          const objectsAttribute = await graphql(
-            `
-              query($contentful_id: String!) {
-                objectsAttribute: allContentfulObject${attribute[0].toUpperCase() +
-                  attribute.slice(1)}(
-                  filter: { contentful_id: { eq: $contentful_id } }
-                ) {
-                  nodes {
-                    contentful_id
-                    node_locale
-                    ${attribute}
+        objectsAttributes.data.objectsAttributes.group.map(
+          async ({ nodes }) => {
+            nodes.length > 0 &&
+              (await buildDynamicPages(
+                nodes,
+                (locale, node, i18n) => ({
+                  path: i18n.t('constant:slug.dynamic.objects-attribute.slug', {
+                    locale: locale,
+                    type: i18n.t(`component-object:${attribute}`),
+                    value: node[attribute].toString()
+                  }),
+                  component: templateDynamicObjectsAttribute,
+                  context: {
+                    byYear: attribute === 'year',
+                    byTechnique: attribute === 'technique',
+                    byMaterial: attribute === 'material',
+                    attributeValue: node[attribute].toString(),
+                    contentful_id: node.contentful_id,
+                    locale: locale
                   }
-                }
-              }
-            `,
-            { contentful_id: node.contentful_id }
-          )
-          objectsAttribute.data.objectsAttribute.nodes.length > 0 &&
-            (await buildDynamicPages(
-              objectsAttribute.data.objectsAttribute.nodes,
-              (locale, node, i18n) => ({
-                path: i18n.t('constant:slug.dynamic.objects-attribute.slug', {
-                  locale: locale,
-                  type: i18n.t(`component-object:${attribute}`),
-                  value: node[attribute].toString()
                 }),
-                component: templateDynamicObjectsAttribute,
-                context: {
-                  byYear: attribute === 'year',
-                  byTechnique: attribute === 'technique',
-                  byMaterial: attribute === 'material',
-                  attributeValue: node[attribute].toString(),
-                  contentful_id: node.contentful_id,
-                  locale: locale
-                }
-              }),
-              ['constant', 'dynamic-object', 'component-object'],
-              createPage
-            ))
-        })
+                ['constant', 'dynamic-object', 'component-object'],
+                createPage
+              ))
+          }
+        )
       )
     })
   )
@@ -279,39 +233,25 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   /* Biuld Event Page */
   const templateDynamicEvent = path.resolve('src/templates/dynamic-event.jsx')
   const events = await graphql(`
-      {
-        events: allContentfulEvent(
-          filter: { node_locale: { eq: "${locales[0]}" } }
-        ) {
+    {
+      events: allContentfulEvent {
+        group(field: contentful_id) {
           nodes {
             contentful_id
+            node_locale
+            name
+            description {
+              json
+            }
           }
         }
       }
-    `)
+    }
+  `)
   await Promise.all(
-    events.data.events.nodes.map(async node => {
-      const event = await graphql(
-        `
-          query($contentful_id: String!) {
-            event: allContentfulEvent(
-              filter: { contentful_id: { eq: $contentful_id } }
-            ) {
-              nodes {
-                contentful_id
-                node_locale
-                name
-                description {
-                  json
-                }
-              }
-            }
-          }
-        `,
-        { contentful_id: node.contentful_id }
-      )
+    events.data.events.group.map(async ({ nodes }) => {
       await buildDynamicPages(
-        event.data.event.nodes,
+        nodes,
         // eslint-disable-next-line camelcase
         (locale, { name, contentful_id, description }, i18n) => ({
           path: i18n.t('constant:slug.dynamic.event.slug', {
@@ -337,39 +277,25 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   /* Biuld News Page */
   const templateDynamicNews = path.resolve('src/templates/dynamic-news.jsx')
   const news = await graphql(`
-        {
-          news: allContentfulNews(
-            filter: { node_locale: { eq: "${locales[0]}" } }
-          ) {
-            nodes {
-              contentful_id
+    {
+      news: allContentfulNews {
+        group(field: contentful_id) {
+          nodes {
+            contentful_id
+            node_locale
+            title
+            content {
+              json
             }
           }
         }
-      `)
+      }
+    }
+  `)
   await Promise.all(
-    news.data.news.nodes.map(async node => {
-      const newsPiece = await graphql(
-        `
-          query($contentful_id: String!) {
-            newsPiece: allContentfulNews(
-              filter: { contentful_id: { eq: $contentful_id } }
-            ) {
-              nodes {
-                contentful_id
-                node_locale
-                title
-                content {
-                  json
-                }
-              }
-            }
-          }
-        `,
-        { contentful_id: node.contentful_id }
-      )
+    news.data.news.group.map(async ({ nodes }) => {
       await buildDynamicPages(
-        newsPiece.data.newsPiece.nodes,
+        nodes,
         // eslint-disable-next-line camelcase
         (locale, { title, contentful_id, content }, i18n) => {
           if (!title) {

@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet'
 import { useTranslation } from 'react-i18next'
 import { useStaticQuery, graphql } from 'gatsby'
 
-function Seo ({ title, keywords, description }) {
+function Seo ({ title, keywords, description, schema }) {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -18,40 +18,25 @@ function Seo ({ title, keywords, description }) {
   )
   const { i18n } = useTranslation()
   return (
-    <Helmet
-      htmlAttributes={{ lang: i18n.language }}
-      title={title}
-      titleTemplate={`%s | ${site.siteMetadata.title}`}
-      meta={[
-        {
-          name: 'description',
-          content: description
-        },
-        {
-          property: 'og:title',
-          content: title
-        },
-        {
-          property: 'og:description',
-          content: description
-        },
-        {
-          property: 'og:type',
-          content: 'website'
-        },
-        {
-          name: 'keywords',
-          content: keywords.join(', ')
-        }
-      ]}
-    />
+    <Helmet title={title} titleTemplate={`%s | ${site.siteMetadata.title}`}>
+      <html lang={i18n.language} />
+      <meta name='description' content={description} />
+      {keywords && <meta name='keywords' content={keywords.join(', ')} />}
+      <meta name='og:title' content={title} />
+      <meta name='og:description' content={description} />
+      <meta name='og:type' content='website' />
+      {schema && (
+        <script type='application/ld+json'>{JSON.stringify(schema)}</script>
+      )}
+    </Helmet>
   )
 }
 
 Seo.propTypes = {
   title: PropTypes.string.isRequired,
   keywords: PropTypes.arrayOf(PropTypes.string),
-  description: PropTypes.string
+  description: PropTypes.string.isRequired,
+  schema: PropTypes.object
 }
 
 export default Seo

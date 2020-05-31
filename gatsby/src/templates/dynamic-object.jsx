@@ -54,6 +54,76 @@ const DynamicObject = ({ pageContext, data }) => {
         object.description &&
         documentToPlainTextString(object.description.json).substring(0, 199)
       }
+      SEOschema={{
+        '@context': 'http://schema.org',
+        '@type': 'Product',
+        name: object.name,
+        image: object.images[0].fluidZoom.src,
+        description:
+          object.description &&
+          documentToPlainTextString(object.description.json),
+        offers: {
+          '@type': 'Offer',
+          price: object.variations
+            ? object.fields.variations_price_range.highest
+            : object.priceSale
+            ? object.priceSale
+            : object.priceOriginal,
+          priceCurrency: 'EUR'
+        },
+        subjectOf: {
+          '@type': 'CreativeWork',
+          abstract:
+            object.description &&
+            documentToPlainTextString(object.description.json),
+          author: { '@type': 'Person', name: object.artist.artist },
+          ...(object.material && {
+            material: object.material.map(material => material.material)
+          })
+        },
+        ...(object.dimensionDepth && { depth: object.dimensionDepth }),
+        ...(object.dimensionHeight && { height: object.dimensionHeight }),
+        ...(object.dimensionWidth && { width: object.dimensionWidth }),
+        // Below for related objects
+        ...(object.artist.object.length > 0 && {
+          isRelatedTo: object.artist.object.map(node => ({
+            '@context': 'http://schema.org',
+            '@type': 'VisualArtwork',
+            url:
+              'https://terra-delft.nl' +
+              t('constant:slug.dynamic.object.slug', {
+                locale: node.node_locale,
+                artist: node.artist.artist,
+                object: node.name,
+                id: node.contentful_id
+              }),
+            name: node.name,
+            image: node.images[0].fluid.src,
+            offers: {
+              '@type': 'Offer',
+              price: node.fields.variations_price_range
+                ? node.fields.variations_price_range.highest
+                : node.priceSale
+                ? node.priceSale
+                : node.priceOriginal,
+              priceCurrency: 'EUR'
+            },
+            subjectOf: {
+              '@type': 'CreativeWork',
+              abstract:
+                node.description &&
+                documentToPlainTextString(node.description.json),
+              author: { '@type': 'Person', name: node.artist.artist },
+              ...(node.material && {
+                material: node.material.map(material => material.material)
+              })
+            },
+            ...(node.dimensionDepth && { depth: node.dimensionDepth }),
+            ...(node.dimensionHeight && { height: node.dimensionHeight }),
+            ...(node.dimensionWidth && { height: node.dimensionWidth })
+          }))
+        })
+      }}
       containerName='dynamic-object'
       useMiniBag
     >
@@ -159,13 +229,15 @@ const DynamicObject = ({ pageContext, data }) => {
             </div>
           </Col>
         </Row>
-        {data.objects.nodes.length > 0 && (
+        {object.artist.object.length > 0 && (
           <div className='related-objects'>
             <h2>
               {t('dynamic-object:related')}
               {object.artist.artist}
             </h2>
-            <GridObjectDefault nodes={data.objects.nodes} />
+            <GridObjectDefault
+              nodes={object.artist.object.filter(f => f.name != object.name)}
+            />
           </div>
         )}
       </ContextVariationImage.Provider>
@@ -181,7 +253,6 @@ DynamicObject.propTypes = {
 export const query = graphql`
   query dynamicObject(
     $contentful_id: String
-    $artist_contentful_id: String
     $locale: String
     $imagesFromRichText: [String!]!
   ) {
@@ -220,6 +291,9 @@ export const query = graphql`
         }
         artist {
           artist
+          object {
+            ...ObjectDefault
+          }
         }
         kunstKoop
         priceOriginal
@@ -278,17 +352,6 @@ export const query = graphql`
     ) {
       nodes {
         ...ImageFromRichText
-      }
-    }
-    objects: allContentfulObject(
-      filter: {
-        contentful_id: { ne: $contentful_id }
-        artist: { contentful_id: { eq: $artist_contentful_id } }
-        node_locale: { eq: $locale }
-      }
-    ) {
-      nodes {
-        ...ObjectDefault
       }
     }
   }

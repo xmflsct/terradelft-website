@@ -19,6 +19,36 @@ const DynamicEvent = ({ pageContext, data }) => {
         data.event.description &&
         documentToPlainTextString(data.event.description.json).substring(0, 199)
       }
+      SEOschema={{
+        '@context': 'http://schema.org',
+        '@type': 'Event',
+        name: data.event.name,
+        startDate: data.event.datetimeStart,
+        endDate: data.event.datetimeEnd,
+        ...(data.event.image && { image: data.event.image.fluid.src }),
+        description:
+          data.event.description &&
+          documentToPlainTextString(data.event.description.json),
+        ...(data.event.organizer && {
+          organizer: [
+            data.event.organizer.map(organizer => ({
+              '@type': 'Organization',
+              name: organizer.name
+            }))
+          ]
+        }),
+        ...(data.event.location && {
+          location: [
+            data.event.location.map(location => ({
+              '@type': 'Place',
+              name: location.name,
+              address: location.address,
+              latitude: location.location.lat,
+              longitude: location.location.lon
+            }))
+          ]
+        })
+      }}
       containerName='dynamic-event'
     >
       <h1>{data.event.name}</h1>
@@ -70,6 +100,11 @@ export const query = graphql`
       location {
         contentful_id
         name
+        location {
+          lat
+          lon
+        }
+        address
       }
       image {
         fluid(maxWidth: 280, quality: 85) {
