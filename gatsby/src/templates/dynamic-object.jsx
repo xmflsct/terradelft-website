@@ -54,6 +54,74 @@ const DynamicObject = ({ pageContext, data }) => {
         object.description &&
         documentToPlainTextString(object.description.json).substring(0, 199)
       }
+      SEOschema={{
+        '@context': 'http://schema.org',
+        '@type': 'Product',
+        name: object.name,
+        image: object.images[0].fluidZoom.src,
+        description:
+          object.description &&
+          documentToPlainTextString(object.description.json),
+        offers: {
+          '@type': 'Offer',
+          price: object.variations
+            ? object.fields.variations_price_range.highest
+            : object.priceSale
+            ? object.priceSale
+            : object.priceOriginal
+        },
+        subjectOf: {
+          '@type': 'CreativeWork',
+          abstract:
+            object.description &&
+            documentToPlainTextString(object.description.json),
+          author: { '@type': 'Person', name: object.artist.artist },
+          ...(object.material && {
+            material: object.material.map(material => material.material)
+          })
+        },
+        ...(object.dimensionDepth && { depth: object.dimensionDepth }),
+        ...(object.dimensionHeight && { height: object.dimensionHeight }),
+        ...(object.dimensionWidth && { width: object.dimensionWidth }),
+        // Below for related objects
+        ...(data.objects.nodes.length > 0 && {
+          isRelatedTo: data.objects.nodes.map(node => ({
+            '@context': 'http://schema.org',
+            '@type': 'VisualArtwork',
+            url:
+              'https://terra-delft.nl' +
+              t('constant:slug.dynamic.object.slug', {
+                locale: node.node_locale,
+                artist: node.artist.artist,
+                object: node.name,
+                id: node.contentful_id
+              }),
+            name: node.name,
+            image: node.images[0].fluid.src,
+            offers: {
+              '@type': 'Offer',
+              price: node.fields.variations_price_range
+                ? node.fields.variations_price_range.highest
+                : node.priceSale
+                ? node.priceSale
+                : node.priceOriginal
+            },
+            subjectOf: {
+              '@type': 'CreativeWork',
+              abstract:
+                node.description &&
+                documentToPlainTextString(node.description.json),
+              author: { '@type': 'Person', name: node.artist.artist },
+              ...(node.material && {
+                material: node.material.map(material => material.material)
+              })
+            },
+            ...(node.dimensionDepth && { depth: node.dimensionDepth }),
+            ...(node.dimensionHeight && { height: node.dimensionHeight }),
+            ...(node.dimensionWidth && { height: node.dimensionWidth })
+          }))
+        })
+      }}
       containerName='dynamic-object'
       useMiniBag
     >

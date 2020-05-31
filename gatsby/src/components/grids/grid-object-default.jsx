@@ -50,6 +50,13 @@ GridObjectDefault.propTypes = {
 
 export const query = graphql`
   fragment ObjectDefault on ContentfulObject {
+    fields {
+      object_sale
+      variations_price_range {
+        highest
+        lowest
+      }
+    }
     contentful_id
     node_locale
     name
@@ -61,8 +68,10 @@ export const query = graphql`
         ...GatsbyContentfulFluid_withWebp_noBase64
       }
     }
-    fields {
-      object_sale
+    priceOriginal
+    priceSale
+    material {
+      material
     }
   }
 `

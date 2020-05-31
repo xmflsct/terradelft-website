@@ -18,6 +18,7 @@ const Layout = ({
   SEOtitle,
   SEOkeywords,
   SEOdescription,
+  SEOschema,
   containerName,
   useMiniBag
 }) => {
@@ -36,6 +37,7 @@ const Layout = ({
         title={SEOtitle}
         keywords={SEOkeywords}
         description={SEOdescription}
+        schema={SEOschema}
       />
       <ContextMobileMenu.Provider value={{ stateMobileMenu, dispatch }}>
         <Header useMiniBag={useMiniBag} />
@@ -51,6 +53,7 @@ Layout.propTypes = {
   SEOtitle: PropTypes.string.isRequired,
   SEOkeywords: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   SEOdescription: PropTypes.string.isRequired,
+  SEOschema: PropTypes.object,
   containerName: PropTypes.string.isRequired,
   useMiniBag: PropTypes.bool
 }

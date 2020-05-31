@@ -5,9 +5,7 @@ require('dotenv').config({
 module.exports = {
   siteMetadata: {
     title: 'Terra Delft',
-    author: '@xmflsct',
-    siteUrl: 'https://terra-delft.nl',
-    image: './static/favicon.png'
+    siteUrl: 'https://terra-delft.nl'
   },
   plugins: [
     {

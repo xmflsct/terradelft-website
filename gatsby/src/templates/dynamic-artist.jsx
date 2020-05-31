@@ -18,6 +18,15 @@ const DynamicArtist = ({ data }) => (
       data.artist.biography &&
       documentToPlainTextString(data.artist.biography.json).substring(0, 199)
     }
+    SEOschema={{
+      '@context': 'http://schema.org',
+      '@type': 'Person',
+      name: data.artist.artist,
+      image: data.artist.image.fluid.src,
+      description:
+        data.artist.biography &&
+        documentToPlainTextString(data.artist.biography.json)
+    }}
     containerName='dynamic-artist'
   >
     <h1>{data.artist.artist}</h1>
