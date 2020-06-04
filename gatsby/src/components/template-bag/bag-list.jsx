@@ -26,7 +26,7 @@ const BagList = () => {
         state.bag.objects.map((_, i) => {
           const object = state.bag.objects[i]
           return (
-            <Row key={i} className='list-object mb-3'>
+            <Row key={object.contentful_id} className='list-object mb-3'>
               <Col xs={12} sm={5} className='object-image'>
                 <Img fluid={object.image.fluid} backgroundColor='#e8e8e8' />
               </Col>
