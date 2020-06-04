@@ -169,7 +169,7 @@ async function checkContentful (req) {
     // if (o.priceSale) {
     //   return o.priceSale
     // } else {
-    return o.priceOriginal
+    return o.priceOriginal * o.amount
     // }
   })
   if (!(subtotal === amounts.subtotal)) {
@@ -224,7 +224,7 @@ async function stripeSession (req) {
             images: images
           }
         },
-        quantity: 1
+        quantity: object.amount
       })
     }
     req.body.data.amounts.delivery > 0 &&

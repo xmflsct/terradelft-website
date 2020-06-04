@@ -44,12 +44,14 @@ function initBagCheckout ({ i18n, state, countries }) {
         // if (d.priceSale) {
         //   return d.priceSale
         // } else {
-        return d.priceOriginal
+        return d.priceOriginal * d.amount
         // }
       }),
       discount: sumBy(state.bag.objects, d => {
         if (d.priceSale) {
-          return (d.priceOriginal * 10 - d.priceSale * 10) / 10
+          return (
+            (d.priceOriginal * d.amount * 10 - d.priceSale * d.amount * 10) / 10
+          )
         }
       }),
       delivery: 0

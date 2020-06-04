@@ -13,6 +13,8 @@
   "dimensionHeight": "Hoogte",
   "dimensionDiameter": "Diameter",
   "dimensionDepth": "Diepte",
+  "amount": "Aantal",
+  "price": "Prijs",
   "on-sale": "Aanbieding",
   "out-of-stock": "Verkocht"
 }

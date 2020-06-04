@@ -13,6 +13,8 @@
   "dimensionHeight": "Height",
   "dimensionDiameter": "Diameter",
   "dimensionDepth": "Depth",
+  "amount": "Amount",
+  "price": "Price",
   "on-sale": "Sale",
   "out-of-stock": "Sold"
 }

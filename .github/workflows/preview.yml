@@ -48,7 +48,7 @@ jobs:
         run: yarn build
         env:
           CI: true
-          CONTENTFUL_HOST: preview.contentful.com
+          CONTENTFUL_HOST: cdn.contentful.com
           CONTENTFUL_OBJECTS_SPACE: ${{ secrets.CONTENTFUL_OBJECTS_SPACE }}
           CONTENTFUL_OBJECTS_ENVIRONMENT: master
           CONTENTFUL_OBJECTS_KEY_GATSBY: ${{ secrets.CONTENTFUL_OBJECTS_KEY_GATSBY_PREVIEW }}

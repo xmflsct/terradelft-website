@@ -2,7 +2,7 @@ import store from 'store2'
 import { findIndex } from 'lodash'
 
 const storageKey = 'terradelft_bag'
-const storageVer = '200514'
+const storageVer = '200603'
 let storageData = store(storageKey)
 
 export function add (data) {
@@ -25,10 +25,11 @@ export function update (data) {
     data.contentful_id
   ])
   if (objectIndex !== -1) {
-    for (const key in data) {
-      key !== 'contentful_id' &&
-        (storageData.objects[objectIndex][key] = data[key])
-    }
+    // for (const key in data) {
+    //   key !== 'contentful_id' &&
+    //     (storageData.objects[objectIndex][key] = data[key])
+    // }
+    storageData.objects[objectIndex] = data
   }
   store(storageKey, storageData)
   return storageData

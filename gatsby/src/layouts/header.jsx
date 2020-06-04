@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGlobeEurope, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { useStaticQuery, graphql, Link } from 'gatsby'
 import Img from 'gatsby-image'
+import { sumBy } from 'lodash'
 
 import Navigation from './navigation'
 import { ContextLanguage } from './contexts/language'
@@ -149,16 +150,19 @@ const Header = ({ useMiniBag }) => {
             })}
           >
             <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
-            <span className='small-block'>{` (${state.bag.objects.length})`}</span>
+            <span className='small-block'>
+              {` (${sumBy(state.bag.objects, d => d.amount)})`}
+            </span>
           </Link>
         </Col>
       </Row>
       <CSSTransition
         in={miniBag}
-        onEnter={() =>
+        onEnter={() => {
           setTimeout(() => {
             setMiniBag(false)
-          }, 3000)}
+          }, 3000)
+        }}
         timeout={350}
         className='mini-bag'
         classNames='mini-bag'
