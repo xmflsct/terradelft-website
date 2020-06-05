@@ -48,6 +48,7 @@ jobs:
         working-directory: ./gatsby
         run: yarn install --pure-lockfile
       - name: -- Step 6 -- Build static site
+        timeout-minutes: 30
         working-directory: ./gatsby
         run: yarn build
         env:
