@@ -13,6 +13,18 @@
         "label": "Onderwerpen",
         "value": "Vraag over {{name}}"
       },
+      "sku": {
+        "label": "SKU"
+      },
+      "variant": {
+        "label": "Variant"
+      },
+      "colour": {
+        "label": "Kleur"
+      },
+      "size": {
+        "label": "Afmeting"
+      },
       "name": {
         "label": "Naam"
       },
