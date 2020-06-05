@@ -6,7 +6,7 @@ import ReactSelect from 'react-select'
 import { difference, findIndex, intersection, reduce, union } from 'lodash'
 
 import { ContextBag } from '../../layouts/contexts/bag'
-import { ContextVariationImage } from '../../templates/dynamic-object'
+import { ContextVariation } from '../../templates/dynamic-object'
 import { Price } from '../utils/price'
 import * as formatNumber from '../utils/format-number'
 
@@ -132,7 +132,7 @@ function reducer (options, action) {
 const SellVariations = ({ object }) => {
   const { t, i18n } = useTranslation(['dynamic-object', 'component-object'])
   const { dispatch } = useContext(ContextBag)
-  const { updateImage } = useContext(ContextVariationImage)
+  const { updateVariation } = useContext(ContextVariation)
   const variationsMain =
     object.nodes[
       findIndex(object.nodes, node => node.node_locale === i18n.language)
@@ -147,13 +147,25 @@ const SellVariations = ({ object }) => {
 
   useEffect(() => {
     if (options.selectedSKUs.length === 1) {
-      updateImage({
+      updateVariation({
         type: 'update',
-        image: sellVariations[options.selectedSKUs[0]].image
+        data: {
+          image: sellVariations[options.selectedSKUs[0]].image,
+          sku: sellVariations[options.selectedSKUs[0]].sku,
+          ...(sellVariations[options.selectedSKUs[0]].variant && {
+            variant: sellVariations[options.selectedSKUs[0]].variant.variant
+          }),
+          ...(sellVariations[options.selectedSKUs[0]].colour && {
+            colour: sellVariations[options.selectedSKUs[0]].colour.colour
+          }),
+          ...(sellVariations[options.selectedSKUs[0]].size && {
+            size: sellVariations[options.selectedSKUs[0]].size.size
+          })
+        }
       })
       setAmount({ value: 1, label: 1 })
     } else {
-      updateImage({
+      updateVariation({
         type: 'clear'
       })
       setAmount(undefined)

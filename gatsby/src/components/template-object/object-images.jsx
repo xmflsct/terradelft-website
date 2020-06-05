@@ -5,7 +5,7 @@ import Img from 'gatsby-image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import { ContextVariationImage } from '../../templates/dynamic-object'
+import { ContextVariation } from '../../templates/dynamic-object'
 
 const MouseZoom = ({ image }) => {
   const containerPosition = useRef(null)
@@ -51,7 +51,7 @@ const MouseZoom = ({ image }) => {
 }
 
 const ObjectImages = ({ images }) => {
-  const { state } = useContext(ContextVariationImage)
+  const { stateVariation } = useContext(ContextVariation)
   const [zoomIndex, setZoomIndex] = useState(0)
   const handleCarousel = (selectedIndex, e) => {
     setZoomIndex(selectedIndex);
@@ -61,39 +61,39 @@ const ObjectImages = ({ images }) => {
   return (
     <>
       <Row>
-        {state.image && (
+        {stateVariation.image && (
           <Col
             xs={12}
             className='mb-3'
             onClick={() => {
               setZoomIndex(0)
-              setZoom({ show: true, fluid: state.image.fluidZoom })
+              setZoom({ show: true, fluid: stateVariation.image.fluidZoom })
             }}
           >
-            <Img fluid={state.image.fluid} />
-            <MouseZoom image={state.image.mouseFluid.src} />
+            <Img fluid={stateVariation.image.fluid} />
+            <MouseZoom image={stateVariation.image.mouseFluid.src} />
           </Col>
         )}
         {images.map((image, index) => (
           <Col
-            xs={!state.image && index === 0 ? 12 : 4}
+            xs={!stateVariation.image && index === 0 ? 12 : 4}
             className='mb-3'
             style={{ overflow: 'hidden' }}
             key={index}
             onClick={() => {
-              setZoomIndex(state.image ? index + 1 : index)
+              setZoomIndex(stateVariation.image ? index + 1 : index)
               setZoom({ show: true, fluid: image.fluidZoom })
             }}
           >
             <Img
               fluid={
-                !state.image && index === 0 ? image.fluid : image.fluidThumbnail
+                !stateVariation.image && index === 0 ? image.fluid : image.fluidThumbnail
               }
               backgroundColor='#e8e8e8'
             />
             <MouseZoom
               image={
-                !state.image && index === 0
+                !stateVariation.image && index === 0
                   ? image.mouseFluid.src
                   : image.mouseFluidThumbnail.src
               }
@@ -109,12 +109,12 @@ const ObjectImages = ({ images }) => {
         aria-labelledby='Image'
       >
         <Carousel activeIndex={zoomIndex} onSelect={handleCarousel} interval={null}>
-          {state.image && (
+          {stateVariation.image && (
             <Carousel.Item>
-              <Img fluid={state.image.fluidZoom} />
-              {state.image.description && (
+              <Img fluid={stateVariation.image.fluidZoom} />
+              {stateVariation.image.description && (
                 <Carousel.Caption>
-                  <p>{state.image.description}</p>
+                  <p>{stateVariation.image.description}</p>
                 </Carousel.Caption>
               )}
             </Carousel.Item>

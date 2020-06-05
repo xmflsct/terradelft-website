@@ -15,20 +15,18 @@ import ObjectAttribute from '../components/template-object/object-attribute'
 import ObjectContact from '../components/template-object/object-contact'
 import { mediaFromRichText } from '../components/utils/media-from-rich-text'
 
-function reducer (state, action) {
+function reducer (_, action) {
   switch (action.type) {
     case 'update':
-      return { ...state, image: action.image }
+      return { ...action.data }
     case 'clear':
-      return { ...state, image: null }
+      return {}
     default:
       throw new Error()
   }
 }
-const initContextVariationImage = { image: null }
-export const ContextVariationImage = React.createContext(
-  initContextVariationImage
-)
+const initContextVariation = { image: null, sku: null }
+export const ContextVariation = React.createContext(initContextVariation)
 
 const DynamicObject = ({ pageContext, data }) => {
   const { t } = useTranslation([
@@ -36,7 +34,10 @@ const DynamicObject = ({ pageContext, data }) => {
     'component-object',
     'constant'
   ])
-  const [state, updateImage] = useReducer(reducer, initContextVariationImage)
+  const [stateVariation, updateVariation] = useReducer(
+    reducer,
+    initContextVariation
+  )
   const [toggleContact, setToggleContact] = useState(false)
   const object =
     data.object.nodes[
@@ -127,7 +128,7 @@ const DynamicObject = ({ pageContext, data }) => {
       containerName='dynamic-object'
       useMiniBag
     >
-      <ContextVariationImage.Provider value={{ state, updateImage }}>
+      <ContextVariation.Provider value={{ stateVariation, updateVariation }}>
         <Row>
           <Col lg={6} className='object-images'>
             <ObjectImages images={object.images} />
@@ -240,7 +241,7 @@ const DynamicObject = ({ pageContext, data }) => {
             />
           </div>
         )}
-      </ContextVariationImage.Provider>
+      </ContextVariation.Provider>
     </Layout>
   )
 }
@@ -299,6 +300,7 @@ export const query = graphql`
         priceOriginal
         priceSale
         sellOnline
+        sku
         stock
         variations {
           contentful_id

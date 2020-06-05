@@ -12,6 +12,18 @@
         "label": "Subject",
         "value": "Inquiry about {{name}}"
       },
+      "sku": {
+        "label": "SKU"
+      },
+      "variant": {
+        "label": "Variant"
+      },
+      "colour": {
+        "label": "Colour"
+      },
+      "size": {
+        "label": "Size"
+      },
       "name": {
         "label": "Name"
       },

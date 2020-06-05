@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types'
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { Button, Form, Spinner } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import ReCAPTCHA from 'react-google-recaptcha'
 
+import { ContextVariation } from '../../templates/dynamic-object'
 import { sendEmail } from '../../api/email'
 
 const ObjectContact = ({ object }) => {
   const { t, i18n } = useTranslation('dynamic-object')
+  const { stateVariation } = useContext(ContextVariation)
   const recaptchaRef = useRef()
   const { formState, handleSubmit, register } = useForm()
   const [sendStatus, setSendStatus] = useState(false)
@@ -23,7 +25,15 @@ const ObjectContact = ({ object }) => {
       }),
       html: `<p><a href="${window.location.href}" target="_blank">${
         window.location.href
-      }</></p>
+      }</a></p>
+      ${stateVariation.sku ?
+        `<p>${t('contact.form.sku.label')}: ${stateVariation.sku}</p>` : ''}
+      ${stateVariation.variant ?
+        `<p>${t('contact.form.variant.label')}: ${stateVariation.variant}</p>` : ''}
+      ${stateVariation.colour ?
+        `<p>${t('contact.form.colour.label')}: ${stateVariation.colour}</p>` : ''}
+      ${stateVariation.size ?
+        `<p>${t('contact.form.size.label')}: ${stateVariation.size}</p>` : ''}
       <p>${t('contact.form.name.label')}: ${d.name}</p>
       <p>${t('contact.form.email.label')}: ${d.email}</p>
       <p>${t('contact.form.question.label')}:<br />${d.question.replace(
