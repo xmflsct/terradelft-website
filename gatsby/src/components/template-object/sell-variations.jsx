@@ -189,7 +189,7 @@ const SellVariations = ({ object }) => {
       // Locale dependent
       name: {}
     }
-    for (const type in options) {
+    for (const type in options.types) {
       data[type] = {}
     }
 
@@ -197,7 +197,7 @@ const SellVariations = ({ object }) => {
       const l = node.node_locale
       const v = node.variations[options.selectedSKUs[0]]
       data.name[l] = node.name
-      for (const type in options) {
+      for (const type in options.types) {
         data[type][l] = v[type]
           ? v[type][type]
           : t('component-object:option-default')
