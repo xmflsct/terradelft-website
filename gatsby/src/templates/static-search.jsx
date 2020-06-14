@@ -11,8 +11,8 @@ const StaticSearch = ({ pageContext }) => {
   const { t } = useTranslation('static-search')
   const params = queryString.parse(useLocation().search)
   const variableCSE = {
-    nl: process.env.GATSBY_GOOGLE_CSE_CX_NL,
-    en: process.env.GATSBY_GOOGLE_CSE_CX_EN
+    nl: '011045817426374110910:o5c3nbazgrk',
+    en: '011045817426374110910:ih4lkw2wwrq'
   }
 
   return (
@@ -20,7 +20,9 @@ const StaticSearch = ({ pageContext }) => {
       <Helmet>
         <script
           async
-          src={`https://cse.google.com/cse.js?cx=${variableCSE[pageContext.locale]}`}
+          src={`https://cse.google.com/cse.js?cx=${
+            variableCSE[pageContext.locale]
+          }`}
         />
       </Helmet>
       <Layout
