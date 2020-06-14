@@ -1,0 +1,7 @@
+{
+  "slug": "$t(constant:slug.static.search.slug)",
+  "name": "$t(constant:slug.static.search.name)",
+  "content": {
+    "heading": "Search result of {{query}}"
+  }
+}

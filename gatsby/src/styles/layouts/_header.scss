@@ -68,6 +68,31 @@ header {
       }
     }
   }
+  .search-box {
+    .input-group {
+      .input-group-prepend {
+        .input-group-text {
+          background: none;
+          border: none;
+          border-radius: 0;
+          border-bottom: 1px solid $color-primary-light;
+          padding-left: 0;
+          padding-right: 0;
+
+          button {
+            padding: 0;
+            color: $color-primary-light;
+          }
+        }
+      }
+      input {
+        height: calc(1.5em + 0.75rem + 3px);
+        border: none;
+        border-radius: 0;
+        border-bottom: 1px solid $color-primary-light;
+      }
+    }
+  }
   .mini-bag {
     position: absolute;
     top: -3rem;
@@ -116,6 +141,9 @@ header {
 
     .header-logo {
       transition: opacity 0.35s ease-in-out;
+    }
+    .search-box {
+      display: none;
     }
   }
 }

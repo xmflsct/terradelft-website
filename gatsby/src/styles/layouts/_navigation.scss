@@ -1,6 +1,9 @@
 header > nav {
   margin-top: $font-size-base;
 
+  .nav-search {
+    display: none;
+  }
   .nav-item {
     text-align: center;
 
@@ -54,6 +57,33 @@ header > nav {
     background: $color-background-light;
     transition: left 0.3s ease-out;
 
+    .nav-search {
+      display: block;
+
+      .input-group {
+        .input-group-prepend {
+          .input-group-text {
+            background: none;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid $color-primary-light;
+            padding-left: 0;
+            padding-right: 0;
+
+            button {
+              padding: 0;
+              color: $color-primary-light;
+            }
+          }
+        }
+        input {
+          height: calc(1.5em + 0.75rem + 3px);
+          border: none;
+          border-radius: 0;
+          border-bottom: 1px solid $color-primary-light;
+        }
+      }
+    }
     .nav-item {
       margin-bottom: 1rem;
     }

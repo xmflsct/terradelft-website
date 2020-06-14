@@ -1,15 +1,14 @@
-import microCors from "micro-cors"
+import microCors from 'micro-cors'
 const cors = microCors({ origin: '*' })
-const sgMail = require("@sendgrid/mail")
-const ky = require("ky-universal")
+const sgMail = require('@sendgrid/mail')
 
-const recaptcha = require("./utils/_recaptcha")
-const terraEmail = "shop@terra-delft.nl"
+const recaptcha = require('./utils/_recaptcha')
+const terraEmail = process.env.SENDGRID_EMAIL
 
-async function sendGrid(req) {
+async function sendGrid (req) {
   sgMail.setApiKey(process.env.SENDGRID_KEY)
   // Filter out yahoo email address, see https://sendgrid.com/blog/yahoo-dmarc-update/
-  const email = req.body.data.email.includes("@yahoo")
+  const email = req.body.data.email.includes('@yahoo')
     ? terraEmail
     : req.body.data.email
   let message = {
@@ -17,7 +16,7 @@ async function sendGrid(req) {
     to: terraEmail,
     // replyTo: req.body.data.email,
     subject: `${req.body.data.type} - ${req.body.data.subject}`,
-    html: req.body.data.html,
+    html: req.body.data.html
   }
   let response = {}
   await sgMail.send(message, (error, result) => {
@@ -32,31 +31,31 @@ async function sendGrid(req) {
   return response
 }
 
-async function email(req, res) {
-  if (req.method === "OPTIONS") {
+async function email (req, res) {
+  if (req.method === 'OPTIONS') {
     return res.status(200).end()
   }
 
-  console.log("[app] Start")
+  console.log('[app] Start')
   if (!req.body || Object.keys(req.body).length === 0) {
-    res.status(400).send({ error: "[app] Content error" })
+    res.status(400).send({ error: '[app] Content error' })
     return
   }
 
-  console.log("[email - checkRecaptcha] Start")
+  console.log('[email - checkRecaptcha] Start')
   const resRecaptcha = await recaptcha.check(
     process.env.RECAPTCHA_PRIVATE_KEY,
     req
   )
-  console.log("[email - checkRecaptcha] End")
+  console.log('[email - checkRecaptcha] End')
   if (!resRecaptcha.success) {
     res.status(400).send({ error: resRecaptcha.error })
     return
   }
 
-  console.log("[email - mailSession] Start")
+  console.log('[email - mailSession] Start')
   const resNodemailer = await sendGrid(req)
-  console.log("[email - mailSession] End")
+  console.log('[email - mailSession] End')
   if (resNodemailer.success) {
     res.status(200).send({ success: true })
   } else {
@@ -64,7 +63,7 @@ async function email(req, res) {
     return
   }
 
-  console.log("[app] End")
+  console.log('[app] End')
 }
 
 export default cors(email)

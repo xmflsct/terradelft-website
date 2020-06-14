@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Col, Row } from 'react-bootstrap'
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGlobeEurope, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
+import {
+  faGlobeEurope,
+  faSearch,
+  faShoppingBag
+} from '@fortawesome/free-solid-svg-icons'
 import { useStaticQuery, graphql, Link } from 'gatsby'
 import Img from 'gatsby-image'
 import { sumBy } from 'lodash'
@@ -91,7 +95,7 @@ const Header = ({ useMiniBag }) => {
             </span>
           </Button>
         </Col>
-        <Col xs={4} sm={6} md={9} className='header-logo'>
+        <Col xs={4} sm={6} md={8} className='header-logo'>
           <Link
             to={t('constant:slug.static.index.slug', { locale: i18n.language })}
           >
@@ -111,49 +115,74 @@ const Header = ({ useMiniBag }) => {
             />
           </Link>
         </Col>
-        <Col
-          xs={{ span: 2, offset: 0 }}
-          sm={{ span: 1, offset: 1 }}
-          md={{ span: 2, offset: 0 }}
-          className='language-switcher'
-        >
-          {alternateLinks &&
-            alternateLinks.map(
-              link =>
-                link.locale !== i18n.language && (
-                  <Link to={link.path} hrefLang={link.locale} key={link.locale}>
-                    <FontAwesomeIcon
-                      icon={faGlobeEurope}
-                      size='sm'
-                      fixedWidth
-                    />
-                    <span className='long small-block'>
-                      {' ' +
-                        t(
-                          `constant:header.language-switcher.long.${link.locale}`
-                        )}
-                    </span>
-                    <span className='short small-block'>
-                      {' ' +
-                        t(
-                          `constant:header.language-switcher.short.${link.locale}`
-                        )}
-                    </span>
-                  </Link>
-                )
-            )}
-        </Col>
-        <Col xs={2} sm={1} md={1} className='bag-link'>
-          <Link
-            to={t('constant:slug.static.bag.slug', {
-              locale: i18n.language
-            })}
-          >
-            <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
-            <span className='small-block'>
-              {` (${sumBy(state.bag.objects, d => d.amount)})`}
-            </span>
-          </Link>
+        <Col xs={4} sm={3} md={4}>
+          <Row className='justify-content-end h-100'>
+            <Col xs={5} sm={4} md={6} className='language-switcher'>
+              {alternateLinks &&
+                alternateLinks.map(
+                  link =>
+                    link.locale !== i18n.language && (
+                      <Link
+                        to={link.path}
+                        hrefLang={link.locale}
+                        key={link.locale}
+                      >
+                        <FontAwesomeIcon
+                          icon={faGlobeEurope}
+                          size='sm'
+                          fixedWidth
+                        />
+                        <span className='long small-block'>
+                          {' ' +
+                            t(
+                              `constant:header.language-switcher.long.${link.locale}`
+                            )}
+                        </span>
+                        <span className='short small-block'>
+                          {' ' +
+                            t(
+                              `constant:header.language-switcher.short.${link.locale}`
+                            )}
+                        </span>
+                      </Link>
+                    )
+                )}
+            </Col>
+            <Col xs={5} sm={4} md={3} className='bag-link'>
+              <Link
+                to={t('constant:slug.static.bag.slug', {
+                  locale: i18n.language
+                })}
+              >
+                <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
+                <span className='small-block'>
+                  {` (${sumBy(state.bag.objects, d => d.amount)})`}
+                </span>
+              </Link>
+            </Col>
+            <Col md={8} className='search-box align-self-end'>
+              <Form
+                action={`${typeof window !== 'undefined' &&
+                  window.location.origin}${t(
+                  'constant:slug.static.search.slug',
+                  {
+                    locale: i18n.language
+                  }
+                )}`}
+              >
+                <InputGroup>
+                  <InputGroup.Prepend>
+                    <InputGroup.Text>
+                      <Button variant='link' type='submit'>
+                        <FontAwesomeIcon icon={faSearch} size='sm' fixedWidth />
+                      </Button>
+                    </InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <Form.Control name='query' placeholder='Search' />
+                </InputGroup>
+              </Form>
+            </Col>
+          </Row>
         </Col>
       </Row>
       <CSSTransition
