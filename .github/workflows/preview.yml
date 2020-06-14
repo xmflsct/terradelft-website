@@ -24,8 +24,8 @@ jobs:
         with:
           path: ./gatsby/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('./gatsby/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
+          # restore-keys: |
+          #   ${{ runner.os }}-node-modules-
       # - name: -- Step 4 -- Cache Gatsby
       #   uses: actions/cache@v2
       #   with:
