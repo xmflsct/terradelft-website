@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { CSSTransition } from 'react-transition-group'
-import { useLocation } from '@reach/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faGlobeEurope,
@@ -68,7 +67,6 @@ const Header = ({ useMiniBag }) => {
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
   const [miniBag, setMiniBag] = useState(false)
   const firstMount = useRef(true)
-  const location = useLocation()
 
   useEffect(() => {
     if (useMiniBag) {
@@ -164,7 +162,8 @@ const Header = ({ useMiniBag }) => {
             </Col>
             <Col md={8} className='search-box align-self-end'>
               <Form
-                action={`${location.origin}${t(
+                action={`${typeof window !== 'undefined' &&
+                  window.location.origin}${t(
                   'constant:slug.static.search.slug',
                   {
                     locale: i18n.language
