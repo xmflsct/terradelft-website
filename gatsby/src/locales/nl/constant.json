@@ -1,8 +1,14 @@
 {
   "header": {
     "language-switcher": {
-      "long": { "nl": "Nederlands", "en": "English" },
-      "short": { "nl": "NL", "en": "EN" }
+      "long": {
+        "nl": "Nederlands",
+        "en": "English"
+      },
+      "short": {
+        "nl": "NL",
+        "en": "EN"
+      }
     },
     "mini-bag": "Toegevoegd aan winkelmandje"
   },
@@ -99,6 +105,10 @@
       "reach-terra": {
         "slug": "/{{locale}}/bezoek-terra",
         "name": "Bezoek Terra"
+      },
+      "search": {
+        "slug": "/{{locale}}/zoeken",
+        "name": "Zoekresultaat"
       },
       "thank-you": {
         "slug": "/{{locale}}/bedankt",

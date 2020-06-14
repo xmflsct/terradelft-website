@@ -1,8 +1,14 @@
 {
   "header": {
     "language-switcher": {
-      "long": { "nl": "Nederlands", "en": "English" },
-      "short": { "nl": "NL", "en": "EN" }
+      "long": {
+        "nl": "Nederlands",
+        "en": "English"
+      },
+      "short": {
+        "nl": "NL",
+        "en": "EN"
+      }
     },
     "mini-bag": "Added to shopping bag"
   },
@@ -99,6 +105,10 @@
       "reach-terra": {
         "slug": "/{{locale}}/reach-terra",
         "name": "Reach Terra"
+      },
+      "search": {
+        "slug": "/{{locale}}/search",
+        "name": "Search result"
       },
       "thank-you": {
         "slug": "/{{locale}}/thank-you",

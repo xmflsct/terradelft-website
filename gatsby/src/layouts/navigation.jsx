@@ -1,7 +1,10 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'gatsby'
-import { Col, Dropdown, Row } from 'react-bootstrap'
+import { Button, Col, Dropdown, Form, InputGroup, Row } from 'react-bootstrap'
+import { useLocation } from '@reach/router'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 const activeChildren = (location, children) => {
   if (location.pathname.includes(children)) {
@@ -14,14 +17,36 @@ const Navigation = () => {
 
   return (
     <Row as='nav'>
+      <Col md={12} className='nav-search mb-3'>
+        <Form
+          action={`${useLocation().origin}${t(
+            'constant:slug.static.search.slug',
+            {
+              locale: i18n.language
+            }
+          )}`}
+        >
+          <InputGroup>
+            <InputGroup.Prepend>
+              <InputGroup.Text>
+                <Button variant='link' type='submit'>
+                  <FontAwesomeIcon icon={faSearch} size='sm' fixedWidth />
+                </Button>
+              </InputGroup.Text>
+            </InputGroup.Prepend>
+            <Form.Control name='query' placeholder='Search' />
+          </InputGroup>
+        </Form>
+      </Col>
       <Col xs={12} sm={4} md={2} className='nav-item'>
         <Link
           to={t('constant:navigation.1.slug', { locale: i18n.language })}
-          getProps={({ location }) =>
+          getProps={({ location }) => {
             activeChildren(
               location,
               t('constant:navigation.1.children', { locale: i18n.language })
-          )}
+            )
+          }}
         >
           {t('constant:navigation.1.name')}
         </Link>
@@ -40,11 +65,12 @@ const Navigation = () => {
           to={t('constant:navigation.3.slug', {
             locale: i18n.language
           })}
-          getProps={({ location }) =>
+          getProps={({ location }) => {
             activeChildren(
               location,
               t('constant:navigation.3.children', { locale: i18n.language })
-          )}
+            )
+          }}
         >
           {t('constant:navigation.3.name')}
         </Link>
@@ -52,11 +78,12 @@ const Navigation = () => {
       <Col xs={12} sm={4} md={2} className='nav-item'>
         <Link
           to={t('constant:navigation.4.slug', { locale: i18n.language })}
-          getProps={({ location }) =>
+          getProps={({ location }) => {
             activeChildren(
               location,
               t('constant:navigation.4.children', { locale: i18n.language })
-          )}
+            )
+          }}
         >
           {t('constant:navigation.4.name')}
         </Link>
@@ -66,11 +93,12 @@ const Navigation = () => {
           to={t('constant:navigation.5.slug', {
             locale: i18n.language
           })}
-          getProps={({ location }) =>
+          getProps={({ location }) => {
             activeChildren(
               location,
               t('constant:navigation.5.children', { locale: i18n.language })
-          )}
+            )
+          }}
         >
           {t('constant:navigation.5.name')}
         </Link>

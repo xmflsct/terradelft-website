@@ -17,6 +17,7 @@ function Seo ({ title, keywords, description, schema }) {
     `
   )
   const { i18n } = useTranslation()
+
   return (
     <Helmet title={title} titleTemplate={`%s | ${site.siteMetadata.title}`}>
       <html lang={i18n.language} />
