@@ -66,6 +66,7 @@ const Header = ({ useMiniBag }) => {
   const { state } = useContext(ContextBag)
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
   const [miniBag, setMiniBag] = useState(false)
+  const [locationOrigin, setLocationOrigin] = useState()
   const firstMount = useRef(true)
 
   useEffect(() => {
@@ -77,6 +78,10 @@ const Header = ({ useMiniBag }) => {
       }
     }
   }, [state, useMiniBag])
+
+  useEffect(() => {
+    setLocationOrigin(window.location.origin)
+  }, [])
 
   return (
     <header>
@@ -162,8 +167,7 @@ const Header = ({ useMiniBag }) => {
             </Col>
             <Col md={8} className='search-box align-self-end'>
               <Form
-                action={`${typeof window !== 'undefined' &&
-                  window.location.origin}${t(
+                action={`${locationOrigin}${t(
                   'constant:slug.static.search.slug',
                   {
                     locale: i18n.language
