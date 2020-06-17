@@ -52,7 +52,14 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-sitemap',
       options: {
-        exclude: ['/en/thank-you', '/nl/bedankt']
+        exclude: [
+          '/en/search',
+          '/nl/zoeken',
+          '/en/shopping-bag',
+          '/nl/winkelmandje',
+          '/en/thank-you',
+          '/nl/bedankt'
+        ]
       }
     },
     {

@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'gatsby'
 import { Button, Col, Dropdown, Form, InputGroup, Row } from 'react-bootstrap'
-import { useLocation } from '@reach/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
@@ -14,17 +13,19 @@ const activeChildren = (location, children) => {
 
 const Navigation = () => {
   const { t, i18n } = useTranslation(['constant'])
+  const [locationOrigin, setLocationOrigin] = useState()
+
+  useEffect(() => {
+    setLocationOrigin(window.location.origin)
+  }, [])
 
   return (
     <Row as='nav'>
       <Col md={12} className='nav-search mb-3'>
         <Form
-          action={`${useLocation().origin}${t(
-            'constant:slug.static.search.slug',
-            {
-              locale: i18n.language
-            }
-          )}`}
+          action={`${locationOrigin}${t('constant:slug.static.search.slug', {
+            locale: i18n.language
+          })}`}
         >
           <InputGroup>
             <InputGroup.Prepend>
