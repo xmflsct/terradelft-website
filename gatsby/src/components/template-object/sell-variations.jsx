@@ -258,31 +258,31 @@ const SellVariations = ({ object }) => {
               />
             </div>
           </InputGroup>
-          {options.selectedSKUs.length === 1 ? (
-            Price(
-              i18n.language,
-              sellVariations[options.selectedSKUs[0]].priceSale *
-                (amount ? amount.value : 1),
-              sellVariations[options.selectedSKUs[0]].priceOriginal *
-                (amount ? amount.value : 1)
-            )
-          ) : (
-            <p className='object-price'>
-              {variationsMain.fields.variations_price_range.lowest ===
-              variationsMain.fields.variations_price_range.highest
-                ? formatNumber.currency(
-                    variationsMain.fields.variations_price_range.highest,
-                    i18n.language
-                  )
-                : `${formatNumber.currency(
-                    variationsMain.fields.variations_price_range.lowest,
-                    i18n.language
-                  )} - ${formatNumber.currency(
-                    variationsMain.fields.variations_price_range.highest,
-                    i18n.language
-                  )}`}
-            </p>
-          )}
+          {options.selectedSKUs.length === 1
+            ? Price(
+                i18n.language,
+                sellVariations[options.selectedSKUs[0]].priceSale *
+                  (amount ? amount.value : 1),
+                sellVariations[options.selectedSKUs[0]].priceOriginal *
+                  (amount ? amount.value : 1)
+              )
+            : variationsMain.fields.variations_price_range.highest !== 0 && (
+              <p className='object-price'>
+                {variationsMain.fields.variations_price_range.lowest ===
+                  variationsMain.fields.variations_price_range.highest
+                    ? formatNumber.currency(
+                        variationsMain.fields.variations_price_range.highest,
+                        i18n.language
+                      )
+                    : `${formatNumber.currency(
+                        variationsMain.fields.variations_price_range.lowest,
+                        i18n.language
+                      )} - ${formatNumber.currency(
+                        variationsMain.fields.variations_price_range.highest,
+                        i18n.language
+                      )}`}
+              </p>
+              )}
           <Button
             variant='primary'
             type='submit'
