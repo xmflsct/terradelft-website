@@ -42,8 +42,12 @@ const DynamicArtist = ({ data }) => (
           )}
       </Col>
     </Row>
-    <h2>Objects by {data.artist.artist}</h2>
-    <GridObjectDefault nodes={data.artist.object} />
+    {data.artist.object && (
+      <>
+        <h2>Objects by {data.artist.artist}</h2>
+        <GridObjectDefault nodes={data.artist.object} />
+      </>
+    )}
   </Layout>
 )
 
