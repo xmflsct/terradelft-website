@@ -5,6 +5,7 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 
 import Seo from './seo'
 import Header from './header'
+import Announcement from './announcement'
 import Footer from './footer'
 
 function reducer (stateMobileMenu) {
@@ -42,6 +43,7 @@ const Layout = ({
       <ContextMobileMenu.Provider value={{ stateMobileMenu, dispatch }}>
         <Header useMiniBag={useMiniBag} />
       </ContextMobileMenu.Provider>
+      <Announcement />
       <main className={containerName}>{children}</main>
       <Footer />
     </Container>
