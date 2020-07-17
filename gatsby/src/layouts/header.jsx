@@ -21,7 +21,7 @@ import { ContextMobileMenu } from './layout'
 import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
 
 const Header = ({ useMiniBag }) => {
-  const image = useStaticQuery(graphql`
+  const data = useStaticQuery(graphql`
     {
       logoLargeNL: file(
         relativePath: { eq: "layout-header/logo-large-nl.png" }
@@ -106,14 +106,14 @@ const Header = ({ useMiniBag }) => {
           >
             <Img
               fluid={
-                image[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp
+                data[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp
                   .fluid
               }
               className='logo-large'
             />
             <Img
               fixed={
-                image[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp
+                data[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp
                   .fixed
               }
               className='logo-small'

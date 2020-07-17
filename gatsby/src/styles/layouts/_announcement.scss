@@ -1,0 +1,11 @@
+.announcement > .col {
+  border: 1px dashed $color-secondary-light;
+  padding: 1rem;
+
+  h4 {
+    font-weight: $font-weight-bold;
+  }
+  p {
+    margin: 0;
+  }
+}
