@@ -9,7 +9,7 @@
     "@sendgrid/mail": "^7.2.0",
     "ky": "^0.20.0",
     "ky-universal": "^0.7.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "micro-cors": "^0.1.1",
     "stripe": "^8.63.0"
   },
