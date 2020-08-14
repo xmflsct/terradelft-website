@@ -15,28 +15,30 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
   return (
     <Row className='component-grid grid-object-default'>
       {nodes.map(node => {
-        return (
-          <Col key={node.contentful_id} xs={4} md={2} className='grid-item'>
-            <Link
-              to={t('constant:slug.dynamic.object.slug', {
-                locale: node.node_locale,
-                artist: node.artist.artist,
-                object: node.name,
-                id: node.contentful_id
-              })}
-            >
-              <div className='item-image'>
-                <Img fluid={node.images[0].fluid} backgroundColor='#e8e8e8' />
-                {node.fields.object_sale && (
-                  <span className='item-sale'>
-                    {t('component-object:on-sale')}
-                  </span>
-                )}
-              </div>
-              <p className='item-name'>{node.name}</p>
-            </Link>
-          </Col>
-        )
+        if (node.artist) {
+          return (
+            <Col key={node.contentful_id} xs={4} md={2} className='grid-item'>
+              <Link
+                to={t('constant:slug.dynamic.object.slug', {
+                  locale: node.node_locale,
+                  artist: node.artist.artist,
+                  object: node.name,
+                  id: node.contentful_id
+                })}
+              >
+                <div className='item-image'>
+                  <Img fluid={node.images[0].fluid} backgroundColor='#e8e8e8' />
+                  {node.fields.object_sale && (
+                    <span className='item-sale'>
+                      {t('component-object:on-sale')}
+                    </span>
+                  )}
+                </div>
+                <p className='item-name'>{node.name}</p>
+              </Link>
+            </Col>
+          )
+        }
       })}
     </Row>
   )

@@ -155,28 +155,30 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   `)
   await Promise.all(
     objects.data.objects.group.map(async ({ nodes }) => {
-      await buildDynamicPages(
-        nodes,
-        // eslint-disable-next-line camelcase
-        (locale, { artist, name, contentful_id, description }, i18n) => ({
-          path: i18n.t('constant:slug.dynamic.object.slug', {
-            locale: locale,
-            artist: artist.artist,
-            object: name,
-            id: contentful_id
+      if (nodes[0].artist) {
+        await buildDynamicPages(
+          nodes,
+          // eslint-disable-next-line camelcase
+          (locale, { artist, name, contentful_id, description }, i18n) => ({
+            path: i18n.t('constant:slug.dynamic.object.slug', {
+              locale: locale,
+              artist: artist.artist,
+              object: name,
+              id: contentful_id
+            }),
+            component: templateDynamicObject,
+            context: {
+              contentful_id: contentful_id,
+              locale: locale,
+              imagesFromRichText: description
+                ? getImagesFromRichText(description.json.content)
+                : []
+            }
           }),
-          component: templateDynamicObject,
-          context: {
-            contentful_id: contentful_id,
-            locale: locale,
-            imagesFromRichText: description
-              ? getImagesFromRichText(description.json.content)
-              : []
-          }
-        }),
-        ['constant', 'dynamic-object', 'component-object'],
-        createPage
-      )
+          ['constant', 'dynamic-object', 'component-object'],
+          createPage
+        )
+      }
     })
   )
 
