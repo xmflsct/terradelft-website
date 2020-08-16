@@ -52,8 +52,9 @@ const DynamicObject = ({ pageContext, data }) => {
       SEOtitle={object.name}
       SEOkeywords={[object.name, 'Terra Delft']}
       SEOdescription={
-        object.description &&
-        documentToPlainTextString(object.description.json).substring(0, 199)
+        object.description
+          ? documentToPlainTextString(object.description.json).substring(0, 199)
+          : object.name
       }
       SEOschema={{
         '@context': 'http://schema.org',
@@ -289,6 +290,7 @@ export const query = graphql`
           mouseFluidThumbnail: fluid(maxWidth: 396, quality: 70) {
             ...GatsbyContentfulFluid_withWebp_noBase64
           }
+          description
         }
         artist {
           artist
@@ -328,6 +330,7 @@ export const query = graphql`
             mouseFluid: fluid(maxWidth: 1280, quality: 80) {
               ...GatsbyContentfulFluid_withWebp_noBase64
             }
+            description
           }
         }
         year {
