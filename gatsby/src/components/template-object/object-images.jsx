@@ -54,8 +54,8 @@ const ObjectImages = ({ images }) => {
   const { stateVariation } = useContext(ContextVariation)
   const [zoomIndex, setZoomIndex] = useState(0)
   const handleCarousel = (selectedIndex, e) => {
-    setZoomIndex(selectedIndex);
-  };
+    setZoomIndex(selectedIndex)
+  }
   const [zoom, setZoom] = useState({ show: false })
 
   return (
@@ -87,7 +87,9 @@ const ObjectImages = ({ images }) => {
           >
             <Img
               fluid={
-                !stateVariation.image && index === 0 ? image.fluid : image.fluidThumbnail
+                !stateVariation.image && index === 0
+                  ? image.fluid
+                  : image.fluidThumbnail
               }
               backgroundColor='#e8e8e8'
             />
@@ -108,15 +110,17 @@ const ObjectImages = ({ images }) => {
         onHide={() => setZoom({ show: false })}
         aria-labelledby='Image'
       >
-        <Carousel activeIndex={zoomIndex} onSelect={handleCarousel} interval={null}>
+        <Carousel
+          activeIndex={zoomIndex}
+          onSelect={handleCarousel}
+          interval={null}
+        >
           {stateVariation.image && (
             <Carousel.Item>
               <Img fluid={stateVariation.image.fluidZoom} />
-              {stateVariation.image.description && (
-                <Carousel.Caption>
-                  <p>{stateVariation.image.description}</p>
-                </Carousel.Caption>
-              )}
+              <Carousel.Caption>
+                <p className='h3'>{stateVariation.image.description}</p>
+              </Carousel.Caption>
             </Carousel.Item>
           )}
           {images.map((image, index) => (
@@ -127,11 +131,9 @@ const ObjectImages = ({ images }) => {
                 style={{ maxHeight: '100vh' }}
                 imgStyle={{ objectFit: 'contain' }}
               />
-              {image.description && (
-                <Carousel.Caption>
-                  <p>{image.description}</p>
-                </Carousel.Caption>
-              )}
+              <Carousel.Caption>
+                <p className='h3'>{image.description}</p>
+              </Carousel.Caption>
             </Carousel.Item>
           ))}
         </Carousel>
