@@ -185,6 +185,7 @@ const SellVariations = ({ object }) => {
       priceOriginal: sellVariations[options.selectedSKUs[0]].priceOriginal,
       priceSale: sellVariations[options.selectedSKUs[0]].priceSale,
       stock: sellVariations[options.selectedSKUs[0]].stock,
+      sku: sellVariations[options.selectedSKUs[0]].sku,
       amount: amount.value,
       // Locale dependent
       name: {}

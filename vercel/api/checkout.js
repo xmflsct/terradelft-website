@@ -202,24 +202,27 @@ async function stripeSession (req) {
             : object.priceOriginal * 10 * 10,
           product_data: {
             name:
+              (object.sku ? `${object.sku} - ` : '') +
               object.name[locale] +
               ((object.variant || object.colour || object.size) &&
-                `(${_.join(
+                ` (${_.join(
                   [
                     object.variant && object.variant[locale],
                     object.colour && object.colour[locale],
                     object.size && object.size[locale]
                   ].filter(f => f),
                   ', '
-                )})`),
+                )})`) +
+              ` - ${object.artist}`,
             ...((object.variant || object.colour || object.size) && {
-              description: _.join(
+              description: `${_.join(
                 [
                   object.variant && object.variant[locale],
                   object.colour && object.colour[locale],
                   object.size && object.size[locale]
-                ].filter(f => f)
-              )
+                ].filter(f => f),
+                ', '
+              )}`
             }),
             images: images
           }

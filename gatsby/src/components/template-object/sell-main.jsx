@@ -30,6 +30,7 @@ const SellMain = ({ object }) => {
         priceOriginal: sellMain.priceOriginal,
         priceSale: sellMain.priceSale,
         stock: sellMain.stock,
+        sku: sellMain.sku,
         amount: amount,
         // Locale dependent
         name: Object.fromEntries(
