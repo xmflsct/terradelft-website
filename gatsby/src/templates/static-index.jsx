@@ -54,7 +54,7 @@ export const query = graphql`
           node_locale
           artist
           image {
-            fluid(maxWidth: 140) {
+            fluid(maxWidth: 200, quality: 80) {
               ...GatsbyContentfulFluid_withWebp_noBase64
             }
           }
