@@ -25,21 +25,6 @@ module.exports = {
       }
     },
     'gatsby-plugin-lodash',
-    {
-      resolve: 'gatsby-plugin-prefetch-google-fonts',
-      options: {
-        fonts: [
-          {
-            family: 'Open Sans',
-            variants: ['400', '600']
-          },
-          {
-            family: 'Proza Libre',
-            variants: ['400']
-          }
-        ]
-      }
-    },
     'gatsby-plugin-react-helmet',
     {
       resolve: 'gatsby-plugin-sass',
@@ -60,6 +45,14 @@ module.exports = {
           '/en/thank-you',
           '/nl/bedankt'
         ]
+      }
+    },
+    {
+      resolve: 'gatsby-plugin-web-font-loader',
+      options: {
+        google: {
+          families: ['Open Sans:400,600', 'Proza Libre:400']
+        }
       }
     },
     {
