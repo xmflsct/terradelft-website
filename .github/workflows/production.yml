@@ -61,16 +61,18 @@ jobs:
           GATSBY_SENTRY_DSN: ${{ secrets.GATSBY_SENTRY_DSN }}
           GATSBY_API_ENDPOINT: api.terra-delft.nl
       - name: -- Step 7 -- Deploy to one.com
-        working-directory: ./gatsby
-        env:
-          remote_host: ${{ secrets.DEPLOY_HOST }}
-          remote_port: ${{ secrets.DEPLOY_PORT }}
-          remote_user: ${{ secrets.DEPLOY_USER }}
-          remote_pass: ${{ secrets.DEPLOY_PASS }}
-          local_dir: 'public/'
-          remote_dir: '/www/'
-        run: |
-          sh ./scripts/rsync-production.sh
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASS }}
+          local-dir: './gatsby/public/'
+          server-dir: '/'
+          exclude: .htaccess
+            - archive1
+            - archive2
+            - preview
       - name: -- Step 8 -- Email notification
         if: github.event_name == 'repository_dispatch'
         uses: dawidd6/action-send-mail@v2
