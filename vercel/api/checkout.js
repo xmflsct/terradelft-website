@@ -230,7 +230,7 @@ async function stripeSession (req) {
         quantity: object.amount
       })
     }
-    req.body.data.amounts.delivery > 0 &&
+    req.body.data.amounts.delivery >= 0 &&
       line_items.push({
         price_data: {
           currency: 'eur',
@@ -246,11 +246,17 @@ async function stripeSession (req) {
       payment_method_types: ['ideal', 'card'],
       mode: 'payment',
       line_items: line_items,
-      ...(req.body.data.delivery.type === 'shipment' && {
-        shipping_address_collection: {
-          allowed_countries: [req.body.data.delivery.countryA2]
-        }
-      }),
+      ...(req.body.data.delivery.type === 'shipment'
+        ? {
+            shipping_address_collection: {
+              allowed_countries: [req.body.data.delivery.countryA2]
+            }
+          }
+        : {
+            shipping_address_collection: {
+              allowed_countries: ['NL']
+            }
+          }),
       locale: req.body.data.locale,
       success_url:
         req.body.data.url.success + '?session_id={CHECKOUT_SESSION_ID}',
