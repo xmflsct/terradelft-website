@@ -70,7 +70,6 @@ jobs:
           local-dir: './gatsby/public/'
           server-dir: '/preview/'
           dry-run: true
-          dangerous-clean-slate: true
           exclude: .htaccess
             - .htpasswd
       # - name: -- Step 7 -- Deploy to one.com
