@@ -69,7 +69,6 @@ jobs:
           password: ${{ secrets.DEPLOY_PASS }}
           local-dir: './gatsby/public/'
           server-dir: '/preview/'
-          dry-run: true
           exclude: .htaccess
             - .htpasswd
       - name: -- Step 8 -- Email notification

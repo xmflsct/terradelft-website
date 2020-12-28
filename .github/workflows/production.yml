@@ -69,7 +69,6 @@ jobs:
           password: ${{ secrets.DEPLOY_PASS }}
           local-dir: './gatsby/public/'
           server-dir: '/'
-          dry-run: true
           exclude: .htaccess
             - archive1
             - archive2
