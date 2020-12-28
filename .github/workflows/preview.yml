@@ -70,7 +70,7 @@ jobs:
           localDir: './gatsby'
           remoteDir: '/www/preview/'
           dryRun: true
-          exclude: ['.well-known', '.htaccess', 'htpasswd']
+          exclude: '[".well-known", ".htaccess", "htpasswd"]'
       # - name: -- Step 7 -- Deploy to one.com
       #   working-directory: ./gatsby
       #   env:
