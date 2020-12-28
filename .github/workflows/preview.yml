@@ -61,16 +61,18 @@ jobs:
           GATSBY_SENTRY_DSN: ${{ secrets.GATSBY_SENTRY_DSN }}
           GATSBY_API_ENDPOINT: preview.api.terra-delft.nl
       - name: -- Step 7 -- Deploy to one.com
-        uses: xmflsct/sftp-upload-action@v0.1
+        uses: SamKirkland/FTP-Deploy-Action@4
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
+          server: ${{ secrets.DEPLOY_HOST }}
           port: ${{ secrets.DEPLOY_PORT }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASS }}
-          localDir: './gatsby/public/'
-          remoteDir: '/www/preview/'
-          dryRun: true
-          exclude: '[".htaccess", "htpasswd"]'
+          local-dir: './gatsby/public/'
+          server-dir: '/preview/'
+          dry-run: true
+          dangerous-clean-slate: true
+          exclude: .htaccess
+            - .htpasswd
       # - name: -- Step 7 -- Deploy to one.com
       #   working-directory: ./gatsby
       #   env:
