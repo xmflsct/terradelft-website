@@ -1,24 +1,21 @@
-import ky from 'ky-universal'
+import axios from 'axios'
 
 const urlDevelopment = 'http://localhost:3000'
 const urlProduction = `https://${process.env.GATSBY_API_ENDPOINT}`
 
-export async function sendEmail (token, data) {
-  try {
-    return await ky
-      .post(
-        `${
-          process.env.NODE_ENV === 'production' ? urlProduction : urlDevelopment
-        }/api/email`,
-        {
-          json: {
-            token: token,
-            data: data
-          }
-        }
-      )
-      .json()
-  } catch (error) {
-    return error.response.json()
-  }
+const sendEmail = async (token, data) => {
+  const baseUrl =
+    // @ts-ignore
+    process.env.NODE_ENV === 'production' ? urlProduction : urlDevelopment
+
+  return await axios({
+    method: 'post',
+    url: `${baseUrl}/api/email`,
+    data: {
+      token: token,
+      data: data
+    }
+  }).then(res => res.data)
 }
+
+export default sendEmail

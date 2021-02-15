@@ -1,10 +1,9 @@
+import { graphql } from 'gatsby'
+import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import { graphql } from 'gatsby'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-
 import Layout from '../layouts/layout'
 
 const StaticReachTerra = ({ data }) => {
@@ -28,9 +27,7 @@ const StaticReachTerra = ({ data }) => {
             />
           </div>
         </Col>
-        <Col sm={6}>
-          {documentToReactComponents(data.reachTerra.description.json)}
-        </Col>
+        <Col sm={6}>{renderRichText(data.reachTerra.description)}</Col>
       </Row>
     </Layout>
   )
@@ -44,7 +41,7 @@ export const query = graphql`
   query staticReachTerra($locale: String) {
     reachTerra: contentfulPageReachTerra(node_locale: { eq: $locale }) {
       description {
-        json
+        raw
       }
     }
   }

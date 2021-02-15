@@ -93,9 +93,6 @@ export const query = graphql`
             ...GatsbyContentfulFluid_withWebp_noBase64
           }
         }
-        content {
-          json
-        }
       }
     }
   }

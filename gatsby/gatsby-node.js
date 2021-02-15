@@ -60,35 +60,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     ['static-terra-in-china-news', 'static-news', 'constant'],
     createPage
   )
-  const aboutTerra = await graphql(`
-    {
-      aboutTerra: allContentfulPageAboutTerra {
-        nodes {
-          node_locale
-          columnLeft {
-            json
-          }
-          columnRight {
-            json
-          }
-        }
-      }
-    }
-  `)
-  const aboutTerraImages = {}
-  await Promise.all(
-    aboutTerra.data.aboutTerra.nodes.map(node => {
-      aboutTerraImages[node.node_locale] = [
-        ...getImagesFromRichText(node.columnLeft.json.content),
-        ...getImagesFromRichText(node.columnRight.json.content)
-      ]
-    })
-  )
-  await buildStaticPages(
-    ['static-about-terra', 'constant'],
-    createPage,
-    aboutTerraImages
-  )
+  await buildStaticPages(['static-about-terra', 'constant'], createPage)
   await buildStaticPages(['static-reach-terra', 'constant'], createPage)
   await buildStaticPages(
     ['static-bag', 'constant', 'component-object'],
@@ -145,9 +117,6 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             artist {
               artist
             }
-            description {
-              json
-            }
           }
         }
       }
@@ -159,7 +128,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         await buildDynamicPages(
           nodes,
           // eslint-disable-next-line camelcase
-          (locale, { artist, name, contentful_id, description }, i18n) => ({
+          (locale, { artist, name, contentful_id }, i18n) => ({
             path: i18n.t('constant:slug.dynamic.object.slug', {
               locale: locale,
               artist: artist.artist,
@@ -167,13 +136,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
               id: contentful_id
             }),
             component: templateDynamicObject,
-            context: {
-              contentful_id: contentful_id,
-              locale: locale,
-              imagesFromRichText: description
-                ? getImagesFromRichText(description.json.content)
-                : []
-            }
+            context: { contentful_id: contentful_id }
           }),
           ['constant', 'dynamic-object', 'component-object'],
           createPage
@@ -244,7 +207,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             node_locale
             name
             description {
-              json
+              raw
             }
           }
         }
@@ -256,7 +219,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       await buildDynamicPages(
         nodes,
         // eslint-disable-next-line camelcase
-        (locale, { name, contentful_id, description }, i18n) => ({
+        (locale, { name, contentful_id }, i18n) => ({
           path: i18n.t('constant:slug.dynamic.event.slug', {
             locale: locale,
             event: name,
@@ -265,10 +228,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           component: templateDynamicEvent,
           context: {
             contentful_id: contentful_id,
-            locale: locale,
-            imagesFromRichText: description
-              ? getImagesFromRichText(description.json.content)
-              : []
+            locale: locale
           }
         }),
         ['constant', 'static-events'],
@@ -288,7 +248,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             node_locale
             title
             content {
-              json
+              raw
             }
           }
         }
@@ -313,10 +273,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             component: templateDynamicNews,
             context: {
               contentful_id: contentful_id,
-              locale: locale,
-              imagesFromRichText: content
-                ? getImagesFromRichText(content.json.content)
-                : []
+              locale: locale
             }
           }
         },
@@ -325,16 +282,6 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       )
     })
   )
-
-  /* Redirect - 404 */
-  // locales.forEach((locale) =>
-  //   createRedirect({
-  //     fromPath: `/${locale}/*`,
-  //     toPath: `/${locale}/404`,
-  //     statusCode: 404,
-  //   })
-  // )
-  // createRedirect({ fromPath: "/*", toPath: "/404", statusCode: 404 })
 }
 
 const createI18nextInstance = async (locale, namespaces) => {
@@ -373,7 +320,6 @@ const buildStaticPages = async (namespaces, createPage, images) => {
           i18nResources: i18n.services.resourceStore.data
         }
       }
-      images && (res.context.imagesFromRichText = images[locale])
       return res
     })
   )
@@ -471,22 +417,6 @@ const buildDynamicPages = async (
   )
 }
 
-const getImagesFromRichText = content => {
-  return (
-    content &&
-    content.reduce((acc, c) => {
-      // eslint-disable-next-line camelcase
-      const contentful_id = _.get(c, 'data.target.sys.contentful_id')
-      // eslint-disable-next-line camelcase
-      if (c.nodeType === 'embedded-asset-block' && contentful_id) {
-        // eslint-disable-next-line camelcase
-        return [...acc, contentful_id]
-      }
-      return acc
-    }, [])
-  )
-}
-
 exports.onCreateNode = ({ actions, getNode, node }) => {
   if (node.internal.owner !== 'gatsby-source-contentful') {
     return
@@ -574,4 +504,14 @@ exports.createSchemaCustomization = ({ actions, schema }) => {
       }
     })
   ])
+}
+
+exports.onCreatePage = ({ page, actions }) => {
+  const { deletePage, createPage } = actions
+
+  if (page.path === '/404/') {
+    deletePage(page)
+  } else {
+    createPage(page)
+  }
 }

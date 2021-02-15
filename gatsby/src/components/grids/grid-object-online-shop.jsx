@@ -1,13 +1,12 @@
+import { Link, graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { find, includes } from 'lodash'
 import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import Select from 'react-select'
-import { Link, graphql } from 'gatsby'
-import Img from 'gatsby-image'
-import { find, includes } from 'lodash'
-
-import * as formatNumber from '../utils/format-number'
+import { currency } from '../utils/formatNumber'
 
 const GridObjectOnlineShop = ({ nodes }) => {
   const { t, i18n } = useTranslation([
@@ -24,39 +23,39 @@ const GridObjectOnlineShop = ({ nodes }) => {
   const options = {
     prices: [
       {
-        label: `< ${formatNumber.currency(50, i18n.language, true)}`,
+        label: `< ${currency(50, i18n.language, true)}`,
         value: { minimum: 0, maximum: 50 }
       },
       {
-        label: `${formatNumber.currency(
-          50,
+        label: `${currency(50, i18n.language)} - ${currency(
+          100,
           i18n.language
-        )} - ${formatNumber.currency(100, i18n.language)}`,
+        )}`,
         value: { minimum: 50, maximum: 100 }
       },
       {
-        label: `${formatNumber.currency(
-          100,
+        label: `${currency(100, i18n.language)} - ${currency(
+          200,
           i18n.language
-        )} - ${formatNumber.currency(200, i18n.language)}`,
+        )}`,
         value: { minimum: 100, maximum: 200 }
       },
       {
-        label: `${formatNumber.currency(
-          200,
+        label: `${currency(200, i18n.language)} - ${currency(
+          300,
           i18n.language
-        )} - ${formatNumber.currency(300, i18n.language)}`,
+        )}`,
         value: { minimum: 200, maximum: 300 }
       },
       {
-        label: `${formatNumber.currency(
-          300,
+        label: `${currency(300, i18n.language)} - ${currency(
+          500,
           i18n.language
-        )} - ${formatNumber.currency(500, i18n.language)}`,
+        )}`,
         value: { minimum: 300, maximum: 500 }
       },
       {
-        label: `> ${formatNumber.currency(500, i18n.language)}`,
+        label: `> ${currency(500, i18n.language)}`,
         value: { minimum: 500, maximum: 99999 }
       }
     ],
@@ -64,11 +63,13 @@ const GridObjectOnlineShop = ({ nodes }) => {
     variants: []
   }
   nodes.forEach(node => {
-    find(options.artists, ['label', node.artist.artist]) ||
-      options.artists.push({
-        label: node.artist.artist,
-        value: node.artist.artist
-      })
+    if (node.artist) {
+      find(options.artists, ['label', node.artist.artist]) ||
+        options.artists.push({
+          label: node.artist.artist,
+          value: node.artist.artist
+        })
+    }
 
     node.fields.object_variants &&
       node.fields.object_variants.forEach(v => {
@@ -92,7 +93,8 @@ const GridObjectOnlineShop = ({ nodes }) => {
             options={options.prices}
             placeholder={t('static-online-shop:content.filters.prices')}
             onChange={d =>
-              setSelected({ ...selected, price: d ? d.value : null })}
+              setSelected({ ...selected, price: d ? d.value : null })
+            }
           />
         </Col>
         <Col sm={4} className='mb-3'>
@@ -103,7 +105,8 @@ const GridObjectOnlineShop = ({ nodes }) => {
             options={options.artists}
             placeholder={t('static-online-shop:content.filters.artists')}
             onChange={d =>
-              setSelected({ ...selected, artist: d ? d.value : null })}
+              setSelected({ ...selected, artist: d ? d.value : null })
+            }
           />
         </Col>
         <Col sm={4} className='mb-3'>
@@ -114,7 +117,8 @@ const GridObjectOnlineShop = ({ nodes }) => {
             options={options.variants}
             placeholder={t('static-online-shop:content.filters.variants')}
             onChange={d =>
-              setSelected({ ...selected, variant: d ? d.value : null })}
+              setSelected({ ...selected, variant: d ? d.value : null })
+            }
           />
         </Col>
       </Row>
@@ -148,7 +152,7 @@ const GridObjectOnlineShop = ({ nodes }) => {
                       )
                   break
                 case 'artist':
-                  objectMatch.artists = selectedValue === node.artist.artist
+                  objectMatch.artists = selectedValue === node.artist?.artist
                   break
                 case 'variant':
                   objectMatch.variants = node.fields.object_variants
@@ -168,29 +172,36 @@ const GridObjectOnlineShop = ({ nodes }) => {
           })
           .map(node => {
             return (
-              <Col key={node.contentful_id} xs={4} md={2} className='grid-item'>
-                <Link
-                  to={t('constant:slug.dynamic.object.slug', {
-                    locale: node.node_locale,
-                    artist: node.artist.artist,
-                    object: node.name,
-                    id: node.contentful_id
-                  })}
+              node.artist && (
+                <Col
+                  key={node.contentful_id}
+                  xs={4}
+                  md={2}
+                  className='grid-item'
                 >
-                  <div className='item-image'>
-                    <Img
-                      fluid={node.images[0].fluid}
-                      backgroundColor='#e8e8e8'
-                    />
-                    {node.fields.object_sale && (
-                      <span className='item-sale'>
-                        {t('component-object:on-sale')}
-                      </span>
-                    )}
-                  </div>
-                  <p className='item-name'>{node.name}</p>
-                </Link>
-              </Col>
+                  <Link
+                    to={t('constant:slug.dynamic.object.slug', {
+                      locale: node.node_locale,
+                      artist: node.artist.artist,
+                      object: node.name,
+                      id: node.contentful_id
+                    })}
+                  >
+                    <div className='item-image'>
+                      <Img
+                        fluid={node.images[0].fluid}
+                        backgroundColor='#e8e8e8'
+                      />
+                      {node.fields.object_sale && (
+                        <span className='item-sale'>
+                          {t('component-object:on-sale')}
+                        </span>
+                      )}
+                    </div>
+                    <p className='item-name'>{node.name}</p>
+                  </Link>
+                </Col>
+              )
             )
           })}
       </Row>

@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
 import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -11,14 +12,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useStaticQuery, graphql, Link } from 'gatsby'
 import Img from 'gatsby-image'
-import { sumBy } from 'lodash'
-
 import Navigation from './navigation'
 import { ContextLanguage } from './contexts/language'
-import { ContextBag } from './contexts/bag'
 import { ContextMobileMenu } from './layout'
-
+import { getBag } from '../state/slices/bag'
 import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
+import { sumBy } from 'lodash'
 
 const Header = ({ useMiniBag }) => {
   const data = useStaticQuery(graphql`
@@ -63,21 +62,21 @@ const Header = ({ useMiniBag }) => {
   `)
   const { t, i18n } = useTranslation('constant')
   const alternateLinks = useContext(ContextLanguage)
-  const { state } = useContext(ContextBag)
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
   const [miniBag, setMiniBag] = useState(false)
   const [locationOrigin, setLocationOrigin] = useState()
-  const firstMount = useRef(true)
 
-  useEffect(() => {
-    if (useMiniBag) {
-      if (firstMount.current) {
-        firstMount.current = false
-      } else {
-        setMiniBag(true)
-      }
-    }
-  }, [state, useMiniBag])
+  const bagObjects = useSelector(getBag)
+
+  // useEffect(() => {
+  //   if (useMiniBag) {
+  //     if (firstMount.current) {
+  //       firstMount.current = false
+  //     } else {
+  //       setMiniBag(true)
+  //     }
+  //   }
+  // }, [state, useMiniBag])
 
   useEffect(() => {
     setLocationOrigin(window.location.origin)
@@ -160,9 +159,10 @@ const Header = ({ useMiniBag }) => {
                 })}
               >
                 <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
-                <span className='small-block'>
-                  {` (${sumBy(state.bag.objects, d => d.amount)})`}
-                </span>
+                <span className='small-block'>{` (${sumBy(
+                  bagObjects,
+                  d => d.amount
+                )})`}</span>
               </Link>
             </Col>
             <Col md={8} className='search-box align-self-end'>

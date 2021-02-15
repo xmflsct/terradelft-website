@@ -1,21 +1,19 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-
+import { useDispatch } from 'react-redux'
 import Layout from '../layouts/layout'
-import { ContextBag } from '../layouts/contexts/bag'
+import { bagClear } from '../state/slices/bag'
 
 const StaticThankYou = () => {
   const { t } = useTranslation('static-thank-you')
-  const { dispatch } = useContext(ContextBag)
+  const dispatch = useDispatch()
   let session_id =
     typeof window !== 'undefined'
       ? new URLSearchParams(window.location.search).get('session_id')
       : ''
   useEffect(() => {
-    dispatch({
-      type: 'clear'
-    })
+    dispatch(bagClear())
   }, [session_id, dispatch])
 
   return (

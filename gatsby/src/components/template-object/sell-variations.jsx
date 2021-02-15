@@ -2,13 +2,14 @@ import PropTypes from 'prop-types'
 import React, { useContext, useEffect, useReducer, useState } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 import ReactSelect from 'react-select'
 import { difference, findIndex, intersection, reduce, union } from 'lodash'
 
-import { ContextBag } from '../../layouts/contexts/bag'
 import { ContextVariation } from '../../templates/dynamic-object'
 import { Price } from '../utils/price'
-import * as formatNumber from '../utils/format-number'
+import { currency } from '../utils/formatNumber'
+import { bagAdd } from '../../state/slices/bag'
 
 function initOptions ({ variations, t }) {
   const d = {
@@ -131,7 +132,7 @@ function reducer (options, action) {
 
 const SellVariations = ({ object }) => {
   const { t, i18n } = useTranslation(['dynamic-object', 'component-object'])
-  const { dispatch } = useContext(ContextBag)
+  const dispatch = useDispatch()
   const { updateVariation } = useContext(ContextVariation)
   const variationsMain =
     object.nodes[
@@ -204,10 +205,7 @@ const SellVariations = ({ object }) => {
           : t('component-object:option-default')
       }
     }
-    dispatch({
-      type: 'add',
-      data: data
-    })
+    dispatch(bagAdd(data))
   }
 
   return (
@@ -268,21 +266,21 @@ const SellVariations = ({ object }) => {
                   (amount ? amount.value : 1)
               )
             : variationsMain.fields.variations_price_range.highest !== 0 && (
-              <p className='object-price'>
-                {variationsMain.fields.variations_price_range.lowest ===
+                <p className='object-price'>
+                  {variationsMain.fields.variations_price_range.lowest ===
                   variationsMain.fields.variations_price_range.highest
-                    ? formatNumber.currency(
+                    ? currency(
                         variationsMain.fields.variations_price_range.highest,
                         i18n.language
                       )
-                    : `${formatNumber.currency(
+                    : `${currency(
                         variationsMain.fields.variations_price_range.lowest,
                         i18n.language
-                      )} - ${formatNumber.currency(
+                      )} - ${currency(
                         variationsMain.fields.variations_price_range.highest,
                         i18n.language
                       )}`}
-              </p>
+                </p>
               )}
           <Button
             variant='primary'

@@ -1,14 +1,12 @@
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
-import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import { mediaFromRichText } from '../components/utils/media-from-rich-text'
-
-import Layout from '../layouts/layout'
 import GridObjectDefault from '../components/grids/grid-object-default'
+import Layout from '../layouts/layout'
 
 const DynamicArtist = ({ data }) => (
   <Layout
@@ -16,7 +14,9 @@ const DynamicArtist = ({ data }) => (
     SEOkeywords={[data.artist.artist, 'Terra Delft']}
     SEOdescription={
       data.artist.biography &&
-      documentToPlainTextString(data.artist.biography.json).substring(0, 199)
+      documentToPlainTextString(
+        JSON.parse(data.artist.biography.raw)
+      ).substring(0, 199)
     }
     SEOschema={{
       '@context': 'http://schema.org',
@@ -25,7 +25,7 @@ const DynamicArtist = ({ data }) => (
       image: data.artist.image.fluid.src,
       description:
         data.artist.biography &&
-        documentToPlainTextString(data.artist.biography.json)
+        documentToPlainTextString(JSON.parse(data.artist.biography.raw))
     }}
     containerName='dynamic-artist'
   >
@@ -35,11 +35,7 @@ const DynamicArtist = ({ data }) => (
         <Img fluid={data.artist.image.fluid} backgroundColor='#e8e8e8' />
       </Col>
       <Col lg={8}>
-        {data.artist.biography &&
-          documentToReactComponents(
-            data.artist.biography.json,
-            mediaFromRichText()
-          )}
+        {data.artist.biography && renderRichText(data.artist.biography)}
       </Col>
     </Row>
     {data.artist.object && (
@@ -68,7 +64,7 @@ export const query = graphql`
         }
       }
       biography {
-        json
+        raw
       }
       object {
         ...ObjectDefault

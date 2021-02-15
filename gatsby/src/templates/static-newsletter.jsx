@@ -7,7 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import { forIn } from 'lodash'
 
 import Layout from '../layouts/layout'
-import { sendEmail } from '../api/email'
+import sendEmail from '../api/email'
 
 var countries = require('i18n-iso-countries')
 countries.registerLocale(require('i18n-iso-countries/langs/en.json'))

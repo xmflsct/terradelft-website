@@ -1,18 +1,17 @@
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { renderRichText } from 'gatsby-source-contentful/rich-text'
+import moment from 'moment'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import moment from 'moment'
 import 'moment/locale/nl'
-
+import contentfulRichTextOptions from '../components/utils/contentfulRichTextOptions'
 import Layout from '../layouts/layout'
-import { mediaFromRichText } from '../components/utils/media-from-rich-text'
 
-const DynamicNews = ({ pageContext, data }) => {
+const DynamicNews = ({ data }) => {
   const { t } = useTranslation('static-news')
 
   return (
@@ -21,7 +20,10 @@ const DynamicNews = ({ pageContext, data }) => {
       SEOkeywords={[data.news.title, 'Terra Delft']}
       SEOdescription={
         data.news.content &&
-        documentToPlainTextString(data.news.content.json).substring(0, 199)
+        documentToPlainTextString(JSON.parse(data.news.content.raw)).substring(
+          0,
+          199
+        )
       }
       SEOschema={{
         '@context': 'http://schema.org',
@@ -30,7 +32,8 @@ const DynamicNews = ({ pageContext, data }) => {
         datePublished: data.news.date,
         ...(data.news.image && { image: data.news.image.fluid.src }),
         articleBody:
-          data.news.content && documentToPlainTextString(data.news.content.json)
+          data.news.content &&
+          documentToPlainTextString(JSON.parse(data.news.content.raw))
       }}
       containerName='dynamic-event'
     >
@@ -48,10 +51,7 @@ const DynamicNews = ({ pageContext, data }) => {
             })}
           </p>
           {data.news.content &&
-            documentToReactComponents(
-              data.news.content.json,
-              mediaFromRichText(data.imagesFromRichText, pageContext.locale)
-            )}
+            renderRichText(data.news.content, contentfulRichTextOptions)}
         </Col>
       </Row>
     </Layout>
@@ -64,11 +64,7 @@ DynamicNews.propTypes = {
 }
 
 export const query = graphql`
-  query dynamicNews(
-    $contentful_id: String
-    $locale: String
-    $imagesFromRichText: [String!]!
-  ) {
+  query dynamicNews($contentful_id: String, $locale: String) {
     news: contentfulNews(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $locale }
@@ -81,17 +77,17 @@ export const query = graphql`
         }
       }
       content {
-        json
-      }
-    }
-    imagesFromRichText: allContentfulAsset(
-      filter: {
-        contentful_id: { in: $imagesFromRichText }
-        node_locale: { eq: $locale }
-      }
-    ) {
-      nodes {
-        ...ImageFromRichText
+        raw
+        references {
+          ... on ContentfulAsset {
+            contentful_id
+            __typename
+            description
+            fluid(maxWidth: 600, quality: 85) {
+              ...GatsbyContentfulFluid_withWebp
+            }
+          }
+        }
       }
     }
   }

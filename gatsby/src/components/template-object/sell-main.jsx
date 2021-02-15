@@ -1,16 +1,16 @@
+import { findIndex } from 'lodash'
 import PropTypes from 'prop-types'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 import ReactSelect from 'react-select'
-import { findIndex } from 'lodash'
-
-import { ContextBag } from '../../layouts/contexts/bag'
 import { Price } from '../utils/price'
+import { bagAdd } from '../../state/slices/bag'
 
 const SellMain = ({ object }) => {
+  const dispatch = useDispatch()
   const { t, i18n } = useTranslation('dynamic-object')
-  const { dispatch } = useContext(ContextBag)
   const [amount, setAmount] = useState(1)
   const sellMain =
     object.nodes[
@@ -19,9 +19,8 @@ const SellMain = ({ object }) => {
 
   const onSubmit = e => {
     e.preventDefault()
-    dispatch({
-      type: 'add',
-      data: {
+    dispatch(
+      bagAdd({
         type: 'main',
         contentful_id: sellMain.contentful_id,
         contentful_id_url: sellMain.contentful_id,
@@ -36,8 +35,8 @@ const SellMain = ({ object }) => {
         name: Object.fromEntries(
           object.nodes.map(node => [node.node_locale, node.name])
         )
-      }
-    })
+      })
+    )
   }
 
   return (

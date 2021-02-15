@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 import { ContextVariation } from '../../templates/dynamic-object'
-import { sendEmail } from '../../api/email'
+import sendEmail from '../../api/email'
 
 const ObjectContact = ({ object }) => {
   const { t, i18n } = useTranslation('dynamic-object')

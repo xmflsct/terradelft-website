@@ -1,8 +1,8 @@
+import { useStaticQuery, graphql } from 'gatsby'
+import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import { useStaticQuery, graphql } from 'gatsby'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
 const Announcement = () => {
   const data = useStaticQuery(graphql`
@@ -11,14 +11,14 @@ const Announcement = () => {
         enabled
         title
         content {
-          json
+          raw
         }
       }
       en: contentfulAnnouncement(node_locale: { eq: "en" }) {
         enabled
         title
         content {
-          json
+          raw
         }
       }
     }
@@ -31,7 +31,7 @@ const Announcement = () => {
         <Row className='justify-content-md-center mt-3 announcement'>
           <Col xs lg='8'>
             <h4 className='text-center'>{data[i18n.language].title}</h4>
-            {documentToReactComponents(data[i18n.language].content.json)}
+            {renderRichText(data[i18n.language].content)}
           </Col>
         </Row>
       )}

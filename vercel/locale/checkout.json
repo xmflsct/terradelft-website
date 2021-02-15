@@ -1,0 +1,14 @@
+{
+  "nl": {
+    "SKU": "SKU: ",
+    "colour": "Kleur: ",
+    "size": "Afmeting: ",
+    "variant": "Variant: "
+  },
+  "en": {
+    "SKU": "SKU: ",
+    "colour": "Colour: ",
+    "size": "Size: ",
+    "variant": "Variant: "
+  }
+}
