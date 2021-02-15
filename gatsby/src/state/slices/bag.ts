@@ -36,7 +36,7 @@ type ObjectVariation = {
 export type TDObject = ObjectMain | ObjectVariation
 
 export type BagState = {
-  timestamp: number
+  buildTime: number
   objects: TDObject[]
   delivery: {
     method: 'pickup' | 'shipment'
@@ -49,7 +49,7 @@ export type BagState = {
 }
 
 export const bagInitialState: BagState = {
-  timestamp: new Date().getTime(),
+  buildTime: 0,
   objects: [],
   delivery: {
     method: 'pickup',
@@ -65,6 +65,11 @@ const bagSlice = createSlice({
   name: 'bag',
   initialState: bagInitialState,
   reducers: {
+    bagReset: (state, action: PayloadAction<BagState['buildTime']>) => {
+      state.buildTime = action.payload
+      state.objects = bagInitialState.objects
+      state.delivery = bagInitialState.delivery
+    },
     bagClear: state => {
       state.objects = []
     },
@@ -115,6 +120,8 @@ const bagSlice = createSlice({
   }
 })
 
+export const getBuildTime = (state: RootState) => state.bag.buildTime
+
 export const getBag = (state: RootState) => state.bag.objects
 
 export const getDeliveryMethod = (state: RootState) => state.bag.delivery.method
@@ -125,6 +132,7 @@ export const getDeliveryShippingMethod = (state: RootState) =>
   state.bag.delivery.shipment.method
 
 export const {
+  bagReset,
   bagClear,
   bagAdd,
   bagRemove,

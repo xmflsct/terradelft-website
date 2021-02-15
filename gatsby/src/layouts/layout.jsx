@@ -20,8 +20,7 @@ const Layout = ({
   SEOkeywords,
   SEOdescription,
   SEOschema,
-  containerName,
-  useMiniBag
+  containerName
 }) => {
   const [stateMobileMenu, dispatch] = useReducer(reducer, initContextMobileMenu)
   if (typeof window !== 'undefined') {
@@ -41,7 +40,7 @@ const Layout = ({
         schema={SEOschema}
       />
       <ContextMobileMenu.Provider value={{ stateMobileMenu, dispatch }}>
-        <Header useMiniBag={useMiniBag} />
+        <Header />
       </ContextMobileMenu.Provider>
       <Announcement />
       <main className={containerName}>{children}</main>
@@ -56,8 +55,7 @@ Layout.propTypes = {
   SEOkeywords: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   SEOdescription: PropTypes.string.isRequired,
   SEOschema: PropTypes.object,
-  containerName: PropTypes.string.isRequired,
-  useMiniBag: PropTypes.bool
+  containerName: PropTypes.string.isRequired
 }
 
 export default Layout

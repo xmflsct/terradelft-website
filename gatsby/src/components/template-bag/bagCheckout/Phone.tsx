@@ -1,6 +1,7 @@
 import countries from 'i18n-iso-countries'
 import React, { useCallback, useMemo } from 'react'
 import { Form } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,6 +13,7 @@ import {
 } from '../../../state/slices/bag'
 
 const CheckoutPhone: React.FC = () => {
+  const { t } = useTranslation('static-bag')
   const dispatch = useDispatch()
   const deliveryMethod = useSelector(getDeliveryMethod)
   const deliveryPhone = useSelector(getDeliveryPhone)
@@ -37,9 +39,8 @@ const CheckoutPhone: React.FC = () => {
 
   return (
     <Form.Group className='px-3'>
-      <Form.Label>Phone number</Form.Label>
+      <Form.Label>{t('content.checkout.heading.phone')}</Form.Label>
       <PhoneInput
-        placeholder='Enter phone number'
         value={deliveryPhone}
         displayInitialValueAsLocalNumber={false}
         useNationalFormatForDefaultCountryValue={false}

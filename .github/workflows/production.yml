@@ -58,6 +58,7 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASS }}
+          log-level: minimal
           local-dir: './gatsby/public/'
           server-dir: '/'
           exclude: .htaccess

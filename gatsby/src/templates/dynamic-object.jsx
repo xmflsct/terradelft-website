@@ -128,7 +128,6 @@ const DynamicObject = ({ pageContext, data }) => {
         })
       }}
       containerName='dynamic-object'
-      useMiniBag
     >
       <ContextVariation.Provider value={{ stateVariation, updateVariation }}>
         <Row>
