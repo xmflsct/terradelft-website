@@ -18,25 +18,22 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - name: -- Step 3 -- Get yarn cache directory
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: -- Step 4 -- Cache node_modules
+      - name: -- Step 3 -- Cache node_modules
         uses: actions/cache@v2
         id: cache-node-modules
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./gatsby/yarn.lock') }}
+          path: './gatsby/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('./gatsby/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: -- Step 5 -- Install dependencies
+            ${{ runner.os }}-modules-
+      - name: -- Step 4 -- Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         working-directory: ./gatsby
-        run: npm install
-      - name: -- Step 6 -- Build static site
+        run: yarn
+      - name: -- Step 5 -- Build static site
         timeout-minutes: 30
         working-directory: ./gatsby
-        run: npm run build
+        run: yarn build
         env:
           CI: true
           CONTENTFUL_HOST: cdn.contentful.com
@@ -54,7 +51,7 @@ jobs:
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
           GATSBY_SENTRY_DSN: ${{ secrets.GATSBY_SENTRY_DSN }}
           GATSBY_API_ENDPOINT: api.terra-delft.nl
-      - name: -- Step 7 -- Deploy to one.com
+      - name: -- Step 6 -- Deploy to one.com
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
           server: ${{ secrets.DEPLOY_HOST }}
@@ -67,7 +64,7 @@ jobs:
             - archive1
             - archive2
             - preview
-      - name: -- Step 8 -- Email notification
+      - name: -- Step 7 -- Email notification
         if: github.event_name == 'repository_dispatch'
         uses: dawidd6/action-send-mail@v2
         with:
