@@ -9,6 +9,7 @@
     "checkout": {
       "heading": {
         "delivery": "Delivery method",
+        "phone": "Phone number",
         "summary": "Summary"
       },
       "delivery": {

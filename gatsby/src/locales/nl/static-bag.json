@@ -9,6 +9,7 @@
     "checkout": {
       "heading": {
         "delivery": "Leveringsmethode",
+        "phone": "Telefoonnummer",
         "summary": "Samenvatting"
       },
       "delivery": {

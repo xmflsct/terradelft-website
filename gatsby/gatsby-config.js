@@ -18,19 +18,15 @@ module.exports = {
         pageTransitionDelay: 0
       }
     },
-    {
-      resolve: 'gatsby-plugin-layout',
-      options: {
-        component: require.resolve('./src/layouts/contexts/bag.jsx')
-      }
-    },
     'gatsby-plugin-lodash',
     'gatsby-plugin-react-helmet',
     {
       resolve: 'gatsby-plugin-sass',
       options: {
-        precision: 6,
-        includePaths: [require('path').resolve(__dirname, 'node_modules')]
+        sassOptions: {
+          includePaths: [require('path').resolve(__dirname, 'node_modules')],
+          precision: 6
+        }
       }
     },
     'gatsby-plugin-sharp',
@@ -47,6 +43,7 @@ module.exports = {
         ]
       }
     },
+    'gatsby-plugin-typescript',
     {
       resolve: 'gatsby-plugin-web-font-loader',
       options: {

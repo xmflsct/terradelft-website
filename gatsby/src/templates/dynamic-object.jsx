@@ -1,19 +1,18 @@
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { graphql, Link } from 'gatsby'
+import { renderRichText } from 'gatsby-source-contentful/rich-text'
+import { findIndex } from 'lodash'
 import PropTypes from 'prop-types'
 import React, { useReducer, useState } from 'react'
 import { Button, Col, Collapse, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import { graphql, Link } from 'gatsby'
-import { findIndex } from 'lodash'
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-
-import Layout from '../layouts/layout'
 import GridObjectDefault from '../components/grids/grid-object-default'
 import ObjectImages from '../components/template-object/object-images'
 import ObjectSell from '../components/template-object/object-sell'
 import ObjectAttribute from '../components/template-object/object-attribute'
 import ObjectContact from '../components/template-object/object-contact'
-import { mediaFromRichText } from '../components/utils/media-from-rich-text'
+import contentfulRichTextOptions from '../components/utils/contentfulRichTextOptions'
+import Layout from '../layouts/layout'
 
 function reducer (_, action) {
   switch (action.type) {
@@ -53,7 +52,9 @@ const DynamicObject = ({ pageContext, data }) => {
       SEOkeywords={[object.name, 'Terra Delft']}
       SEOdescription={
         object.description
-          ? documentToPlainTextString(object.description.json).substring(0, 199)
+          ? documentToPlainTextString(
+              JSON.parse(object.description.raw)
+            ).substring(0, 199)
           : object.name
       }
       SEOschema={{
@@ -63,7 +64,7 @@ const DynamicObject = ({ pageContext, data }) => {
         image: object.images[0].fluidZoom.src,
         description:
           object.description &&
-          documentToPlainTextString(object.description.json),
+          documentToPlainTextString(JSON.parse(object.description.raw)),
         offers: {
           '@type': 'Offer',
           price: object.variations
@@ -77,7 +78,7 @@ const DynamicObject = ({ pageContext, data }) => {
           '@type': 'CreativeWork',
           abstract:
             object.description &&
-            documentToPlainTextString(object.description.json),
+            documentToPlainTextString(JSON.parse(object.description.raw)),
           author: { '@type': 'Person', name: object.artist.artist },
           ...(object.material && {
             material: object.material.map(material => material.material)
@@ -114,7 +115,7 @@ const DynamicObject = ({ pageContext, data }) => {
               '@type': 'CreativeWork',
               abstract:
                 node.description &&
-                documentToPlainTextString(node.description.json),
+                documentToPlainTextString(JSON.parse(node.description.raw)),
               author: { '@type': 'Person', name: node.artist.artist },
               ...(node.material && {
                 material: node.material.map(material => material.material)
@@ -127,7 +128,6 @@ const DynamicObject = ({ pageContext, data }) => {
         })
       }}
       containerName='dynamic-object'
-      useMiniBag
     >
       <ContextVariation.Provider value={{ stateVariation, updateVariation }}>
         <Row>
@@ -204,10 +204,7 @@ const DynamicObject = ({ pageContext, data }) => {
             )}
             <div className='object-description'>
               {object.description &&
-                documentToReactComponents(
-                  object.description.json,
-                  mediaFromRichText(data.imagesFromRichText, pageContext.locale)
-                )}
+                renderRichText(object.description, contentfulRichTextOptions)}
             </div>
             <div className='object-contact'>
               <Button
@@ -253,11 +250,7 @@ DynamicObject.propTypes = {
 }
 
 export const query = graphql`
-  query dynamicObject(
-    $contentful_id: String
-    $locale: String
-    $imagesFromRichText: [String!]!
-  ) {
+  query dynamicObject($contentful_id: String) {
     object: allContentfulObject(
       filter: { contentful_id: { eq: $contentful_id } }
     ) {
@@ -272,7 +265,17 @@ export const query = graphql`
         node_locale
         name
         description {
-          json
+          raw
+          references {
+            ... on ContentfulAsset {
+              contentful_id
+              __typename
+              description
+              fluid(maxWidth: 600, quality: 85) {
+                ...GatsbyContentfulFluid_withWebp
+              }
+            }
+          }
         }
         images {
           fluid(maxWidth: 427, quality: 80) {
@@ -347,16 +350,6 @@ export const query = graphql`
         dimensionHeight
         dimensionDiameter
         dimensionDepth
-      }
-    }
-    imagesFromRichText: allContentfulAsset(
-      filter: {
-        contentful_id: { in: $imagesFromRichText }
-        node_locale: { eq: $locale }
-      }
-    ) {
-      nodes {
-        ...ImageFromRichText
       }
     }
   }

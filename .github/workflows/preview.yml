@@ -22,27 +22,18 @@ jobs:
         uses: actions/cache@v2
         id: cache-node-modules
         with:
-          path: ./gatsby/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('./gatsby/package-lock.json') }}
-          # restore-keys: |
-          #   ${{ runner.os }}-node-modules-
-      # - name: -- Step 4 -- Cache Gatsby
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       ./gatsby/.cache
-      #       ./gatsby/public
-      #     key: ${{ runner.os }}-gatsby-${{ github.sha }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-gatsby-
-      - name: -- Step 5 -- Install dependencies
+          path: './gatsby/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('./gatsby/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-modules-
+      - name: -- Step 4 -- Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         working-directory: ./gatsby
-        run: npm install
-      - name: -- Step 6 -- Build static site
+        run: yarn
+      - name: -- Step 5 -- Build static site
         timeout-minutes: 30
         working-directory: ./gatsby
-        run: npm run build
+        run: yarn build
         env:
           CI: true
           CONTENTFUL_HOST: cdn.contentful.com
@@ -60,18 +51,19 @@ jobs:
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
           GATSBY_SENTRY_DSN: ${{ secrets.GATSBY_SENTRY_DSN }}
           GATSBY_API_ENDPOINT: preview.api.terra-delft.nl
-      - name: -- Step 7 -- Deploy to one.com
+      - name: -- Step 6 -- Deploy to one.com
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
           server: ${{ secrets.DEPLOY_HOST }}
           port: ${{ secrets.DEPLOY_PORT }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASS }}
+          log-level: minimal
           local-dir: './gatsby/public/'
           server-dir: '/preview/'
           exclude: .htaccess
             - .htpasswd
-      - name: -- Step 8 -- Email notification
+      - name: -- Step 7 -- Email notification
         if: github.event_name == 'repository_dispatch'
         uses: dawidd6/action-send-mail@v2
         with:

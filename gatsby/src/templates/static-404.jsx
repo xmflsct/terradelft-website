@@ -1,8 +1,7 @@
-import React from 'react'
-import { useTranslation } from 'react-i18next'
 import { useStaticQuery, graphql } from 'gatsby'
 import Img from 'gatsby-image'
-
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 import Layout from '../layouts/layout'
 
 const Static404 = () => {

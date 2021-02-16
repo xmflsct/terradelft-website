@@ -4,7 +4,7 @@ import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'gatsby'
 
-import * as formatNumber from '../utils/format-number'
+import { dimension } from '../utils/formatNumber'
 
 const ObjectAttribute = ({ type, value }) => {
   const { t, i18n } = useTranslation('constant')
@@ -19,7 +19,7 @@ const ObjectAttribute = ({ type, value }) => {
             ? // Year only
               value[Object.keys(value)[0]]
             : // Dimensions only
-              formatNumber.dimension(value, i18n.language)}
+              dimension(value, i18n.language)}
         </Col>
       ) : (
         // Technique and material, many references

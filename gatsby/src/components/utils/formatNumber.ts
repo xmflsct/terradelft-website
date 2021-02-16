@@ -1,4 +1,4 @@
-export function currency (number, locale) {
+const currency = (number, locale) => {
   locale = locale === 'nl' ? 'nl-NL' : 'en-Intl'
 
   return new Intl.NumberFormat(locale, {
@@ -7,7 +7,7 @@ export function currency (number, locale) {
   }).format(number)
 }
 
-export function dimension (number, locale) {
+const dimension = (number, locale) => {
   locale = locale === 'nl' ? 'nl-NL' : 'en-Intl'
 
   return new Intl.NumberFormat(locale, {
@@ -15,3 +15,5 @@ export function dimension (number, locale) {
     unit: 'centimeter'
   }).format(number)
 }
+
+export { currency, dimension }

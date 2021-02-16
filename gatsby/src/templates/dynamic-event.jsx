@@ -1,14 +1,13 @@
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
-import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-
-import Layout from '../layouts/layout'
 import EventInformation from '../components/template-event/event-information'
-import { mediaFromRichText } from '../components/utils/media-from-rich-text'
+import contentfulRichTextOptions from '../components/utils/contentfulRichTextOptions'
+import Layout from '../layouts/layout'
 
 const DynamicEvent = ({ pageContext, data }) => {
   return (
@@ -17,7 +16,9 @@ const DynamicEvent = ({ pageContext, data }) => {
       SEOkeywords={[data.event.name, 'Terra Delft']}
       SEOdescription={
         data.event.description &&
-        documentToPlainTextString(data.event.description.json).substring(0, 199)
+        documentToPlainTextString(
+          JSON.parse(data.event.description.raw)
+        ).substring(0, 199)
       }
       SEOschema={{
         '@context': 'http://schema.org',
@@ -28,7 +29,7 @@ const DynamicEvent = ({ pageContext, data }) => {
         ...(data.event.image && { image: data.event.image.fluid.src }),
         description:
           data.event.description &&
-          documentToPlainTextString(data.event.description.json),
+          documentToPlainTextString(JSON.parse(data.event.description.raw)),
         ...(data.event.organizer && {
           organizer: [
             data.event.organizer.map(organizer => ({
@@ -61,10 +62,7 @@ const DynamicEvent = ({ pageContext, data }) => {
         <Col sm={data.event.image ? 8 : 12}>
           <EventInformation event={data.event} />
           {data.event.description &&
-            documentToReactComponents(
-              data.event.description.json,
-              mediaFromRichText(data.imagesFromRichText, pageContext.locale)
-            )}
+            renderRichText(data.event.description, contentfulRichTextOptions)}
         </Col>
       </Row>
     </Layout>
@@ -77,11 +75,7 @@ DynamicEvent.propTypes = {
 }
 
 export const query = graphql`
-  query dynamicEvent(
-    $contentful_id: String
-    $locale: String
-    $imagesFromRichText: [String!]!
-  ) {
+  query dynamicEvent($contentful_id: String, $locale: String) {
     event: contentfulEvent(
       contentful_id: { eq: $contentful_id }
       node_locale: { eq: $locale }
@@ -112,17 +106,17 @@ export const query = graphql`
         }
       }
       description {
-        json
-      }
-    }
-    imagesFromRichText: allContentfulAsset(
-      filter: {
-        contentful_id: { in: $imagesFromRichText }
-        node_locale: { eq: $locale }
-      }
-    ) {
-      nodes {
-        ...ImageFromRichText
+        raw
+        references {
+          ... on ContentfulAsset {
+            contentful_id
+            __typename
+            description
+            fluid(maxWidth: 600, quality: 85) {
+              ...GatsbyContentfulFluid_withWebp
+            }
+          }
+        }
       }
     }
   }
