@@ -272,7 +272,7 @@ export const query = graphql`
               __typename
               description
               fluid(maxWidth: 600, quality: 85) {
-                ...GatsbyContentfulFluid_withWebp
+                ...GatsbyContentfulFluid_withWebp_noBase64
               }
             }
           }
