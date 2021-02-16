@@ -18,6 +18,12 @@ module.exports = {
         pageTransitionDelay: 0
       }
     },
+    {
+      resolve: `gatsby-plugin-htaccess`,
+      options: {
+        https: true
+      }
+    },
     'gatsby-plugin-lodash',
     'gatsby-plugin-react-helmet',
     {

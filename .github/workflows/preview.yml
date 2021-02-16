@@ -61,8 +61,7 @@ jobs:
           log-level: minimal
           local-dir: './gatsby/public/'
           server-dir: '/preview/'
-          exclude: .htaccess
-            - .htpasswd
+          exclude: .htpasswd
       - name: -- Step 7 -- Email notification
         if: github.event_name == 'repository_dispatch'
         uses: dawidd6/action-send-mail@v2
