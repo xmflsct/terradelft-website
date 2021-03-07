@@ -3,7 +3,7 @@ import React from 'react'
 import { Badge, Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql, Link } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from "gatsby-plugin-image";
 
 import Layout from '../layouts/layout'
 import EventInformation from '../components/template-event/event-information'
@@ -58,7 +58,7 @@ const StaticTerraInChinaEvents = ({ pageContext, data }) => {
               <Row className='events-current' key={node.contentful_id}>
                 {node.image && (
                   <Col sm={6}>
-                    <Img fluid={node.image.fluid} backgroundColor='#e8e8e8' />
+                    <GatsbyImage image={node.image.gatsbyImageData} backgroundColor='#e8e8e8' />
                   </Col>
                 )}
                 <Col sm={6}>
@@ -86,7 +86,7 @@ const StaticTerraInChinaEvents = ({ pageContext, data }) => {
         </Col>
       </Row>
     </Layout>
-  )
+  );
 }
 
 StaticTerraInChinaEvents.propTypes = {
@@ -107,9 +107,7 @@ export const query = graphql`
       nodes {
         contentful_id
         image {
-          fluid(maxWidth: 600, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          gatsbyImageData(layout: CONSTRAINED, quality: 80)
         }
         name
         datetimeStart

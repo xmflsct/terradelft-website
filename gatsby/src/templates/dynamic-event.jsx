@@ -1,6 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -9,7 +9,7 @@ import EventInformation from '../components/template-event/event-information'
 import contentfulRichTextOptions from '../components/utils/contentfulRichTextOptions'
 import Layout from '../layouts/layout'
 
-const DynamicEvent = ({ pageContext, data }) => {
+const DynamicEvent = ({ data }) => {
   return (
     <Layout
       SEOtitle={data.event.name}
@@ -26,7 +26,7 @@ const DynamicEvent = ({ pageContext, data }) => {
         name: data.event.name,
         startDate: data.event.datetimeStart,
         endDate: data.event.datetimeEnd,
-        ...(data.event.image && { image: data.event.image.fluid.src }),
+        ...(data.event.image && { image: data.event.image.file.url }),
         description:
           data.event.description &&
           documentToPlainTextString(JSON.parse(data.event.description.raw)),
@@ -56,7 +56,10 @@ const DynamicEvent = ({ pageContext, data }) => {
       <Row>
         {data.event.image && (
           <Col sm={4}>
-            <Img fluid={data.event.image.fluid} backgroundColor='#e8e8e8' />
+            <GatsbyImage
+              image={data.event.image.gatsbyImageData}
+              backgroundColor='#e8e8e8'
+            />
           </Col>
         )}
         <Col sm={data.event.image ? 8 : 12}>
@@ -70,7 +73,6 @@ const DynamicEvent = ({ pageContext, data }) => {
 }
 
 DynamicEvent.propTypes = {
-  pageContext: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired
 }
 
@@ -101,9 +103,10 @@ export const query = graphql`
         address
       }
       image {
-        fluid(maxWidth: 280, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp_noBase64
+        file {
+          url
         }
+        gatsbyImageData(layout: CONSTRAINED, quality: 85)
       }
       description {
         raw
@@ -112,9 +115,7 @@ export const query = graphql`
             contentful_id
             __typename
             description
-            fluid(maxWidth: 600, quality: 85) {
-              ...GatsbyContentfulFluid_withWebp
-            }
+            gatsbyImageData(layout: CONSTRAINED, quality: 85)
           }
         }
       }

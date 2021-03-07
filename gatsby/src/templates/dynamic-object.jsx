@@ -13,6 +13,10 @@ import ObjectAttribute from '../components/template-object/object-attribute'
 import ObjectContact from '../components/template-object/object-contact'
 import contentfulRichTextOptions from '../components/utils/contentfulRichTextOptions'
 import Layout from '../layouts/layout'
+import {
+  ContextVariation,
+  initContextVariation
+} from './dynamic-object/context'
 
 function reducer (_, action) {
   switch (action.type) {
@@ -24,8 +28,6 @@ function reducer (_, action) {
       throw new Error()
   }
 }
-const initContextVariation = { image: null, sku: null }
-export const ContextVariation = React.createContext(initContextVariation)
 
 const DynamicObject = ({ pageContext, data }) => {
   const { t } = useTranslation([
@@ -61,7 +63,7 @@ const DynamicObject = ({ pageContext, data }) => {
         '@context': 'http://schema.org',
         '@type': 'Product',
         name: object.name,
-        image: object.images[0].fluidZoom.src,
+        image: object.images[0].file.url,
         description:
           object.description &&
           documentToPlainTextString(JSON.parse(object.description.raw)),
@@ -101,7 +103,6 @@ const DynamicObject = ({ pageContext, data }) => {
                 id: node.contentful_id
               }),
             name: node.name,
-            image: node.images[0].fluid.src,
             offers: {
               '@type': 'Offer',
               price: node.fields.variations_price_range
@@ -278,21 +279,11 @@ export const query = graphql`
           }
         }
         images {
-          fluid(maxWidth: 427, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp
+          file {
+            url
           }
-          fluidThumbnail: fluid(maxWidth: 200, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
-          fluidZoom: fluid(maxWidth: 1280, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
-          mouseFluid: fluid(maxWidth: 1280, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
-          mouseFluidThumbnail: fluid(maxWidth: 396, quality: 70) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          constrained: gatsbyImageData(layout: CONSTRAINED, quality: 80)
+          fullwidth: gatsbyImageData(layout: FULL_WIDTH, quality: 80)
           description
         }
         artist {
@@ -324,15 +315,8 @@ export const query = graphql`
           sellOnline
           stock
           image {
-            fluid(maxWidth: 427, quality: 80) {
-              ...GatsbyContentfulFluid_withWebp_noBase64
-            }
-            fluidZoom: fluid(maxWidth: 2000, quality: 80) {
-              ...GatsbyContentfulFluid_withWebp_noBase64
-            }
-            mouseFluid: fluid(maxWidth: 1280, quality: 80) {
-              ...GatsbyContentfulFluid_withWebp_noBase64
-            }
+            constrained: gatsbyImageData(layout: CONSTRAINED, quality: 80)
+            fullwidth: gatsbyImageData(layout: FULL_WIDTH, quality: 80)
             description
           }
         }

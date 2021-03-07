@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux'
 import ReactSelect from 'react-select'
 import { difference, findIndex, intersection, reduce, union } from 'lodash'
 
-import { ContextVariation } from '../../templates/dynamic-object'
+import { ContextVariation } from '../../templates/dynamic-object/context'
 import { Price } from '../utils/price'
 import { currency } from '../utils/formatNumber'
 import { bagAdd } from '../../state/slices/bag'

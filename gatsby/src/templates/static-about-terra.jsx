@@ -1,6 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from "gatsby-plugin-image";
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -42,11 +42,10 @@ const StaticAboutTerra = ({ data }) => {
           {data.aboutTerra.staff.map(s => (
             <Row key={s.name} className='staff-member'>
               <Col xs={{ span: 6, offset: 3 }} sm={{ span: 2, offset: 0 }}>
-                <Img
-                  fluid={s.avatar.fluid}
+                <GatsbyImage
+                  image={s.avatar.gatsbyImageData}
                   className='mb-2'
-                  backgroundColor='#e8e8e8'
-                />
+                  backgroundColor='#e8e8e8' />
                 <h4 className='text-center'>{s.name}</h4>
               </Col>
               <Col sm={10}>{renderRichText(s.biography)}</Col>
@@ -55,7 +54,7 @@ const StaticAboutTerra = ({ data }) => {
         </Col>
       </Row>
     </Layout>
-  )
+  );
 }
 
 StaticAboutTerra.propTypes = {
@@ -72,9 +71,7 @@ export const query = graphql`
             contentful_id
             __typename
             description
-            fluid(maxWidth: 430, quality: 85) {
-              ...GatsbyContentfulFluid_withWebp
-            }
+            gatsbyImageData(layout: CONSTRAINED, quality: 85)
           }
         }
       }
@@ -85,18 +82,14 @@ export const query = graphql`
             contentful_id
             __typename
             description
-            fluid(maxWidth: 430, quality: 85) {
-              ...GatsbyContentfulFluid_withWebp
-            }
+            gatsbyImageData(layout: CONSTRAINED, quality: 85)
           }
         }
       }
       staff {
         name
         avatar {
-          fluid(maxWidth: 200) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          gatsbyImageData(layout: CONSTRAINED, quality: 100)
         }
         biography {
           raw

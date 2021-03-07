@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import ReCAPTCHA from 'react-google-recaptcha'
 
-import { ContextVariation } from '../../templates/dynamic-object'
+import { ContextVariation } from '../../templates/dynamic-object/context'
 import sendEmail from '../../api/email'
 
 const ObjectContact = ({ object }) => {

@@ -3,7 +3,7 @@ import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 
 const GridArtist = ({ data }) => {
   const { t } = useTranslation('constant')
@@ -11,17 +11,20 @@ const GridArtist = ({ data }) => {
   return (
     <Row className='component-grid grid-artist'>
       {data.map(d => (
-        <Col key={d.node.artist} xs={4} md={2} className='grid-item'>
+        <Col key={d.artist} xs={4} md={2} className='grid-item'>
           <Link
             to={t('constant:slug.dynamic.artist.slug', {
-              locale: d.node.node_locale,
-              artist: d.node.artist
+              locale: d.node_locale,
+              artist: d.artist
             })}
           >
             <div className='item-image'>
-              <Img fluid={d.node.image.fluid} backgroundColor='#e8e8e8' />
+              <GatsbyImage
+                image={d.image.gatsbyImageData}
+                backgroundColor='#e8e8e8'
+              />
             </div>
-            <p className='item-name'>{d.node.artist}</p>
+            <p className='item-name'>{d.artist}</p>
           </Link>
         </Col>
       ))}

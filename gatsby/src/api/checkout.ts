@@ -3,6 +3,7 @@ import axios from 'axios'
 import { BagState, TDObject } from '../state/slices/bag'
 
 const urlDevelopment = 'http://localhost:3000'
+// @ts-ignore
 const urlProduction = `https://${process.env.GATSBY_API_ENDPOINT}`
 
 export interface Params {

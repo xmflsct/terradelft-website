@@ -24,7 +24,7 @@ const StaticIndex = ({ data }) => {
       </div>
       <div className='section-collection'>
         <h1>{t('content.section.collection')}</h1>
-        <GridArtist data={data.artists.edges} />
+        <GridArtist data={data.artists.nodes} />
       </div>
       <NewsletterPopup />
     </Layout>
@@ -49,18 +49,14 @@ export const query = graphql`
       filter: { node_locale: { eq: $locale } }
       sort: { fields: fields___artist_lastname, order: ASC }
     ) {
-      edges {
-        node {
-          node_locale
-          artist
-          image {
-            fluid(maxWidth: 200, quality: 80) {
-              ...GatsbyContentfulFluid_withWebp_noBase64
-            }
-          }
-          fields {
-            artist_lastname
-          }
+      nodes {
+        node_locale
+        artist
+        image {
+          gatsbyImageData(layout: CONSTRAINED, quality: 80)
+        }
+        fields {
+          artist_lastname
         }
       }
     }

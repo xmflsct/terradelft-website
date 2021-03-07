@@ -14,6 +14,9 @@ type ObjectMain = {
   sku: string
   amount: number
   name: { nl: string; en: string }
+  colour?: undefined
+  size?: undefined
+  variant?: undefined
 }
 
 type ObjectVariation = {

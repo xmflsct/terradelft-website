@@ -3,7 +3,7 @@ import React from 'react'
 import { Badge, Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql, Link } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from "gatsby-plugin-image";
 import moment from 'moment'
 import 'moment/locale/nl'
 
@@ -33,7 +33,7 @@ const StaticTerraInChina = ({ pageContext, data }) => {
             <Row className='mb-3' key={node.contentful_id}>
               <Col>
                 {node.image && (
-                  <Img fluid={node.image.fluid} backgroundColor='#e8e8e8' />
+                  <GatsbyImage image={node.image.gatsbyImageData} backgroundColor='#e8e8e8' />
                 )}
                 <div className='current-type'>
                   {node.type.map(t => (
@@ -77,11 +77,10 @@ const StaticTerraInChina = ({ pageContext, data }) => {
                   })}
                 >
                   {node.image && (
-                    <Img
-                      fluid={node.image.fluid}
+                    <GatsbyImage
+                      image={node.image.gatsbyImageData}
                       className='news-image mb-2'
-                      backgroundColor='#e8e8e8'
-                    />
+                      backgroundColor='#e8e8e8' />
                   )}
                   <h4>{node.title}</h4>
                 </Link>
@@ -103,7 +102,7 @@ const StaticTerraInChina = ({ pageContext, data }) => {
         </Col>
       </Row>
     </Layout>
-  )
+  );
 }
 
 StaticTerraInChina.propTypes = {
@@ -121,9 +120,7 @@ export const query = graphql`
       nodes {
         contentful_id
         image {
-          fluid(maxWidth: 427, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          gatsbyImageData(layout: CONSTRAINED, quality: 80)
         }
         name
         datetimeEnd
@@ -151,9 +148,7 @@ export const query = graphql`
         title
         date
         image {
-          fluid(maxWidth: 427, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          gatsbyImageData(layout: CONSTRAINED, quality: 80)
         }
       }
     }

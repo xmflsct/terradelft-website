@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React, { useContext, useRef, useState } from 'react'
 import { Button, Carousel, Col, Modal, Row } from 'react-bootstrap'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import { ContextVariation } from '../../templates/dynamic-object'
+import { ContextVariation } from '../../templates/dynamic-object/context'
 
 const MouseZoom = ({ image }) => {
   const containerPosition = useRef(null)
@@ -67,11 +67,11 @@ const ObjectImages = ({ images }) => {
             className='mb-3'
             onClick={() => {
               setZoomIndex(0)
-              setZoom({ show: true, fluid: stateVariation.image.fluidZoom })
+              setZoom({ show: true, fluid: stateVariation.image.fullwidth })
             }}
           >
-            <Img fluid={stateVariation.image.fluid} />
-            <MouseZoom image={stateVariation.image.mouseFluid.src} />
+            <GatsbyImage image={stateVariation.image.constrained} />
+            <MouseZoom image={stateVariation.image.file.url} />
           </Col>
         )}
         {images.map((image, index) => (
@@ -82,24 +82,11 @@ const ObjectImages = ({ images }) => {
             key={index}
             onClick={() => {
               setZoomIndex(stateVariation.image ? index + 1 : index)
-              setZoom({ show: true, fluid: image.fluidZoom })
+              setZoom({ show: true, fluid: image.fullwidth })
             }}
           >
-            <Img
-              fluid={
-                !stateVariation.image && index === 0
-                  ? image.fluid
-                  : image.fluidThumbnail
-              }
-              backgroundColor='#e8e8e8'
-            />
-            <MouseZoom
-              image={
-                !stateVariation.image && index === 0
-                  ? image.mouseFluid.src
-                  : image.mouseFluidThumbnail.src
-              }
-            />
+            <GatsbyImage image={image.constrained} backgroundColor='#e8e8e8' />
+            <MouseZoom image={image.file.url} />
           </Col>
         ))}
       </Row>
@@ -117,7 +104,7 @@ const ObjectImages = ({ images }) => {
         >
           {stateVariation.image && (
             <Carousel.Item>
-              <Img fluid={stateVariation.image.fluidZoom} />
+              <GatsbyImage image={stateVariation.image.fullwidth} />
               <Carousel.Caption>
                 <p className='h3'>{stateVariation.image.description}</p>
               </Carousel.Caption>
@@ -125,8 +112,8 @@ const ObjectImages = ({ images }) => {
           )}
           {images.map((image, index) => (
             <Carousel.Item key={index} style={{ maxHeight: '100vh' }}>
-              <Img
-                fluid={image.fluidZoom}
+              <GatsbyImage
+                image={image.fullwidth}
                 backgroundColor='rgba(100, 100, 100)'
                 style={{ maxHeight: '100vh' }}
                 imgStyle={{ objectFit: 'contain' }}

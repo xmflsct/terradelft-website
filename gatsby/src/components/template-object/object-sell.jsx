@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStaticQuery, graphql } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from "gatsby-plugin-image";
 import { findIndex } from 'lodash'
 
 import SellVariations from './sell-variations'
@@ -10,17 +10,14 @@ import SellMain from './sell-main'
 import { Price } from '../utils/price'
 
 const ObjectSell = ({ object }) => {
-  const image = useStaticQuery(graphql`
-    {
-      file(relativePath: { eq: "dynamic-object/kunstkoop.png" }) {
-        childImageSharp {
-          fixed(width: 70) {
-            ...GatsbyImageSharpFixed_noBase64
-          }
-        }
-      }
+  const image = useStaticQuery(graphql`{
+  file(relativePath: {eq: "dynamic-object/kunstkoop.png"}) {
+    childImageSharp {
+      gatsbyImageData(width: 70, placeholder: NONE, layout: FIXED)
     }
-  `)
+  }
+}
+`)
   const { t, i18n } = useTranslation('component-object')
   const objectSell =
     object.nodes[
@@ -51,11 +48,11 @@ const ObjectSell = ({ object }) => {
           target='_blank'
           rel='noopener noreferrer'
         >
-          <Img fixed={image.file.childImageSharp.fixed} />
+          <GatsbyImage image={image.file.childImageSharp.gatsbyImageData} />
         </a>
       )}
     </div>
-  )
+  );
 }
 
 ObjectSell.propTypes = {

@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const urlDevelopment = 'http://localhost:3000'
+// @ts-ignore
 const urlProduction = `https://${process.env.GATSBY_API_ENDPOINT}`
 
 const sendEmail = async (token, data) => {
