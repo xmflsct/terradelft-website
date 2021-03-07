@@ -8,7 +8,7 @@ const stripeSession = async (
 ) => {
   let line_items = []
   for (const object of objects) {
-    const images = [`https:${object.image.file.url}`]
+    const images = [`https:${object.image.fluid.src}`]
     switch (object.type) {
       case 'main':
         line_items.push({

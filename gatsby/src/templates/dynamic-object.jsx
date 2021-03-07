@@ -63,7 +63,7 @@ const DynamicObject = ({ pageContext, data }) => {
         '@context': 'http://schema.org',
         '@type': 'Product',
         name: object.name,
-        image: object.images[0].file.url,
+        image: object.images[0].fluid.src,
         description:
           object.description &&
           documentToPlainTextString(JSON.parse(object.description.raw)),
@@ -103,6 +103,7 @@ const DynamicObject = ({ pageContext, data }) => {
                 id: node.contentful_id
               }),
             name: node.name,
+            image: node.images[0].fluid.src,
             offers: {
               '@type': 'Offer',
               price: node.fields.variations_price_range
@@ -279,11 +280,21 @@ export const query = graphql`
           }
         }
         images {
-          file {
-            url
+          fluid(maxWidth: 427, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp
           }
-          constrained: gatsbyImageData(layout: CONSTRAINED, quality: 80)
-          fullwidth: gatsbyImageData(layout: FULL_WIDTH, quality: 80)
+          fluidThumbnail: fluid(maxWidth: 200, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
+          fluidZoom: fluid(maxWidth: 1280, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
+          mouseFluid: fluid(maxWidth: 1280, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
+          mouseFluidThumbnail: fluid(maxWidth: 396, quality: 70) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
           description
         }
         artist {
@@ -315,8 +326,15 @@ export const query = graphql`
           sellOnline
           stock
           image {
-            constrained: gatsbyImageData(layout: CONSTRAINED, quality: 80)
-            fullwidth: gatsbyImageData(layout: FULL_WIDTH, quality: 80)
+            fluid(maxWidth: 427, quality: 80) {
+              ...GatsbyContentfulFluid_withWebp_noBase64
+            }
+            fluidZoom: fluid(maxWidth: 2000, quality: 80) {
+              ...GatsbyContentfulFluid_withWebp_noBase64
+            }
+            mouseFluid: fluid(maxWidth: 1280, quality: 80) {
+              ...GatsbyContentfulFluid_withWebp_noBase64
+            }
             description
           }
         }

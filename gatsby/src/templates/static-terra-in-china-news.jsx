@@ -3,7 +3,7 @@ import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql, Link } from 'gatsby'
-import { GatsbyImage } from "gatsby-plugin-image";
+import Img from 'gatsby-image'
 import moment from 'moment'
 import 'moment/locale/nl'
 
@@ -36,10 +36,11 @@ const StaticTerraInChinaNews = ({ pageContext, data }) => {
               })}
             >
               {node.image && (
-                <GatsbyImage
-                  image={node.image.gatsbyImageData}
+                <Img
+                  fluid={node.image.fluid}
                   className='news-image'
-                  backgroundColor='#e8e8e8' />
+                  backgroundColor='#e8e8e8'
+                />
               )}
               <h4>{node.title}</h4>
             </Link>
@@ -52,7 +53,7 @@ const StaticTerraInChinaNews = ({ pageContext, data }) => {
         ))}
       </Row>
     </Layout>
-  );
+  )
 }
 
 StaticTerraInChinaNews.propTypes = {
@@ -71,7 +72,9 @@ export const query = graphql`
         title
         date
         image {
-          gatsbyImageData(layout: CONSTRAINED, quality: 80)
+          fluid(maxWidth: 280, quality: 80) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
         }
       }
     }

@@ -1,5 +1,5 @@
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
-import { GatsbyImage } from "gatsby-plugin-image";
+import Img from 'gatsby-image'
 import getYouTubeID from 'get-youtube-id'
 import React from 'react'
 
@@ -9,12 +9,12 @@ const contentfulRichTextOptions = {
       console.log(node.data)
       return (
         <div className='image-rich-text'>
-          <GatsbyImage image={node.data.target.gatsbyImageData} />
+          <Img fluid={node.data.target.fluid} />
           {node.data.target.description && (
             <figcaption>{node.data.target.description}</figcaption>
           )}
         </div>
-      );
+      )
     },
     [INLINES.HYPERLINK]: node => {
       if (node.data.uri.includes('youtube.com')) {

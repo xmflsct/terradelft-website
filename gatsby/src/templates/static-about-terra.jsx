@@ -1,6 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { graphql } from 'gatsby'
-import { GatsbyImage } from "gatsby-plugin-image";
+import Img from 'gatsby-image'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -42,10 +42,11 @@ const StaticAboutTerra = ({ data }) => {
           {data.aboutTerra.staff.map(s => (
             <Row key={s.name} className='staff-member'>
               <Col xs={{ span: 6, offset: 3 }} sm={{ span: 2, offset: 0 }}>
-                <GatsbyImage
-                  image={s.avatar.gatsbyImageData}
+                <Img
+                  fluid={s.avatar.fluid}
                   className='mb-2'
-                  backgroundColor='#e8e8e8' />
+                  backgroundColor='#e8e8e8'
+                />
                 <h4 className='text-center'>{s.name}</h4>
               </Col>
               <Col sm={10}>{renderRichText(s.biography)}</Col>
@@ -54,7 +55,7 @@ const StaticAboutTerra = ({ data }) => {
         </Col>
       </Row>
     </Layout>
-  );
+  )
 }
 
 StaticAboutTerra.propTypes = {
@@ -71,7 +72,9 @@ export const query = graphql`
             contentful_id
             __typename
             description
-            gatsbyImageData(layout: CONSTRAINED, quality: 85)
+            fluid(maxWidth: 430, quality: 85) {
+              ...GatsbyContentfulFluid_withWebp
+            }
           }
         }
       }
@@ -82,14 +85,18 @@ export const query = graphql`
             contentful_id
             __typename
             description
-            gatsbyImageData(layout: CONSTRAINED, quality: 85)
+            fluid(maxWidth: 430, quality: 85) {
+              ...GatsbyContentfulFluid_withWebp
+            }
           }
         }
       }
       staff {
         name
         avatar {
-          gatsbyImageData(layout: CONSTRAINED, quality: 100)
+          fluid(maxWidth: 200) {
+            ...GatsbyContentfulFluid_withWebp_noBase64
+          }
         }
         biography {
           raw

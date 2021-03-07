@@ -3,7 +3,7 @@ import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'gatsby'
-import { GatsbyImage } from 'gatsby-plugin-image'
+import Img from 'gatsby-image'
 
 const GridArtist = ({ data }) => {
   const { t } = useTranslation('constant')
@@ -19,10 +19,7 @@ const GridArtist = ({ data }) => {
             })}
           >
             <div className='item-image'>
-              <GatsbyImage
-                image={d.image.gatsbyImageData}
-                backgroundColor='#e8e8e8'
-              />
+              <Img fluid={d.image.fluid} backgroundColor='#e8e8e8' />
             </div>
             <p className='item-name'>{d.artist}</p>
           </Link>

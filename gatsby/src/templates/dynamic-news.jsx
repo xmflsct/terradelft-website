@@ -1,6 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { graphql } from 'gatsby'
-import { GatsbyImage } from "gatsby-plugin-image";
+import Img from 'gatsby-image'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import moment from 'moment'
 import PropTypes from 'prop-types'
@@ -30,7 +30,7 @@ const DynamicNews = ({ data }) => {
         '@type': 'Article',
         name: data.news.title,
         datePublished: data.news.date,
-        ...(data.news.image && { image: data.news.image.file.url }),
+        ...(data.news.image && { image: data.news.image.fluid.src }),
         articleBody:
           data.news.content &&
           documentToPlainTextString(JSON.parse(data.news.content.raw))
@@ -41,9 +41,7 @@ const DynamicNews = ({ data }) => {
       <Row>
         {data.news.image && (
           <Col sm={4} className='mb-3'>
-            <GatsbyImage
-              image={data.news.image.gatsbyImageData}
-              backgroundColor='#e8e8e8' />
+            <Img fluid={data.news.image.fluid} backgroundColor='#e8e8e8' />
           </Col>
         )}
         <Col sm={data.news.image ? 8 : 12}>
@@ -57,7 +55,7 @@ const DynamicNews = ({ data }) => {
         </Col>
       </Row>
     </Layout>
-  );
+  )
 }
 
 DynamicNews.propTypes = {
@@ -73,10 +71,9 @@ export const query = graphql`
       title
       date
       image {
-        file {
-          url
+        fluid(maxWidth: 280, quality: 85) {
+          ...GatsbyContentfulFluid_withWebp_noBase64
         }
-        gatsbyImageData(layout: CONSTRAINED, quality: 85)
       }
       content {
         raw
@@ -85,7 +82,9 @@ export const query = graphql`
             contentful_id
             __typename
             description
-            gatsbyImageData(layout: CONSTRAINED, quality: 85)
+            fluid(maxWidth: 600, quality: 85) {
+              ...GatsbyContentfulFluid_withWebp
+            }
           }
         }
       }

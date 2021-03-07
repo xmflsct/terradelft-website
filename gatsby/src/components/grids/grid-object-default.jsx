@@ -3,7 +3,7 @@ import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql, Link } from 'gatsby'
-import { GatsbyImage } from 'gatsby-plugin-image'
+import Img from 'gatsby-image'
 import { shuffle } from 'lodash'
 
 const GridObjectDefault = ({ nodes, randomize, limit }) => {
@@ -28,10 +28,7 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
               >
                 <div className='item-image'>
                   {node.images && node.images.length && (
-                    <GatsbyImage
-                      image={node.images[0].gatsbyImageData}
-                      backgroundColor='#e8e8e8'
-                    />
+                    <Img fluid={node.images[0].fluid} />
                   )}
                   {node.fields.object_sale && (
                     <span className='item-sale'>
@@ -71,7 +68,9 @@ export const query = graphql`
       artist
     }
     images {
-      gatsbyImageData(layout: CONSTRAINED, quality: 80)
+      fluid(maxWidth: 140, quality: 85) {
+        ...GatsbyContentfulFluid_withWebp_noBase64
+      }
     }
     priceOriginal
     priceSale
