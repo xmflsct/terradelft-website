@@ -10,7 +10,7 @@ import {
   faShoppingBag
 } from '@fortawesome/free-solid-svg-icons'
 import { useStaticQuery, graphql, Link } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from "gatsby-plugin-image";
 import Navigation from './navigation'
 import { ContextLanguage } from './contexts/language'
 import { ContextMobileMenu } from './layout'
@@ -19,49 +19,32 @@ import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
 import { sumBy } from 'lodash'
 
 const Header = () => {
-  const data = useStaticQuery(graphql`
-    {
-      logoLargeNL: file(
-        relativePath: { eq: "layout-header/logo-large-nl.png" }
-      ) {
-        childImageSharp {
-          fluid(maxWidth: 700, quality: 90) {
-            ...GatsbyImageSharpFluid_noBase64
-          }
-        }
-      }
-      logoLargeEN: file(
-        relativePath: { eq: "layout-header/logo-large-en.png" }
-      ) {
-        childImageSharp {
-          fluid(maxWidth: 700, quality: 90) {
-            ...GatsbyImageSharpFluid_noBase64
-          }
-        }
-      }
-      logoSmallNL: file(
-        relativePath: { eq: "layout-header/logo-small-nl.png" }
-      ) {
-        childImageSharp {
-          fixed(width: 100, quality: 90) {
-            ...GatsbyImageSharpFixed_noBase64
-          }
-        }
-      }
-      logoSmallEN: file(
-        relativePath: { eq: "layout-header/logo-small-en.png" }
-      ) {
-        childImageSharp {
-          fixed(width: 100, quality: 90) {
-            ...GatsbyImageSharpFixed_noBase64
-          }
-        }
-      }
-      siteBuildMetadata {
-        buildTime
-      }
+  const data = useStaticQuery(graphql`{
+  logoLargeNL: file(relativePath: {eq: "layout-header/logo-large-nl.png"}) {
+    childImageSharp {
+      gatsbyImageData(width: 700, quality: 90, placeholder: NONE, layout: CONSTRAINED)
     }
-  `)
+  }
+  logoLargeEN: file(relativePath: {eq: "layout-header/logo-large-en.png"}) {
+    childImageSharp {
+      gatsbyImageData(width: 700, quality: 90, placeholder: NONE, layout: CONSTRAINED)
+    }
+  }
+  logoSmallNL: file(relativePath: {eq: "layout-header/logo-small-nl.png"}) {
+    childImageSharp {
+      gatsbyImageData(width: 100, quality: 90, placeholder: NONE, layout: FIXED)
+    }
+  }
+  logoSmallEN: file(relativePath: {eq: "layout-header/logo-small-en.png"}) {
+    childImageSharp {
+      gatsbyImageData(width: 100, quality: 90, placeholder: NONE, layout: FIXED)
+    }
+  }
+  siteBuildMetadata {
+    buildTime
+  }
+}
+`)
   const { t, i18n } = useTranslation('constant')
   const alternateLinks = useContext(ContextLanguage)
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
@@ -116,20 +99,12 @@ const Header = () => {
           <Link
             to={t('constant:slug.static.index.slug', { locale: i18n.language })}
           >
-            <Img
-              fluid={
-                data[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp
-                  .fluid
-              }
-              className='logo-large'
-            />
-            <Img
-              fixed={
-                data[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp
-                  .fixed
-              }
-              className='logo-small'
-            />
+            <GatsbyImage
+              image={data[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp.gatsbyImageData}
+              className='logo-large' />
+            <GatsbyImage
+              image={data[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp.gatsbyImageData}
+              className='logo-small' />
           </Link>
         </Col>
         <Col xs={4} sm={3} md={4}>
@@ -214,7 +189,7 @@ const Header = () => {
       </CSSTransition>
       <Navigation />
     </header>
-  )
+  );
 }
 
 export default Header

@@ -9,7 +9,7 @@ import EventInformation from '../components/template-event/event-information'
 import contentfulRichTextOptions from '../components/utils/contentfulRichTextOptions'
 import Layout from '../layouts/layout'
 
-const DynamicEvent = ({ pageContext, data }) => {
+const DynamicEvent = ({ data }) => {
   return (
     <Layout
       SEOtitle={data.event.name}
@@ -70,7 +70,6 @@ const DynamicEvent = ({ pageContext, data }) => {
 }
 
 DynamicEvent.propTypes = {
-  pageContext: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired
 }
 

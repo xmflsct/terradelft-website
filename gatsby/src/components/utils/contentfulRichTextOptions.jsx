@@ -6,6 +6,7 @@ import React from 'react'
 const contentfulRichTextOptions = {
   renderNode: {
     [BLOCKS.EMBEDDED_ASSET]: node => {
+      console.log(node.data)
       return (
         <div className='image-rich-text'>
           <Img fluid={node.data.target.fluid} />

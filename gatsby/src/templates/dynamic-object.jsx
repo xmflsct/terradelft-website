@@ -13,6 +13,10 @@ import ObjectAttribute from '../components/template-object/object-attribute'
 import ObjectContact from '../components/template-object/object-contact'
 import contentfulRichTextOptions from '../components/utils/contentfulRichTextOptions'
 import Layout from '../layouts/layout'
+import {
+  ContextVariation,
+  initContextVariation
+} from './dynamic-object/context'
 
 function reducer (_, action) {
   switch (action.type) {
@@ -24,8 +28,6 @@ function reducer (_, action) {
       throw new Error()
   }
 }
-const initContextVariation = { image: null, sku: null }
-export const ContextVariation = React.createContext(initContextVariation)
 
 const DynamicObject = ({ pageContext, data }) => {
   const { t } = useTranslation([
@@ -61,7 +63,7 @@ const DynamicObject = ({ pageContext, data }) => {
         '@context': 'http://schema.org',
         '@type': 'Product',
         name: object.name,
-        image: object.images[0].fluidZoom.src,
+        image: object.images[0].fluid.src,
         description:
           object.description &&
           documentToPlainTextString(JSON.parse(object.description.raw)),

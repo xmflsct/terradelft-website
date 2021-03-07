@@ -24,6 +24,7 @@ module.exports = {
         https: true
       }
     },
+    'gatsby-plugin-image',
     'gatsby-plugin-lodash',
     'gatsby-plugin-react-helmet',
     {

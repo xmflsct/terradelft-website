@@ -28,10 +28,7 @@ const GridObjectDefault = ({ nodes, randomize, limit }) => {
               >
                 <div className='item-image'>
                   {node.images && node.images.length && (
-                    <Img
-                      fluid={node.images[0].fluid}
-                      backgroundColor='#e8e8e8'
-                    />
+                    <Img fluid={node.images[0].fluid} />
                   )}
                   {node.fields.object_sale && (
                     <span className='item-sale'>

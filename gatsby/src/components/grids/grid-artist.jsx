@@ -11,17 +11,17 @@ const GridArtist = ({ data }) => {
   return (
     <Row className='component-grid grid-artist'>
       {data.map(d => (
-        <Col key={d.node.artist} xs={4} md={2} className='grid-item'>
+        <Col key={d.artist} xs={4} md={2} className='grid-item'>
           <Link
             to={t('constant:slug.dynamic.artist.slug', {
-              locale: d.node.node_locale,
-              artist: d.node.artist
+              locale: d.node_locale,
+              artist: d.artist
             })}
           >
             <div className='item-image'>
-              <Img fluid={d.node.image.fluid} backgroundColor='#e8e8e8' />
+              <Img fluid={d.image.fluid} backgroundColor='#e8e8e8' />
             </div>
-            <p className='item-name'>{d.node.artist}</p>
+            <p className='item-name'>{d.artist}</p>
           </Link>
         </Col>
       ))}

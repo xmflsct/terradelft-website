@@ -5,7 +5,7 @@ import Img from 'gatsby-image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import { ContextVariation } from '../../templates/dynamic-object'
+import { ContextVariation } from '../../templates/dynamic-object/context'
 
 const MouseZoom = ({ image }) => {
   const containerPosition = useRef(null)

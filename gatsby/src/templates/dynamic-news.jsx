@@ -59,7 +59,6 @@ const DynamicNews = ({ data }) => {
 }
 
 DynamicNews.propTypes = {
-  pageContext: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired
 }
 

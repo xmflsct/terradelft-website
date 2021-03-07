@@ -30,7 +30,7 @@ const BagList = () => {
       </Row>
     )
   } else {
-    return bagObjects.map((object, i) => {
+    return bagObjects.map(object => {
       return (
         <Row key={object.contentful_id} className='list-object mb-3'>
           <Col xs={12} sm={5} className='object-image'>

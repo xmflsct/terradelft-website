@@ -3,27 +3,35 @@
     {
       "src": "/api/checkout",
       "dest": "/api/checkout",
-      "methods": ["GET", "POST", "OPTIONS"],
+      "methods": [
+        "POST",
+        "OPTIONS"
+      ],
       "headers": {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
         "Access-Control-Allow-Credentials": "true"
       }
     },
     {
       "src": "/api/email",
       "dest": "/api/email",
-      "methods": ["GET", "POST", "OPTIONS"],
+      "methods": [
+        "POST",
+        "OPTIONS"
+      ],
       "headers": {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
         "Access-Control-Allow-Credentials": "true"
       }
     },
     {
       "src": "/(.*)",
       "status": 308,
-      "headers": { "Location": "https://terra-delft.nl" }
+      "headers": {
+        "Location": "https://terra-delft.nl"
+      }
     }
   ]
 }
