@@ -10,7 +10,6 @@ import {
   getDeliveryShippingCountry,
   getDeliveryShippingMethod,
   updateDeliveryMethod,
-  updateDeliveryPhone,
   updateDeliveryShippingCountry,
   updateDeliveryShippingMethod
 } from '../../../state/slices/bag'
