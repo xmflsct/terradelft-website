@@ -105,7 +105,7 @@ const BagCheckout = () => {
     delivery:
       deliveryMethod === 'pickup'
         ? 0
-        : shipmentMethods && shippingMethod
+        : shipmentMethods && shippingMethod >= 0
         ? shipmentMethods[shippingMethod].freeForTotal &&
           subtotal >= shipmentMethods[shippingMethod].freeForTotal
           ? 0
