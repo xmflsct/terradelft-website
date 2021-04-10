@@ -10,7 +10,7 @@ import {
   faShoppingBag
 } from '@fortawesome/free-solid-svg-icons'
 import { useStaticQuery, graphql, Link } from 'gatsby'
-import { GatsbyImage } from "gatsby-plugin-image";
+import { GatsbyImage } from 'gatsby-plugin-image'
 import Navigation from './navigation'
 import { ContextLanguage } from './contexts/language'
 import { ContextMobileMenu } from './layout'
@@ -19,32 +19,61 @@ import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
 import { sumBy } from 'lodash'
 
 const Header = () => {
-  const data = useStaticQuery(graphql`{
-  logoLargeNL: file(relativePath: {eq: "layout-header/logo-large-nl.png"}) {
-    childImageSharp {
-      gatsbyImageData(width: 700, quality: 90, placeholder: NONE, layout: CONSTRAINED)
+  const data = useStaticQuery(graphql`
+    {
+      logoLargeNL: file(
+        relativePath: { eq: "layout-header/logo-large-nl.png" }
+      ) {
+        childImageSharp {
+          gatsbyImageData(
+            width: 700
+            quality: 90
+            placeholder: NONE
+            layout: CONSTRAINED
+          )
+        }
+      }
+      logoLargeEN: file(
+        relativePath: { eq: "layout-header/logo-large-en.png" }
+      ) {
+        childImageSharp {
+          gatsbyImageData(
+            width: 700
+            quality: 90
+            placeholder: NONE
+            layout: CONSTRAINED
+          )
+        }
+      }
+      logoSmallNL: file(
+        relativePath: { eq: "layout-header/logo-small-nl.png" }
+      ) {
+        childImageSharp {
+          gatsbyImageData(
+            width: 100
+            quality: 90
+            placeholder: NONE
+            layout: FIXED
+          )
+        }
+      }
+      logoSmallEN: file(
+        relativePath: { eq: "layout-header/logo-small-en.png" }
+      ) {
+        childImageSharp {
+          gatsbyImageData(
+            width: 100
+            quality: 90
+            placeholder: NONE
+            layout: FIXED
+          )
+        }
+      }
+      siteBuildMetadata {
+        buildTime
+      }
     }
-  }
-  logoLargeEN: file(relativePath: {eq: "layout-header/logo-large-en.png"}) {
-    childImageSharp {
-      gatsbyImageData(width: 700, quality: 90, placeholder: NONE, layout: CONSTRAINED)
-    }
-  }
-  logoSmallNL: file(relativePath: {eq: "layout-header/logo-small-nl.png"}) {
-    childImageSharp {
-      gatsbyImageData(width: 100, quality: 90, placeholder: NONE, layout: FIXED)
-    }
-  }
-  logoSmallEN: file(relativePath: {eq: "layout-header/logo-small-en.png"}) {
-    childImageSharp {
-      gatsbyImageData(width: 100, quality: 90, placeholder: NONE, layout: FIXED)
-    }
-  }
-  siteBuildMetadata {
-    buildTime
-  }
-}
-`)
+  `)
   const { t, i18n } = useTranslation('constant')
   const alternateLinks = useContext(ContextLanguage)
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
@@ -55,13 +84,13 @@ const Header = () => {
   const bagSum = useMemo(() => {
     return sumBy(bagObjects, d => d.amount)
   }, [bagObjects])
-  const prevBagSum = useRef(bagSum)
+  const prevBagLength = useRef(bagObjects.length)
   useEffect(() => {
-    if (bagSum > prevBagSum.current) {
+    if (bagObjects.length > prevBagLength.current) {
       setMiniBag(true)
-      prevBagSum.current = bagSum
+      prevBagLength.current = bagObjects.length
     }
-  }, [bagSum, prevBagSum.current])
+  }, [bagObjects.length, prevBagLength.current])
 
   useEffect(() => {
     setLocationOrigin(window.location.origin)
@@ -100,11 +129,19 @@ const Header = () => {
             to={t('constant:slug.static.index.slug', { locale: i18n.language })}
           >
             <GatsbyImage
-              image={data[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp.gatsbyImageData}
-              className='logo-large' />
+              image={
+                data[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp
+                  .gatsbyImageData
+              }
+              className='logo-large'
+            />
             <GatsbyImage
-              image={data[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp.gatsbyImageData}
-              className='logo-small' />
+              image={
+                data[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp
+                  .gatsbyImageData
+              }
+              className='logo-small'
+            />
           </Link>
         </Col>
         <Col xs={4} sm={3} md={4}>
@@ -189,7 +226,7 @@ const Header = () => {
       </CSSTransition>
       <Navigation />
     </header>
-  );
+  )
 }
 
 export default Header
