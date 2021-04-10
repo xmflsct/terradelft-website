@@ -93,7 +93,10 @@ const BagCheckout = () => {
     }
   }, [shippingCountry, i18n.language])
 
-  const subtotal = sumBy(bagObjects, object => object.priceOriginal)
+  const subtotal = sumBy(
+    bagObjects,
+    object => (object.priceOriginal * 10 * object.amount) / 10
+  )
   const amounts = {
     subtotal,
     discount: sumBy(
