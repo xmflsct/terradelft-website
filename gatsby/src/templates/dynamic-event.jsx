@@ -1,6 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -26,7 +26,9 @@ const DynamicEvent = ({ data }) => {
         name: data.event.name,
         startDate: data.event.datetimeStart,
         endDate: data.event.datetimeEnd,
-        ...(data.event.image && { image: data.event.image.fluid.src }),
+        ...(data.event.image && {
+          image: data.event.image.gatsbyImageData.images.fallback.src
+        }),
         description:
           data.event.description &&
           documentToPlainTextString(JSON.parse(data.event.description.raw)),
@@ -56,7 +58,10 @@ const DynamicEvent = ({ data }) => {
       <Row>
         {data.event.image && (
           <Col sm={4}>
-            <Img fluid={data.event.image.fluid} backgroundColor='#e8e8e8' />
+            <GatsbyImage
+              image={data.event.image.gatsbyImageData}
+              backgroundColor='#e8e8e8'
+            />
           </Col>
         )}
         <Col sm={data.event.image ? 8 : 12}>
@@ -100,9 +105,7 @@ export const query = graphql`
         address
       }
       image {
-        fluid(maxWidth: 280, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp_noBase64
-        }
+        gatsbyImageData(width: 280, quality: 85)
       }
       description {
         raw
@@ -111,9 +114,7 @@ export const query = graphql`
             contentful_id
             __typename
             description
-            fluid(maxWidth: 600, quality: 85) {
-              ...GatsbyContentfulFluid_withWebp
-            }
+            gatsbyImageData(width: 600, quality: 85)
           }
         }
       }

@@ -10,7 +10,7 @@ import {
   faShoppingBag
 } from '@fortawesome/free-solid-svg-icons'
 import { useStaticQuery, graphql, Link } from 'gatsby'
-import { GatsbyImage } from 'gatsby-plugin-image'
+import { StaticImage } from 'gatsby-plugin-image'
 import Navigation from './navigation'
 import { ContextLanguage } from './contexts/language'
 import { ContextMobileMenu } from './layout'
@@ -19,61 +19,53 @@ import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css'
 import { sumBy } from 'lodash'
 
 const Header = () => {
-  const data = useStaticQuery(graphql`
-    {
-      logoLargeNL: file(
-        relativePath: { eq: "layout-header/logo-large-nl.png" }
-      ) {
-        childImageSharp {
-          gatsbyImageData(
-            width: 700
-            quality: 90
-            placeholder: NONE
-            layout: CONSTRAINED
-          )
-        }
-      }
-      logoLargeEN: file(
-        relativePath: { eq: "layout-header/logo-large-en.png" }
-      ) {
-        childImageSharp {
-          gatsbyImageData(
-            width: 700
-            quality: 90
-            placeholder: NONE
-            layout: CONSTRAINED
-          )
-        }
-      }
-      logoSmallNL: file(
-        relativePath: { eq: "layout-header/logo-small-nl.png" }
-      ) {
-        childImageSharp {
-          gatsbyImageData(
-            width: 100
-            quality: 90
-            placeholder: NONE
-            layout: FIXED
-          )
-        }
-      }
-      logoSmallEN: file(
-        relativePath: { eq: "layout-header/logo-small-en.png" }
-      ) {
-        childImageSharp {
-          gatsbyImageData(
-            width: 100
-            quality: 90
-            placeholder: NONE
-            layout: FIXED
-          )
-        }
-      }
-      siteBuildMetadata {
-        buildTime
-      }
-    }
-  `)
+  // const data = useStaticQuery(graphql`
+  //   {
+  //     logoLargeNL: file(
+  //       relativePath: { eq: "layout-header/logo-large-nl.png" }
+  //     ) {
+  //       gatsbyImageData(
+  //         width: 700
+  //         quality: 90
+  //         placeholder: NONE
+  //         layout: CONSTRAINED
+  //       )
+  //     }
+  //     logoLargeEN: file(
+  //       relativePath: { eq: "layout-header/logo-large-en.png" }
+  //     ) {
+  //       gatsbyImageData(
+  //         width: 700
+  //         quality: 90
+  //         placeholder: NONE
+  //         layout: CONSTRAINED
+  //       )
+  //     }
+  //     logoSmallNL: file(
+  //       relativePath: { eq: "layout-header/logo-small-nl.png" }
+  //     ) {
+  //       gatsbyImageData(
+  //         width: 100
+  //         quality: 90
+  //         placeholder: NONE
+  //         layout: FIXED
+  //       )
+  //     }
+  //     logoSmallEN: file(
+  //       relativePath: { eq: "layout-header/logo-small-en.png" }
+  //     ) {
+  //       gatsbyImageData(
+  //         width: 100
+  //         quality: 90
+  //         placeholder: NONE
+  //         layout: FIXED
+  //       )
+  //     }
+  //     siteBuildMetadata {
+  //       buildTime
+  //     }
+  //   }
+  // `)
   const { t, i18n } = useTranslation('constant')
   const alternateLinks = useContext(ContextLanguage)
   const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
@@ -98,14 +90,14 @@ const Header = () => {
 
   const dispatchBag = useDispatch()
   const prevBuildTime = useSelector(getBuildTime)
-  useEffect(() => {
-    if (new Date(data.siteBuildMetadata.buildTime).getTime() > prevBuildTime) {
-      dispatchBag(
-        bagReset(new Date(data.siteBuildMetadata.buildTime).getTime())
-      )
-    } else {
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (new Date(data.siteBuildMetadata.buildTime).getTime() > prevBuildTime) {
+  //     dispatchBag(
+  //       bagReset(new Date(data.siteBuildMetadata.buildTime).getTime())
+  //     )
+  //   } else {
+  //   }
+  // }, [])
 
   return (
     <header>
@@ -128,20 +120,16 @@ const Header = () => {
           <Link
             to={t('constant:slug.static.index.slug', { locale: i18n.language })}
           >
-            <GatsbyImage
-              image={
-                data[`logoLarge${i18n.language.toUpperCase()}`].childImageSharp
-                  .gatsbyImageData
-              }
+            <StaticImage
+              src={`../images/layout-header/logo-large-en.png`}
               className='logo-large'
             />
-            <GatsbyImage
+            {/* <StaticImage
               image={
-                data[`logoSmall${i18n.language.toUpperCase()}`].childImageSharp
-                  .gatsbyImageData
+                data[`logoSmall${i18n.language.toUpperCase()}`].gatsbyImageData
               }
               className='logo-small'
-            />
+            /> */}
           </Link>
         </Col>
         <Col xs={4} sm={3} md={4}>
@@ -188,7 +176,7 @@ const Header = () => {
               </Link>
             </Col>
             <Col md={8} className='search-box align-self-end'>
-              <Form
+              {/* <Form
                 action={`${locationOrigin}${t(
                   'constant:slug.static.search.slug',
                   {
@@ -206,7 +194,7 @@ const Header = () => {
                   </InputGroup.Prepend>
                   <Form.Control name='query' placeholder='Search' />
                 </InputGroup>
-              </Form>
+              </Form> */}
             </Col>
           </Row>
         </Col>

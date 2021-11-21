@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import ReactSelect from 'react-select'
 import { Link } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { isEmpty } from 'lodash'
@@ -34,7 +34,10 @@ const BagList = () => {
       return (
         <Row key={object.contentful_id} className='list-object mb-3'>
           <Col xs={12} sm={5} className='object-image'>
-            <Img fluid={object.image.fluid} backgroundColor='#e8e8e8' />
+            <GatsbyImage
+              image={object.image.gatsbyImageData}
+              alt={object.name[i18n.language]}
+            />
           </Col>
           <Col xs={12} sm={7} className='object-details'>
             <Link

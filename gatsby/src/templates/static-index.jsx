@@ -53,9 +53,7 @@ export const query = graphql`
         node_locale
         artist
         image {
-          fluid(maxWidth: 200, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          gatsbyImageData(width: 200, quality: 80)
         }
         fields {
           artist_lastname

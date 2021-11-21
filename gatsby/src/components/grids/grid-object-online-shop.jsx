@@ -1,5 +1,5 @@
 import { Link, graphql } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import { find, includes } from 'lodash'
 import PropTypes from 'prop-types'
 import React, { useState } from 'react'
@@ -188,10 +188,9 @@ const GridObjectOnlineShop = ({ nodes }) => {
                     })}
                   >
                     <div className='item-image'>
-                      <Img
-                        fluid={node.images[0].fluid}
-                        backgroundColor='#e8e8e8'
-                      />
+                      {node.images && node.images.length && (
+                        <GatsbyImage image={node.images[0].gatsbyImageData} />
+                      )}
                       {node.fields.object_sale && (
                         <span className='item-sale'>
                           {t('component-object:on-sale')}
@@ -222,9 +221,7 @@ export const query = graphql`
       artist
     }
     images {
-      fluid(maxWidth: 140, quality: 85) {
-        ...GatsbyContentfulFluid_withWebp_noBase64
-      }
+      gatsbyImageData(width: 140, quality: 85)
     }
     priceOriginal
     priceSale

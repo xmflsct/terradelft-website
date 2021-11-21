@@ -1,6 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { graphql } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -22,7 +22,7 @@ const DynamicArtist = ({ data }) => (
       '@context': 'http://schema.org',
       '@type': 'Person',
       name: data.artist.artist,
-      image: data.artist.image.fluid.src,
+      image: data.artist.image.gatsbyImageData.images.fallback.src,
       description:
         data.artist.biography &&
         documentToPlainTextString(JSON.parse(data.artist.biography.raw))
@@ -32,7 +32,7 @@ const DynamicArtist = ({ data }) => (
     <h1>{data.artist.artist}</h1>
     <Row className='artist-section'>
       <Col lg={4} className='mb-3'>
-        <Img fluid={data.artist.image.fluid} backgroundColor='#e8e8e8' />
+        <GatsbyImage image={data.artist.image.gatsbyImageData} />
       </Col>
       <Col lg={8}>
         {data.artist.biography && renderRichText(data.artist.biography)}
@@ -59,9 +59,7 @@ export const query = graphql`
     ) {
       artist
       image {
-        fluid(maxWidth: 280, quality: 85) {
-          ...GatsbyContentfulFluid_withWebp_noBase64
-        }
+        gatsbyImageData(width: 280, quality: 85)
       }
       biography {
         raw

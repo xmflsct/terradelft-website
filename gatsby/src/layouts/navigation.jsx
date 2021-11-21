@@ -22,7 +22,7 @@ const Navigation = () => {
   return (
     <Row as='nav'>
       <Col md={12} className='nav-search mb-3'>
-        <Form
+        {/* <Form
           action={`${locationOrigin}${t('constant:slug.static.search.slug', {
             locale: i18n.language
           })}`}
@@ -37,7 +37,7 @@ const Navigation = () => {
             </InputGroup.Prepend>
             <Form.Control name='query' placeholder='Search' />
           </InputGroup>
-        </Form>
+        </Form> */}
       </Col>
       <Col xs={12} sm={4} md={2} className='nav-item'>
         <Link

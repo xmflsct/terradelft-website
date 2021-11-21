@@ -3,7 +3,7 @@ import React from 'react'
 import { Col, Pagination, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql, Link } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import moment from 'moment'
 import 'moment/locale/nl'
 
@@ -35,8 +35,8 @@ const StaticNews = ({ pageContext, data }) => {
                 })}
               >
                 {node.image && (
-                  <Img
-                    fluid={node.image.fluid}
+                  <GatsbyImage
+                    image={node.image.gatsbyImageData}
                     className='news-image'
                     backgroundColor='#e8e8e8'
                   />
@@ -89,9 +89,7 @@ export const query = graphql`
         title
         date
         image {
-          fluid(maxWidth: 600, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          gatsbyImageData(width: 600, quality: 80)
         }
       }
     }

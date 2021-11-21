@@ -3,7 +3,7 @@ import React from 'react'
 import { Badge, Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { graphql, Link } from 'gatsby'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 
 import Layout from '../layouts/layout'
 import EventInformation from '../components/template-event/event-information'
@@ -49,35 +49,37 @@ const StaticEvents = ({ pageContext, data }) => {
                 new Date(node.datetimeEnd) >= new Date() &&
                 new Date(node.datetimeStart) <= new Date()
             )
-            .map(node => (
-              <Row className='events-current' key={node.contentful_id}>
-                {node.image && (
+            .map(node => {
+              return (
+                <Row className='events-current' key={node.contentful_id}>
+                  {node.image && (
+                    <Col sm={6}>
+                      <GatsbyImage image={node.image.gatsbyImageData} />
+                    </Col>
+                  )}
                   <Col sm={6}>
-                    <Img fluid={node.image.fluid} backgroundColor='#e8e8e8' />
+                    <div className='current-type'>
+                      {node.type.map(t => (
+                        <Badge variant='info' key={t.name}>
+                          {t.name}
+                        </Badge>
+                      ))}
+                    </div>
+                    <Link
+                      to={t('constant:slug.dynamic.event.slug', {
+                        locale: pageContext.locale,
+                        event: node.name,
+                        id: node.contentful_id
+                      })}
+                      className='current-name'
+                    >
+                      <h3>{node.name}</h3>
+                    </Link>
+                    <EventInformation event={node} type='current' />
                   </Col>
-                )}
-                <Col sm={6}>
-                  <div className='current-type'>
-                    {node.type.map(t => (
-                      <Badge variant='info' key={t.name}>
-                        {t.name}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Link
-                    to={t('constant:slug.dynamic.event.slug', {
-                      locale: pageContext.locale,
-                      event: node.name,
-                      id: node.contentful_id
-                    })}
-                    className='current-name'
-                  >
-                    <h3>{node.name}</h3>
-                  </Link>
-                  <EventInformation event={node} type='current' />
-                </Col>
-              </Row>
-            ))}
+                </Row>
+              )
+            })}
         </Col>
       </Row>
     </Layout>
@@ -98,9 +100,7 @@ export const query = graphql`
       nodes {
         contentful_id
         image {
-          fluid(maxWidth: 600, quality: 80) {
-            ...GatsbyContentfulFluid_withWebp_noBase64
-          }
+          gatsbyImageData(width: 600, quality: 80)
         }
         name
         datetimeStart

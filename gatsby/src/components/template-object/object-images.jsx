@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { useContext, useRef, useState } from 'react'
 import { Button, Carousel, Col, Modal, Row } from 'react-bootstrap'
-import Img from 'gatsby-image'
+import { GatsbyImage } from 'gatsby-plugin-image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
@@ -70,7 +70,7 @@ const ObjectImages = ({ images }) => {
               setZoom({ show: true, fluid: stateVariation.image.fluidZoom })
             }}
           >
-            <Img fluid={stateVariation.image.fluid} />
+            <GatsbyImage image={stateVariation.image.gatsbyImageData} />
             <MouseZoom image={stateVariation.image.mouseFluid.src} />
           </Col>
         )}
@@ -85,10 +85,10 @@ const ObjectImages = ({ images }) => {
               setZoom({ show: true, fluid: image.fluidZoom })
             }}
           >
-            <Img
-              fluid={
+            <GatsbyImage
+              image={
                 !stateVariation.image && index === 0
-                  ? image.fluid
+                  ? image.gatsbyImageData
                   : image.fluidThumbnail
               }
               backgroundColor='#e8e8e8'
@@ -117,7 +117,7 @@ const ObjectImages = ({ images }) => {
         >
           {stateVariation.image && (
             <Carousel.Item>
-              <Img fluid={stateVariation.image.fluidZoom} />
+              <GatsbyImage image={stateVariation.image.fluidZoom} />
               <Carousel.Caption>
                 <p className='h3'>{stateVariation.image.description}</p>
               </Carousel.Caption>
@@ -125,8 +125,8 @@ const ObjectImages = ({ images }) => {
           )}
           {images.map((image, index) => (
             <Carousel.Item key={index} style={{ maxHeight: '100vh' }}>
-              <Img
-                fluid={image.fluidZoom}
+              <GatsbyImage
+                image={image.fluidZoom}
                 backgroundColor='rgba(100, 100, 100)'
                 style={{ maxHeight: '100vh' }}
                 imgStyle={{ objectFit: 'contain' }}
