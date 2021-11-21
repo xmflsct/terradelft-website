@@ -40,7 +40,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-sitemap',
       options: {
-        exclude: [
+        excludes: [
           '/en/search',
           '/nl/zoeken',
           '/en/shopping-bag',
