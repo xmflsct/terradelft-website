@@ -188,10 +188,10 @@ const GridObjectOnlineShop = ({ nodes }) => {
                     })}
                   >
                     <div className='item-image'>
-                      <Img
+                      {node.images && node.images.length && <Img
                         fluid={node.images[0].fluid}
                         backgroundColor='#e8e8e8'
-                      />
+                      />}
                       {node.fields.object_sale && (
                         <span className='item-sale'>
                           {t('component-object:on-sale')}
