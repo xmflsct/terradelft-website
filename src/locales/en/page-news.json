@@ -1,0 +1,7 @@
+{
+  "slug": "$t(translation:slug.static.news.slug)",
+  "name": "$t(translation:slug.static.news.name)",
+  "content": {
+    "published": "Published on {{date}}"
+  }
+}

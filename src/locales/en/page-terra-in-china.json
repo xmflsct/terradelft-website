@@ -1,0 +1,14 @@
+{
+  "slug": "$t(translation:slug.static.terra-in-china.slug)",
+  "name": "$t(translation:slug.static.terra-in-china.name)",
+  "content": {
+    "heading": {
+      "events": "$t(page-exhibitions:name)",
+      "news": "$t(page-news:name)"
+    },
+    "view-all": {
+      "events": "View all events of $t(name) →",
+      "news": "View all news of $t(name) →"
+    }
+  }
+}
