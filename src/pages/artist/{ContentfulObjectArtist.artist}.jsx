@@ -33,7 +33,10 @@ const PageArtist = ({ data }) => {
       <h1>{data.artist.artist}</h1>
       <Row className='artist-section'>
         <Col lg={4} className='mb-3'>
-          <GatsbyImage image={data.artist.image.gatsbyImageData} />
+          <GatsbyImage
+            alt={data.artist.artist}
+            image={data.artist.image.gatsbyImageData}
+          />
         </Col>
         <Col lg={8}>
           {data.artist.biography && renderRichText(data.artist.biography)}

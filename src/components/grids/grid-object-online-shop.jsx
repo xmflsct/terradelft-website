@@ -178,7 +178,10 @@ const GridObjectOnlineShop = ({ nodes }) => {
                   <Link to={node.gatsbyPath}>
                     <div className='item-image'>
                       {node.images && node.images.length && (
-                        <GatsbyImage image={node.images[0].gatsbyImageData} />
+                        <GatsbyImage
+                          alt={node.name}
+                          image={node.images[0].gatsbyImageData}
+                        />
                       )}
                       {node.fields.object_sale && (
                         <span className='item-sale'>

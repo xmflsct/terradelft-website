@@ -59,8 +59,8 @@ const PageExhibition = ({ data }) => {
         {data.event.image && (
           <Col sm={4}>
             <GatsbyImage
+              alt={data.event.name}
               image={data.event.image.gatsbyImageData}
-              backgroundColor='#e8e8e8'
             />
           </Col>
         )}

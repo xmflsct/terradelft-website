@@ -28,8 +28,8 @@ const PageTerraInChina = ({ data }) => {
               <Col>
                 {node.image && (
                   <GatsbyImage
+                    alt={node.image.description}
                     image={node.image.gatsbyImageData}
-                    backgroundColor='#e8e8e8'
                   />
                 )}
                 <div className='current-type'>
@@ -58,9 +58,9 @@ const PageTerraInChina = ({ data }) => {
                 <Link to={node.gatsbyPath}>
                   {node.image && (
                     <GatsbyImage
+                      alt={node.image.description}
                       image={node.image.gatsbyImageData}
                       className='news-image mb-2'
-                      backgroundColor='#e8e8e8'
                     />
                   )}
                   <h4>{node.title}</h4>

@@ -1,5 +1,5 @@
-import sendEmail from '@api/email'
 import Layout from '@components/layout'
+import sendEmail from '@utils/email'
 import { graphql } from 'gatsby'
 import { forIn } from 'lodash'
 import PropTypes from 'prop-types'

@@ -1,4 +1,4 @@
-import sendEmail from '@api/email'
+import sendEmail from '@utils/email'
 import PropTypes from 'prop-types'
 import React, { useContext, useRef, useState } from 'react'
 import { Button, Form, Spinner } from 'react-bootstrap'

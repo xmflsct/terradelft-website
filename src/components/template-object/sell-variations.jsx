@@ -130,7 +130,6 @@ function reducer(options, action) {
 }
 
 const SellVariations = ({ object }) => {
-  console.log(object)
   const { t, i18n } = useTranslation()
   const dispatch = useDispatch()
   const { updateVariation } = useContext(ContextVariation)

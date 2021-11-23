@@ -1,4 +1,3 @@
-import checkout from '@api/checkout'
 import {
   BagState,
   getBag,
@@ -9,6 +8,7 @@ import {
   updateDeliveryShippingMethod
 } from '@state/slices/bag'
 import { loadStripe } from '@stripe/stripe-js'
+import checkout from '@utils/checkout'
 import { graphql, useStaticQuery } from 'gatsby'
 import countries from 'i18n-iso-countries'
 import { findIndex, sumBy } from 'lodash'
@@ -27,7 +27,7 @@ const BagCheckout = () => {
   const { t, i18n } = useTranslation()
   // @ts-ignore
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
-  const recaptchaRef = useRef<ReCAPTCHA>()
+  const recaptchaRef = useRef<ReCAPTCHA>(null)
 
   const bagObjects = useSelector(getBag)
   const deliveryMethod = useSelector(getDeliveryMethod)
@@ -107,8 +107,9 @@ const BagCheckout = () => {
     delivery:
       deliveryMethod === 'pickup'
         ? 0
-        : shipmentMethods && shippingMethod >= 0
+        : shipmentMethods && shippingMethod && shippingMethod >= 0
         ? shipmentMethods[shippingMethod].freeForTotal &&
+          // @ts-ignore
           subtotal >= shipmentMethods[shippingMethod].freeForTotal
           ? 0
           : shipmentMethods[shippingMethod].price
@@ -124,11 +125,11 @@ const BagCheckout = () => {
     const delivery: {
       method: BagState['delivery']['method']
       name: string
-      phone: string
+      phone?: string
       countryCode?: string
       countryA2?: string
       index?: number
-    } = { method: undefined, name: undefined, phone: undefined }
+    } = { method: 'pickup', name: '', phone: undefined }
     switch (deliveryMethod) {
       case 'pickup':
         delivery.method = 'pickup'
@@ -146,6 +147,7 @@ const BagCheckout = () => {
         delivery.countryA2 = countries.numericToAlpha2(shippingCountry.value)
         break
     }
+
     const res = await checkout({
       token,
       objects: bagObjects,
@@ -167,14 +169,12 @@ const BagCheckout = () => {
     })
     if (res.sessionId) {
       const stripe = await stripePromise
-      const { error } = await stripe.redirectToCheckout({
+      const result = await stripe?.redirectToCheckout({
         sessionId: res.sessionId
       })
-      if (error) {
+      if (result && result.error) {
         return false
       }
-    } else if (res.corrections) {
-      return false
     } else {
       return false
     }

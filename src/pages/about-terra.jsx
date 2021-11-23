@@ -43,6 +43,7 @@ const PageAboutTerra = ({ data }) => {
             <Row key={s.name} className='staff-member'>
               <Col xs={{ span: 6, offset: 3 }} sm={{ span: 2, offset: 0 }}>
                 <GatsbyImage
+                  alt={s.name}
                   image={s.avatar.gatsbyImageData}
                   className='mb-2'
                   backgroundColor='#e8e8e8'

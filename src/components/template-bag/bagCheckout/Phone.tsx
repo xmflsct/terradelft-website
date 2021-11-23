@@ -43,7 +43,6 @@ const CheckoutPhone: React.FC = () => {
       <PhoneInput
         value={deliveryPhone}
         displayInitialValueAsLocalNumber={false}
-        useNationalFormatForDefaultCountryValue={false}
         international
         // @ts-ignore
         defaultCountry={defaultCcountry}

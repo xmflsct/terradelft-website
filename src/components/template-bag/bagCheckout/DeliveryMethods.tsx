@@ -18,7 +18,7 @@ import ReactSelect from 'react-select'
 export interface Props {
   subtotal: number
   isSubmitting: boolean
-  shipmentMethods: {
+  shipmentMethods?: {
     method: string
     price: number
     freeForTotal?: number

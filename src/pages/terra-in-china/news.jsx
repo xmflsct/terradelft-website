@@ -26,6 +26,7 @@ const PageTerraInChinaNews = ({ data }) => {
             <Link to={node.gatsbyPath}>
               {node.image && (
                 <GatsbyImage
+                  alt={node.image.description}
                   image={node.image.gatsbyImageData}
                   className='news-image'
                 />

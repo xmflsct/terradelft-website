@@ -70,7 +70,10 @@ const ObjectImages = ({ images }) => {
               setZoom({ show: true, fluid: stateVariation.image.fluidZoom })
             }}
           >
-            <GatsbyImage image={stateVariation.image.gatsbyImageData} />
+            <GatsbyImage
+              alt={stateVariation.image.description}
+              image={stateVariation.image.gatsbyImageData}
+            />
             <MouseZoom
               image={stateVariation.image.mouseFluid.images.fallback.src}
             />
@@ -88,6 +91,7 @@ const ObjectImages = ({ images }) => {
             }}
           >
             <GatsbyImage
+              alt={image.description}
               image={
                 !stateVariation.image && index === 0
                   ? image.gatsbyImageData
@@ -119,7 +123,7 @@ const ObjectImages = ({ images }) => {
         >
           {stateVariation.image && (
             <Carousel.Item>
-              <GatsbyImage image={stateVariation.image.fluidZoom} />
+              <GatsbyImage alt='' image={stateVariation.image.fluidZoom} />
               <Carousel.Caption>
                 <p className='h3'>{stateVariation.image.description}</p>
               </Carousel.Caption>
@@ -128,6 +132,7 @@ const ObjectImages = ({ images }) => {
           {images.map((image, index) => (
             <Carousel.Item key={index} style={{ maxHeight: '100vh' }}>
               <GatsbyImage
+                alt=''
                 image={image.fluidZoom}
                 backgroundColor='rgba(100, 100, 100)'
                 style={{ maxHeight: '100vh' }}

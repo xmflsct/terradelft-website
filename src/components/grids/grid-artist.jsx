@@ -12,6 +12,7 @@ const GridArtist = ({ data }) => {
           <Link to={d.gatsbyPath}>
             <div className='item-image'>
               <GatsbyImage
+                alt={d.artist}
                 image={d.image.gatsbyImageData}
                 backgroundColor='#e8e8e8'
               />

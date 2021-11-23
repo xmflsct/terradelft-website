@@ -46,7 +46,10 @@ const PageExhibitions = ({ data }) => {
                 <Row className='events-current' key={node.contentful_id}>
                   {node.image && (
                     <Col sm={6}>
-                      <GatsbyImage image={node.image.gatsbyImageData} />
+                      <GatsbyImage
+                        alt={node.image.description}
+                        image={node.image.gatsbyImageData}
+                      />
                     </Col>
                   )}
                   <Col sm={6}>

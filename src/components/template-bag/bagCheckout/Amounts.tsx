@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next'
 
 export interface Props {
   subtotal: number
-  discount?: number
-  delivery?: number
+  discount: number
+  delivery: number | null
 }
 
 const CheckoutAmounts: React.FC<Props> = ({ subtotal, discount, delivery }) => {
@@ -33,7 +33,7 @@ const CheckoutAmounts: React.FC<Props> = ({ subtotal, discount, delivery }) => {
           <strong>{t('content.checkout.summary.delivery')}</strong>
         </Col>
         <Col md='7'>
-          {delivery !== undefined &&
+          {delivery !== null &&
             (delivery === 0
               ? t('content.checkout.delivery.free')
               : currency(delivery, i18n.language))}
@@ -44,7 +44,7 @@ const CheckoutAmounts: React.FC<Props> = ({ subtotal, discount, delivery }) => {
           <strong>{t('content.checkout.summary.total')}</strong>
         </Col>
         <Col md='7'>
-          {delivery !== undefined &&
+          {delivery !== null &&
             currency(
               (subtotal * 10 - (discount || 0) * 10 + delivery * 10) / 10,
               i18n.language

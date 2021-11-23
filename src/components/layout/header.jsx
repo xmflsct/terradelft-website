@@ -78,11 +78,13 @@ const Header = () => {
             {i18n.language === 'nl' && (
               <>
                 <StaticImage
+                  alt='logo'
                   src={`../../images/layout-header/logo-large-nl.png`}
                   placeholder='none'
                   className='logo-large'
                 />
                 <StaticImage
+                  alt='logo'
                   src={`../../images/layout-header/logo-small-nl.png`}
                   placeholder='none'
                   className='logo-small'
@@ -92,11 +94,13 @@ const Header = () => {
             {i18n.language === 'en' && (
               <>
                 <StaticImage
+                  alt='logo'
                   src={`../../images/layout-header/logo-large-en.png`}
                   placeholder='none'
                   className='logo-large'
                 />
                 <StaticImage
+                  alt='logo'
                   src={`../../images/layout-header/logo-small-en.png`}
                   placeholder='none'
                   className='logo-small'

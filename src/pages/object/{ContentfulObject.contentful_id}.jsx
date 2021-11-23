@@ -30,7 +30,6 @@ function reducer(_, action) {
 }
 
 const PageObject = ({ pageContext, data }) => {
-  console.log(data)
   const { t } = useTranslation()
   const [stateVariation, updateVariation] = useReducer(
     reducer,
@@ -137,14 +136,7 @@ const PageObject = ({ pageContext, data }) => {
             <h1>{object.name}</h1>
             <h4>
               {t('component-object:artist')}{' '}
-              <Link
-                to={t('translation:slug.dynamic.artist.slug', {
-                  locale: pageContext.locale,
-                  artist: object.artist.artist
-                })}
-              >
-                {object.artist.artist}
-              </Link>
+              <Link to={object.artist.gatsbyPath}>{object.artist.artist}</Link>
             </h4>
             <ObjectSell object={data.object} />
             {object.year && (

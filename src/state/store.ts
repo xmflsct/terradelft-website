@@ -9,17 +9,9 @@ import bagSlice from './slices/bag'
 
 const prefix = 'terradelft'
 
-const bagPersistConfig = {
-  key: 'bag',
-  prefix,
-  storage: storage
-}
+const bagPersistConfig = { key: 'bag', prefix, storage }
 
-const rootPersistConfig = {
-  key: 'root',
-  prefix,
-  storage: storage
-}
+const rootPersistConfig = { key: 'root', prefix, storage }
 
 const rootReducer = combineReducers({
   bag: persistReducer(bagPersistConfig, bagSlice)

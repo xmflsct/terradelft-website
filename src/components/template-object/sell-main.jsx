@@ -42,7 +42,6 @@ const SellMain = ({ object }) => {
       })
     )
   }
-  console.log(sellMain)
 
   return (
     <Form onSubmit={e => onSubmit(e)} className='sell-main'>

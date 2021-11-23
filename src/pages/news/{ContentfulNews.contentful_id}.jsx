@@ -44,8 +44,8 @@ const PageNews = ({ data }) => {
         {data.news.image && (
           <Col sm={4} className='mb-3'>
             <GatsbyImage
+              alt={data.news.title}
               image={data.news.image.gatsbyImageData}
-              backgroundColor='#e8e8e8'
             />
           </Col>
         )}
