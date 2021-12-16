@@ -1,4 +1,4 @@
-name = "worker-typescript-template"
+name = "terradelft-api"
 type = "javascript"
 zone_id = ""
 account_id = ""
@@ -6,6 +6,7 @@ route = ""
 workers_dev = false
 
 [build]
-command = "npm install && npm run build"
+command = "yarn && yarn build"
 [build.upload]
-format = "service-worker"
+format = "modules"
+main = "./index.mjs"

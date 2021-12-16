@@ -21,7 +21,6 @@
       "@pages/*": ["pages/*"],
       "@state/*": ["state/*"],
       "@utils/*": ["utils/*"]
-    },
-    "types": ["@cloudflare/workers-types"]
+    }
   }
 }

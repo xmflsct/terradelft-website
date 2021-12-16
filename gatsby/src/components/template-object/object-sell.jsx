@@ -21,7 +21,10 @@ const ObjectSell = ({ object }) => {
         objectSell.sellOnline ? (
           <SellMain object={object} />
         ) : (
-          Price(i18n.language, objectSell.priceSale, objectSell.priceOriginal)
+          <Price
+            priceSell={objectSell.priceSale}
+            priceOriginal={objectSell.priceOriginal}
+          />
         )
       ) : objectSell.stock === 0 ? (
         <div className='object-sold'>

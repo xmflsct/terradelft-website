@@ -60,7 +60,6 @@ const ObjectContact = ({ object }) => {
       setSendStatus(true)
       return true
     } else {
-      console.log(response.error)
       return false
     }
   }

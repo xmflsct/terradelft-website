@@ -121,19 +121,16 @@ const Header = () => {
                         size='sm'
                         fixedWidth
                       />
-                      {lng}
-                      {/* <span className='long small-block'>
-                      {' ' +
-                        t(
-                          `translation:header.language-switcher.long.${link.locale}`
-                        )}
-                    </span>
-                    <span className='short small-block'>
-                      {' ' +
-                        t(
-                          `translation:header.language-switcher.short.${link.locale}`
-                        )}
-                    </span> */}
+                      <span className='long small-block'>
+                        {' ' +
+                          t(`translation:header.language-switcher.long.${lng}`)}
+                      </span>
+                      <span className='short small-block'>
+                        {' ' +
+                          t(
+                            `translation:header.language-switcher.short.${lng}`
+                          )}
+                      </span>
                     </Link>
                   )
               )}
@@ -154,7 +151,14 @@ const Header = () => {
                 )}`}
               >
                 <InputGroup>
-                  <InputGroup.Text>
+                  <InputGroup.Text
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      borderRadius: 0,
+                      borderBottom: '#394c50 1px solid'
+                    }}
+                  >
                     <FontAwesomeIcon icon={faSearch} size='sm' fixedWidth />
                   </InputGroup.Text>
                   <Form.Control name='query' placeholder='Search' />

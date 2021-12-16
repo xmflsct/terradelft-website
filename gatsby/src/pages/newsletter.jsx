@@ -41,7 +41,6 @@ const PageNewsletter = ({ pageContext }) => {
       setSendStatus(true)
       return true
     } else {
-      console.log(response.error)
       return false
     }
   }

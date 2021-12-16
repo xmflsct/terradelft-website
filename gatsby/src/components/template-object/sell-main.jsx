@@ -58,11 +58,10 @@ const SellMain = ({ object }) => {
           />
         </div>
       </InputGroup>
-      {Price(
-        i18n.language,
-        sellMain.priceSale * amount,
-        sellMain.priceOriginal * amount
-      )}
+      <Price
+        priceSale={sellMain.priceSale * amount}
+        priceOriginal={sellMain.priceOriginal * amount}
+      />
       <Button variant='primary' type='submit'>
         {t('add-button.add-to-bag')}
       </Button>

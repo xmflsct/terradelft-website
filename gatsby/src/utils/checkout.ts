@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { BagState, TDObject } from '@state/slices/bag'
 
-const urlDevelopment = 'http://localhost:8000'
-const urlProduction = 'https://www.terra-delft.nl'
+const urlDevelopment = 'http://localhost:8787'
+const urlProduction = 'https://api.terra-delft.nl'
 
 export interface Params {
   token: string
@@ -32,13 +32,13 @@ const checkout = async ({
   locale,
   urls
 }: Params): Promise<{ sessionId: string }> => {
-  const baseUrl =
-    // @ts-ignore
+  const baseURL =
     process.env.NODE_ENV === 'production' ? urlProduction : urlDevelopment
 
   const { data } = await axios({
     method: 'post',
-    url: `${baseUrl}/checkout`,
+    baseURL,
+    url: '/checkout',
     data: { token, objects, delivery, amounts, locale, urls }
   })
 

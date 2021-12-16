@@ -30,7 +30,13 @@ module.exports = {
           interpolation: {
             escapeValue: false
           }
-        }
+        },
+        pages: [
+          {
+            matchPath: '/api/(.*)',
+            excludeLanguages: ['en', 'nl']
+          }
+        ]
       }
     },
     {

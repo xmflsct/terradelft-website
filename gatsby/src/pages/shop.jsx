@@ -41,7 +41,11 @@ export const query = graphql`
       }
     }
     objects: allContentfulObject(
-      filter: { sellOnline: { eq: true }, node_locale: { eq: $language } }
+      filter: {
+        sellOnline: { eq: true }
+        node_locale: { eq: $language }
+        stock: { ne: 0 }
+      }
     ) {
       nodes {
         ...ObjectOnlineShop

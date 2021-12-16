@@ -155,18 +155,11 @@ const BagCheckout = () => {
       amounts,
       locale: i18n.language,
       urls: {
-        success: `${window.location.origin}${t(
-          'translation:slug.static.thank-you.slug',
-          { locale: i18n.language }
-        )}`,
-        cancel: `${window.location.origin}${t(
-          'translation:slug.static.bag.slug',
-          {
-            locale: i18n.language
-          }
-        )}`
+        success: `${window.location.origin}/thank-you`,
+        cancel: `${window.location.origin}/bag`
       }
     })
+    console.log('res', res)
     if (res.sessionId) {
       const stripe = await stripePromise
       const result = await stripe?.redirectToCheckout({
