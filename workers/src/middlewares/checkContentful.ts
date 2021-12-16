@@ -2,6 +2,18 @@ import { error } from 'itty-router-extras'
 import { sumBy } from 'lodash'
 import { ContentCheckout, Env } from '..'
 
+export let shipping_options: {
+  shipping_rate_data: {
+    display_name: string
+    type: 'fixed_amount'
+    fixed_amount: {
+      amount: number
+      currency: 'eur'
+    }
+    metadata?: Object
+  }
+}[] = []
+
 const checkContentful = async (
   { content: { objects, delivery, amounts, locale } }: ContentCheckout,
   env: Env
@@ -97,11 +109,17 @@ const checkContentful = async (
     }
   }
 
+  // Check subtotal
+  const subtotal = sumBy(objects, o => {
+    return o.priceOriginal * o.amount
+  })
+  if (!(subtotal === amounts.subtotal)) {
+    console.log('[checkContentful]', 'Total amount has changed')
+    return error(400, 'Total amount has changed')
+  }
+
   // Check delivery
   if (delivery.method !== 'pickup') {
-    if (!delivery.index) {
-      return error(400, 'No delivery index provided')
-    }
     const params = new URLSearchParams({
       access_token: secret,
       content_type: contentType.delivery,
@@ -140,35 +158,32 @@ const checkContentful = async (
     countryCodeIndex =
       countryCodeIndex !== -1 ? countryCodeIndex : rates.length - 1
 
-    if (rates[countryCodeIndex].rates[delivery.index].freeForTotal) {
-      if (
-        amounts.subtotal <
-          rates[countryCodeIndex].rates[delivery.index].freeForTotal &&
-        amounts.delivery === 0
-      ) {
-        console.log('[checkContentful]', 'Delivery price is wrong - 1')
-        return error(400, 'Delivery price is wrong - 1')
+    shipping_options = rates[countryCodeIndex].rates.map(rate => ({
+      shipping_rate_data: {
+        display_name: rate.method,
+        type: 'fixed_amount',
+        fixed_amount: {
+          amount: subtotal >= rate.freeForTotal ? 0 : rate.price * 10 * 10,
+          currency: 'eur'
+        },
+        ...(rate.description && {
+          metadata: { description: rate.description }
+        })
       }
-    } else {
-      if (
-        !(
-          amounts.delivery ===
-          rates[countryCodeIndex].rates[delivery.index].price
-        )
-      ) {
-        console.log('[checkContentful]', 'Delivery price is wrong - 2')
-        return error(400, 'Delivery price is wrong - 2')
+    }))
+  } else {
+    shipping_options = [
+      {
+        shipping_rate_data: {
+          display_name: delivery.name,
+          type: 'fixed_amount',
+          fixed_amount: {
+            amount: 0,
+            currency: 'eur'
+          }
+        }
       }
-    }
-  }
-
-  // Check subtotal
-  const subtotal = sumBy(objects, o => {
-    return o.priceOriginal * o.amount
-  })
-  if (!(subtotal === amounts.subtotal)) {
-    console.log('[checkContentful]', 'Total amount has changed')
-    return error(400, 'Total amount has changed')
+    ]
   }
 }
 

@@ -11,7 +11,13 @@ import React from 'react'
 
 const CheckoutSuppliers: React.FC = () => {
   return (
-    <div className='mt-3'>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+      }}
+    >
       <FontAwesomeIcon icon={faIdeal} size='2x' />{' '}
       <FontAwesomeIcon icon={faApplePay} size='2x' />{' '}
       <FontAwesomeIcon icon={faGoogleWallet} size='2x' />{' '}

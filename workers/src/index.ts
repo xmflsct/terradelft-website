@@ -62,7 +62,6 @@ export type ContentCheckout = Request & {
     delivery: {
       method: 'pickup' | 'shipment'
       name: string
-      phone: string
       countryCode?: number
       countryA2?: string
       index?: number

@@ -47,9 +47,7 @@ export type BagState = {
     method: 'pickup' | 'shipment'
     shipment: {
       country?: { value: string; label: string }
-      method?: number
     }
-    phone?: string
   }
 }
 
@@ -59,10 +57,8 @@ export const bagInitialState: BagState = {
   delivery: {
     method: 'pickup',
     shipment: {
-      country: undefined,
-      method: undefined
-    },
-    phone: undefined
+      country: undefined
+    }
   }
 }
 
@@ -104,23 +100,11 @@ const bagSlice = createSlice({
     ) => {
       state.delivery.method = action.payload
     },
-    updateDeliveryPhone: (
-      state,
-      action: PayloadAction<BagState['delivery']['phone']>
-    ) => {
-      state.delivery.phone = action.payload
-    },
     updateDeliveryShippingCountry: (
       state,
       action: PayloadAction<BagState['delivery']['shipment']['country']>
     ) => {
       state.delivery.shipment.country = action.payload
-    },
-    updateDeliveryShippingMethod: (
-      state,
-      action: PayloadAction<BagState['delivery']['shipment']['method']>
-    ) => {
-      state.delivery.shipment.method = action.payload
     }
   }
 })
@@ -130,11 +114,8 @@ export const getBuildTime = (state: RootState) => state.bag.buildTime
 export const getBag = (state: RootState) => state.bag.objects
 
 export const getDeliveryMethod = (state: RootState) => state.bag.delivery.method
-export const getDeliveryPhone = (state: RootState) => state.bag.delivery.phone
 export const getDeliveryShippingCountry = (state: RootState) =>
   state.bag.delivery.shipment.country
-export const getDeliveryShippingMethod = (state: RootState) =>
-  state.bag.delivery.shipment.method
 
 export const {
   bagReset,
@@ -142,8 +123,6 @@ export const {
   bagAdd,
   bagRemove,
   updateDeliveryMethod,
-  updateDeliveryPhone,
-  updateDeliveryShippingCountry,
-  updateDeliveryShippingMethod
+  updateDeliveryShippingCountry
 } = bagSlice.actions
 export default bagSlice.reducer

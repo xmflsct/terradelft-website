@@ -1,12 +1,12 @@
 import { error, json } from 'itty-router-extras'
 import { ContentCheckout, Env } from '..'
 import { wrapCorsHeader } from '../utils/cors'
+import { shipping_options } from './checkContentful'
 
 const stripeSession = async (
   { content: { objects, delivery, amounts, locale, urls } }: ContentCheckout,
   env: Env
 ) => {
-  console.log('urls', urls)
   const translations = {
     nl: {
       SKU: 'SKU: ',
@@ -32,13 +32,16 @@ const stripeSession = async (
               ? object.priceSale * 10 * 10
               : object.priceOriginal * 10 * 10,
             product_data: {
-              name: object.name[locale] + ' - ' + object.artist.name,
+              name:
+                object.name[locale].replace('&', ' ') +
+                ' - ' +
+                object.artist.name.replace('&', ' '),
+              ...(object.sku && {
+                description: `${translations[locale].SKU}${object.sku}`
+              }),
               images: [
                 object.image.gatsbyImageData.images.fallback.src.split('?')[0]
-              ],
-              ...(object.sku && {
-                metadata: { [translations[locale].SKU]: object.sku }
-              })
+              ]
             }
           },
           quantity: object.amount
@@ -52,22 +55,27 @@ const stripeSession = async (
               ? object.priceSale * 10 * 10
               : object.priceOriginal * 10 * 10,
             product_data: {
-              name: object.name[locale] + ' - ' + object.artist.name,
+              name:
+                object.name[locale].replace('&', ' ') +
+                ' - ' +
+                object.artist.name.replace('&', ' '),
+              description: [
+                object.sku ? `${translations[locale].SKU}${object.sku}` : null,
+                object.colour
+                  ? `${translations[locale].colour}${object.colour[locale]}`
+                  : null,
+                object.size
+                  ? `${translations[locale].size}${object.size[locale]}`
+                  : null,
+                object.variant
+                  ? `${translations[locale].variant}${object.variant[locale]}`
+                  : null
+              ]
+                .filter(d => d)
+                .join(', '),
               images: [
                 object.image.gatsbyImageData.images.fallback.src.split('?')[0]
-              ],
-              metadata: {
-                ...(object.sku && { [translations[locale].SKU]: object.sku }),
-                ...(object.colour && {
-                  [translations[locale].colour]: object.colour[locale]
-                }),
-                ...(object.size && {
-                  [translations[locale].size]: object.size[locale]
-                }),
-                ...(object.variant && {
-                  [translations[locale].variant]: object.variant[locale]
-                })
-              }
+              ]
             }
           },
           quantity: object.amount
@@ -105,6 +113,7 @@ const stripeSession = async (
             allowed_countries: ['NL']
           }
         }),
+    shipping_options,
     locale,
     success_url: urls.success + '?session_id={CHECKOUT_SESSION_ID}',
     cancel_url: urls.cancel,
@@ -138,7 +147,6 @@ const stripeSession = async (
     body
   })
   const result = await res.json<any>()
-  console.log('[checkout - stripeSession] result', result)
   if (result.id) {
     return wrapCorsHeader(json({ success: true, sessionId: result.id }))
   } else {

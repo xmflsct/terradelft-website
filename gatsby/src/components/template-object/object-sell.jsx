@@ -13,6 +13,20 @@ const ObjectSell = ({ object }) => {
       object.nodes.findIndex(node => node.node_locale === i18n.language)
     ]
 
+  if (objectSell.variations) {
+    if (
+      objectSell.variations.filter(
+        variation => variation.priceSale > 0 || variation.priceOriginal > 0
+      ).length <= 0
+    ) {
+      return null
+    }
+  } else {
+    if (!objectSell.priceSale && !objectSell.priceOriginal) {
+      return null
+    }
+  }
+
   return (
     <div className='object-sell'>
       {objectSell.variations ? (

@@ -65,6 +65,7 @@ const ObjectImages = ({ images }) => {
           <Col
             xs={12}
             className='mb-3'
+            style={{ overflow: 'hidden', position: 'relative' }}
             onClick={() => {
               setZoomIndex(0)
               setZoom({ show: true, fluid: stateVariation.image.fluidZoom })

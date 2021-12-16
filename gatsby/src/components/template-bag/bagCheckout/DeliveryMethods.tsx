@@ -1,16 +1,14 @@
 import {
   getDeliveryMethod,
   getDeliveryShippingCountry,
-  getDeliveryShippingMethod,
   updateDeliveryMethod,
-  updateDeliveryShippingCountry,
-  updateDeliveryShippingMethod
+  updateDeliveryShippingCountry
 } from '@state/slices/bag'
 import { currency } from '@utils/formatNumber'
 import countries from 'i18n-iso-countries'
 import { forIn } from 'lodash'
 import React, { useEffect, useState } from 'react'
-import { Col, Form, FormCheck, Row, Tab, Tabs } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import ReactSelect from 'react-select'
@@ -33,7 +31,6 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
 }) => {
   const { t, i18n } = useTranslation()
   const shippingCountry = useSelector(getDeliveryShippingCountry)
-  const shippingMethod = useSelector(getDeliveryShippingMethod)
   const dispatch = useDispatch()
 
   const [countryNames, setCountryNames] = useState<
@@ -57,99 +54,82 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
     setCountryNames(tempCountries)
   }, [i18n.language])
 
+  const deliveryMethod = useSelector(getDeliveryMethod)
+
   return (
-    <Tabs
-      id='delivery-methods'
-      activeKey={useSelector(getDeliveryMethod)}
-      variant='pills'
-      // @ts-ignore
-      onSelect={e => {
-        switch (e) {
-          case 'pickup':
-            dispatch(updateDeliveryMethod(e))
-            break
-          case 'shipment':
-            dispatch(updateDeliveryMethod(e))
-            break
-        }
-      }}
-    >
-      <Tab
-        eventKey='pickup'
-        title={t('content.checkout.delivery.pickup.heading')}
-        className='p-3'
-      >
-        <Row className='checkout-shipping'>
-          <Col xs={9}>
-            <FormCheck>
-              <FormCheck.Input
-                type='radio'
-                defaultChecked
-                disabled={isSubmitting}
-              />
-              <FormCheck.Label>
-                {t('content.checkout.delivery.pickup.name')}
-              </FormCheck.Label>
-              <Form.Text>
-                {t('content.checkout.delivery.pickup.address')}
-              </Form.Text>
-            </FormCheck>
-          </Col>
-          <Col xs={3} className='text-right'>
-            {t('content.checkout.delivery.free')}
-          </Col>
-        </Row>
-      </Tab>
-      <Tab
-        eventKey='shipment'
-        title={t('content.checkout.delivery.shipment.heading')}
-        className='p-3'
-      >
-        <ReactSelect
-          name='optionCountries'
-          className='mb-3'
-          options={countryNames}
-          defaultValue={shippingCountry}
-          placeholder={t('content.checkout.delivery.shipment.selection')}
-          onChange={e => {
-            // @ts-ignore
-            dispatch(updateDeliveryShippingCountry(e))
-          }}
-          isSearchable
-          isDisabled={isSubmitting}
+    <Form.Group style={{ marginBottom: '1.5rem' }}>
+      <Form.Check name='delivery'>
+        <Form.Check.Input
+          type='radio'
+          onChange={() => dispatch(updateDeliveryMethod('pickup'))}
+          checked={deliveryMethod === 'pickup'}
         />
-        {shipmentMethods &&
+        <Form.Check.Label>
+          {t('content.checkout.delivery.pickup.heading')}
+        </Form.Check.Label>
+        <Form.Text style={{ display: 'block' }}>
+          {t('content.checkout.delivery.free')}
+        </Form.Text>
+      </Form.Check>
+      <Form.Check name='delivery'>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}
+        >
+          <Form.Check.Input
+            style={{ marginTop: 0, marginRight: '0.5rem' }}
+            type='radio'
+            onChange={() => dispatch(updateDeliveryMethod('shipment'))}
+            checked={deliveryMethod === 'shipment'}
+          />
+          <Form.Check.Label>
+            {t('content.checkout.delivery.shipment.heading')}
+          </Form.Check.Label>
+          <div style={{ flex: '1', marginLeft: '0.5rem' }}>
+            <ReactSelect
+              name='optionCountries'
+              options={countryNames}
+              defaultValue={shippingCountry}
+              placeholder={t('content.checkout.delivery.shipment.selection')}
+              onChange={e => {
+                // @ts-ignore
+                dispatch(updateDeliveryShippingCountry(e))
+              }}
+              isSearchable
+              isDisabled={deliveryMethod === 'pickup' || isSubmitting}
+            />
+          </div>
+        </div>
+        {deliveryMethod === 'shipment' &&
+          shipmentMethods &&
           shipmentMethods.map((method, index) => {
             return (
-              <Row className='checkout-shipping mb-2' key={index}>
-                <Col xs={9}>
-                  <FormCheck>
-                    <FormCheck.Input
-                      type='radio'
-                      checked={shippingMethod == index}
-                      value={index}
-                      onChange={() =>
-                        dispatch(updateDeliveryShippingMethod(index))
-                      }
-                      required
-                      disabled={isSubmitting}
-                    />
-                    <FormCheck.Label>{method.method}</FormCheck.Label>
-                    {method.description && (
-                      <Form.Text>{method.description}</Form.Text>
-                    )}
-                    {method.freeForTotal &&
-                      Number.isFinite(method.freeForTotal) && (
-                        <Form.Text>
-                          {t(
-                            'content.checkout.delivery.shipment.free-for-total'
-                          )}{' '}
-                          {currency(method.freeForTotal, i18n.language)}
-                        </Form.Text>
-                      )}
-                  </FormCheck>
-                </Col>
-                <Col xs={3} className='text-right'>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: '0.5rem'
+                }}
+              >
+                <div style={{ flex: '1', paddingLeft: '1.5rem' }}>
+                  <div>{method.method}</div>
+                  {method.description && (
+                    <div style={{ fontSize: '0.875em', color: '#6c757d' }}>
+                      {method.description}
+                    </div>
+                  )}
+                  {method.freeForTotal && Number.isFinite(method.freeForTotal) && (
+                    <div style={{ fontSize: '0.875em', color: '#6c757d' }}>
+                      {t('content.checkout.delivery.shipment.free-for-total')}{' '}
+                      {currency(method.freeForTotal, i18n.language)}
+                    </div>
+                  )}
+                </div>
+                <div>
                   {method.price === 0 ||
                     (method.freeForTotal &&
                     Number.isFinite(method.freeForTotal) &&
@@ -158,12 +138,12 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
                     ) : (
                       <>{currency(method.price, i18n.language)}</>
                     ))}
-                </Col>
-              </Row>
+                </div>
+              </div>
             )
           })}
-      </Tab>
-    </Tabs>
+      </Form.Check>
+    </Form.Group>
   )
 }
 

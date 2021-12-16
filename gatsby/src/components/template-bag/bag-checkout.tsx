@@ -2,10 +2,7 @@ import {
   BagState,
   getBag,
   getDeliveryMethod,
-  getDeliveryPhone,
-  getDeliveryShippingCountry,
-  getDeliveryShippingMethod,
-  updateDeliveryShippingMethod
+  getDeliveryShippingCountry
 } from '@state/slices/bag'
 import { loadStripe } from '@stripe/stripe-js'
 import checkout from '@utils/checkout'
@@ -17,23 +14,19 @@ import { Button, Form, Spinner } from 'react-bootstrap'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import CheckoutAmounts from './bagCheckout/Amounts'
 import CheckoutDeliveryMethods from './bagCheckout/DeliveryMethods'
-import CheckoutPhone from './bagCheckout/Phone'
 import CheckoutSuppliers from './bagCheckout/Suppliers'
 
 const BagCheckout = () => {
   const { t, i18n } = useTranslation()
-  // @ts-ignore
-  const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
+  const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY!)
   const recaptchaRef = useRef<ReCAPTCHA>(null)
 
   const bagObjects = useSelector(getBag)
   const deliveryMethod = useSelector(getDeliveryMethod)
-  const deliveryPhone = useSelector(getDeliveryPhone)
   const shippingCountry = useSelector(getDeliveryShippingCountry)
-  const shippingMethod = useSelector(getDeliveryShippingMethod)
 
   const rates = useStaticQuery(graphql`
     {
@@ -77,9 +70,7 @@ const BagCheckout = () => {
       description?: string
     }[]
   >()
-  const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(updateDeliveryShippingMethod())
     const foundIndex = findIndex(rates[i18n.language].rates, rate =>
       // @ts-ignore
       rate.countryCode.includes(shippingCountry?.value)
@@ -103,17 +94,7 @@ const BagCheckout = () => {
       object.priceSale
         ? (object.priceOriginal * 10 - object.priceSale * 10) / 10
         : 0
-    ),
-    delivery:
-      deliveryMethod === 'pickup'
-        ? 0
-        : shipmentMethods && shippingMethod && shippingMethod >= 0
-        ? shipmentMethods[shippingMethod].freeForTotal &&
-          // @ts-ignore
-          subtotal >= shipmentMethods[shippingMethod].freeForTotal
-          ? 0
-          : shipmentMethods[shippingMethod].price
-        : null
+    )
   }
 
   const { formState, handleSubmit } = useForm()
@@ -122,35 +103,27 @@ const BagCheckout = () => {
     handleSubmit(() => formSubmit(token))()
   }
   const formSubmit = async (token: string) => {
-    const delivery: {
-      method: BagState['delivery']['method']
-      name: string
-      phone?: string
-      countryCode?: string
-      countryA2?: string
-      index?: number
-    } = { method: 'pickup', name: '', phone: undefined }
+    let delivery
     switch (deliveryMethod) {
       case 'pickup':
-        delivery.method = 'pickup'
-        delivery.name = `${t('content.checkout.delivery.pickup.heading')} ${t(
-          'content.checkout.delivery.pickup.name'
-        )}`
-        delivery.phone = deliveryPhone
+        delivery = {
+          method: 'pickup',
+          name: t('content.checkout.delivery.pickup.heading')
+        }
         break
       case 'shipment':
-        delivery.method = 'shipment'
-        delivery.index = shippingMethod
-        delivery.name = shipmentMethods[shippingMethod].method
-        delivery.phone = deliveryPhone
-        delivery.countryCode = shippingCountry.value
-        delivery.countryA2 = countries.numericToAlpha2(shippingCountry.value)
+        delivery = {
+          method: 'shipment',
+          countryCode: shippingCountry!.value,
+          countryA2: countries.numericToAlpha2(shippingCountry!.value)
+        }
         break
     }
 
     const res = await checkout({
       token,
       objects: bagObjects,
+      // @ts-ignore
       delivery,
       amounts,
       locale: i18n.language,
@@ -159,7 +132,6 @@ const BagCheckout = () => {
         cancel: `${window.location.origin}/bag`
       }
     })
-    console.log('res', res)
     if (res.sessionId) {
       const stripe = await stripePromise
       const result = await stripe?.redirectToCheckout({
@@ -181,64 +153,51 @@ const BagCheckout = () => {
     [formState.isSubmitted, recaptchaRef.current]
   )
 
-  return (
-    <>
-      {bagObjects.length > 0 && (
-        <>
-          <h3>{t('content.checkout.heading.delivery')}</h3>
-          <CheckoutDeliveryMethods
-            subtotal={amounts.subtotal}
-            isSubmitting={formState.isSubmitting}
-            shipmentMethods={shipmentMethods}
-          />
-          <CheckoutPhone />
-          <hr />
-          <h3>{t('content.checkout.heading.summary')}</h3>
-          <CheckoutAmounts {...amounts} />
-          <Form className='mt-3' onSubmit={e => onSubmit(e)}>
-            <Button
-              variant='primary'
-              type='submit'
-              className='mb-2'
-              disabled={
-                !Number.isFinite(amounts.delivery) ||
-                !deliveryPhone ||
-                formState.isSubmitting
-              }
-            >
-              {(formState.isSubmitting && (
-                <>
-                  <Spinner
-                    as='span'
-                    animation='border'
-                    size='sm'
-                    role='status'
-                    aria-hidden='true'
-                  />
-                  {` ${t('content.checkout.button.wait')}`}
-                </>
-              )) ||
-                (formState.submitCount !== 0 &&
-                  t('content.checkout.button.retry')) ||
-                t('content.checkout.button.submit')}
-            </Button>
-            <CheckoutSuppliers />
-            <div className='mt-3'>
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                size='invisible'
-                badge='inline'
-                // @ts-ignore
-                sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
-                onChange={userVerified}
-                hl={i18n.language}
-              />
-            </div>
-          </Form>
-        </>
-      )}
-    </>
-  )
+  return bagObjects.length > 0 ? (
+    <Form className='mt-3' onSubmit={e => onSubmit(e)}>
+      <h3>{t('content.checkout.heading.summary')}</h3>
+      <CheckoutAmounts {...amounts} />
+      <h3>{t('content.checkout.heading.delivery')}</h3>
+      <CheckoutDeliveryMethods
+        subtotal={amounts.subtotal}
+        isSubmitting={formState.isSubmitting}
+        shipmentMethods={shipmentMethods}
+      />
+      <Button
+        style={{ marginBottom: '1rem', width: '100%' }}
+        variant='primary'
+        type='submit'
+        disabled={formState.isSubmitting}
+      >
+        {(formState.isSubmitting && (
+          <>
+            <Spinner
+              as='span'
+              animation='border'
+              size='sm'
+              role='status'
+              aria-hidden='true'
+            />
+            {` ${t('content.checkout.button.wait')}`}
+          </>
+        )) ||
+          (formState.submitCount !== 0 && t('content.checkout.button.retry')) ||
+          t('content.checkout.button.submit')}
+      </Button>
+      <CheckoutSuppliers />
+      <div className='mt-3' style={{ opacity: 0, height: '1px' }}>
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          size='invisible'
+          badge='inline'
+          // @ts-ignore
+          sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
+          onChange={userVerified}
+          hl={i18n.language}
+        />
+      </div>
+    </Form>
+  ) : null
 }
 
 export default BagCheckout

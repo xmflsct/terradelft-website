@@ -14,12 +14,10 @@
       },
       "delivery": {
         "pickup": {
-          "heading": "Afhalen",
-          "name": "Galerie Terra Delft",
-          "address": "Nieuwstraat 7, 2611 HK Delft"
+          "heading": "Afhalen bij Galerie Terra Delft"
         },
         "shipment": {
-          "heading": "Verzending",
+          "heading": "Verzending naar",
           "selection": "Selecteer land",
           "free-for-total": "Gratis voor boven "
         },

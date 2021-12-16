@@ -1,24 +1,26 @@
 import axios from 'axios'
-import { BagState, TDObject } from '@state/slices/bag'
+import { TDObject } from '@state/slices/bag'
 
-const urlDevelopment = 'http://localhost:8787'
+const urlDevelopment = 'https://terradelft-api-development.xmflsct.workers.dev'
 const urlProduction = 'https://api.terra-delft.nl'
 
 export interface Params {
   token: string
   objects: TDObject[]
-  delivery: {
-    method: BagState['delivery']['method']
-    name: string
-    phone: string
-    countryCode?: string
-    countryA2?: string
-    index?: number
-  }
+  delivery:
+    | {
+        method: 'pickup'
+        name: string
+      }
+    | {
+        method: 'shipment'
+        name: string
+        countryCode: string
+        countryA2: string
+      }
   amounts: {
     subtotal: number
     discount: number
-    delivery: number | null
   }
   locale: string
   urls: { success: string; cancel: string }

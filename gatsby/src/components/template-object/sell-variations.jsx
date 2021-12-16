@@ -163,7 +163,9 @@ const SellVariations = ({ object }) => {
           })
         }
       })
-      setAmount({ value: 1, label: 1 })
+      sellVariations[options.selectedSKUs[0]] &&
+        sellVariations[options.selectedSKUs[0]] > 0 &&
+        setAmount({ value: 1, label: 1 })
     } else {
       updateVariation({
         type: 'clear'
@@ -251,6 +253,11 @@ const SellVariations = ({ object }) => {
                 value={amount}
                 onChange={e => setAmount(e)}
                 isSearchable={false}
+                isDisabled={
+                  options.selectedSKUs.length === 1
+                    ? sellVariations[options.selectedSKUs[0]].stock === 0
+                    : false
+                }
               />
             </div>
           </InputGroup>
