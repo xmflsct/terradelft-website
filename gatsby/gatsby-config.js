@@ -12,7 +12,8 @@ module.exports = {
       resolve: '@sentry/gatsby',
       options: {
         dsn: process.env.GATSBY_SENTRY_DSN,
-        enabled: process.env.NODE_ENV !== 'development'
+        enabled: process.env.NODE_ENV !== 'development',
+        release: process.env.CF_PAGES_COMMIT_SHA
       }
     },
     `gatsby-plugin-fontawesome-css`,
