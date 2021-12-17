@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import Select from 'react-select'
 
-const GridObjectOnlineShop = ({ nodes }) => {
+const GridObjectOnlineShop = ({ nodes, giftCard = undefined }) => {
   const { t, i18n } = useTranslation()
 
   const [selected, setSelected] = useState({
@@ -119,6 +119,25 @@ const GridObjectOnlineShop = ({ nodes }) => {
         </Col>
       </Row>
       <Row className='component-grid grid-object'>
+        {giftCard &&
+        !selected.price &&
+        !selected.artist &&
+        !selected.variant ? (
+          <Col xs={4} md={2} className='grid-item'>
+            <Link to='/gift-card'>
+              <div className='item-image'>
+                <GatsbyImage
+                  alt='Gift Card'
+                  image={giftCard.images[0].gatsbyImageData}
+                />
+              </div>
+              <p className='item-name' style={{ fontWeight: 'bold' }}>
+                {t('translation:gift-card.name')}
+                <br />€ 20 - 100
+              </p>
+            </Link>
+          </Col>
+        ) : null}
         {nodes
           .filter(node => {
             let objectMatch = {

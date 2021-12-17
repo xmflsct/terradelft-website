@@ -1,39 +1,11 @@
 import { sumBy } from 'lodash'
 import { Context } from './_middleware'
+import { TDObject } from '../../src/state/slices/bag'
 
-type ObjectMain = {
-  type: 'main'
-  contentful_id: string
-  contentful_id_url: string
-  artist: { name: string }
-  image: any
-  priceOriginal: number
-  priceSale?: number
-  stock: number
-  sku: string
-  amount: number
-  name: { nl: string; en: string }
-}
-type ObjectVariation = {
-  type: 'variation'
-  contentful_id: string
-  contentful_id_url: string
-  artist: { name: string }
-  image: any
-  priceOriginal: number
-  priceSale?: number
-  stock: number
-  sku: string
-  amount: number
-  name: { nl: string; en: string }
-  colour?: { nl: string; en: string }
-  size?: { nl: string; en: string }
-  variant?: { nl: string; en: string }
-}
 export type BodyCheckout = {
   body: {
     token: string
-    objects: (ObjectMain | ObjectVariation)[]
+    objects: TDObject[]
     delivery: {
       method: 'pickup' | 'shipment'
       name: string
@@ -44,7 +16,6 @@ export type BodyCheckout = {
     amounts: {
       subtotal: number
       discount?: number
-      delivery?: number
     }
     locale: 'en' | 'nl'
     urls: { success: string; cancel: string }
@@ -218,7 +189,13 @@ const checkContentful = async ({
         display_name: rate.method,
         type: 'fixed_amount',
         fixed_amount: {
-          amount: subtotal >= rate.freeForTotal ? 0 : rate.price * 10 * 10,
+          amount:
+            subtotal >= rate.freeForTotal
+              ? 0
+              : objects.filter(object => object.type !== 'giftcard').length ===
+                  0 && delivery.countryA2 === 'NL'
+              ? 200
+              : rate.price * 10 * 10,
           currency: 'eur'
         },
         ...(rate.description && {
@@ -245,7 +222,7 @@ const checkContentful = async ({
 const stripeSession = async ({
   env,
   data: {
-    body: { objects, delivery, amounts, locale, urls }
+    body: { objects, delivery, locale, urls }
   }
 }: Pick<Context<BodyCheckout>, 'env' | 'data'>) => {
   const translations = {
@@ -322,21 +299,22 @@ const stripeSession = async ({
           quantity: object.amount
         })
         break
+      case 'giftcard':
+        line_items.push({
+          price_data: {
+            currency: 'eur',
+            unit_amount: object.priceOriginal * 10 * 10,
+            product_data: {
+              name: object.name[locale],
+              images: [
+                object.image.gatsbyImageData.images.fallback.src.split('?')[0]
+              ]
+            }
+          },
+          quantity: object.amount
+        })
+        break
     }
-  }
-
-  if (amounts.delivery && amounts.delivery >= 0) {
-    line_items.push({
-      price_data: {
-        currency: 'eur',
-        unit_amount: amounts.delivery * 10 * 10,
-        product_data: {
-          name: delivery.name,
-          description: delivery.countryA2
-        }
-      },
-      quantity: 1
-    })
   }
 
   const sessionData = {

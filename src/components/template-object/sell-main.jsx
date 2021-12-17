@@ -49,7 +49,7 @@ const SellMain = ({ object }) => {
         <InputGroup.Text>{t('amount')}</InputGroup.Text>
         <div className='form-selection'>
           <ReactSelect
-            options={Array(sellMain.stock === 1 ? 1 : 99)
+            options={Array(sellMain.stock === 1 ? 1 : 50)
               .fill()
               .map((_, i) => ({ value: i + 1, label: i + 1 }))}
             defaultValue={{ value: 1, label: 1 }}

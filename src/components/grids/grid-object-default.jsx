@@ -6,14 +6,35 @@ import { graphql, Link } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
 import { shuffle } from 'lodash'
 
-const GridObjectDefault = ({ nodes, randomize, limit }) => {
+const GridObjectDefault = ({
+  nodes,
+  giftCard = undefined,
+  randomize,
+  limit
+}) => {
   const { t } = useTranslation(['component-object', 'constant'])
 
   randomize && (nodes = shuffle(nodes))
-  limit && (nodes = nodes.slice(0, limit))
+  limit && (nodes = nodes.slice(0, giftCard ? limit - 1 : limit))
 
   return (
     <Row className='component-grid grid-object-default'>
+      {giftCard ? (
+        <Col xs={4} md={2} className='grid-item'>
+          <Link to='/gift-card'>
+            <div className='item-image'>
+              <GatsbyImage
+                alt='Gift Card'
+                image={giftCard.images[0].gatsbyImageData}
+              />
+            </div>
+            <p className='item-name' style={{ fontWeight: 'bold' }}>
+              {t('translation:gift-card.name')}
+              <br />€ 20 - 100
+            </p>
+          </Link>
+        </Col>
+      ) : null}
       {nodes.map(node => {
         if (node.artist) {
           return (

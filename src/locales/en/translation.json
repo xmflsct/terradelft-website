@@ -58,6 +58,12 @@
   },
   "slug": {
     "static": {
+      "404": {
+        "name": "404 not found"
+      },
+      "gift-card": {
+        "name": "Terra Delft Gift Card"
+      },
       "about-terra": {
         "name": "About Terra"
       },
@@ -114,6 +120,12 @@
       "objects-attribute": {
         "name": "Objects with {{type}} of {{value}}"
       }
+    }
+  },
+  "gift-card": {
+    "amount": {
+      "en": "Gift Card € {{amount}}",
+      "nl": "Cadeaubon € {{amount}}"
     }
   }
 }

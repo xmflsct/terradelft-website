@@ -15,7 +15,10 @@ const PageShop = ({ data }) => {
       SEOdescription={t('name')}
       containerName='static-online-shop'
     >
-      <GridObjectOnlineShop nodes={data.objects.nodes} />
+      <GridObjectOnlineShop
+        nodes={data.objects.nodes}
+        giftCard={data.giftCard}
+      />
     </Layout>
   )
 }
@@ -49,6 +52,19 @@ export const query = graphql`
     ) {
       nodes {
         ...ObjectOnlineShop
+      }
+    }
+    giftCard: contentfulGiftCard(
+      contentful_id: { eq: "owqoj0fTsXPwPeo6VMb2Z" }
+    ) {
+      images {
+        gatsbyImageData(
+          aspectRatio: 1
+          resizingBehavior: FILL
+          cropFocus: FACES
+          width: 200
+          quality: 80
+        )
       }
     }
   }

@@ -15,9 +15,9 @@ type ObjectMain = {
   sku: string
   amount: number
   name: { nl: string; en: string }
-  colour?: undefined
-  size?: undefined
-  variant?: undefined
+  colour: undefined
+  size: undefined
+  variant: undefined
 }
 
 type ObjectVariation = {
@@ -38,7 +38,23 @@ type ObjectVariation = {
   variant?: { nl: string; en: string }
 }
 
-export type TDObject = ObjectMain | ObjectVariation
+type ObjectGiftCard = {
+  type: 'giftcard'
+  gatsbyPath: string
+  contentful_id: string
+  artist: undefined
+  image: any
+  priceOriginal: number
+  priceSale: undefined
+  stock: number
+  amount: number
+  name: { nl: string; en: string }
+  colour: undefined
+  size: undefined
+  variant: undefined
+}
+
+export type TDObject = ObjectMain | ObjectVariation | ObjectGiftCard
 
 export type BagState = {
   buildTime: number

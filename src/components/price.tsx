@@ -5,14 +5,19 @@ import React from 'react'
 interface Props {
   priceSale: number
   priceOriginal: number
+  showZero?: boolean
 }
 
-const Price: React.FC<Props> = ({ priceSale, priceOriginal }) => {
+const Price: React.FC<Props> = ({
+  priceSale,
+  priceOriginal,
+  showZero = false
+}) => {
   const { i18n } = useTranslation()
 
   return (
     <>
-      {!(priceSale > 0) && !(priceOriginal > 0) ? (
+      {!showZero && !(priceSale > 0) && !(priceOriginal > 0) ? (
         ''
       ) : (
         <div className='object-price'>

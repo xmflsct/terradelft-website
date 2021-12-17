@@ -1,4 +1,5 @@
 import {
+  getBag,
   getDeliveryMethod,
   getDeliveryShippingCountry,
   updateDeliveryMethod,
@@ -31,6 +32,7 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
   shipmentMethods
 }) => {
   const { t, i18n } = useTranslation()
+  const bagObjects = useSelector(getBag)
   const shippingCountry = useSelector(getDeliveryShippingCountry)
   const dispatch = useDispatch()
 
@@ -141,6 +143,7 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
           shipmentMethods.map((method, index) => {
             return (
               <div
+                key={index}
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
@@ -166,11 +169,14 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
                   {method.price === 0 ||
                     (method.freeForTotal &&
                     Number.isFinite(method.freeForTotal) &&
-                    subtotal >= method.freeForTotal ? (
-                      t('content.checkout.delivery.free')
-                    ) : (
-                      <>{currency(method.price, i18n.language)}</>
-                    ))}
+                    subtotal >= method.freeForTotal
+                      ? t('content.checkout.delivery.free')
+                      : bagObjects.filter(object => object.type !== 'giftcard')
+                          .length === 0 &&
+                        countries.alpha2ToNumeric('NL') ===
+                          shippingCountry?.value
+                      ? currency(2, i18n.language)
+                      : currency(method.price, i18n.language))}
                 </div>
               </div>
             )

@@ -61,6 +61,9 @@
       "404": {
         "name": "404 niet gevonden"
       },
+      "gift-card": {
+        "name": "Terra Delft Cadeaubon"
+      },
       "about-terra": {
         "name": "Over Terra"
       },
@@ -117,6 +120,12 @@
       "objects-attribute": {
         "name": "Objecten met {{type}} over {{value}}"
       }
+    }
+  },
+  "gift-card": {
+    "amount": {
+      "en": "Gift Card € {{amount}}",
+      "nl": "Cadeaubon € {{amount}}"
     }
   }
 }

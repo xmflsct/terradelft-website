@@ -42,14 +42,18 @@ const BagList = () => {
                 object.name[i18n.language]
               }
             </Link>
-            <Row className='object-details'>
-              <Col xs={5} sm={4} className='detail-type'>
-                {t('component-object:artist')}
-              </Col>
-              <Col xs={7} sm={8} className='detail-value'>
-                <Link to={object.artist.gatsbyPath}>{object.artist.name}</Link>
-              </Col>
-            </Row>
+            {object.artist ? (
+              <Row className='object-details'>
+                <Col xs={5} sm={4} className='detail-type'>
+                  {t('component-object:artist')}
+                </Col>
+                <Col xs={7} sm={8} className='detail-value'>
+                  <Link to={object.artist.gatsbyPath}>
+                    {object.artist.name}
+                  </Link>
+                </Col>
+              </Row>
+            ) : null}
             {!isEmpty(object.variant) && (
               <Row className='object-details'>
                 <Col xs={5} sm={4} className='detail-type'>
@@ -106,7 +110,7 @@ const BagList = () => {
               </Col>
               <Col xs={7} sm={8} className='detail-value'>
                 <ReactSelect
-                  options={Array(object.stock === 1 ? 1 : 99)
+                  options={Array(object.stock === 1 ? 1 : 50)
                     .fill('')
                     .map((_, i) => ({ value: i + 1, label: i + 1 }))}
                   defaultValue={{

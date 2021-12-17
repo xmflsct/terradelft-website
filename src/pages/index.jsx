@@ -21,7 +21,7 @@ const PageIndex = ({ data }) => {
         <h2>{t('content.section.online-shop')}</h2>
         <GridObjectDefault
           nodes={data.objects.nodes}
-          withGiftCard
+          giftCard={data.giftCard}
           randomize
           limit={6}
         />
@@ -77,6 +77,19 @@ export const query = graphql`
         image {
           gatsbyImageData(width: 200, quality: 80)
         }
+      }
+    }
+    giftCard: contentfulGiftCard(
+      contentful_id: { eq: "owqoj0fTsXPwPeo6VMb2Z" }
+    ) {
+      images {
+        gatsbyImageData(
+          aspectRatio: 1
+          resizingBehavior: FILL
+          cropFocus: FACES
+          width: 200
+          quality: 80
+        )
       }
     }
   }
