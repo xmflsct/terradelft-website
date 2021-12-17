@@ -31,14 +31,18 @@ const checkout = async ({
   locale,
   urls
 }: Params): Promise<{ sessionId: string }> => {
-  const { data } = await axios({
-    method: 'post',
-    baseURL: process.env.GATSBY_API_ENDPOINT,
-    url: '/checkout',
-    data: { token, objects, delivery, amounts, locale, urls }
-  })
-
-  return data
+  let data
+  try {
+    data = await axios({
+      method: 'post',
+      url: '/api/checkout',
+      data: { token, objects, delivery, amounts, locale, urls }
+    })
+  } catch (error: any) {
+    console.log(error.response.data)
+  } finally {
+    return data?.data
+  }
 }
 
 export default checkout

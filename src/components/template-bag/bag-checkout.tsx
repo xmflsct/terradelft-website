@@ -132,6 +132,7 @@ const BagCheckout = () => {
         cancel: `${window.location.origin}/bag`
       }
     })
+    console.log('res', res)
     if (res.sessionId) {
       const stripe = await stripePromise
       const result = await stripe?.redirectToCheckout({

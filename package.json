@@ -60,6 +60,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^3.2.0",
     "@sendgrid/mail": "^7.6.0",
+    "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.9",
     "@types/react": "^17.0.36",
     "@types/react-bootstrap": "^0.32.28",
@@ -73,7 +74,7 @@
   },
   "scripts": {
     "clean": "gatsby clean",
-    "dev": "gatsby develop",
+    "dev": "npx wrangler pages dev --port 3000 --proxy 8000 -- npx gatsby develop --binding RECAPTCHA_PRIVATE_KEY=$RECAPTCHA_PRIVATE_KEY",
     "build": "gatsby build"
   }
 }
