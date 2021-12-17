@@ -5,6 +5,7 @@ import {
   updateDeliveryShippingCountry
 } from '@state/slices/bag'
 import { currency } from '@utils/formatNumber'
+import axios from 'axios'
 import countries from 'i18n-iso-countries'
 import { forIn } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -53,6 +54,45 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
     })
     setCountryNames(tempCountries)
   }, [i18n.language])
+
+  useEffect(() => {
+    const getLoc = async () => {
+      let trace: any = []
+      return await axios
+        .get('/cdn-cgi/trace')
+        .then(res => {
+          console.log('res data', res.data)
+          let lines: string[] = res.data.split('\n')
+          let keyValue
+          console.log('lines', lines)
+          lines.forEach(line => {
+            keyValue = line.split('=')
+            trace[keyValue[0]] = decodeURIComponent(keyValue[1] || '')
+
+            if (keyValue[0] === 'loc' && trace['loc'] !== 'XX') {
+              alert(trace['loc'])
+            }
+
+            if (keyValue[0] === 'ip') {
+              alert(trace['ip'])
+            }
+          })
+          console.log('trace', trace)
+          return trace
+        })
+        .catch(() => console.log('Fetch /cdn-cgi/trace failed'))
+    }
+    if (countryNames?.length && !shippingCountry) {
+      getLoc().then(res =>
+        console.log(
+          'country label',
+          countryNames.find(
+            c => c.value === countries.alpha2ToNumeric(res['loc'])
+          )
+        )
+      )
+    }
+  }, [countryNames?.length, shippingCountry])
 
   const deliveryMethod = useSelector(getDeliveryMethod)
 
