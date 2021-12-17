@@ -1,4 +1,4 @@
-import sendEmail from '@utils/email'
+import api from '@utils/api'
 import PropTypes from 'prop-types'
 import React, { useContext, useRef, useState } from 'react'
 import { Button, Form, Spinner } from 'react-bootstrap'
@@ -55,7 +55,7 @@ const ObjectContact = ({ object }) => {
       )}</p>
       <p>GDPR: ${d.GDPR.toString()}</p>`
     }
-    const response = await sendEmail(token, data)
+    const response = await api('email', { token, ...data })
     if (response.success) {
       setSendStatus(true)
       return true

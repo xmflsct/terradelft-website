@@ -1,10 +1,10 @@
 export type Env = {
   RECAPTCHA_PRIVATE_KEY: string
-  CONTENTFUL_HOST: string
   CONTENTFUL_OBJECTS_SPACE: string
   CONTENTFUL_OBJECTS_KEY_CHECKOUT: string
-  CONTENTFUL_OBJECTS_ENVIRONMENT: string
   STRIPE_PRIVATE_KEY: string
+  SENDGRID_EMAIL: string
+  SENDGRID_KEY: string
 }
 
 export type Context<T = unknown> = {

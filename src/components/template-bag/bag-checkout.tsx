@@ -1,11 +1,11 @@
 import {
-  BagState,
   getBag,
   getDeliveryMethod,
-  getDeliveryShippingCountry
+  getDeliveryShippingCountry,
+  TDObject
 } from '@state/slices/bag'
 import { loadStripe } from '@stripe/stripe-js'
-import checkout from '@utils/checkout'
+import api from '@utils/api'
 import { graphql, useStaticQuery } from 'gatsby'
 import countries from 'i18n-iso-countries'
 import { findIndex, sumBy } from 'lodash'
@@ -120,7 +120,27 @@ const BagCheckout = () => {
         break
     }
 
-    const res = await checkout({
+    const res = await api<{
+      token: string
+      objects: TDObject[]
+      delivery:
+        | {
+            method: 'pickup'
+            name: string
+          }
+        | {
+            method: 'shipment'
+            name: string
+            countryCode: string
+            countryA2: string
+          }
+      amounts: {
+        subtotal: number
+        discount: number
+      }
+      locale: string
+      urls: { success: string; cancel: string }
+    }>('checkout', {
       token,
       objects: bagObjects,
       // @ts-ignore

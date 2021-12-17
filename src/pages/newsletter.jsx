@@ -1,5 +1,5 @@
 import Layout from '@components/layout'
-import sendEmail from '@utils/email'
+import api from '@utils/api'
 import { graphql } from 'gatsby'
 import { forIn } from 'lodash'
 import PropTypes from 'prop-types'
@@ -36,7 +36,8 @@ const PageNewsletter = ({ pageContext }) => {
       <p>Country: ${d.country}</p>
       <p>GDPR: ${d.GDPR.toString()}</p>`
     }
-    const response = await sendEmail(t, data)
+
+    const response = await api('email', { token: t, ...data })
     if (response.success) {
       setSendStatus(true)
       return true

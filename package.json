@@ -59,7 +59,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.2.0",
-    "@sendgrid/mail": "^7.6.0",
     "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.9",
     "@types/react": "^17.0.36",
@@ -74,7 +73,7 @@
   },
   "scripts": {
     "clean": "gatsby clean",
-    "dev": "npx wrangler pages dev --binding RECAPTCHA_PRIVATE_KEY=$RECAPTCHA_PRIVATE_KEY CONTENTFUL_OBJECTS_SPACE=$CONTENTFUL_OBJECTS_SPACE CONTENTFUL_OBJECTS_KEY_CHECKOUT=$CONTENTFUL_OBJECTS_KEY_CHECKOUT STRIPE_PRIVATE_KEY=$STRIPE_PRIVATE_KEY --port 3000 --proxy 8000 -- npx gatsby develop",
+    "dev": "npx wrangler pages dev --binding RECAPTCHA_PRIVATE_KEY=$RECAPTCHA_PRIVATE_KEY CONTENTFUL_OBJECTS_SPACE=$CONTENTFUL_OBJECTS_SPACE CONTENTFUL_OBJECTS_KEY_CHECKOUT=$CONTENTFUL_OBJECTS_KEY_CHECKOUT STRIPE_PRIVATE_KEY=$STRIPE_PRIVATE_KEY SENDGRID_EMAIL=$SENDGRID_EMAIL SENDGRID_KEY=$SENDGRID_KEY --port 3000 --proxy 8000 -- npx gatsby develop",
     "build": "gatsby build"
   }
 }
