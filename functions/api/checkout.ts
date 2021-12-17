@@ -80,15 +80,10 @@ const checkContentful = async ({
 
   const space = env.CONTENTFUL_OBJECTS_SPACE
   const secret = env.CONTENTFUL_OBJECTS_KEY_CHECKOUT
-  const environment = env.CONTENTFUL_OBJECTS_ENVIRONMENT
   const url =
-    'https://' +
-    env.CONTENTFUL_HOST +
-    '/spaces/' +
+    'https://cdn.contentful.com/spaces/' +
     space +
-    '/environments/' +
-    environment +
-    '/entries/'
+    '/environments/master/entries/'
   const contentType = {
     main: 'objectsObject',
     variation: 'objectsObjectVariation',
@@ -393,6 +388,12 @@ const stripeSession = async ({
     body
   })
   const result = await res.json()
+  return result
+}
+
+export const onRequestPost = async ({ env, data }: Context<BodyCheckout>) => {
+  await checkContentful({ env, data })
+  const result = await stripeSession({ env, data })
   if (result.id) {
     return new Response(
       JSON.stringify({ success: true, sessionId: result.id }),
@@ -402,11 +403,4 @@ const stripeSession = async ({
     console.log('[stripeSession]', result.error.message)
     return new Response('Failed to create Stripe session', { status: 500 })
   }
-}
-
-export const onRequestPost = async ({ env, data }: Context<BodyCheckout>) => {
-  await checkContentful({ env, data })
-  await stripeSession({ env, data })
-
-  return new Response('Hello, world!')
 }
