@@ -1,11 +1,10 @@
-import { Router } from 'itty-router'
-import { missing, withContent, withParams } from 'itty-router-extras'
+import { missing, ThrowableRouter, withContent } from 'itty-router-extras'
 import checkContentful from './middlewares/checkContentful'
 import recaptcha from './middlewares/recaptcha'
 import stripeSession from './middlewares/stripeSession'
 import { handleCors } from './utils/cors'
 
-const router = Router()
+const router = ThrowableRouter()
 
 export type Env = {
   RECAPTCHA_PRIVATE_KEY: string
@@ -67,14 +66,7 @@ export type ContentCheckout = Request & {
   }
 }
 router.options('/checkout', handleCors)
-router.post(
-  '/checkout',
-  withParams,
-  withContent,
-  recaptcha,
-  checkContentful,
-  stripeSession
-)
+router.post('/checkout', withContent, recaptcha, checkContentful, stripeSession)
 
 router.all('*', () => missing('Missing 😭'))
 
