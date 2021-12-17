@@ -33,7 +33,7 @@ const checkout = async ({
 }: Params): Promise<{ sessionId: string }> => {
   const { data } = await axios({
     method: 'post',
-    baseURL: `https://${process.env.GATSBY_API_ENDPOINT}/`,
+    baseURL: process.env.GATSBY_API_ENDPOINT,
     url: '/checkout',
     data: { token, objects, delivery, amounts, locale, urls }
   })

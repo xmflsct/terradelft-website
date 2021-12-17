@@ -58,6 +58,9 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
   useEffect(() => {
     const getLoc = async (): Promise<string | null> => {
       let trace: any = []
+      if (process.env.NODE_ENV === 'development') {
+        return 'NL'
+      }
       return await axios
         .get('/cdn-cgi/trace')
         .then(res => {
@@ -123,10 +126,9 @@ const CheckoutDeliveryMethods: React.FC<Props> = ({
             <ReactSelect
               name='optionCountries'
               options={countryNames}
-              defaultValue={shippingCountry}
+              value={shippingCountry}
               placeholder={t('content.checkout.delivery.shipment.selection')}
               onChange={e => {
-                // @ts-ignore
                 dispatch(updateDeliveryShippingCountry(e))
               }}
               isSearchable

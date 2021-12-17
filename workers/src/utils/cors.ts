@@ -1,6 +1,4 @@
-import { Env } from '..'
-
-export const handleCors = (_: Request, env: Env) => (request: Request) => {
+export const handleCors = (request: Request) => {
   const origin = '*'
   const methods = 'POST'
   const headers = 'referer, origin, content-type'

@@ -46,7 +46,7 @@ export type BagState = {
   delivery: {
     method: 'pickup' | 'shipment'
     shipment: {
-      country?: { value: string; label: string }
+      country: { value: string; label: string } | null
     }
   }
 }
@@ -57,7 +57,7 @@ export const bagInitialState: BagState = {
   delivery: {
     method: 'pickup',
     shipment: {
-      country: undefined
+      country: null
     }
   }
 }
