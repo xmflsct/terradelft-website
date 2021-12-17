@@ -1,54 +1,32 @@
-export const handleCors =
-  (options: {
-    origin?: string
-    methods?: string
-    headers?: string
-    maxAge?: number
-    allowCredentials?: boolean
-  }) =>
-  (request: Request) => {
-    const {
-      origin = '*',
-      methods = 'GET, POST, PATCH, DELETE',
-      headers = 'referer, origin, content-type',
-      maxAge = null,
-      allowCredentials = false
-    } = options
+import { Env } from '..'
 
-    if (
-      request.headers.get('Origin') !== null &&
-      request.headers.get('Access-Control-Request-Method') !== null
-    ) {
-      const corsHeaders = {
+export const handleCors = (_: Request, env: Env) => (request: Request) => {
+  const origin = '*'
+  const methods = 'POST'
+  const headers = 'referer, origin, content-type'
+  const maxAge = 86400
+
+  if (
+    request.headers.get('Origin') !== null &&
+    request.headers.get('Access-Control-Request-Method') !== null
+  ) {
+    return new Response(null, {
+      status: 204,
+      headers: {
         'Access-Control-Allow-Origin': origin,
         'Access-Control-Allow-Methods': methods,
-        'Access-Control-Allow-Headers': headers
+        'Access-Control-Allow-Headers': headers,
+        'Access-Control-Max-Age': maxAge.toString()
       }
-
-      if (allowCredentials) {
-        // @ts-ignore
-        corsHeaders['Access-Control-Allow-Credentials'] = 'true'
-      }
-
-      if (maxAge) {
-        // @ts-ignore
-        corsHeaders['Access-Control-Max-Age'] = maxAge
-      }
-
-      // Handle CORS pre-flight request.
-      return new Response(null, {
-        status: 204,
-        headers: corsHeaders
-      })
-    }
-
-    // Handle standard OPTIONS request.
+    })
+  } else {
     return new Response(null, {
       headers: {
         Allow: `${methods}, HEAD, OPTIONS`
       }
     })
   }
+}
 
 export const wrapCorsHeader = (response: Response) => {
   response.headers.set('Access-Control-Allow-Origin', '*')

@@ -1,14 +1,5 @@
 import { Router } from 'itty-router'
-import {
-  json,
-  missing,
-  error,
-  status,
-  withContent,
-  withParams,
-  ThrowableRouter,
-  text
-} from 'itty-router-extras'
+import { missing, withContent, withParams } from 'itty-router-extras'
 import checkContentful from './middlewares/checkContentful'
 import recaptcha from './middlewares/recaptcha'
 import stripeSession from './middlewares/stripeSession'
@@ -75,7 +66,7 @@ export type ContentCheckout = Request & {
     urls: { success: string; cancel: string }
   }
 }
-router.options('/checkout', handleCors({ methods: 'POST', maxAge: 86400 }))
+router.options('/checkout', handleCors)
 router.post(
   '/checkout',
   withParams,
