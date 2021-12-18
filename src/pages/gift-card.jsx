@@ -30,7 +30,8 @@ const PageGiftCard = ({ data }) => {
     )
   )
   const [amountCustom, setAmountCustom] = useState(0)
-  const [theAmount, setTheAmount] = useState(20)
+  const [theAmount, setTheAmount] = useState(null)
+  const [theAmountDirty, setTheAmountDirty] = useState(false)
 
   const dispatch = useDispatch()
   const onSubmit = e => {
@@ -120,9 +121,13 @@ const PageGiftCard = ({ data }) => {
                 <FormControl
                   type='number'
                   value={theAmount}
-                  onChange={e => setTheAmount(Math.ceil(e.target.value))}
+                  onChange={e => {
+                    setTheAmountDirty(true)
+                    setTheAmount(Math.ceil(e.target.value))
+                  }}
                   style={{ flex: 0.18 }}
                   isInvalid={
+                    theAmountDirty &&
                     theAmount < data.contentfulGiftCard.customAmountMinimum
                   }
                 />
@@ -137,7 +142,9 @@ const PageGiftCard = ({ data }) => {
                   />
                 </div>
                 <FormControl.Feedback type='invalid'>
-                  {t('content.minimum')}
+                  {t('content.minimum', {
+                    amount: data.contentfulGiftCard.customAmountMinimum
+                  })}
                 </FormControl.Feedback>
               </InputGroup>
             ) : null}
@@ -180,7 +187,10 @@ export const query = graphql`
         }
       }
     }
-    contentfulGiftCard(contentful_id: { eq: "owqoj0fTsXPwPeo6VMb2Z" }) {
+    contentfulGiftCard(
+      contentful_id: { eq: "owqoj0fTsXPwPeo6VMb2Z" }
+      node_locale: { eq: $language }
+    ) {
       images {
         gatsbyImageData(width: 427, quality: 85)
       }
