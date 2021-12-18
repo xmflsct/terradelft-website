@@ -1,0 +1,10 @@
+{
+  "name": "$t(translation:slug.static.gift-card.name)",
+  "content": {
+    "amount": "Gift Card € {{amount}}",
+    "minimum": "Minimum € {{amount}}"
+  },
+  "add-button": {
+    "add-to-bag": "Add to bag"
+  }
+}

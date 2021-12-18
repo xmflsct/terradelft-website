@@ -1,0 +1,40 @@
+{
+  "slug": "$t(translation:slug.static.bag.slug)",
+  "name": "$t(translation:slug.static.bag.name)",
+  "content": {
+    "heading": "Winkelmandje",
+    "list": {
+      "empty": "Het lijkt erop dat je boodschappentas leeg is."
+    },
+    "checkout": {
+      "heading": {
+        "delivery": "Leveringsmethode",
+        "phone": "Telefoonnummer",
+        "summary": "Samenvatting"
+      },
+      "delivery": {
+        "pickup": {
+          "heading": "Afhalen bij Galerie Terra Delft"
+        },
+        "shipment": {
+          "heading": "Verzending naar",
+          "selection": "Selecteer land",
+          "free-for-total": "Gratis voor boven "
+        },
+        "free": "Gratis"
+      },
+      "summary": {
+        "subtotal": "Subtotaal",
+        "discount": "Korting",
+        "delivery": "Verzendkosten",
+        "total": "Totaal"
+      },
+      "button": {
+        "submit": "Uitchecken",
+        "retry": "Probeer het alstublieft opnieuw",
+        "wait": "Wacht alsjeblieft"
+      },
+      "correction": "Vergoeding gecorrigeerd. Controleer of neem contact met ons op."
+    }
+  }
+}

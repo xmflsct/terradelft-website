@@ -1,0 +1,8 @@
+{
+  "slug": "$t(translation:slug.static.thank-you.slug)",
+  "name": "$t(translation:slug.static.thank-you.name)",
+  "content": {
+    "heading": "Thank you for your order!",
+    "content": "You should have received a receipt in your email. We will let you know once your order has been handled."
+  }
+}

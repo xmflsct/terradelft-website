@@ -1,0 +1,10 @@
+{
+  "name": "$t(translation:slug.static.gift-card.name)",
+  "content": {
+    "amount": "Cadeaubon € {{amount}}",
+    "minimum": "Minimaal € {{amount}}"
+  },
+  "add-button": {
+    "add-to-bag": "In winkelmand"
+  }
+}

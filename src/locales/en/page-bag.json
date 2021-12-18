@@ -1,0 +1,40 @@
+{
+  "slug": "$t(translation:slug.static.bag.slug)",
+  "name": "$t(translation:slug.static.bag.name)",
+  "content": {
+    "heading": "Shopping Bag",
+    "list": {
+      "empty": "Seems like your shopping bag is empty."
+    },
+    "checkout": {
+      "heading": {
+        "delivery": "Delivery method",
+        "phone": "Phone number",
+        "summary": "Summary"
+      },
+      "delivery": {
+        "pickup": {
+          "heading": "Pick up at Terra Delft Gallery"
+        },
+        "shipment": {
+          "heading": "Ship to",
+          "selection": "Select country",
+          "free-for-total": "Free for above "
+        },
+        "free": "Free"
+      },
+      "summary": {
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "delivery": "Delivery fee",
+        "total": "Total"
+      },
+      "button": {
+        "submit": "Checkout",
+        "retry": "Please try again",
+        "wait": "Please wait"
+      },
+      "correction": "Fee corrected. Please double check or contact us."
+    }
+  }
+}

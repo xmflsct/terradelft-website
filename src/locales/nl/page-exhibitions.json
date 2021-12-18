@@ -1,0 +1,11 @@
+{
+  "slug": "$t(translation:slug.static.events.slug)",
+  "name": "$t(translation:slug.static.events.name)",
+  "content": {
+    "heading": {
+      "current": "Nu",
+      "upcoming": "Verwacht",
+      "past": "Afgelopen archief"
+    }
+  }
+}

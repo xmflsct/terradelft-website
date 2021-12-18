@@ -1,0 +1,11 @@
+{
+  "slug": "$t(translation:slug.static.index.slug)",
+  "name": "$t(translation:slug.static.index.name)",
+  "content": {
+    "section": {
+      "online-shop": "Online Shop",
+      "collection": "Collection"
+    },
+    "newsletter": "Subscribe to our newsletter"
+  }
+}
