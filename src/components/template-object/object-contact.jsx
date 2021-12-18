@@ -85,12 +85,22 @@ const ObjectContact = ({ object }) => {
 
         <Form.Group controlId='formName'>
           <Form.Label>{t('contact.form.name.label')}</Form.Label>
-          <Form.Control name='name' type='input' ref={register} />
+          <Form.Control
+            name='name'
+            type='input'
+            required
+            {...register('name', { required: true })}
+          />
         </Form.Group>
 
         <Form.Group controlId='formEmail'>
           <Form.Label>{t('contact.form.email.label')}</Form.Label>
-          <Form.Control name='email' type='email' required ref={register} />
+          <Form.Control
+            name='email'
+            type='email'
+            required
+            {...register('email', { required: true })}
+          />
         </Form.Group>
 
         <Form.Group controlId='formQuestion'>
@@ -100,17 +110,20 @@ const ObjectContact = ({ object }) => {
             as='textarea'
             rows={5}
             required
-            ref={register}
+            {...register('question', { required: true })}
           />
         </Form.Group>
 
-        <Form.Group controlId='formGDPR'>
+        <Form.Group
+          controlId='formGDPR'
+          style={{ marginTop: '1rem', marginBottom: '1rem' }}
+        >
           <Form.Check
             name='GDPR'
             type='checkbox'
             label={t('contact.form.GDPR.label')}
             required
-            ref={register}
+            {...register('GDPR', { required: true })}
           />
         </Form.Group>
 
@@ -138,7 +151,7 @@ const ObjectContact = ({ object }) => {
             t('contact.form.button.default')}
         </Button>
 
-        <div className='mt-3'>
+        <div style={{ opacity: 0, height: '1px' }}>
           <ReCAPTCHA
             ref={recaptchaRef}
             size='invisible'

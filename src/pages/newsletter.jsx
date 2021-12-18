@@ -111,7 +111,10 @@ const PageNewsletter = ({ pageContext }) => {
               </Form.Control>
             </Form.Group>
 
-            <Form.Group controlId='formGDPR'>
+            <Form.Group
+              controlId='formGDPR'
+              style={{ marginTop: '1rem', marginBottom: '1rem' }}
+            >
               <Form.Check
                 name='GDPR'
                 type='checkbox'
@@ -145,7 +148,7 @@ const PageNewsletter = ({ pageContext }) => {
                 t('content.form.button.default')}
             </Button>
 
-            <div className='mt-3'>
+            <div style={{ opacity: 0, height: '1px' }}>
               <ReCAPTCHA
                 ref={recaptchaRef}
                 size='invisible'

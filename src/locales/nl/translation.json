@@ -123,6 +123,7 @@
     }
   },
   "gift-card": {
+    "name": "Cadeaubon",
     "amount": {
       "en": "Gift Card € {{amount}}",
       "nl": "Cadeaubon € {{amount}}"

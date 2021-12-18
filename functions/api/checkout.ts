@@ -186,7 +186,9 @@ const checkContentful = async ({
 
     shipping_options = rates[countryCodeIndex].rates.map(rate => ({
       shipping_rate_data: {
-        display_name: rate.method,
+        display_name: `${rate.method}${
+          rate.description ? ` (${rate.description})` : null
+        }`,
         type: 'fixed_amount',
         fixed_amount: {
           amount:
