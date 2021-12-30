@@ -1,6 +1,5 @@
 import { Price } from '@components/price'
 import { StaticImage } from 'gatsby-plugin-image'
-import PropTypes from 'prop-types'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import SellMain from './sell-main'
@@ -63,10 +62,6 @@ const ObjectSell = ({ object }) => {
       )}
     </div>
   )
-}
-
-ObjectSell.propTypes = {
-  object: PropTypes.object.isRequired
 }
 
 export default ObjectSell

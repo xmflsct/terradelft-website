@@ -1,9 +1,7 @@
 import { dimension } from '@utils/formatNumber'
-import { Link } from 'gatsby'
-import PropTypes from 'prop-types'
+import { Link, useTranslation } from 'gatsby-plugin-react-i18next'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
-import { useTranslation } from 'react-i18next'
 
 const ObjectAttribute = ({ type, value }) => {
   const { t, i18n } = useTranslation('constant')
@@ -41,11 +39,6 @@ const ObjectAttribute = ({ type, value }) => {
       )}
     </Row>
   )
-}
-
-ObjectAttribute.propTypes = {
-  type: PropTypes.string.isRequired,
-  value: PropTypes.any.isRequired
 }
 
 export default ObjectAttribute

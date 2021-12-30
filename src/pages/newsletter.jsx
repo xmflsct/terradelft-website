@@ -2,7 +2,6 @@ import Layout from '@components/layout'
 import api from '@utils/api'
 import { graphql } from 'gatsby'
 import { forIn } from 'lodash'
-import PropTypes from 'prop-types'
 import React, { useRef, useState } from 'react'
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap'
 import ReCAPTCHA from 'react-google-recaptcha'
@@ -165,10 +164,6 @@ const PageNewsletter = ({ pageContext }) => {
       </Row>
     </Layout>
   )
-}
-
-PageNewsletter.propTypes = {
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

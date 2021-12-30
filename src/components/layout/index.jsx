@@ -1,12 +1,10 @@
-import PropTypes from 'prop-types'
+import { config } from '@fortawesome/fontawesome-svg-core'
 import React, { useReducer } from 'react'
 import { Container } from 'react-bootstrap'
-import { config } from '@fortawesome/fontawesome-svg-core'
-
-import Seo from './seo'
-import Header from './header'
 import Announcement from './announcement'
 import Footer from './footer'
+import Header from './header'
+import Seo from './seo'
 
 function reducer (stateMobileMenu) {
   return !stateMobileMenu
@@ -47,15 +45,6 @@ const Layout = ({
       <Footer />
     </Container>
   )
-}
-
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
-  SEOtitle: PropTypes.string.isRequired,
-  SEOkeywords: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  SEOdescription: PropTypes.string.isRequired,
-  SEOschema: PropTypes.object,
-  containerName: PropTypes.string.isRequired
 }
 
 export default Layout

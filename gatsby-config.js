@@ -2,10 +2,12 @@ require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`
 })
 
+const siteUrl = 'https://www.terra-delft.nl'
+
 module.exports = {
   siteMetadata: {
     title: 'Terra Delft',
-    siteUrl: 'https://terra-delft.nl'
+    siteUrl
   },
   plugins: [
     // {
@@ -26,7 +28,7 @@ module.exports = {
         languages: ['nl', 'en'],
         defaultLanguage: 'nl',
         generateDefaultLanguagePage: true,
-        siteUrl: 'https://terra-delft.nl',
+        siteUrl,
         i18nextOptions: {
           interpolation: {
             escapeValue: false
@@ -83,57 +85,52 @@ module.exports = {
         path: `${__dirname}/src/locales`
       }
     },
-    `gatsby-transformer-sharp`
-    // {
-    //   resolve: 'gatsby-plugin-sitemap',
-    //   options: {
-    //     exclude: ['/**/404', '/**/404.html'],
-    //     query: `
-    //       {
-    //         site {
-    //           siteMetadata {
-    //             siteUrl
-    //           }
-    //         }
-    //         allSitePage(filter: {context: {i18n: {routed: {eq: false}}}}) {
-    //           edges {
-    //             node {
-    //               context {
-    //                 i18n {
-    //                   defaultLanguage
-    //                   languages
-    //                   originalPath
-    //                 }
-    //               }
-    //               path
-    //             }
-    //           }
-    //         }
-    //       }
-    //     `,
-    //     serialize: ({ site, allSitePage }) => {
-    //       return allSitePage.edges.map(edge => {
-    //         const { languages, originalPath, defaultLanguage } =
-    //           edge.node.context.i18n
-    //         const { siteUrl } = site.siteMetadata
-    //         const url = siteUrl + originalPath
-    //         const links = [
-    //           { lang: defaultLanguage, url },
-    //           { lang: 'x-default', url }
-    //         ]
-    //         languages.forEach(lang => {
-    //           if (lang === defaultLanguage) return
-    //           links.push({ lang, url: `${siteUrl}/${lang}${originalPath}` })
-    //         })
-    //         return {
-    //           url,
-    //           changefreq: 'daily',
-    //           priority: originalPath === '/' ? 1.0 : 0.7,
-    //           links
-    //         }
-    //       })
-    //     }
-    //   }
-    // },
+    `gatsby-transformer-sharp`,
+    {
+      resolve: 'gatsby-plugin-sitemap',
+      options: {
+        excludes: ['/**/404', '/**/404.html'],
+        // query: `
+        //   {
+        //     allSitePage(filter: {pageContext: {i18n: {routed: {eq: false}}}}) {
+        //       edges {
+        //         node {
+        //           pageContext {
+        //             i18n {
+        //               defaultLanguage
+        //               languages
+        //               originalPath
+        //             }
+        //           }
+        //           path
+        //         }
+        //       }
+        //     }
+        //   }
+        // `,
+        // resolveSiteUrl: () => siteUrl,
+        // serialize: ({ allSitePage }) => {
+        //   return allSitePage.edges.map(edge => {
+        //     const { languages, originalPath, defaultLanguage } =
+        //       edge.node.pageContext.i18n
+        //     const url = siteUrl + originalPath
+        //     const links = [
+        //       { lang: defaultLanguage, url },
+        //       { lang: 'x-default', url }
+        //     ]
+        //     languages.forEach(lang => {
+        //       if (lang === defaultLanguage) return
+        //       links.push({ lang, url: `${siteUrl}/${lang}${originalPath}` })
+        //     })
+        //     return {
+        //       url,
+        //       changefreq: 'daily',
+        //       priority: originalPath === '/' ? 1.0 : 0.7,
+        //       links
+        //     }
+        //   })
+        // }
+      }
+    }
   ]
 }

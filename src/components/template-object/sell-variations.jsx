@@ -2,7 +2,6 @@ import { Price } from '@components/price'
 import { bagAdd } from '@state/slices/bag'
 import { currency } from '@utils/formatNumber'
 import { difference, findIndex, intersection, reduce, union } from 'lodash'
-import PropTypes from 'prop-types'
 import React, { useContext, useEffect, useReducer, useState } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
@@ -312,10 +311,6 @@ const SellVariations = ({ object }) => {
       )}
     </div>
   )
-}
-
-SellVariations.propTypes = {
-  object: PropTypes.object.isRequired
 }
 
 export default SellVariations

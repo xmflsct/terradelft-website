@@ -1,11 +1,10 @@
 import Layout from '@components/layout'
 import EventInformation from '@components/template-event/event-information'
-import { graphql, Link } from 'gatsby'
+import { graphql } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
-import { useTranslation } from 'gatsby-plugin-react-i18next'
+import { Link, useTranslation } from 'gatsby-plugin-react-i18next'
 import moment from 'moment'
 import 'moment/locale/nl'
-import PropTypes from 'prop-types'
 import React from 'react'
 import { Badge, Col, Row } from 'react-bootstrap'
 
@@ -80,11 +79,6 @@ const PageTerraInChina = ({ data }) => {
       </Row>
     </Layout>
   )
-}
-
-PageTerraInChina.propTypes = {
-  pageContext: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

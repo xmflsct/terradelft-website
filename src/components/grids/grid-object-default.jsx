@@ -1,10 +1,10 @@
-import PropTypes from 'prop-types'
+import { graphql } from 'gatsby'
+import { GatsbyImage } from 'gatsby-plugin-image'
+import { Link } from 'gatsby-plugin-react-i18next'
+import { shuffle } from 'lodash'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import { graphql, Link } from 'gatsby'
-import { GatsbyImage } from 'gatsby-plugin-image'
-import { shuffle } from 'lodash'
 
 const GridObjectDefault = ({
   nodes,
@@ -63,12 +63,6 @@ const GridObjectDefault = ({
       })}
     </Row>
   )
-}
-
-GridObjectDefault.propTypes = {
-  nodes: PropTypes.array.isRequired,
-  randomize: PropTypes.bool,
-  limit: PropTypes.number
 }
 
 export const query = graphql`

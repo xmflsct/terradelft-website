@@ -1,7 +1,6 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GatsbyImage } from 'gatsby-plugin-image'
-import PropTypes from 'prop-types'
 import React, { useContext, useRef, useState } from 'react'
 import { Button, Carousel, Col, Modal, Row } from 'react-bootstrap'
 import { ContextVariation } from './object-context'
@@ -156,14 +155,6 @@ const ObjectImages = ({ images }) => {
       </Modal>
     </>
   )
-}
-
-MouseZoom.propTypes = {
-  image: PropTypes.string.isRequired
-}
-
-ObjectImages.propTypes = {
-  images: PropTypes.array.isRequired
 }
 
 export default ObjectImages

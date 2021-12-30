@@ -5,7 +5,6 @@ import { documentToPlainTextString } from '@contentful/rich-text-plain-text-rend
 import { graphql } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
-import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 
@@ -72,10 +71,6 @@ const PageExhibition = ({ data }) => {
       </Row>
     </Layout>
   )
-}
-
-PageExhibition.propTypes = {
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

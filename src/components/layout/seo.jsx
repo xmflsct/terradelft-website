@@ -1,10 +1,8 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { Helmet } from 'react-helmet'
-import { useTranslation } from 'react-i18next'
 import { useStaticQuery, graphql } from 'gatsby'
+import { Helmet } from 'gatsby-plugin-react-i18next'
+import React from 'react'
 
-function Seo ({ title, keywords, description, schema }) {
+function Seo({ title, keywords, description, schema }) {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -16,11 +14,9 @@ function Seo ({ title, keywords, description, schema }) {
       }
     `
   )
-  const { i18n } = useTranslation()
 
   return (
     <Helmet title={title} titleTemplate={`%s | ${site.siteMetadata.title}`}>
-      <html lang={i18n.language} />
       <meta name='description' content={description} />
       {keywords && <meta name='keywords' content={keywords.join(', ')} />}
       <meta name='og:title' content={title} />
@@ -31,13 +27,6 @@ function Seo ({ title, keywords, description, schema }) {
       )}
     </Helmet>
   )
-}
-
-Seo.propTypes = {
-  title: PropTypes.string.isRequired,
-  keywords: PropTypes.arrayOf(PropTypes.string),
-  description: PropTypes.string.isRequired,
-  schema: PropTypes.object
 }
 
 export default Seo
