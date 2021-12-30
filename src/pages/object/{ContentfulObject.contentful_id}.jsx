@@ -14,7 +14,6 @@ import { graphql } from 'gatsby'
 import { Link, useTranslation } from 'gatsby-plugin-react-i18next'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import { findIndex } from 'lodash'
-import PropTypes from 'prop-types'
 import React, { useReducer, useState } from 'react'
 import { Button, Col, Collapse, Row } from 'react-bootstrap'
 
@@ -233,11 +232,6 @@ const PageObject = ({ pageContext, data }) => {
       </ContextVariation.Provider>
     </Layout>
   )
-}
-
-PageObject.propTypes = {
-  pageContext: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

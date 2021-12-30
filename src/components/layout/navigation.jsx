@@ -1,7 +1,6 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link } from 'gatsby'
-import { useTranslation } from 'gatsby-plugin-react-i18next'
+import { Link, useTranslation } from 'gatsby-plugin-react-i18next'
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Dropdown, Form, InputGroup, Row } from 'react-bootstrap'
 

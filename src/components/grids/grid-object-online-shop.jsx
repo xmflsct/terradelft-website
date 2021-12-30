@@ -1,9 +1,8 @@
 import { currency } from '@utils/formatNumber'
-import { Link, graphql } from 'gatsby'
+import { graphql } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
-import { useTranslation } from 'gatsby-plugin-react-i18next'
+import { Link, useTranslation } from 'gatsby-plugin-react-i18next'
 import { find, includes } from 'lodash'
-import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import Select from 'react-select'
@@ -217,10 +216,6 @@ const GridObjectOnlineShop = ({ nodes, giftCard = undefined }) => {
       </Row>
     </>
   )
-}
-
-GridObjectOnlineShop.propTypes = {
-  nodes: PropTypes.array.isRequired
 }
 
 export const query = graphql`

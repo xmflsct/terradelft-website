@@ -1,5 +1,4 @@
 import api from '@utils/api'
-import PropTypes from 'prop-types'
 import React, { useContext, useRef, useState } from 'react'
 import { Button, Form, Spinner } from 'react-bootstrap'
 import ReCAPTCHA from 'react-google-recaptcha'
@@ -164,10 +163,6 @@ const ObjectContact = ({ object }) => {
       </Form>
     </div>
   )
-}
-
-ObjectContact.propTypes = {
-  object: PropTypes.object.isRequired
 }
 
 export default ObjectContact

@@ -1,8 +1,8 @@
 import Layout from '@components/layout'
-import { graphql, Link } from 'gatsby'
+import { graphql } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
+import { Link } from 'gatsby-plugin-react-i18next'
 import moment from 'moment'
-import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Pagination, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
@@ -58,11 +58,6 @@ const TemplateNews = ({ pageContext, data }) => {
       </Pagination>
     </Layout>
   )
-}
-
-TemplateNews.propTypes = {
-  pageContext: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

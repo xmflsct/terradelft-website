@@ -2,7 +2,6 @@ import GridObjectOnlineShop from '@components/grids/grid-object-online-shop'
 import Layout from '@components/layout'
 import { graphql } from 'gatsby'
 import { useTranslation } from 'gatsby-plugin-react-i18next'
-import PropTypes from 'prop-types'
 import React from 'react'
 
 const PageShop = ({ data }) => {
@@ -21,10 +20,6 @@ const PageShop = ({ data }) => {
       />
     </Layout>
   )
-}
-
-PageShop.propTypes = {
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

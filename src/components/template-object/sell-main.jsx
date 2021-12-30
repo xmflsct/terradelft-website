@@ -1,6 +1,5 @@
 import { Price } from '@components/price'
 import { bagAdd } from '@state/slices/bag'
-import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
@@ -67,10 +66,6 @@ const SellMain = ({ object }) => {
       </Button>
     </Form>
   )
-}
-
-SellMain.propTypes = {
-  object: PropTypes.object.isRequired
 }
 
 export default SellMain

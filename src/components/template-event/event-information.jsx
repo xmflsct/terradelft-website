@@ -1,10 +1,9 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock, faIdBadge, faMap } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import 'moment/locale/nl'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 const EventInformation = ({ event, type }) => {
   const { t, i18n } = useTranslation()
@@ -69,11 +68,6 @@ const EventInformation = ({ event, type }) => {
       )}
     </div>
   )
-}
-
-EventInformation.propTypes = {
-  event: PropTypes.object.isRequired,
-  type: PropTypes.string
 }
 
 export default EventInformation

@@ -5,7 +5,6 @@ import { graphql } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
 import { useTranslation } from 'gatsby-plugin-react-i18next'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
-import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 
@@ -57,10 +56,6 @@ const PageAboutTerra = ({ data }) => {
       </Row>
     </Layout>
   )
-}
-
-PageAboutTerra.propTypes = {
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

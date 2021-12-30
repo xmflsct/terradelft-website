@@ -36,7 +36,7 @@ const PageGiftCard = ({ data }) => {
   const dispatch = useDispatch()
   const onSubmit = e => {
     e.preventDefault()
-    Object.keys(quantity).map(amount => {
+    Object.keys(quantity).forEach(amount => {
       if (quantity[amount] > 0) {
         dispatch(
           bagAdd({

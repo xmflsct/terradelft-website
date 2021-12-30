@@ -4,7 +4,6 @@ import Layout from '@components/layout'
 import NewsletterPopup from '@components/newsletter-popup'
 import { graphql } from 'gatsby'
 import { useTranslation } from 'gatsby-plugin-react-i18next'
-import PropTypes from 'prop-types'
 import React from 'react'
 
 const PageIndex = ({ data }) => {
@@ -33,10 +32,6 @@ const PageIndex = ({ data }) => {
       <NewsletterPopup />
     </Layout>
   )
-}
-
-PageIndex.propTypes = {
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`

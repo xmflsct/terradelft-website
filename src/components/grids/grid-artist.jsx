@@ -1,6 +1,5 @@
-import { Link } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
-import PropTypes from 'prop-types'
+import { Link } from 'gatsby-plugin-react-i18next'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 
@@ -23,10 +22,6 @@ const GridArtist = ({ data }) => {
       ))}
     </Row>
   )
-}
-
-GridArtist.propTypes = {
-  data: PropTypes.array.isRequired
 }
 
 export default GridArtist

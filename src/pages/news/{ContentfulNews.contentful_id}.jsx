@@ -5,7 +5,6 @@ import { graphql } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
 import { renderRichText } from 'gatsby-source-contentful/rich-text'
 import moment from 'moment'
-import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
@@ -61,10 +60,6 @@ const PageNews = ({ data }) => {
       </Row>
     </Layout>
   )
-}
-
-PageNews.propTypes = {
-  data: PropTypes.object.isRequired
 }
 
 export const query = graphql`
