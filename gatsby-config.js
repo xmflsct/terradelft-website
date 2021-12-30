@@ -2,10 +2,12 @@ require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`
 })
 
+const siteUrl = 'https://www.terra-delft.nl'
+
 module.exports = {
   siteMetadata: {
     title: 'Terra Delft',
-    siteUrl: 'https://www.terra-delft.nl'
+    siteUrl
   },
   plugins: [
     // {
@@ -26,7 +28,7 @@ module.exports = {
         languages: ['nl', 'en'],
         defaultLanguage: 'nl',
         generateDefaultLanguagePage: true,
-        siteUrl: 'https://www.terra-delft.nl',
+        siteUrl,
         i18nextOptions: {
           interpolation: {
             escapeValue: false
@@ -90,11 +92,6 @@ module.exports = {
         excludes: ['/**/404', '/**/404.html'],
         query: `
           {
-            site {
-              siteMetadata {
-                siteUrl
-              }
-            }
             allSitePage(filter: {context: {i18n: {routed: {eq: false}}}}) {
               edges {
                 node {
@@ -115,7 +112,6 @@ module.exports = {
           return allSitePage.edges.map(edge => {
             const { languages, originalPath, defaultLanguage } =
               edge.node.context.i18n
-            const { siteUrl } = site.siteMetadata
             const url = siteUrl + originalPath
             const links = [
               { lang: defaultLanguage, url },
