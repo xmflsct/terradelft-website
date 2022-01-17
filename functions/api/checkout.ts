@@ -148,7 +148,7 @@ const checkContentful = async ({
       access_token: secret,
       content_type: contentType.delivery,
       select: 'fields.rates',
-      'fields.year[eq]': '2020',
+      'fields.year[eq]': '2022',
       locale: locale
     })
     const res = await fetch(`${url}?${params.toString()}`, { method: 'GET' })

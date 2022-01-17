@@ -31,7 +31,7 @@ const BagCheckout = () => {
   const rates = useStaticQuery(graphql`
     {
       nl: contentfulShippingRates(
-        contentful_id: { eq: "4PqNb8jwgZrWgqXFzafrI5" }
+        year: { eq: "2022" }
         node_locale: { eq: "nl" }
       ) {
         rates {
@@ -46,7 +46,7 @@ const BagCheckout = () => {
         }
       }
       en: contentfulShippingRates(
-        contentful_id: { eq: "4PqNb8jwgZrWgqXFzafrI5" }
+        year: { eq: "2022" }
         node_locale: { eq: "en" }
       ) {
         rates {
