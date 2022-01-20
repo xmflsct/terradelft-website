@@ -89,7 +89,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-sitemap',
       options: {
-        excludes: ['/**/404', '/**/404.html'],
+        excludes: ['/**/404', '/**/404.html', '/**/bag', '/**/thank-you']
         // query: `
         //   {
         //     allSitePage(filter: {pageContext: {i18n: {routed: {eq: false}}}}) {
