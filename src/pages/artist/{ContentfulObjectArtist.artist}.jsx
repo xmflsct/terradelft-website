@@ -22,7 +22,7 @@ const PageArtist = ({ data }) => {
         '@context': 'http://schema.org',
         '@type': 'Person',
         name: data.artist.artist,
-        image: data.artist.image.gatsbyImageData.images.fallback.src,
+        image: data.artist.image?.gatsbyImageData.images.fallback.src,
         description:
           data.artist.biography &&
           documentToPlainTextString(JSON.parse(data.artist.biography.raw))
@@ -34,7 +34,7 @@ const PageArtist = ({ data }) => {
         <Col lg={4} className='mb-3'>
           <GatsbyImage
             alt={data.artist.artist}
-            image={data.artist.image.gatsbyImageData}
+            image={data.artist.image?.gatsbyImageData}
           />
         </Col>
         <Col lg={8}>
