@@ -63,7 +63,7 @@ const PageNews = ({ data }) => {
 }
 
 export const query = graphql`
-  query PageNews($language: String!, $id: String!) {
+  query PageNews($language: String!, $contentful_id: String!) {
     locales: allLocale(
       filter: {
         ns: { in: ["translation", "page-news"] }
@@ -78,7 +78,10 @@ export const query = graphql`
         }
       }
     }
-    news: contentfulNews(id: { eq: $id }) {
+    news: contentfulNews(
+      node_locale: { eq: $language }
+      contentful_id: { eq: $contentful_id }
+    ) {
       title
       date
       image {
