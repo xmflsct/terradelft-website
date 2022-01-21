@@ -52,7 +52,7 @@ const PageArtist = ({ data }) => {
 }
 
 export const query = graphql`
-  query PageArtist($language: String!, $id: String!) {
+  query PageArtist($language: String!, $artist: String!) {
     locales: allLocale(
       filter: { ns: { in: ["translation"] }, language: { eq: $language } }
     ) {
@@ -64,7 +64,10 @@ export const query = graphql`
         }
       }
     }
-    artist: contentfulObjectArtist(id: { eq: $id }) {
+    artist: contentfulObjectArtist(
+      node_locale: { eq: $language }
+      artist: { eq: $artist }
+    ) {
       artist
       image {
         gatsbyImageData(width: 280, quality: 85)

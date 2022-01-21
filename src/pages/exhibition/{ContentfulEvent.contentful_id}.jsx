@@ -74,7 +74,7 @@ const PageExhibition = ({ data }) => {
 }
 
 export const query = graphql`
-  query PageExhibition($language: String!, $id: String!) {
+  query PageExhibition($language: String!, $contentful_id: String!) {
     locales: allLocale(
       filter: {
         ns: { in: ["translation", "component-exhibition"] }
@@ -89,7 +89,10 @@ export const query = graphql`
         }
       }
     }
-    event: contentfulEvent(id: { eq: $id }) {
+    event: contentfulEvent(
+      node_locale: { eq: $language }
+      contentful_id: { eq: $contentful_id }
+    ) {
       name
       datetimeStart
       datetimeEnd
