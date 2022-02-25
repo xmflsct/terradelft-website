@@ -117,7 +117,9 @@ const PageGiftCard = ({ data }) => {
             ))}
             {data.contentfulGiftCard.customAmountAllow ? (
               <InputGroup>
-                <InputGroup.Text>{t('content.amount')}</InputGroup.Text>
+                <InputGroup.Text>
+                  {t('content.amount', { amount: '' })}
+                </InputGroup.Text>
                 <FormControl
                   type='number'
                   value={theAmount}
