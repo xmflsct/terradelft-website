@@ -175,6 +175,7 @@ const SellVariations = ({ object }) => {
 
   const onSubmit = e => {
     e.preventDefault()
+    if (!amount?.value) return
     const data = {
       type: 'variation',
       gatsbyPath: object.nodes[0].gatsbyPath,
