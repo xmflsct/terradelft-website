@@ -7,7 +7,7 @@
       "news": "$t(page-news:name)"
     },
     "view-all": {
-      "events": "Bekijk al het nieuws van $t(name) →",
+      "events": "Bekijk al het exposities van $t(name) →",
       "news": "Bekijk al het nieuws van $t(name) →"
     }
   }
