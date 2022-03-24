@@ -69,6 +69,9 @@ const PageExhibitions = ({ data }) => {
             })}
         </Col>
       </Row>
+      <Link to='/exhibitions/page/1'>
+        {t('page-exhibitions:content.view-all')}
+      </Link>
     </Layout>
   )
 }

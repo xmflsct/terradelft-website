@@ -114,17 +114,49 @@ exports.createPages = async ({ graphql, actions }) => {
     }
   `)
   const newsPerPage = 9
-  const numPages = Math.ceil(
+  const newsNumPages = Math.ceil(
     totalNews.data.newsTotal.totalCount / 2 / newsPerPage
   )
-  Array.from({ length: numPages }).forEach((_, i) => {
+  Array.from({ length: newsNumPages }).forEach((_, i) => {
     createPage({
       path: `/news/page/${i + 1}`,
       component: path.resolve('./src/templates/news.jsx'),
       context: {
         limit: newsPerPage,
         skip: i * newsPerPage,
-        numPages,
+        numPages: newsNumPages,
+        currentPage: i + 1
+      }
+    })
+  })
+
+  const archivedExhibitions = await graphql(`
+    {
+      archivedExhibitions: allContentfulEvent(
+        filter: {
+          type: {
+            elemMatch: { contentful_id: { ne: "htJrQs69zz39hTCtUKiP0" } }
+          }
+        }
+      ) {
+        totalCount
+      }
+    }
+  `)
+  const exhibitionsPerPage = 9
+  const exhibitionsNumPages = Math.ceil(
+    archivedExhibitions.data.archivedExhibitions.totalCount /
+      2 /
+      exhibitionsPerPage
+  )
+  Array.from({ length: exhibitionsNumPages }).forEach((_, i) => {
+    createPage({
+      path: `/exhibitions/page/${i + 1}`,
+      component: path.resolve('./src/templates/exhibitions.jsx'),
+      context: {
+        limit: newsPerPage,
+        skip: i * newsPerPage,
+        numPages: exhibitionsNumPages,
         currentPage: i + 1
       }
     })
