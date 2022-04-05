@@ -97,7 +97,7 @@ export const query = graphql`
         isCurrentAndFuture: { eq: true }
         node_locale: { eq: $language }
       }
-      sort: { order: ASC, fields: datetimeEnd }
+      sort: { order: ASC, fields: datetimeStart }
     ) {
       nodes {
         gatsbyPath(filePath: "/exhibition/{ContentfulEvent.contentful_id}")
