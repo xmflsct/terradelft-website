@@ -1,5 +1,7 @@
 import Layout from '@components/layout'
 import EventInformation from '@components/template-event/event-information'
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { graphql } from 'gatsby'
 import { GatsbyImage } from 'gatsby-plugin-image'
 import { Link, useTranslation } from 'gatsby-plugin-react-i18next'
@@ -7,7 +9,7 @@ import React from 'react'
 import { Badge, Col, Row } from 'react-bootstrap'
 
 const PageExhibitions = ({ data }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   return (
     <Layout
@@ -69,9 +71,25 @@ const PageExhibitions = ({ data }) => {
             })}
         </Col>
       </Row>
-      <Link to='/exhibitions/page/1'>
-        {t('page-exhibitions:content.view-all')}
-      </Link>
+      <Row>
+        <Link to='/exhibitions/page/1'>
+          {t('page-exhibitions:content.view-all')}
+        </Link>
+      </Row>
+      <Row>
+        <a
+          href={
+            i18n.language.startsWith('en')
+              ? 'https://archive2.terra-delft.nl/exhibition/archive/'
+              : 'https://archive2.terra-delft.nl/nl/expositie/archief/'
+          }
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          {t('page-exhibitions:content.archive-wordpress')}{' '}
+          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+        </a>
+      </Row>
     </Layout>
   )
 }
