@@ -9,9 +9,8 @@ import RichText from '~/components/richText'
 import { getObjectsArtist, ObjectsArtist } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const loader: LoaderFunction = async props => {
-  return await getObjectsArtist(props)
-}
+export const loader: LoaderFunction = async props =>
+  await getObjectsArtist(props)
 
 export const meta: MetaFunction = ({ data }: { data: ObjectsArtist }) => ({
   title: SEOTitle(data.artist),

@@ -7,6 +7,7 @@ module.exports = {
         primary: '#394c50',
         secondary: '#bd2716',
         background: '#f4f4f4',
+        disabled: '#acacac',
         placeholder: '#ddd'
       },
       flex: {

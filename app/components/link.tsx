@@ -19,8 +19,8 @@ const Link: React.FC<PropsWithChildren & RemixLinkProps> = props => {
 
   return (
     <RemixLink
-      className={`text-secondary underline-offset-4 no-underline hover:underline ${props.className}`}
       {...props}
+      className={`text-secondary underline-offset-4 no-underline hover:underline ${props.className}`}
       to={`/${language}${to === '/' ? '' : to}`}
     />
   )

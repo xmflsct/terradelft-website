@@ -3,8 +3,8 @@
   "name": "$t(translation:slug.static.terra-in-china.name)",
   "content": {
     "heading": {
-      "events": "$t(page-exhibitions:name)",
-      "news": "$t(page-news:name)"
+      "events": "$t(pageExhibitions:name)",
+      "news": "$t(pageNews:name)"
     },
     "view-all": {
       "events": "View all events of $t(name) →",

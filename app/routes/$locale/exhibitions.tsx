@@ -40,11 +40,6 @@ const PageExhibitions = () => {
           <H2>{t('content.heading.upcoming')}</H2>
           {eventsEvents
             .filter(event => new Date(event.datetimeStart) > new Date())
-            .sort(
-              (a, b) =>
-                new Date(a.datetimeStart).getTime() -
-                new Date(b.datetimeStart).getTime()
-            )
             .map(event => (
               <div key={event.sys.id} className='mb-4'>
                 <div>

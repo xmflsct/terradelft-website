@@ -524,15 +524,28 @@ const getEventsEvent = async ({
 
 const getEventsEvents = async ({
   context,
-  params: { locale }
+  params: { locale, page }
 }: DataFunctionArgs): Promise<Readonly<EventsEvent[]>> => {
+  const perPage = 9
+
   return (
     await apolloClient({ context }).query<{
       eventsEventCollection: { items: EventsEvent[] }
     }>({
       query: gql`
       query {
-        eventsEventCollection (locale: "${locale}", where: { datetimeEnd_gte: "${new Date().toISOString()}" }) {
+        eventsEventCollection (
+          locale: "${locale}",
+          order: datetimeStart_DESC,
+          ${
+            page
+              ? `limit: ${perPage},
+          skip: ${
+            perPage * (parseInt(page || '0') - 1)
+          }, where: { datetimeEnd_lt: "${new Date().toISOString()}" }`
+              : `where: { datetimeEnd_gte: "${new Date().toISOString()}" }`
+          }
+        ) {
           items {
             sys {
               id
@@ -586,18 +599,88 @@ const getNewsNew = async ({
 const getNewsNews = async ({
   context,
   params: { locale, page }
-}: DataFunctionArgs): Promise<Readonly<NewsNews[]>> => {
+}: DataFunctionArgs): Promise<
+  Readonly<{ total: number; items: NewsNews[] }>
+> => {
   const perPage = 9
 
+  const res = await apolloClient({ context }).query<{
+    newsNewsCollection: { total: number; items: NewsNews[] }
+  }>({
+    query: gql`
+    query {
+      newsNewsCollection (
+        locale: "${locale}",
+        order: date_DESC,
+        limit: ${perPage},
+        skip: ${perPage * (parseInt(page || '0') - 1)}
+      ) {
+        total
+        items {
+          sys {
+            id
+          }
+          title
+          date
+          image {
+            url
+          }
+        }
+      }
+    }
+  `
+  })
+  return {
+    total: Math.round(res.data.newsNewsCollection.total / 9),
+    items: res.data.newsNewsCollection.items
+  }
+}
+
+const getTerraInChina = async ({
+  context,
+  params: { locale }
+}: DataFunctionArgs): Promise<
+  Readonly<{
+    eventsEventCollection: { items: EventsEvent[] }
+    newsNewsCollection: { items: NewsNews[] }
+  }>
+> => {
   return (
     await apolloClient({ context }).query<{
+      eventsEventCollection: { items: EventsEvent[] }
       newsNewsCollection: { items: NewsNews[] }
     }>({
       query: gql`
       query {
-        newsNewsCollection (locale: "${locale}", limit: ${perPage}, skip: ${
-        perPage * (parseInt(page || '0') - 1)
-      }, order: date_DESC) {
+        eventsEventCollection (
+          locale: "${locale}"
+          where: { terraInChina: true },
+          limit: 6,
+          order: datetimeEnd_DESC
+        ) {
+          items {
+            sys {
+              id
+            }
+            image {
+              url
+            }
+            name
+            datetimeStart
+            datetimeEnd
+            typeCollection {
+              items {
+                name
+              }
+            }
+          }
+        }
+        newsNewsCollection (
+          locale: "${locale}",
+          where: { terraInChina: true },
+          limit: 6,
+          order: date_DESC
+        ) {
           items {
             sys {
               id
@@ -612,7 +695,7 @@ const getNewsNews = async ({
       }
     `
     })
-  ).data.newsNewsCollection.items
+  ).data
 }
 
 export {
@@ -624,5 +707,6 @@ export {
   getEventsEvent,
   getEventsEvents,
   getNewsNew,
-  getNewsNews
+  getNewsNews,
+  getTerraInChina
 }
