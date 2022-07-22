@@ -12,6 +12,7 @@ import { Link } from '~/components/link'
 import ObjectAttribute from '~/components/object/attribute'
 import ObjectImages from '~/components/object/images'
 import ObjectSell from '~/components/object/sell'
+import RichText from '~/components/richText'
 import {
   cacheQuery,
   CommonImage,
@@ -224,10 +225,11 @@ const PageObject = () => {
               )}
             </tbody>
           </table>
-          <div className='object-description'>
-            {objectsObject.description &&
-              documentToReactComponents(objectsObject.description.json)}
-          </div>
+          <RichText
+            content={objectsObject.description}
+            className='mt-2'
+            assetWidth={634}
+          />
           <div className='object-contact'>
             {/* <button
               onClick={() => setToggleContact(!toggleContact)}

@@ -166,6 +166,57 @@ export type NewsNews = {
   content?: CommonRichText
 }
 
+const richTextLinks = `
+links {
+  assets {
+    block {
+      sys {
+        id
+      }
+      url
+      description
+    }
+  }
+  entries {
+    inline {
+      sys {
+        id
+      }
+      ... on EventsEvent {
+        name
+      }
+      ... on NewsNews {
+        title
+      }
+      ... on ObjectsArtist {
+        slug
+        artist
+      }
+      ... on ObjectsObject {
+        name
+      }
+    }
+    hyperlink {
+      sys {
+        id
+      }
+      ... on EventsEvent {
+        name
+      }
+      ... on NewsNews {
+        title
+      }
+      ... on ObjectsArtist {
+        slug
+        artist
+      }
+      ... on ObjectsObject {
+        name
+      }
+    }
+  }
+}`
+
 const getObjectsArtist = async ({
   context,
   params: { locale, slug }
@@ -186,6 +237,7 @@ const getObjectsArtist = async ({
             }
             biography {
               json
+              ${richTextLinks}
             }
             linkedFrom {
               objectsObjectCollection (locale: "nl") {
@@ -255,6 +307,7 @@ const getObjectsObject = async ({
               name_en: name (locale: "en")
               description {
                 json
+                ${richTextLinks}
               }
               imagesCollection {
                 items {
@@ -460,16 +513,7 @@ const getEventsEvent = async ({
           }
           description {
             json
-            links {
-              assets {
-                block {
-                  sys {
-                    id
-                  }
-                  url
-                }
-              }
-            }
+            ${richTextLinks}
           }
         }
       }
@@ -530,55 +574,7 @@ const getNewsNew = async ({
           terraInChina
           content {
             json
-            links {
-              assets {
-                block {
-                  sys {
-                    id
-                  }
-                  url
-                  description
-                }
-              }
-              entries {
-                inline {
-                  sys {
-                    id
-                  }
-                  ... on EventsEvent {
-                    name
-                  }
-                  ... on NewsNews {
-                    title
-                  }
-                  ... on ObjectsArtist {
-                    slug
-                    artist
-                  }
-                  ... on ObjectsObject {
-                    name
-                  }
-                }
-                hyperlink {
-                  sys {
-                    id
-                  }
-                  ... on EventsEvent {
-                    name
-                  }
-                  ... on NewsNews {
-                    title
-                  }
-                  ... on ObjectsArtist {
-                    slug
-                    artist
-                  }
-                  ... on ObjectsObject {
-                    name
-                  }
-                }
-              }
-            }
+            ${richTextLinks}
           }
         }
       }
