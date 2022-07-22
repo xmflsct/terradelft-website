@@ -2,9 +2,9 @@ import { useMatches } from '@remix-run/react'
 
 const StructuredData: React.FC = () => {
   const matches = useMatches()
-  const structuredData = matches.flatMap(({ data, handle }) => {
+  const structuredData = matches.flatMap(({ data, handle, params }) => {
     if (handle?.structuredData && typeof handle.structuredData === 'function') {
-      const result = handle.structuredData(data)
+      const result = handle.structuredData(data, params)
 
       if (result) {
         return result

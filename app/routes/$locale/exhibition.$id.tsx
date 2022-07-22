@@ -1,18 +1,12 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
-import type { Person, WithContext } from 'schema-dts'
+import type { Event, WithContext } from 'schema-dts'
 import EventInformation from '~/components/event/information'
-import { H1, H2 } from '~/components/globals'
-import GridObjectDefault from '~/components/grids/grid-object-default'
+import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
-import {
-  EventsEvent,
-  getEventsEvent,
-  getObjectsArtist,
-  ObjectsArtist
-} from '~/utils/contentful'
+import RichText from '~/components/richText'
+import { EventsEvent, getEventsEvent } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader: LoaderFunction = async props => {
@@ -29,17 +23,34 @@ export const meta: MetaFunction = ({ data }: { data: EventsEvent }) => ({
     )
   })
 })
-// export const handle = {
-//   structuredData: (data: ObjectsArtist): WithContext<Person> => ({
-//     '@context': 'https://schema.org',
-//     '@type': 'Person',
-//     name: data.artist,
-//     image: data.image.url,
-//     ...(data.biography && {
-//       description: documentToPlainTextString(data.biography.json)
-//     })
-//   })
-// }
+export const handle = {
+  structuredData: (data: EventsEvent): WithContext<Event> => ({
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: data.name,
+    startDate: data.datetimeStart,
+    endDate: data.datetimeEnd,
+    ...(data.image && { image: data.image.url }),
+    description:
+      data.description &&
+      documentToPlainTextString(data.description.json).substring(0, 199),
+    ...(data.organizerCollection?.items.length && {
+      organizer: data.organizerCollection.items.map(organizer => ({
+        '@type': 'Organization',
+        name: organizer.name
+      }))
+    }),
+    ...(data.locationCollection?.items.length && {
+      location: data.locationCollection.items.map(location => ({
+        '@type': 'Place',
+        name: location.name,
+        address: location.address,
+        latitude: location.location.lat,
+        longitude: location.location.lon
+      }))
+    })
+  })
+}
 
 const PageExhibition = () => {
   const eventsEvent = useLoaderData<EventsEvent>()
@@ -59,10 +70,11 @@ const PageExhibition = () => {
         )}
         <div className={eventsEvent.image ? 'col-span-4' : 'col-span-6'}>
           <EventInformation event={eventsEvent} />
-          <div className='mt-2'>
-            {eventsEvent.description &&
-              documentToReactComponents(eventsEvent.description.json)}
-          </div>
+          <RichText
+            content={eventsEvent.description}
+            className='mt-2'
+            assetWidth={634}
+          />
         </div>
       </div>
     </>

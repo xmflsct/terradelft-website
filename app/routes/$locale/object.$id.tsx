@@ -1,21 +1,17 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction
-} from '@remix-run/cloudflare'
+import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
-import { createElement, useState } from 'react'
+import { max } from 'lodash'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { Person, WithContext } from 'schema-dts'
-import { H1, H2, H3, H4 } from '~/components/globals'
+import type { Product, WithContext } from 'schema-dts'
+import { H1, H2, H3 } from '~/components/globals'
 import GridObjectDefault from '~/components/grids/grid-object-default'
 import { Link } from '~/components/link'
 import ObjectAttribute from '~/components/object/attribute'
 import ObjectImages from '~/components/object/images'
 import ObjectSell from '~/components/object/sell'
-import { cookieBag } from '~/cookies'
 import {
   cacheQuery,
   CommonImage,
@@ -28,31 +24,108 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 export const loader: LoaderFunction = async props =>
   await cacheQuery(30, props, async () => await getObjectsObject(props))
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: ObjectsObject_NameLocalized
-}) => ({
-  // title: SEOTitle(data.artist),
-  // keywords: SEOKeywords([data.artist]),
-  // ...(data.biography && {
-  //   description: documentToPlainTextString(data.biography.json).substring(
-  //     0,
-  //     199
-  //   )
-  // })
+export const meta: MetaFunction = ({ data, params: { locale } }) => ({
+  title: SEOTitle(data.name[locale!]),
+  keywords: SEOKeywords([data.name[locale!]]),
+  ...(data.description && {
+    description: documentToPlainTextString(data.description.json).substring(
+      0,
+      199
+    )
+  })
 })
 export const handle = {
-  i18n: 'pageObject'
-  // structuredData: (data: ObjectsArtist): WithContext<Person> => ({
-  //   '@context': 'https://schema.org',
-  //   '@type': 'Person',
-  //   name: data.artist,
-  //   image: data.image.url,
-  //   ...(data.biography && {
-  //     description: documentToPlainTextString(data.biography.json)
-  //   })
-  // })
+  i18n: 'pageObject',
+  structuredData: (
+    data: ObjectsObject_NameLocalized,
+    { locale }: any
+  ): WithContext<Product> => ({
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: data.name[locale],
+    image: data.imagesCollection?.items[0].url,
+    description:
+      data.description &&
+      documentToPlainTextString(data.description.json).substring(0, 199),
+    offers: {
+      '@type': 'Offer',
+      price: data.variationsCollection?.items.length
+        ? max(data.variationsCollection.items.map(item => item.priceOriginal))
+        : data.priceSale
+        ? data.priceSale
+        : data.priceOriginal,
+      priceCurrency: 'EUR'
+    },
+    subjectOf: {
+      '@type': 'CreativeWork',
+      abstract:
+        data.description &&
+        documentToPlainTextString(data.description.json).substring(0, 199),
+      author: { '@type': 'Person', name: data.artist.artist },
+      ...(data.materialCollection?.items.length && {
+        material: data.materialCollection.items.map(
+          material => material.material
+        )
+      })
+    },
+    ...(data.dimensionDepth && {
+      depth: { '@type': 'QuantitativeValue', value: data.dimensionDepth }
+    }),
+    ...(data.dimensionHeight && {
+      height: { '@type': 'QuantitativeValue', value: data.dimensionHeight }
+    }),
+    ...(data.dimensionWidth && {
+      width: { '@type': 'QuantitativeValue', value: data.dimensionWidth }
+    }),
+    ...(data.artist.linkedFrom.objectsObjectCollection.items.length && {
+      isRelatedTo: data.artist.linkedFrom.objectsObjectCollection.items.map(
+        item => ({
+          '@context': 'http://schema.org',
+          '@type': 'Product',
+          url: `https://www.terra-delft.nl/object/${item.sys.id}`,
+          name: item.name,
+          image: item.imagesCollection?.items[0].url,
+          offers: {
+            '@type': 'Offer',
+            price: item.variationsCollection?.items.length
+              ? max(
+                  item.variationsCollection.items.map(
+                    item => item.priceOriginal
+                  )
+                )
+              : item.priceSale
+              ? item.priceSale
+              : item.priceOriginal,
+            priceCurrency: 'EUR'
+          },
+          subjectOf: {
+            '@type': 'CreativeWork',
+            abstract:
+              item.description &&
+              documentToPlainTextString(item.description.json),
+            author: { '@type': 'Person', name: data.artist.artist },
+            ...(item.materialCollection?.items.length && {
+              material: item.materialCollection.items.map(
+                material => material.material
+              )
+            })
+          },
+          ...(item.dimensionDepth && {
+            depth: { '@type': 'QuantitativeValue', value: item.dimensionDepth }
+          }),
+          ...(item.dimensionHeight && {
+            height: {
+              '@type': 'QuantitativeValue',
+              value: item.dimensionHeight
+            }
+          }),
+          ...(item.dimensionWidth && {
+            height: { '@type': 'QuantitativeValue', value: item.dimensionWidth }
+          })
+        })
+      )
+    })
+  })
 }
 
 export type SelectedVariation = {
@@ -66,6 +139,7 @@ export type SelectedVariation = {
 const PageObject = () => {
   const { t, i18n } = useTranslation('pageObject')
   const objectsObject = useLoaderData<ObjectsObject_NameLocalized>()
+  console.log(objectsObject)
 
   const [selectedVariation, setSelectedVariation] =
     useState<SelectedVariation>()

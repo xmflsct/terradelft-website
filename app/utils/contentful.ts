@@ -69,7 +69,7 @@ const logError = (e: any) => {
 
 export type CommonImage = {
   title: string
-  // description: string
+  description: string
   contentType: string
   // fileName: string
   // size: number
@@ -77,7 +77,7 @@ export type CommonImage = {
   // width: number
   // height: number
 }
-export type CommonRichText = { json: Document }
+export type CommonRichText = { json: Document; links: any }
 
 export type ObjectsObjectVariation = {
   sys: { id: string }
@@ -147,7 +147,11 @@ export type EventsEvent = {
   terraInChina: boolean
   organizerCollection?: { items: { name: string }[] }
   locationCollection?: {
-    items: { name: string; location: string; address: string }[]
+    items: {
+      name: string
+      location: { lat: number; lon: number }
+      address: string
+    }[]
   }
   image?: CommonImage
   description?: CommonRichText
@@ -447,6 +451,16 @@ const getEventsEvent = async ({
           }
           description {
             json
+            links {
+              assets {
+                block {
+                  sys {
+                    id
+                  }
+                  url
+                }
+              }
+            }
           }
         }
       }

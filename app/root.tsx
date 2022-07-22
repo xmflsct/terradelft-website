@@ -1,5 +1,4 @@
 import {
-  ErrorBoundaryComponent,
   json,
   LinksFunction,
   LoaderFunction,
@@ -12,8 +11,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  Outlet,
-  useMatches
+  Outlet
 } from '@remix-run/react'
 import { useChangeLanguage } from 'remix-i18next'
 import { useTranslation } from 'react-i18next'

@@ -1,11 +1,11 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import type { Person, WithContext } from 'schema-dts'
 import { H1, H2 } from '~/components/globals'
 import GridObjectDefault from '~/components/grids/grid-object-default'
 import ContentfulImage from '~/components/image'
+import RichText from '~/components/richText'
 import { getObjectsArtist, ObjectsArtist } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
@@ -30,7 +30,10 @@ export const handle = {
     name: data.artist,
     image: data.image.url,
     ...(data.biography && {
-      description: documentToPlainTextString(data.biography.json)
+      description: documentToPlainTextString(data.biography.json).substring(
+        0,
+        199
+      )
     })
   })
 }
@@ -50,10 +53,11 @@ const PageArtist = () => {
             quality={85}
           />
         </div>
-        <div className='flex-2'>
-          {objectsArtist.biography &&
-            documentToReactComponents(objectsArtist.biography.json)}
-        </div>
+        <RichText
+          content={objectsArtist.biography}
+          className='flex-2'
+          assetWidth={628}
+        />
       </div>
       {objectsArtist.linkedFrom.objectsObjectCollection.items.length ? (
         <>
