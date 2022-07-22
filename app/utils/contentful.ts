@@ -540,6 +540,44 @@ const getNewsNew = async ({
                   description
                 }
               }
+              entries {
+                inline {
+                  sys {
+                    id
+                  }
+                  ... on EventsEvent {
+                    name
+                  }
+                  ... on NewsNews {
+                    title
+                  }
+                  ... on ObjectsArtist {
+                    slug
+                    artist
+                  }
+                  ... on ObjectsObject {
+                    name
+                  }
+                }
+                hyperlink {
+                  sys {
+                    id
+                  }
+                  ... on EventsEvent {
+                    name
+                  }
+                  ... on NewsNews {
+                    title
+                  }
+                  ... on ObjectsArtist {
+                    slug
+                    artist
+                  }
+                  ... on ObjectsObject {
+                    name
+                  }
+                }
+              }
             }
           }
         }

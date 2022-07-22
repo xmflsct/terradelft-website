@@ -36,36 +36,32 @@ const PageNews = () => {
   const { t, i18n } = useTranslation('pageNews')
 
   return (
-    <>
-      <H1>{newsNew.title}</H1>
-      <div className='grid grid-cols-6 gap-4'>
-        {newsNew.image && (
-          <ContentfulImage
-            alt={newsNew.title}
-            image={newsNew.image}
-            width={309}
-            quality={80}
-            className='col-span-2'
-          />
-        )}
-        <div className={newsNew.image ? 'col-span-4' : 'col-span-6'}>
-          <p>
-            {t('content.published', {
-              date: new Date(newsNew.date).toLocaleDateString(i18n.language, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-              })
-            })}
-          </p>
-          <RichText
-            content={newsNew.content}
-            className='mt-2'
-            assetWidth={634}
-          />
-        </div>
+    <div className='grid grid-cols-6 gap-4'>
+      <H1 className={newsNew.image ? 'col-span-6' : 'col-span-4 col-start-2'}>
+        {newsNew.title}
+      </H1>
+      {newsNew.image && (
+        <ContentfulImage
+          alt={newsNew.title}
+          image={newsNew.image}
+          width={309}
+          quality={80}
+          className='col-span-2'
+        />
+      )}
+      <div className={newsNew.image ? 'col-span-4' : 'col-span-4 col-start-2'}>
+        <p>
+          {t('content.published', {
+            date: new Date(newsNew.date).toLocaleDateString(i18n.language, {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            })
+          })}
+        </p>
+        <RichText content={newsNew.content} className='mt-2' assetWidth={634} />
       </div>
-    </>
+    </div>
   )
 }
 

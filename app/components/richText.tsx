@@ -2,10 +2,18 @@ import {
   documentToReactComponents,
   Options
 } from '@contentful/rich-text-react-renderer'
-import { BLOCKS, Inline, INLINES } from '@contentful/rich-text-types'
-import { CommonImage, CommonRichText } from '~/utils/contentful'
+import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
+import {
+  faCalendarDays,
+  faNewspaper,
+  faPalette,
+  faUser
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import getYouTubeID from 'get-youtube-id'
+import { CommonImage, CommonRichText } from '~/utils/contentful'
 import ContentfulImage from './image'
+import { Link } from './link'
 
 const richTextOptions = ({
   links,
@@ -27,6 +35,11 @@ const richTextOptions = ({
       entryMap.set(entry.sys.id, entry)
     }
   }
+  if (links?.entries?.hyperlink) {
+    for (const entry of links.entries?.hyperlink) {
+      entryMap.set(entry.sys.id, entry)
+    }
+  }
   if (links?.entries?.inline) {
     for (const entry of links.entries?.inline) {
       entryMap.set(entry.sys.id, entry)
@@ -37,6 +50,7 @@ const richTextOptions = ({
     renderNode: {
       [BLOCKS.EMBEDDED_ASSET]: node => {
         const asset = assetMap.get(node.data.target.sys.id) as CommonImage
+        if (!asset) return
 
         return (
           <div>
@@ -51,6 +65,10 @@ const richTextOptions = ({
             )}
           </div>
         )
+      },
+      [BLOCKS.EMBEDDED_ENTRY]: node => {
+        // Same as inline entry, maybe with widgets?
+        return null
       },
       [INLINES.HYPERLINK]: node => {
         const youtubeId = getYouTubeID(node.data.uri)
@@ -69,13 +87,103 @@ const richTextOptions = ({
             </span>
           )
         } else if (node.data.uri.includes('terra-delft.nl')) {
-          return <a href={node.data.uri}>{node.content[0].value}</a>
+          return <a href={node.data.uri}>{(node.content[0] as Text).value}</a>
         } else {
           return (
             <a href={node.data.uri} target='_blank' rel='noopener noreferrer'>
-              {node.content[0].value}
+              {(node.content[0] as Text).value}
             </a>
           )
+        }
+      },
+      [INLINES.ENTRY_HYPERLINK]: node => {
+        const entry = entryMap.get(node.data.target.sys.id)
+        if (!entry) return null
+
+        switch (entry.__typename) {
+          case 'EventsEvent':
+            return (
+              <Link to={`/exhibition/${entry.sys.id}`}>
+                <FontAwesomeIcon
+                  icon={faCalendarDays}
+                  className='mr-1'
+                  size='sm'
+                />
+                {(node.content[0] as Text).value}
+              </Link>
+            )
+          case 'NewsNews':
+            return (
+              <Link to={`/news/${entry.sys.id}`}>
+                <FontAwesomeIcon
+                  icon={faNewspaper}
+                  className='mr-1'
+                  size='sm'
+                />
+                {(node.content[0] as Text).value}
+              </Link>
+            )
+          case 'ObjectsArtist':
+            return (
+              <Link to={`/artist/${entry.slug}`}>
+                <FontAwesomeIcon icon={faUser} className='mr-1' size='sm' />
+                {(node.content[0] as Text).value}
+              </Link>
+            )
+          case 'ObjectsObject':
+            return (
+              <Link to={`/object/${entry.sys.id}`}>
+                <FontAwesomeIcon icon={faPalette} className='mr-1' size='sm' />
+                {(node.content[0] as Text).value}
+              </Link>
+            )
+          default:
+            return null
+        }
+      },
+      [INLINES.EMBEDDED_ENTRY]: node => {
+        const entry = entryMap.get(node.data.target.sys.id)
+        if (!entry) return null
+
+        switch (entry.__typename) {
+          case 'EventsEvent':
+            return (
+              <Link to={`/exhibition/${entry.sys.id}`}>
+                <FontAwesomeIcon
+                  icon={faCalendarDays}
+                  className='mr-1'
+                  size='sm'
+                />
+                {entry.name}
+              </Link>
+            )
+          case 'NewsNews':
+            return (
+              <Link to={`/news/${entry.sys.id}`}>
+                <FontAwesomeIcon
+                  icon={faNewspaper}
+                  className='mr-1'
+                  size='sm'
+                />
+                {entry.title}
+              </Link>
+            )
+          case 'ObjectsArtist':
+            return (
+              <Link to={`/artist/${entry.slug}`}>
+                <FontAwesomeIcon icon={faUser} className='mr-1' size='sm' />
+                {entry.artist}
+              </Link>
+            )
+          case 'ObjectsObject':
+            return (
+              <Link to={`/object/${entry.sys.id}`}>
+                <FontAwesomeIcon icon={faPalette} className='mr-1' size='sm' />
+                {entry.name}
+              </Link>
+            )
+          default:
+            return null
         }
       }
     }
@@ -93,7 +201,7 @@ const RichText: React.FC<Props> = ({ content, className, assetWidth }) => {
 
   return (
     <article
-      className={`prose prose-neutral ${className}`}
+      className={`prose prose-neutral max-w-none ${className}`}
       children={documentToReactComponents(
         content.json,
         richTextOptions({ links: content.links, assetWidth })

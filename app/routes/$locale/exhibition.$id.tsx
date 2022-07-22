@@ -56,28 +56,32 @@ const PageExhibition = () => {
   const eventsEvent = useLoaderData<EventsEvent>()
 
   return (
-    <>
-      <H1>{eventsEvent.name}</H1>
-      <div className='grid grid-cols-6 gap-4'>
-        {eventsEvent.image && (
-          <ContentfulImage
-            alt={eventsEvent.name}
-            image={eventsEvent.image}
-            width={309}
-            quality={80}
-            className='col-span-2'
-          />
-        )}
-        <div className={eventsEvent.image ? 'col-span-4' : 'col-span-6'}>
-          <EventInformation event={eventsEvent} />
-          <RichText
-            content={eventsEvent.description}
-            className='mt-2'
-            assetWidth={634}
-          />
-        </div>
+    <div className='grid grid-cols-6 gap-4'>
+      <H1
+        className={eventsEvent.image ? 'col-span-6' : 'col-span-4 col-start-2'}
+      >
+        {eventsEvent.name}
+      </H1>
+      {eventsEvent.image && (
+        <ContentfulImage
+          alt={eventsEvent.name}
+          image={eventsEvent.image}
+          width={309}
+          quality={80}
+          className='col-span-2'
+        />
+      )}
+      <div
+        className={eventsEvent.image ? 'col-span-4' : 'col-span-4 col-start-2'}
+      >
+        <EventInformation event={eventsEvent} />
+        <RichText
+          content={eventsEvent.description}
+          className='mt-2'
+          assetWidth={634}
+        />
       </div>
-    </>
+    </div>
   )
 }
 
