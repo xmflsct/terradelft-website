@@ -137,6 +137,22 @@ export type ShippingRates = {
   }[]
 }[]
 
+export type EventsEvent = {
+  sys: { id: string }
+  name: string
+  datetimeStart: string // Date
+  datetimeEnd: string // Date
+  datetimeAllDay: boolean
+  typeCollection?: { items: { name: string }[] }
+  terraInChina: boolean
+  organizerCollection?: { items: { name: string }[] }
+  locationCollection?: {
+    items: { name: string; location: string; address: string }[]
+  }
+  image?: CommonImage
+  description?: CommonRichText
+}
+
 const getObjectsArtist = async ({
   context,
   params: { locale, slug }
@@ -392,10 +408,93 @@ const getShippingRates = async ({
   ).data.shippingRatesCollection.items[0].rates
 }
 
+const getEventsEvent = async ({
+  context,
+  params: { locale, id }
+}: DataFunctionArgs): Promise<Readonly<EventsEvent>> => {
+  return (
+    await apolloClient({ context }).query<{ eventsEvent: EventsEvent }>({
+      query: gql`
+      query {
+        eventsEvent (locale: "${locale}", id: "${id}") {
+          name
+          datetimeStart
+          datetimeEnd
+          datetimeAllDay
+          typeCollection {
+            items {
+              name
+            }
+          }
+          terraInChina
+          organizerCollection {
+            items {
+              name
+            }
+          }
+          locationCollection {
+            items {
+              name
+              location {
+                lat
+                lon
+              }
+              address
+            }
+          }
+          image {
+            url
+          }
+          description {
+            json
+          }
+        }
+      }
+    `
+    })
+  ).data.eventsEvent
+}
+
+const getEventsEvents = async ({
+  context,
+  params: { locale }
+}: DataFunctionArgs): Promise<Readonly<EventsEvent[]>> => {
+  return (
+    await apolloClient({ context }).query<{
+      eventsEventCollection: { items: EventsEvent[] }
+    }>({
+      query: gql`
+      query {
+        eventsEventCollection (locale: "${locale}", where: { datetimeEnd_gte: "${new Date().toISOString()}" }) {
+          items {
+            sys {
+              id
+            }
+            image {
+              url
+            }
+            name
+            datetimeStart
+            datetimeEnd
+            typeCollection {
+              items {
+                name
+              }
+            }
+          }
+        }
+      }
+    `
+    })
+  ).data.eventsEventCollection.items
+}
+
 export {
   getObjectsArtist,
   getObjectsArtists,
   getObjectsObject,
   getObjectsObjects,
-  getShippingRates
+  getShippingRates,
+  getEventsEvent,
+  getEventsEvents
 }

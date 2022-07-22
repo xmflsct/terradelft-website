@@ -8,6 +8,12 @@
       "past": "Past archive"
     },
     "view-all": "Archive →",
-    "archive-wordpress": "Archive before 2020"
+    "archive-wordpress": "Archive before 2020",
+    "datetime": {
+      "Start": "Starts {{datetime}}",
+      "End": "Ends {{datetime}}"
+    },
+    "organizer": "Organizer",
+    "location": "Location"
   }
 }
