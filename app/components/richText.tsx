@@ -37,14 +37,18 @@ const richTextOptions = ({
     renderNode: {
       [BLOCKS.EMBEDDED_ASSET]: node => {
         const asset = assetMap.get(node.data.target.sys.id) as CommonImage
+
         return (
-          <div className='image-rich-text'>
+          <div>
             <ContentfulImage
               image={asset}
               width={assetWidth || 400}
               quality={85}
+              className={asset.description ? 'mb-0' : ''}
             />
-            {asset.description && <figcaption>{asset.description}</figcaption>}
+            {asset.description && (
+              <figcaption className='mt-1'>{asset.description}</figcaption>
+            )}
           </div>
         )
       },

@@ -157,6 +157,15 @@ export type EventsEvent = {
   description?: CommonRichText
 }
 
+export type NewsNews = {
+  sys: { id: string }
+  title: string
+  date: string // Date
+  image?: CommonImage
+  terraInChina: boolean
+  content?: CommonRichText
+}
+
 const getObjectsArtist = async ({
   context,
   params: { locale, slug }
@@ -503,6 +512,75 @@ const getEventsEvents = async ({
   ).data.eventsEventCollection.items
 }
 
+const getNewsNew = async ({
+  context,
+  params: { locale, id }
+}: DataFunctionArgs): Promise<Readonly<NewsNews>> => {
+  return (
+    await apolloClient({ context }).query<{ newsNews: NewsNews }>({
+      query: gql`
+      query {
+        newsNews (locale: "${locale}", id: "${id}") {
+          title
+          date
+          image {
+            url
+            description
+          }
+          terraInChina
+          content {
+            json
+            links {
+              assets {
+                block {
+                  sys {
+                    id
+                  }
+                  url
+                  description
+                }
+              }
+            }
+          }
+        }
+      }
+    `
+    })
+  ).data.newsNews
+}
+
+const getNewsNews = async ({
+  context,
+  params: { locale, page }
+}: DataFunctionArgs): Promise<Readonly<NewsNews[]>> => {
+  const perPage = 9
+
+  return (
+    await apolloClient({ context }).query<{
+      newsNewsCollection: { items: NewsNews[] }
+    }>({
+      query: gql`
+      query {
+        newsNewsCollection (locale: "${locale}", limit: ${perPage}, skip: ${
+        perPage * (parseInt(page || '0') - 1)
+      }, order: date_DESC) {
+          items {
+            sys {
+              id
+            }
+            title
+            date
+            image {
+              url
+            }
+          }
+        }
+      }
+    `
+    })
+  ).data.newsNewsCollection.items
+}
+
 export {
   getObjectsArtist,
   getObjectsArtists,
@@ -510,5 +588,7 @@ export {
   getObjectsObjects,
   getShippingRates,
   getEventsEvent,
-  getEventsEvents
+  getEventsEvents,
+  getNewsNew,
+  getNewsNews
 }
