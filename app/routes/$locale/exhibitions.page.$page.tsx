@@ -5,6 +5,7 @@ import EventInformation from '~/components/event/information'
 import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
+import Pagination from '~/components/pagination'
 import i18next from '~/i18next.server'
 import { cacheQuery, EventsEvent, getEventsEvents } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
@@ -14,8 +15,8 @@ export const loader: LoaderFunction = async props =>
     const t = await i18next.getFixedT(props.request, 'pageExhibitions')
     const meta = { title: t('name') }
 
-    const eventsEvents = await getEventsEvents(props)
-    return { meta, eventsEvents }
+    const data = await getEventsEvents(props)
+    return { meta, data }
   })
 
 export const meta: MetaFunction = ({ data: { meta } }) => ({
@@ -28,15 +29,19 @@ export let handle = {
 }
 
 const PageExhibitions = () => {
-  const { eventsEvents } = useLoaderData<{ eventsEvents: EventsEvent[] }>()
-  const params = useParams()
+  const {
+    data: { total, items }
+  } = useLoaderData<{
+    data: { total: number; items: EventsEvent[] }
+  }>()
+  const { page } = useParams()
   const { t, i18n } = useTranslation('pageExhibitions')
 
   return (
     <>
-      <H1>{params.page}</H1>
+      <H1>{page}</H1>
       <div className='grid grid-cols-3 gap-x-4 gap-y-8'>
-        {eventsEvents?.map(event => {
+        {items?.map(event => {
           return (
             <div key={event.sys.id}>
               <Link to={`/exhibition/${event.sys.id}`}>
@@ -57,17 +62,7 @@ const PageExhibitions = () => {
           )
         })}
       </div>
-      {/* <Pagination>
-        {Array.from({ length: numPages }).map((_, i) => (
-          <Pagination.Item
-            key={i}
-            href={`/news/page/${i + 1}`}
-            active={i === currentPage - 1}
-          >
-            {i + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination> */}
+      <Pagination basePath='/exhibitions/page' page={page!} total={total} />
     </>
   )
 }

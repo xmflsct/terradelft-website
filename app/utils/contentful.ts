@@ -525,48 +525,53 @@ const getEventsEvent = async ({
 const getEventsEvents = async ({
   context,
   params: { locale, page }
-}: DataFunctionArgs): Promise<Readonly<EventsEvent[]>> => {
+}: DataFunctionArgs): Promise<
+  Readonly<{ total: number; items: EventsEvent[] }>
+> => {
   const perPage = 9
 
-  return (
-    await apolloClient({ context }).query<{
-      eventsEventCollection: { items: EventsEvent[] }
-    }>({
-      query: gql`
-      query {
-        eventsEventCollection (
-          locale: "${locale}",
-          order: datetimeStart_DESC,
-          ${
-            page
-              ? `limit: ${perPage},
-          skip: ${
-            perPage * (parseInt(page || '0') - 1)
-          }, where: { datetimeEnd_lt: "${new Date().toISOString()}" }`
-              : `where: { datetimeEnd_gte: "${new Date().toISOString()}" }`
+  const res = await apolloClient({ context }).query<{
+    eventsEventCollection: { total: number; items: EventsEvent[] }
+  }>({
+    query: gql`
+    query {
+      eventsEventCollection (
+        locale: "${locale}",
+        order: datetimeStart_DESC,
+        ${
+          page
+            ? `limit: ${perPage},
+        skip: ${
+          perPage * (parseInt(page || '0') - 1)
+        }, where: { datetimeEnd_lt: "${new Date().toISOString()}" }`
+            : `where: { datetimeEnd_gte: "${new Date().toISOString()}" }`
+        }
+      ) {
+        total
+        items {
+          sys {
+            id
           }
-        ) {
-          items {
-            sys {
-              id
-            }
-            image {
-              url
-            }
-            name
-            datetimeStart
-            datetimeEnd
-            typeCollection {
-              items {
-                name
-              }
+          image {
+            url
+          }
+          name
+          datetimeStart
+          datetimeEnd
+          typeCollection {
+            items {
+              name
             }
           }
         }
       }
-    `
-    })
-  ).data.eventsEventCollection.items
+    }
+  `
+  })
+  return {
+    total: Math.round(res.data.eventsEventCollection.total / 9),
+    items: res.data.eventsEventCollection.items
+  }
 }
 
 const getNewsNew = async ({
