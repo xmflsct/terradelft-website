@@ -618,11 +618,18 @@ const getNewsNew = async ({
 
 const getNewsNews = async ({
   context,
-  params: { locale, page }
+  params: { locale, page, terraInChina }
 }: DataFunctionArgs): Promise<
   Readonly<{ total: number; items: NewsNews[] }>
 > => {
+  const pageNum = parseInt(page || '0') - 1
   const perPage = 9
+
+  const filterWhereTerraInChina =
+    terraInChina === 'true' ? 'terraInChina: true' : ''
+  const filterWhere = `
+    where: { ${filterWhereTerraInChina} }
+  `
 
   const res = await apolloClient({ context }).query<{
     newsNewsCollection: { total: number; items: NewsNews[] }
@@ -633,7 +640,8 @@ const getNewsNews = async ({
         locale: "${locale}",
         order: date_DESC,
         limit: ${perPage},
-        skip: ${perPage * (parseInt(page || '0') - 1)}
+        skip: ${perPage * pageNum},
+        ${filterWhere}
       ) {
         total
         items {
