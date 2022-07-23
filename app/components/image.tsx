@@ -1,4 +1,3 @@
-import { Entry } from 'contentful'
 import { DOMAttributes } from 'react'
 import { CommonImage } from '~/utils/contentful'
 
@@ -63,7 +62,17 @@ const ContentfulImage: React.FC<Props> = ({
   eager = false
 }) => {
   if (!image) {
-    return <div className='pb-100 bg-placeholder' />
+    return (
+      <div
+        className='relative pb-100 bg-placeholder'
+        children={
+          <span
+            className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-background text-3xl'
+            children='Terra Delft'
+          />
+        }
+      />
+    )
   }
 
   let mimeType = image.contentType // extract mimeType from image.url
