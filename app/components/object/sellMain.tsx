@@ -4,7 +4,7 @@ import ReactSelect from 'react-select'
 import { BagContext } from '~/states/bag'
 import { ObjectsObject_NameLocalized } from '~/utils/contentful'
 import Button from '../button'
-import Select from '../select'
+import FormField from '../formField'
 import Price from './price'
 
 type Props = {
@@ -39,7 +39,7 @@ const SellMain: React.FC<Props> = ({ object }) => {
       }}
       className='my-4'
     >
-      <Select label={t('amount')}>
+      <FormField label={t('amount')}>
         <ReactSelect
           name='bagAdd'
           options={Array(object.stock === 1 ? 1 : 50)
@@ -56,7 +56,7 @@ const SellMain: React.FC<Props> = ({ object }) => {
             })
           }}
         />
-      </Select>
+      </FormField>
       <Price
         priceSale={(object.priceSale || 0) * amount}
         priceOriginal={(object.priceOriginal || 0) * amount}

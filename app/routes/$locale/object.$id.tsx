@@ -140,7 +140,6 @@ export type SelectedVariation = {
 const PageObject = () => {
   const { t, i18n } = useTranslation('pageObject')
   const objectsObject = useLoaderData<ObjectsObject_NameLocalized>()
-  console.log(objectsObject)
 
   const [selectedVariation, setSelectedVariation] =
     useState<SelectedVariation>()

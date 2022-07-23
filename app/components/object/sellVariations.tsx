@@ -14,7 +14,7 @@ import { BagContext } from '~/states/bag'
 import { ObjectsObject_NameLocalized } from '~/utils/contentful'
 import { currency } from '~/utils/formatNumber'
 import Button from '../button'
-import Select from '../select'
+import FormField from '../formField'
 import Price from './price'
 
 type Props = {
@@ -214,7 +214,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
         optionsSize?.length) && (
         <form onSubmit={onSubmit}>
           {optionsVariant?.length && (
-            <Select label={t('pageObject:variant')}>
+            <FormField label={t('pageObject:variant')}>
               <ReactSelect
                 name='variant'
                 options={optionsVariant}
@@ -234,10 +234,10 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                   })
                 }}
               />
-            </Select>
+            </FormField>
           )}
           {optionsColour?.length && (
-            <Select label={t('pageObject:colour')}>
+            <FormField label={t('pageObject:colour')}>
               <ReactSelect
                 name='colour'
                 options={optionsColour}
@@ -257,10 +257,10 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                   })
                 }}
               />
-            </Select>
+            </FormField>
           )}
           {optionsSize?.length && (
-            <Select label={t('pageObject:size')}>
+            <FormField label={t('pageObject:size')}>
               <ReactSelect
                 name='size'
                 options={optionsSize}
@@ -280,9 +280,9 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                   })
                 }}
               />
-            </Select>
+            </FormField>
           )}
-          <Select label={t('pageObject:amount')}>
+          <FormField label={t('pageObject:amount')}>
             <ReactSelect
               options={Array(
                 commonIDs.length === 1 && variation
@@ -302,7 +302,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                   : false
               }
             />
-          </Select>
+          </FormField>
           {commonIDs.length === 1 && variation ? (
             <Price
               priceSale={(variation.priceSale ?? 0) * (amount || 1)}

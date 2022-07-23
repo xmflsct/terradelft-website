@@ -4,7 +4,7 @@ type Props = {
   label: string
 }
 
-const Select: React.FC<PropsWithChildren & Props> = ({ label, children }) => {
+const FormField: React.FC<PropsWithChildren & Props> = ({ label, children }) => {
   return (
     <div className='my-2 flex flex-row'>
       <span className='bg-placeholder px-4 inline-flex items-center rounded-l'>{label}</span>
@@ -13,4 +13,4 @@ const Select: React.FC<PropsWithChildren & Props> = ({ label, children }) => {
   )
 }
 
-export default Select
+export default FormField
