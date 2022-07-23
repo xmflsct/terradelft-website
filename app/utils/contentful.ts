@@ -166,6 +166,18 @@ export type NewsNews = {
   content?: CommonRichText
 }
 
+export type AboutTerra = {
+  columnLeft: CommonRichText
+  columnRight: CommonRichText
+  staffCollection?: {
+    items: {
+      name: string
+      avatar: CommonImage
+      biography: CommonRichText
+    }[]
+  }
+}
+
 const richTextLinks = `
 links {
   assets {
@@ -726,6 +738,44 @@ const getTerraInChina = async ({
   ).data
 }
 
+const getAboutTerra = async ({
+  context,
+  params: { locale }
+}: DataFunctionArgs): Promise<Readonly<AboutTerra>> => {
+  return (
+    await apolloClient({ context }).query<{
+      informationAboutTerra: AboutTerra
+    }>({
+      query: gql`
+      query {
+        informationAboutTerra ( locale: "${locale}", id: "7eZ2uEBMVW8HDUMlBXLxgx" ) {
+          columnLeft {
+            json
+            ${richTextLinks}
+          }
+          columnRight {
+            json
+            ${richTextLinks}
+          }
+          staffCollection {
+            items {
+              name
+              avatar {
+                url
+              }
+              biography {
+                json
+                ${richTextLinks}
+              }
+            }
+          }
+        }
+      }
+    `
+    })
+  ).data.informationAboutTerra
+}
+
 export {
   getObjectsArtist,
   getObjectsArtists,
@@ -736,5 +786,6 @@ export {
   getEventsEvents,
   getNewsNew,
   getNewsNews,
-  getTerraInChina
+  getTerraInChina,
+  getAboutTerra
 }

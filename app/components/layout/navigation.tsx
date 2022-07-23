@@ -1,8 +1,10 @@
-// import { faSearch } from '@fortawesome/free-solid-svg-icons'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Menu, Transition } from '@headlessui/react'
 import { useLocation } from '@remix-run/react'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import classNames from '~/utils/classNames'
 import { NavLink } from '../link'
 
 // const activeChildren = (location, children) => {
@@ -69,25 +71,67 @@ const Navigation = () => {
         className={styleNavItem([])}
         children={t('common:navigation.5.name')}
       />
-      <NavLink
-        to='/about-terra'
-        className={styleNavItem([
-          '/about-terra',
-          '/reach-terra',
-          '/newsletter'
-        ])}
-        children={t('common:navigation.6.name')}
-      />
-      {/* <Dropdown as={Col} xs={12} sm={4} md={2} role='menu' className='nav-item'>
-        <Dropdown.Toggle as={Col}>
-          {t('common:navigation.6.name')}
-        </Dropdown.Toggle>
-        <Dropdown.Menu alignRight>
-          <Link to='/about-terra'>{t('common:navigation.6.1.name')}</Link>
-          <Link to='/reach-terra'>{t('common:navigation.6.2.name')}</Link>
-          <Link to='/newsletter'>{t('common:navigation.6.3.name')}</Link>
-        </Dropdown.Menu>
-      </Dropdown> */}
+      <Menu
+        as='div'
+        className={classNames(
+          'relative inline-block text-left',
+          styleNavItem(['/about-terra', '/reach-terra'])({ isActive: false })
+        )}
+      >
+        {({ open }) => (
+          <>
+            <Menu.Button>
+              <span>
+                {t('common:navigation.6.name')}
+                <FontAwesomeIcon
+                  icon={open ? faChevronUp : faChevronDown}
+                  className='ml-2'
+                />
+              </span>
+            </Menu.Button>
+
+            <Transition
+              as={Fragment}
+              enter='transition ease-out duration-100'
+              enterFrom='transform opacity-0 scale-95'
+              enterTo='transform opacity-100 scale-100'
+              leave='transition ease-in duration-75'
+              leaveFrom='transform opacity-100 scale-100'
+              leaveTo='transform opacity-0 scale-95'
+            >
+              <Menu.Items className='z-50 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col p-2'>
+                <Menu.Item
+                  children={
+                    <NavLink
+                      to='/about-terra'
+                      className={styleNavItem([])}
+                      children={t('common:navigation.6.1.name')}
+                    />
+                  }
+                />
+                <Menu.Item
+                  children={
+                    <NavLink
+                      to='/reach-terra'
+                      className={styleNavItem([])}
+                      children={t('common:navigation.6.2.name')}
+                    />
+                  }
+                />
+                <Menu.Item
+                  children={
+                    <NavLink
+                      to='/newsletter'
+                      className={styleNavItem([])}
+                      children={t('common:navigation.6.3.name')}
+                    />
+                  }
+                />
+              </Menu.Items>
+            </Transition>
+          </>
+        )}
+      </Menu>
     </nav>
   )
 }
