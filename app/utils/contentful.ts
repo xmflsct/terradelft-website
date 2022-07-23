@@ -178,6 +178,8 @@ export type AboutTerra = {
   }
 }
 
+export type ReachTerra = { description: CommonRichText }
+
 const richTextLinks = `
 links {
   assets {
@@ -776,6 +778,28 @@ const getAboutTerra = async ({
   ).data.informationAboutTerra
 }
 
+const getReachTerra = async ({
+  context,
+  params: { locale }
+}: DataFunctionArgs): Promise<Readonly<ReachTerra>> => {
+  return (
+    await apolloClient({ context }).query<{
+      informationReachTerra: ReachTerra
+    }>({
+      query: gql`
+      query {
+        informationReachTerra ( locale: "${locale}", id: "7Hr9VIqrByJWQpkMVgxwN6" ) {
+          description {
+            json
+            ${richTextLinks}
+          }
+        }
+      }
+    `
+    })
+  ).data.informationReachTerra
+}
+
 export {
   getObjectsArtist,
   getObjectsArtists,
@@ -787,5 +811,6 @@ export {
   getNewsNew,
   getNewsNews,
   getTerraInChina,
-  getAboutTerra
+  getAboutTerra,
+  getReachTerra
 }
