@@ -73,7 +73,7 @@ const PageTerraInChina = () => {
               </div>
             </div>
           ))}
-          <Link to='/terra-in-china/exhibitions'>
+          <Link to='/terra-in-china/exhibitions/page/1'>
             {t('content.view-all.events')}
           </Link>
         </div>

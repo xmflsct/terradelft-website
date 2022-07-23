@@ -524,11 +524,33 @@ const getEventsEvent = async ({
 
 const getEventsEvents = async ({
   context,
-  params: { locale, page }
+  params: { locale, page, terraInChina }
 }: DataFunctionArgs): Promise<
   Readonly<{ total: number; items: EventsEvent[] }>
 > => {
+  const pageNum = parseInt(page || '0') - 1
   const perPage = 9
+
+  const filterWhereTerraInChina =
+    terraInChina === 'true' ? 'terraInChina: true' : ''
+  let filterPagination: string
+  if (page) {
+    filterPagination = `
+      limit: ${perPage},
+      skip: ${perPage * pageNum},
+      where: {
+        datetimeEnd_lt: "${new Date().toISOString()}",
+        ${filterWhereTerraInChina}
+      }
+    `
+  } else {
+    filterPagination = `
+      where: {
+        datetimeEnd_gte: "${new Date().toISOString()}",
+        ${filterWhereTerraInChina}
+      }
+    `
+  }
 
   const res = await apolloClient({ context }).query<{
     eventsEventCollection: { total: number; items: EventsEvent[] }
@@ -538,14 +560,7 @@ const getEventsEvents = async ({
       eventsEventCollection (
         locale: "${locale}",
         order: datetimeStart_DESC,
-        ${
-          page
-            ? `limit: ${perPage},
-        skip: ${
-          perPage * (parseInt(page || '0') - 1)
-        }, where: { datetimeEnd_lt: "${new Date().toISOString()}" }`
-            : `where: { datetimeEnd_gte: "${new Date().toISOString()}" }`
-        }
+        ${filterPagination}
       ) {
         total
         items {

@@ -16,8 +16,8 @@ export const loader: LoaderFunction = async props =>
     const t = await i18next.getFixedT(props.request, 'pageExhibitions')
     const meta = { title: t('name') }
 
-    const eventsEvents = await getEventsEvents(props)
-    return { meta, eventsEvents }
+    const data = await getEventsEvents(props)
+    return { meta, data }
   })
 
 export const meta: MetaFunction = ({ data: { meta } }) => ({
@@ -30,7 +30,9 @@ export let handle = {
 }
 
 const PageExhibitions = () => {
-  const { eventsEvents } = useLoaderData<{ eventsEvents: EventsEvent[] }>()
+  const {
+    data: { items }
+  } = useLoaderData<{ data: { items: EventsEvent[] } }>()
   const { t, i18n } = useTranslation('pageExhibitions')
 
   return (
@@ -38,7 +40,7 @@ const PageExhibitions = () => {
       <div className='grid grid-cols-6 gap-4 mb-4'>
         <div className='col-span-2'>
           <H2>{t('content.heading.upcoming')}</H2>
-          {eventsEvents
+          {items
             .filter(event => new Date(event.datetimeStart) > new Date())
             .map(event => (
               <div key={event.sys.id} className='mb-4'>
@@ -53,7 +55,7 @@ const PageExhibitions = () => {
         </div>
         <div className='col-span-4'>
           <H2>{t('content.heading.current')}</H2>
-          {eventsEvents
+          {items
             .filter(
               event =>
                 new Date(event.datetimeEnd) >= new Date() &&
