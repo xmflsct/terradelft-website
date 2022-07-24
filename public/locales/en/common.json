@@ -12,35 +12,6 @@
     },
     "mini-bag": "Added to shopping bag"
   },
-  "navigation": {
-    "1": {
-      "name": "$t(slug.static.index.name)"
-    },
-    "2": {
-      "name": "$t(slug.static.online-shop.name)"
-    },
-    "3": {
-      "name": "$t(slug.static.events.name)"
-    },
-    "4": {
-      "name": "$t(slug.static.news.name)"
-    },
-    "5": {
-      "name": "$t(slug.static.terra-in-china.name)"
-    },
-    "6": {
-      "name": "About Us",
-      "1": {
-        "name": "$t(slug.static.about-terra.name)"
-      },
-      "2": {
-        "name": "$t(slug.static.reach-terra.name)"
-      },
-      "3": {
-        "name": "$t(slug.static.newsletter.name)"
-      }
-    }
-  },
   "footer": {
     "left": {
       "copyright": "© Terra Delft Online 2015 - 2022",
@@ -56,71 +27,30 @@
       "email": "Email: info@terra-delft.nl"
     }
   },
-  "slug": {
-    "static": {
-      "404": {
-        "name": "404 not found"
-      },
-      "gift-card": {
-        "name": "Terra Delft Gift Card"
-      },
-      "about-terra": {
-        "name": "About Terra"
-      },
-      "bag": {
-        "name": "Shopping Bag"
-      },
-      "events": {
-        "name": "Exhibitions"
-      },
-      "index": {
-        "name": "Collection"
-      },
-      "news": {
-        "name": "News"
-      },
-      "newsletter": {
-        "name": "Newsletter"
-      },
-      "online-shop": {
-        "name": "Online Shop"
-      },
-      "reach-terra": {
-        "name": "Reach Terra"
-      },
-      "search": {
-        "name": "Search result"
-      },
-      "thank-you": {
-        "name": "Thank you for your order!"
-      },
-      "terra-in-china": {
-        "name": "Terra in China"
-      },
-      "terra-in-china-news": {
-        "name": "Terra in China News"
-      },
-      "terra-in-china-events": {
-        "name": "Terra in China Exhibitions"
-      }
-    },
-    "dynamic": {
-      "artist": {
-        "name": "{{artist}}"
-      },
-      "event": {
-        "name": "{{event}}"
-      },
-      "news": {
-        "name": "{{news}}"
-      },
-      "object": {
-        "name": "{{object}} by {{artist}}"
-      },
-      "objects-attribute": {
-        "name": "Objects with {{type}} of {{value}}"
-      }
-    }
+  "pages": {
+    "404": "Page not found",
+    "about-terra": "About Terra",
+    "about-us": "About us",
+    "artist": "{{artist}}",
+    "bag": "Shopping bag",
+    "exhibition": "{{exhibition}}",
+    "exhibitions": "Exhibitions",
+    "exhibitions_page": "Exhibitions page {{page}}",
+    "index": "Collection",
+    "news": "News",
+    "news_article": "{{news}}",
+    "news_page": "News page {{page}}",
+    "newsletter": "Newsletter",
+    "object": "{{object}} by {{artist}}",
+    "reach-terra": "Reach Terra",
+    "shop": "Online shop",
+    "terra-in-china-exhibitions-page": "Terra in China exhibitions page {{page}}",
+    "terra-in-china-news-page": "Terra in China news page {{page}}",
+    "terra-in-china": "Terra in China",
+    "gift-card": "Terra Delft Gift Card",
+    "search": "Search result",
+    "thank-you": "Thank you for your order!",
+    "objects-attribute": "Objects with {{type}} of {{value}}"
   },
   "gift-card": {
     "name": "Gift Card",

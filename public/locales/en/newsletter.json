@@ -1,0 +1,15 @@
+{
+  "heading": "Subscribe to Terra Delft's newsletter",
+  "description": "Thank you for subscribing to our newsletter. Please fill out the form below.",
+  "first-name": "First name",
+  "last-name": "Last name",
+  "email": "Email address",
+  "country": "Country / region",
+  "GDPR": "Yes, I accept that Terra Delft handles my information",
+  "button": {
+    "default": "Subscribe",
+    "submitting": "Please wait",
+    "success": "Thank you!",
+    "fail": "Please try again or contact us"
+  }
+}

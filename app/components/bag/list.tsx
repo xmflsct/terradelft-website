@@ -13,12 +13,12 @@ import Price from '../object/price'
 const BagList: React.FC = () => {
   const { objects, objectsAdd, objectsRemove } = useContext(BagContext)
 
-  const { t, i18n } = useTranslation('pageBag')
+  const { t, i18n } = useTranslation('bag')
 
   if (objects.length === 0) {
     return (
       <div>
-        <p>{t('content.list.empty')}</p>
+        <p>{t('list-empty')}</p>
       </div>
     )
   }
@@ -51,7 +51,7 @@ const BagList: React.FC = () => {
                   {object.artist ? (
                     <tr>
                       <th className='text-left py-1 pr-4'>
-                        {t('pageObject:artist')}
+                        {t('object:artist')}
                       </th>
                       <td>
                         <Link to={`/artist/${object.artist.slug}`}>
@@ -63,7 +63,7 @@ const BagList: React.FC = () => {
                   {object.variant && (
                     <tr>
                       <th className='text-left py-1 pr-4'>
-                        {t('pageObject:variant')}
+                        {t('object:variant')}
                       </th>
                       <td>{object.variant[i18n.language]}</td>
                     </tr>
@@ -71,7 +71,7 @@ const BagList: React.FC = () => {
                   {object.colour && (
                     <tr>
                       <th className='text-left py-1 pr-4'>
-                        {t('pageObject:colour')}
+                        {t('object:colour')}
                       </th>
                       <td>{object.colour[i18n.language]}</td>
                     </tr>
@@ -79,14 +79,14 @@ const BagList: React.FC = () => {
                   {object.size && (
                     <tr>
                       <th className='text-left py-1 pr-4'>
-                        {t('pageObject:size')}
+                        {t('object:size')}
                       </th>
                       <td>{object.size[i18n.language]}</td>
                     </tr>
                   )}
                   <tr>
                     <th className='text-left py-1 pr-4'>
-                      {t('pageObject:price')}
+                      {t('object:price')}
                     </th>
                     <td>
                       {currency(
@@ -97,7 +97,7 @@ const BagList: React.FC = () => {
                   </tr>
                   <tr>
                     <th className='text-left py-1 pr-4'>
-                      {t('pageObject:amount')}
+                      {t('object:amount')}
                     </th>
                     <td>
                       <ReactSelect

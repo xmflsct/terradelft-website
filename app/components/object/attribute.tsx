@@ -8,7 +8,7 @@ type Props = {
 }
 
 const ObjectAttribute: React.FC<Props> = ({ type, value }) => {
-  const { i18n } = useTranslation('pageObject')
+  const { i18n } = useTranslation()
 
   return (
     <tr>

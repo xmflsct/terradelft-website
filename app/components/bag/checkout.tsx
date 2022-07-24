@@ -19,7 +19,7 @@ type Props = {
 }
 
 const BagCheckout: React.FC<Props> = ({ country, rates }) => {
-  const { t, i18n } = useTranslation('pageBag')
+  const { t, i18n } = useTranslation('bag')
 
   const [formState, setFormState] = useState<{
     hasSubmitted: boolean
@@ -68,7 +68,7 @@ const BagCheckout: React.FC<Props> = ({ country, rates }) => {
       delivery.method === 'pickup'
         ? {
             method: 'pickup',
-            name: t('content.checkout.delivery.pickup.heading')
+            name: t('pick-up')
           }
         : {
             method: 'shipment',
@@ -102,9 +102,9 @@ const BagCheckout: React.FC<Props> = ({ country, rates }) => {
 
   return objects.length ? (
     <>
-      <H3>{t('content.checkout.heading.summary')}</H3>
+      <H3>{t('summary')}</H3>
       <CheckoutAmounts {...amounts} />
-      <H3>{t('content.checkout.heading.delivery')}</H3>
+      <H3>{t('delivery-method')}</H3>
       <CheckoutDelivery
         country={country}
         subtotal={amounts.subtotal}
@@ -119,10 +119,9 @@ const BagCheckout: React.FC<Props> = ({ country, rates }) => {
       />
 
       <Button type='submit' disabled={transition.state === 'submitting'}>
-        {(transition.state === 'submitting' &&
-          t('content.checkout.button.wait')) ||
-          (formState.submitCount !== 0 && t('content.checkout.button.retry')) ||
-          t('content.checkout.button.submit')}
+        {(transition.state === 'submitting' && t('button.wait')) ||
+          (formState.submitCount !== 0 && t('button.retry')) ||
+          t('button.submit')}
       </Button>
       <CheckoutSuppliers />
     </>

@@ -14,7 +14,7 @@ import { NavLink } from '../link'
 // }
 
 const Navigation = () => {
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation('common')
   const { pathname } = useLocation()
 
   const [locationOrigin, setLocationOrigin] = useState<string>()
@@ -49,27 +49,27 @@ const Navigation = () => {
         to='/'
         end
         className={styleNavItem(['/artist/'])}
-        children={t('common:navigation.1.name')}
+        children={t('pages.index')}
       />
       <NavLink
         to='/shop'
         className={styleNavItem(['/object/'])}
-        children={t('common:navigation.2.name')}
+        children={t('pages.shop')}
       />
       <NavLink
         to='/exhibitions'
         className={styleNavItem(['/exhibition/'])}
-        children={t('common:navigation.3.name')}
+        children={t('pages.exhibitions')}
       />
       <NavLink
         to='/news/page/1'
         className={styleNavItem(['/news/'])}
-        children={t('common:navigation.4.name')}
+        children={t('pages.news')}
       />
       <NavLink
         to='/terra-in-china'
         className={styleNavItem([])}
-        children={t('common:navigation.5.name')}
+        children={t('pages.terra-in-china')}
       />
       <Menu
         as='div'
@@ -82,7 +82,7 @@ const Navigation = () => {
           <>
             <Menu.Button>
               <span>
-                {t('common:navigation.6.name')}
+                {t('pages.about-us')}
                 <FontAwesomeIcon
                   icon={open ? faChevronUp : faChevronDown}
                   className='ml-2'
@@ -105,7 +105,7 @@ const Navigation = () => {
                     <NavLink
                       to='/about-terra'
                       className={styleNavItem([])}
-                      children={t('common:navigation.6.1.name')}
+                      children={t('pages.about-terra')}
                     />
                   }
                 />
@@ -114,7 +114,7 @@ const Navigation = () => {
                     <NavLink
                       to='/reach-terra'
                       className={styleNavItem([])}
-                      children={t('common:navigation.6.2.name')}
+                      children={t('pages.reach-terra')}
                     />
                   }
                 />
@@ -123,7 +123,7 @@ const Navigation = () => {
                     <NavLink
                       to='/newsletter'
                       className={styleNavItem([])}
-                      children={t('common:navigation.6.3.name')}
+                      children={t('pages.newsletter')}
                     />
                   }
                 />

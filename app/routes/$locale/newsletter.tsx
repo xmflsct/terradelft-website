@@ -13,8 +13,8 @@ countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
 countries.registerLocale(require('i18n-iso-countries/langs/nl.json'))
 
 export const loader: LoaderFunction = async props => {
-  const t = await i18next.getFixedT(props.request, 'pageNewsletter')
-  const meta = { title: t('name') }
+  const t = await i18next.getFixedT(props.request, 'common')
+  const meta = { title: t('pages.newsletter') }
 
   return { meta }
 }
@@ -25,11 +25,11 @@ export const meta: MetaFunction = ({ data: { meta } }) => ({
   description: meta.title
 })
 export let handle = {
-  i18n: 'pageNewsletter'
+  i18n: 'newsletter'
 }
 
 const PageNewsletter = () => {
-  const { t, i18n } = useTranslation('pageNewsletter')
+  const { t, i18n } = useTranslation('newsletter')
 
   const [sendStatus, setSendStatus] = useState(false)
 
@@ -62,33 +62,28 @@ const PageNewsletter = () => {
 
   return (
     <>
-      <H1>{t('content.heading')}</H1>
+      <H1>{t('heading')}</H1>
       <div>
         <div>
-          <p>{t('content.description')}</p>
+          <p>{t('description')}</p>
           <Form method='post'>
-            <FormField label={t('content.form.first-name.label')}>
+            <FormField label={t('first-name')}>
               <input name='firstName' type='text' required />
             </FormField>
 
-            <FormField label={t('content.form.last-name.label')}>
+            <FormField label={t('last-name')}>
               <input name='lastName' type='text' required />
             </FormField>
 
-            <FormField label={t('content.form.email.label')}>
+            <FormField label={t('email')}>
               <input name='email' type='email' required />
             </FormField>
 
-            <FormField label={t('content.form.country.label')}>
-              <ReactSelect
-                name='country'
-                options={countries}
-                placeholder={t('content.checkout.delivery.shipment.selection')}
-                isSearchable
-              />
+            <FormField label={t('country')}>
+              <ReactSelect name='country' options={countries} isSearchable />
             </FormField>
 
-            <FormField label={t('content.form.GDPR.label')}>
+            <FormField label={t('GDPR')}>
               <input name='GDPR' type='checkbox' required />
             </FormField>
 

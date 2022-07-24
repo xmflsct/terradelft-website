@@ -2,7 +2,7 @@ import { documentToPlainTextString } from '@contentful/rich-text-plain-text-rend
 import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import type { Event, WithContext } from 'schema-dts'
-import EventInformation from '~/components/event/information'
+import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
@@ -74,7 +74,7 @@ const PageExhibition = () => {
       <div
         className={eventsEvent.image ? 'col-span-4' : 'col-span-4 col-start-2'}
       >
-        <EventInformation event={eventsEvent} />
+        <ExhibitionInformation event={eventsEvent} />
         <RichText
           content={eventsEvent.description}
           className='mt-2'

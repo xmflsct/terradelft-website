@@ -54,7 +54,7 @@ export const meta: MetaFunction = () => ({
   description: 'Terra Delft Website'
 })
 export let handle = {
-  i18n: ['pageBag', 'pageObject']
+  i18n: ['bag', 'object']
 }
 
 const PageBag = () => {
@@ -62,11 +62,11 @@ const PageBag = () => {
     country: string
     rates: ShippingRates
   }>()
-  const { t } = useTranslation('pageBag')
+  const { t } = useTranslation('bag')
 
   return (
     <>
-      <H1>{t('content.heading')}</H1>
+      <H1>{t('common:pages.bag')}</H1>
       <Form method='post' className='grid grid-cols-12 gap-4'>
         <div className='col-span-7'>
           <BagList />

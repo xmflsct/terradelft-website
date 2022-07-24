@@ -1,7 +1,7 @@
 import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
-import EventInformation from '~/components/event/information'
+import ExhibitionInformation from '~/components/exhibition/information'
 import { H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
@@ -16,8 +16,8 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader: LoaderFunction = async props =>
   await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'pageNews')
-    const meta = { title: t('name') }
+    const t = await i18next.getFixedT(props.request, 'common')
+    const meta = { title: t('pages.terra-in-china') }
 
     return { meta, data: await getTerraInChina(props) }
   })
@@ -28,7 +28,7 @@ export const meta: MetaFunction = ({ data: { meta } }) => ({
   description: 'Terra Delft Website'
 })
 export let handle = {
-  i18n: ['pageTerraInChina', 'pageNews']
+  i18n: ['terraInChina', 'news']
 }
 
 const PageTerraInChina = () => {
@@ -38,14 +38,13 @@ const PageTerraInChina = () => {
       newsNewsCollection: { items: NewsNews[] }
     }
   }>()
-  console.log('data', data)
-  const { t, i18n } = useTranslation('pageTerraInChina')
+  const { t, i18n } = useTranslation('terraInChina')
 
   return (
     <>
       <div className='grid grid-cols-2 gap-4'>
         <div>
-          <H2>{t('content.heading.events')}</H2>
+          <H2>{t('heading.events')}</H2>
           {data.eventsEventCollection.items.map(event => (
             <div key={event.sys.id} className='mb-8'>
               <div>
@@ -69,16 +68,16 @@ const PageTerraInChina = () => {
                     </Badge>
                   ))} */}
                 </div>
-                <EventInformation event={event} type='current' />
+                <ExhibitionInformation event={event} type='current' />
               </div>
             </div>
           ))}
           <Link to='/terra-in-china/exhibitions/page/1'>
-            {t('content.view-all.events')}
+            {t('view-all.events')}
           </Link>
         </div>
         <div>
-          <H2>{t('content.heading.news')}</H2>
+          <H2>{t('heading.news')}</H2>
           {data.newsNewsCollection.items.map(news => (
             <div key={news.sys.id} className='mb-8'>
               <div>
@@ -96,7 +95,7 @@ const PageTerraInChina = () => {
                   {news.title}
                 </Link>
                 <p>
-                  {t('pageNews:content.published', {
+                  {t('news:published', {
                     date: new Date(news.date).toLocaleDateString(
                       i18n.language,
                       {
@@ -111,7 +110,7 @@ const PageTerraInChina = () => {
             </div>
           ))}
           <Link to='/terra-in-china/news/page/1'>
-            {t('content.view-all.news')}
+            {t('view-all.news')}
           </Link>
         </div>
       </div>

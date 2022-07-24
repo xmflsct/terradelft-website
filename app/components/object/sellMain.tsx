@@ -12,7 +12,7 @@ type Props = {
 }
 
 const SellMain: React.FC<Props> = ({ object }) => {
-  const { t } = useTranslation('pageObject')
+  const { t } = useTranslation('object')
 
   const { objectsAdd } = useContext(BagContext)
 
@@ -61,7 +61,7 @@ const SellMain: React.FC<Props> = ({ object }) => {
         priceSale={(object.priceSale || 0) * amount}
         priceOriginal={(object.priceOriginal || 0) * amount}
       />
-      <Button type='submit'>{t('add-button.add-to-bag')}</Button>
+      <Button type='submit'>{t('add-to-bag')}</Button>
     </form>
   )
 }

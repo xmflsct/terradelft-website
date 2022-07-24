@@ -13,7 +13,7 @@ type Props = {
 }
 
 const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {
-  const { t } = useTranslation('pageObject')
+  const { t } = useTranslation('object')
 
   if (object.variationsCollection?.items.length) {
     if (
@@ -52,7 +52,7 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {
         </div>
       ) : null}
       {object.kunstKoop && (
-        <div className='mt-1'>
+        <div className='inline-block'>
           <a
             href='https://kunstkoop.nl/'
             target='_blank'

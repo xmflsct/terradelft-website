@@ -457,12 +457,41 @@ const getObjectsObjects = async ({
                   }
                 }
                 priceSale
+                sellOnline
+                stock
+                variationsCollection {
+                  items {
+                    sellOnline
+                    stock
+                  }
+                }
               }
             }
           }
         `
     })
-  ).data.objectsObjectCollection.items
+  ).data.objectsObjectCollection.items.reduce(
+    (filtered: ObjectsObject[], item) => {
+      if (item.variationsCollection?.items.length) {
+        // Count only variations
+        if (
+          item.variationsCollection.items.filter(
+            variation => variation.sellOnline && (variation.stock ?? 0 > 0)
+          ).length
+        ) {
+          filtered.push(item)
+        }
+      } else {
+        // Count only root object
+        if (item.sellOnline && (item.stock ?? 0 > 0)) {
+          filtered.push(item)
+        }
+      }
+
+      return filtered
+    },
+    []
+  )
 }
 
 const getShippingRates = async ({

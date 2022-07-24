@@ -9,7 +9,7 @@ type Props = {
 }
 
 const GridObjectDefault: React.FC<Props> = ({ objects, giftCard = false }) => {
-  const { t } = useTranslation(['pageObject', 'constant'])
+  const { t } = useTranslation()
 
   return (
     <div className='grid grid-cols-6 gap-x-4 gap-y-8'>
@@ -27,7 +27,7 @@ const GridObjectDefault: React.FC<Props> = ({ objects, giftCard = false }) => {
               className='group-hover:opacity-50'
             />
             <p className='item-name' style={{ fontWeight: 'bold' }}>
-              {t('translation:gift-card.name')}
+              {t('common:gift-card.name')}
               <br />€ 20 - 100
             </p>
           </Link>
@@ -51,7 +51,7 @@ const GridObjectDefault: React.FC<Props> = ({ objects, giftCard = false }) => {
                 )}
                 {object.priceSale && (
                   <span className='absolute bottom-0 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-secondary text-background text-sm font-semibold'>
-                    {t('component-object:on-sale')}
+                    {t('object:on-sale')}
                   </span>
                 )}
               </div>

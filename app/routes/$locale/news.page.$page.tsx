@@ -1,6 +1,7 @@
 import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useParams } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
+import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
 import Pagination from '~/components/pagination'
@@ -10,8 +11,8 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader: LoaderFunction = async props =>
   await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'pageNews')
-    const meta = { title: t('name') }
+    const t = await i18next.getFixedT(props.request, 'common')
+    const meta = { title: t('pages.news') }
 
     const data = await getNewsNews(props)
     return { meta, data }
@@ -23,7 +24,7 @@ export const meta: MetaFunction = ({ data: { meta } }) => ({
   description: 'News'
 })
 export let handle = {
-  i18n: 'pageNews'
+  i18n: 'news'
 }
 
 const PageNews = () => {
@@ -33,10 +34,11 @@ const PageNews = () => {
     data: { total: number; items: NewsNews[] }
   }>()
   const { page } = useParams()
-  const { t, i18n } = useTranslation('pageNews')
+  const { t, i18n } = useTranslation('news')
 
   return (
     <>
+      <H1>{t('common:pages.news', { context: 'page', page })}</H1>
       <div className='grid grid-cols-3 gap-x-4 gap-y-8'>
         {items?.map(news => {
           return (
@@ -55,7 +57,7 @@ const PageNews = () => {
                 <p className='text-lg truncate'>{news.title}</p>
               </Link>
               <p>
-                {t('content.published', {
+                {t('published', {
                   date: new Date(news.date).toLocaleDateString(i18n.language, {
                     year: 'numeric',
                     month: 'short',

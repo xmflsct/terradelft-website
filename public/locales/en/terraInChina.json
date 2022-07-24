@@ -1,0 +1,10 @@
+{
+  "heading": {
+    "events": "$t(common:pages.exhibitions)",
+    "news": "$t(common:pages.news)"
+  },
+  "view-all": {
+    "events": "View all events of $t(name) →",
+    "news": "View all news of $t(name) →"
+  }
+}

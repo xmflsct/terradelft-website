@@ -40,11 +40,11 @@ export const meta: MetaFunction = () => ({
   description: 'Terra Delft Website'
 })
 export let handle = {
-  i18n: 'pageIndex'
+  i18n: 'index'
 }
 
 const PageIndex = () => {
-  const { t } = useTranslation('pageIndex')
+  const { t } = useTranslation('index')
   const data = useLoaderData<{
     objectsObjects: ObjectsObject[]
     objectsArtists: ObjectsArtist[]
@@ -53,14 +53,14 @@ const PageIndex = () => {
   return (
     <>
       <div className='section-online-shop mb-3'>
-        <H2>{t('content.section.online-shop')}</H2>
+        <H2>{t('online-shop')}</H2>
         <GridObjectDefault
           objects={data.objectsObjects}
           // giftCard={data.giftCard}
         />
       </div>
       <div className='section-collection'>
-        <H2>{t('content.section.collection')}</H2>
+        <H2>{t('collection')}</H2>
         <div className='grid grid-cols-6 gap-x-4 gap-y-8'>
           {data.objectsArtists.map(artist => (
             <div key={artist.artist} className='group cursor-pointer'>
@@ -85,7 +85,7 @@ const PageIndex = () => {
       </div>
       <Link to='/newsletter'>
         <button className='fixed bottom-0 right-4 px-4 py-2 bg-secondary text-background '>
-          {t('content.newsletter')}
+          {t('newsletter')}
         </button>
       </Link>
     </>

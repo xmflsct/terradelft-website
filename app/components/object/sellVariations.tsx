@@ -29,7 +29,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
 
   const { objectsAdd } = useContext(BagContext)
 
-  const { t, i18n } = useTranslation('pageObject')
+  const { t, i18n } = useTranslation('object')
 
   const sellVariations = object.variationsCollection.items.filter(
     item => item.sellOnline && item.stock > 0
@@ -98,7 +98,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
         delete d[typeKey]
       } else if (dValue.length < sellVariations.length) {
         d[typeKey].push({
-          label: t('pageObject:option-default'),
+          label: t('option-default'),
           value: difference(variationsRange, dValue),
           isDisabled: false
         })
@@ -214,7 +214,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
         optionsSize?.length) && (
         <form onSubmit={onSubmit}>
           {optionsVariant?.length && (
-            <FormField label={t('pageObject:variant')}>
+            <FormField label={t('variant')}>
               <ReactSelect
                 name='variant'
                 options={optionsVariant}
@@ -237,7 +237,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
             </FormField>
           )}
           {optionsColour?.length && (
-            <FormField label={t('pageObject:colour')}>
+            <FormField label={t('colour')}>
               <ReactSelect
                 name='colour'
                 options={optionsColour}
@@ -260,7 +260,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
             </FormField>
           )}
           {optionsSize?.length && (
-            <FormField label={t('pageObject:size')}>
+            <FormField label={t('size')}>
               <ReactSelect
                 name='size'
                 options={optionsSize}
@@ -282,7 +282,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
               />
             </FormField>
           )}
-          <FormField label={t('pageObject:amount')}>
+          <FormField label={t('amount')}>
             <ReactSelect
               options={Array(
                 commonIDs.length === 1 && variation
@@ -335,9 +335,9 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           >
             {commonIDs.length === 1
               ? (variation?.stock ?? 0) > 0
-                ? t('add-button.add-to-bag')
-                : t('add-button.out-of-stock')
-              : t('add-button.select-variation')}
+                ? t('add-to-bag')
+                : t('out-of-stock')
+              : t('select-variation')}
           </Button>
         </form>
       )}

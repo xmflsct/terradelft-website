@@ -24,7 +24,7 @@ const CheckoutDelivery: React.FC<Props> = ({
   isSubmitting,
   shipmentMethods
 }) => {
-  const { t, i18n } = useTranslation('pageBag')
+  const { t, i18n } = useTranslation('bag')
   const {
     delivery,
     objects,
@@ -71,8 +71,8 @@ const CheckoutDelivery: React.FC<Props> = ({
           checked={delivery.method === 'pickup'}
           onChange={() => {}}
         />
-        {t('content.checkout.delivery.pickup.heading')}
-        {t('content.checkout.delivery.free')}
+        {t('pick-up')}
+        {t('free')}
       </div>
       <div>
         <div
@@ -89,13 +89,13 @@ const CheckoutDelivery: React.FC<Props> = ({
             checked={delivery.method === 'shipment'}
             onChange={() => {}}
           />
-          {t('content.checkout.delivery.shipment.heading')}
+          {t('shipping')}
           <div style={{ flex: '1', marginLeft: '0.5rem' }}>
             <ReactSelect
               name='country'
               options={countryNames}
               value={delivery.shipment}
-              placeholder={t('content.checkout.delivery.shipment.selection')}
+              placeholder={t('select-country')}
               onChange={e => updateDeliveryShipmentCountry(e)}
               isSearchable
               isDisabled={delivery.method === 'pickup' || isSubmitting}
@@ -124,8 +124,9 @@ const CheckoutDelivery: React.FC<Props> = ({
                   )}
                   {method.freeForTotal && Number.isFinite(method.freeForTotal) && (
                     <div style={{ fontSize: '0.875em', color: '#6c757d' }}>
-                      {t('content.checkout.delivery.shipment.free-for-total')}{' '}
-                      {currency(method.freeForTotal, i18n.language)}
+                      {t('free-for-above', {
+                        amount: currency(method.freeForTotal, i18n.language)
+                      })}
                     </div>
                   )}
                 </div>
@@ -134,7 +135,7 @@ const CheckoutDelivery: React.FC<Props> = ({
                     (method.freeForTotal &&
                     Number.isFinite(method.freeForTotal) &&
                     subtotal >= method.freeForTotal
-                      ? t('content.checkout.delivery.free')
+                      ? t('free')
                       : objects.filter(object => object.type !== 'giftcard')
                           .length === 0 &&
                         countries.alpha2ToNumeric('NL') ===

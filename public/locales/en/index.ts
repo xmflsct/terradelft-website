@@ -1,11 +1,16 @@
 export default {
   common: require('./common'),
 
-  pageBag: require('./pageBag.json'),
-  pageExhibitions: require('./pageExhibitions.json'),
-  pageIndex: require('./pageIndex.json'),
-  pageNews: require('./pageNews.json'),
-  pageNewsletter: require('./pageNewsletter.json'),
-  pageObject: require('./pageObject.json'),
-  pageTerraInChina: require('./pageTerraInChina.json')
+  aboutTerra: require('./aboutTerra.json'),
+  bag: require('./bag.json'),
+  exhibition: require('./exhibition.json'),
+  giftCard: require('./giftCard.json'),
+  index: require('./index.json'),
+  news: require('./news.json'),
+  newsletter: require('./newsletter.json'),
+  object: require('./object.json'),
+  search: require('./search.json'),
+  shop: require('./shop.json'),
+  terraInChina: require('./terraInChina.json'),
+  thankYou: require('./thankYou.json')
 }

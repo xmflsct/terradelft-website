@@ -17,7 +17,7 @@ export const meta: MetaFunction = () => ({
   description: 'Terra Delft Website'
 })
 export let handle = {
-  i18n: 'pageShop'
+  i18n: 'shop'
 }
 
 const PageShop = () => {

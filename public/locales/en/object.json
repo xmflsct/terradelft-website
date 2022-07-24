@@ -17,11 +17,8 @@
   "price": "Price",
   "on-sale": "Sale",
   "out-of-stock": "Sold",
-  "add-button": {
-    "add-to-bag": "Add to bag",
-    "select-variation": "Select options",
-    "out-of-stock": "Sold"
-  },
+  "add-to-bag": "Add to bag",
+  "select-variation": "Select options",
   "contact": {
     "button": "Question about this object?",
     "heading": "Send us your inquiry below",

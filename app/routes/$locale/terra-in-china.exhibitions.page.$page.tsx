@@ -1,7 +1,7 @@
 import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useParams } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
-import EventInformation from '~/components/event/information'
+import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
@@ -12,8 +12,12 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader: LoaderFunction = async props =>
   await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'pageTerraInChina')
-    const meta = { title: t('name') }
+    const t = await i18next.getFixedT(props.request, 'common')
+    const meta = {
+      title: t('pages.terra-in-china-exhibitions-page', {
+        page: props.params.page
+      })
+    }
 
     const data = await getEventsEvents({
       ...props,
@@ -28,7 +32,7 @@ export const meta: MetaFunction = ({ data: { meta } }) => ({
   description: 'Terra in China exhibitions'
 })
 export let handle = {
-  i18n: 'pageTerraInChina'
+  i18n: 'terraInChina'
 }
 
 const PageTerraInChinaExhibitions = () => {
@@ -38,11 +42,11 @@ const PageTerraInChinaExhibitions = () => {
     data: { total: number; items: EventsEvent[] }
   }>()
   const { page } = useParams()
-  const { t, i18n } = useTranslation('pageTerraInChina')
+  const { t } = useTranslation()
 
   return (
     <>
-      <H1>{page}</H1>
+      <H1>{t('common:pages.terra-in-china-exhibitions-page', { page })}</H1>
       <div className='grid grid-cols-3 gap-x-4 gap-y-8'>
         {items?.map(event => {
           return (
@@ -60,7 +64,7 @@ const PageTerraInChinaExhibitions = () => {
                 />
                 <p className='text-lg truncate'>{event.name}</p>
               </Link>
-              <EventInformation event={event} type='current' />
+              <ExhibitionInformation event={event} type='current' />
             </div>
           )
         })}

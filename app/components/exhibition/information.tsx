@@ -9,8 +9,8 @@ type Props = {
   type?: 'current' | 'upcoming'
 }
 
-const EventInformation: React.FC<Props> = ({ event, type }) => {
-  const { t, i18n } = useTranslation('pageExhibitions')
+const ExhibitionInformation: React.FC<Props> = ({ event, type }) => {
+  const { t, i18n } = useTranslation('exhibition')
 
   const datetimeType = type === 'current' ? 'End' : 'Start'
 
@@ -31,7 +31,7 @@ const EventInformation: React.FC<Props> = ({ event, type }) => {
             )}
             <small className='ml-2'>
               (
-              {t(`content.datetime.${datetimeType}`, {
+              {t(`datetime.${datetimeType}`, {
                 datetime: relativeTime(
                   i18n.language,
                   event[`datetime${datetimeType}`]
@@ -63,7 +63,7 @@ const EventInformation: React.FC<Props> = ({ event, type }) => {
             <dl className='information-organizer'>
               <dt>
                 <FontAwesomeIcon icon={faIdBadge} size='sm' fixedWidth />{' '}
-                {t('content.organizer')}
+                {t('organizer')}
               </dt>
               {event.organizerCollection.items.map(organizer => (
                 <dd key={organizer.name}>{organizer.name}</dd>
@@ -74,7 +74,7 @@ const EventInformation: React.FC<Props> = ({ event, type }) => {
             <dl className='information-location'>
               <dt>
                 <FontAwesomeIcon icon={faMap} size='sm' fixedWidth />{' '}
-                {t('content.location')}
+                {t('location')}
               </dt>
               {event.locationCollection.items.map(location => (
                 <dd key={location.name}>{location.name}</dd>
@@ -87,4 +87,4 @@ const EventInformation: React.FC<Props> = ({ event, type }) => {
   )
 }
 
-export default EventInformation
+export default ExhibitionInformation

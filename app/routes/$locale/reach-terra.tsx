@@ -8,8 +8,8 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader: LoaderFunction = async props =>
   await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'pageReachTerra')
-    const meta = { title: t('name') }
+    const t = await i18next.getFixedT(props.request, 'common')
+    const meta = { title: t('pages.reach-terra') }
 
     return { meta, data: await getReachTerra(props) }
   })
@@ -22,9 +22,6 @@ export const meta: MetaFunction = ({ data: { meta, data } }) => ({
     199
   )
 })
-export let handle = {
-  i18n: 'pageReachTerra'
-}
 
 const PageReachTerra = () => {
   const { data } = useLoaderData<{ data: ReachTerra }>()

@@ -210,7 +210,7 @@ const GridObjectOnlineShop: React.FC<Props> = ({
                     )}
                     {object.priceSale && (
                       <span className='absolute bottom-0 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-secondary text-background text-sm font-semibold'>
-                        {t('pageObject:on-sale')}
+                        {t('object:on-sale')}
                       </span>
                     )}
                   </div>

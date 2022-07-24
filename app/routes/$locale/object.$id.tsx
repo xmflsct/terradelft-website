@@ -36,7 +36,7 @@ export const meta: MetaFunction = ({ data, params: { locale } }) => ({
   })
 })
 export const handle = {
-  i18n: 'pageObject',
+  i18n: 'object',
   structuredData: (
     data: ObjectsObject_NameLocalized,
     { locale }: any
@@ -138,7 +138,7 @@ export type SelectedVariation = {
 } | null
 
 const PageObject = () => {
-  const { t, i18n } = useTranslation('pageObject')
+  const { t, i18n } = useTranslation('object')
   const objectsObject = useLoaderData<ObjectsObject_NameLocalized>()
 
   const [selectedVariation, setSelectedVariation] =

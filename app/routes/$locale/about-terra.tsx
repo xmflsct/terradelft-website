@@ -11,8 +11,8 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader: LoaderFunction = async props =>
   await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'pageAboutTerra')
-    const meta = { title: t('name') }
+    const t = await i18next.getFixedT(props.request, 'common')
+    const meta = { title: t('pages.about-terra') }
 
     return { meta, data: await getAboutTerra(props) }
   })
@@ -23,22 +23,22 @@ export const meta: MetaFunction = ({ data: { meta, data } }) => ({
   description: documentToPlainTextString(data.columnLeft.json).substring(0, 199)
 })
 export let handle = {
-  i18n: 'pageAboutTerra'
+  i18n: 'aboutTerra'
 }
 
 const PageAboutTerra = () => {
   const { data } = useLoaderData<{ data: AboutTerra }>()
-  const { t } = useTranslation('pageAboutTerra')
+  const { t } = useTranslation('aboutTerra')
 
   return (
     <>
-      <H1>{t('name')}</H1>
+      <H1>{t('common:pages.about-terra')}</H1>
       <div className='grid grid-cols-2 gap-4'>
         <RichText content={data.columnLeft} assetWidth={471} />
         <RichText content={data.columnRight} assetWidth={471} />
       </div>
       <div className='terra-staff'>
-        <H2>{t('content.staff')}</H2>
+        <H2>{t('staff')}</H2>
         {data.staffCollection?.items.map(staff => (
           <div key={staff.name} className='grid grid-cols-6 gap-4 mb-8'>
             <div className='col-span-1'>

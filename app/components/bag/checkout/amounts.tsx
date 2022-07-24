@@ -7,7 +7,7 @@ type Props = {
 }
 
 const CheckoutAmounts: React.FC<Props> = ({ subtotal, discount }) => {
-  const { t, i18n } = useTranslation('pageBag')
+  const { t, i18n } = useTranslation('bag')
 
   return (
     <>
@@ -18,14 +18,14 @@ const CheckoutAmounts: React.FC<Props> = ({ subtotal, discount }) => {
         <tbody>
           <tr>
             <th className='text-left py-1 pr-8'>
-              {t('content.checkout.summary.subtotal')}
+              {t('subtotal')}
             </th>
             <td>{currency(subtotal, i18n.language)}</td>
           </tr>
           {discount && discount > 0 ? (
             <tr>
               <th className='text-left py-1 pr-8'>
-                {t('content.checkout.summary.discount')}
+                {t('discount')}
               </th>
               <td>- {currency(discount, i18n.language)}</td>
             </tr>

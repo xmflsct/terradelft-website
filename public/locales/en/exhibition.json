@@ -1,0 +1,12 @@
+{
+  "current": "Now",
+  "upcoming": "Coming Up",
+  "archive": "Archive →",
+  "archive_wordpress": "Archive before 2020",
+  "datetime": {
+    "Start": "Starts {{datetime}}",
+    "End": "Ends {{datetime}}"
+  },
+  "organizer": "Organizer",
+  "location": "Location"
+}

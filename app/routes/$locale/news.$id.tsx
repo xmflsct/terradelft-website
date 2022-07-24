@@ -33,7 +33,7 @@ export const handle = {
 
 const PageNews = () => {
   const newsNew = useLoaderData<NewsNews>()
-  const { t, i18n } = useTranslation('pageNews')
+  const { t, i18n } = useTranslation('news')
 
   return (
     <div className='grid grid-cols-6 gap-4'>
@@ -51,7 +51,7 @@ const PageNews = () => {
       )}
       <div className={newsNew.image ? 'col-span-4' : 'col-span-4 col-start-2'}>
         <p>
-          {t('content.published', {
+          {t('published', {
             date: new Date(newsNew.date).toLocaleDateString(i18n.language, {
               year: 'numeric',
               month: 'short',

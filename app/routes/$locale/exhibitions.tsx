@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
-import EventInformation from '~/components/event/information'
+import ExhibitionInformation from '~/components/exhibition/information'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
@@ -13,8 +13,8 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader: LoaderFunction = async props =>
   await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'pageExhibitions')
-    const meta = { title: t('name') }
+    const t = await i18next.getFixedT(props.request, 'exhibition')
+    const meta = { title: t('common:pages.exhibitions') }
 
     const data = await getEventsEvents(props)
     return { meta, data }
@@ -26,20 +26,20 @@ export const meta: MetaFunction = ({ data: { meta } }) => ({
   description: 'Exhibitions'
 })
 export let handle = {
-  i18n: 'pageExhibitions'
+  i18n: 'exhibition'
 }
 
 const PageExhibitions = () => {
   const {
     data: { items }
   } = useLoaderData<{ data: { items: EventsEvent[] } }>()
-  const { t, i18n } = useTranslation('pageExhibitions')
+  const { t, i18n } = useTranslation('exhibition')
 
   return (
     <>
       <div className='grid grid-cols-6 gap-4 mb-4'>
         <div className='col-span-2'>
-          <H2>{t('content.heading.upcoming')}</H2>
+          <H2>{t('upcoming')}</H2>
           {items
             .filter(event => new Date(event.datetimeStart) > new Date())
             .map(event => (
@@ -48,13 +48,13 @@ const PageExhibitions = () => {
                   <Link to={`/exhibition/${event.sys.id}`}>
                     <p className='text-lg'>{event.name}</p>
                   </Link>
-                  <EventInformation event={event} type='upcoming' />
+                  <ExhibitionInformation event={event} type='upcoming' />
                 </div>
               </div>
             ))}
         </div>
         <div className='col-span-4'>
-          <H2>{t('content.heading.current')}</H2>
+          <H2>{t('current')}</H2>
           {items
             .filter(
               event =>
@@ -84,7 +84,7 @@ const PageExhibitions = () => {
                     <Link to={`/exhibition/${event.sys.id}`}>
                       <H3>{event.name}</H3>
                     </Link>
-                    <EventInformation event={event} type='current' />
+                    <ExhibitionInformation event={event} type='current' />
                   </div>
                 </div>
               )
@@ -92,7 +92,7 @@ const PageExhibitions = () => {
         </div>
       </div>
       <div>
-        <Link to='/exhibitions/page/1'>{t('content.view-all')}</Link>
+        <Link to='/exhibitions/page/1'>{t('archive')}</Link>
       </div>
       <div>
         <a
@@ -104,7 +104,7 @@ const PageExhibitions = () => {
           target='_blank'
           rel='noopener noreferrer'
         >
-          {t('content.archive-wordpress')}{' '}
+          {t('archive', { context: 'wordpress' })}{' '}
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
         </a>
       </div>
