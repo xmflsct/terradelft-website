@@ -2,6 +2,7 @@ export default {
   common: require('./common'),
 
   aboutTerra: require('./aboutTerra.json'),
+  artist: require('./artist.json'),
   bag: require('./bag.json'),
   exhibition: require('./exhibition.json'),
   giftCard: require('./giftCard.json'),

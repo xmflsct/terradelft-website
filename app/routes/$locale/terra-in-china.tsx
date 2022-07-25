@@ -1,43 +1,98 @@
-import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { gql, QueryOptions } from '@apollo/client'
+import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import i18next from '~/i18next.server'
-import {
-  cacheQuery,
-  EventsEvent,
-  getTerraInChina,
-  NewsNews
-} from '~/utils/contentful'
+import { cacheQuery, EventsEvent, NewsNews } from '~/utils/contentful'
+import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const loader: LoaderFunction = async props =>
-  await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'common')
-    const meta = { title: t('pages.terra-in-china') }
+type Data = {
+  meta: { title: string }
+  data: {
+    exhibitions: {
+      items: Pick<
+        EventsEvent,
+        | 'sys'
+        | 'image'
+        | 'name'
+        | 'datetimeStart'
+        | 'datetimeEnd'
+        | 'typeCollection'
+      >[]
+    }
+    news: { items: Pick<NewsNews, 'sys' | 'image' | 'title' | 'date'>[] }
+  }
+}
+export const loader: LoaderFunction = async props => {
+  const query: QueryOptions<{ locale: string }> = {
+    variables: { locale: props.params.locale! },
+    query: gql`
+      query Index($locale: String) {
+        exhibitions: eventsEventCollection(
+          locale: $locale
+          where: { terraInChina: true }
+          limit: 6
+          order: datetimeEnd_DESC
+        ) {
+          items {
+            sys {
+              id
+            }
+            image {
+              url
+            }
+            name
+            datetimeStart
+            datetimeEnd
+            typeCollection {
+              items {
+                name
+              }
+            }
+          }
+        }
+        news: newsNewsCollection(
+          locale: $locale
+          where: { terraInChina: true }
+          limit: 6
+          order: date_DESC
+        ) {
+          items {
+            sys {
+              id
+            }
+            image {
+              url
+            }
+            title
+            date
+          }
+        }
+      }
+    `
+  }
+  const data = await cacheQuery<Data['data']>(query, 30, props)
+  const meta = await loadMeta(props, { titleKey: 'pages.terra-in-china' })
 
-    return { meta, data: await getTerraInChina(props) }
-  })
+  return json({ meta, data })
+}
 
-export const meta: MetaFunction = ({ data: { meta } }) => ({
-  title: SEOTitle(meta.title),
-  keywords: SEOKeywords(meta.title),
-  description: 'Terra Delft Website'
-})
+export const meta: MetaFunction = ({ data }: { data: Data }) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title]),
+    description: data.meta.title
+  }
 export let handle = {
   i18n: ['terraInChina', 'news']
 }
 
 const PageTerraInChina = () => {
-  const { data } = useLoaderData<{
-    data: {
-      eventsEventCollection: { items: EventsEvent[] }
-      newsNewsCollection: { items: NewsNews[] }
-    }
-  }>()
+  const { data } = useLoaderData<Data>()
   const { t, i18n } = useTranslation('terraInChina')
 
   return (
@@ -45,30 +100,26 @@ const PageTerraInChina = () => {
       <div className='grid grid-cols-2 gap-4'>
         <div>
           <H2>{t('heading.events')}</H2>
-          {data.eventsEventCollection.items.map(event => (
-            <div key={event.sys.id} className='mb-8'>
+          {data.exhibitions.items.map(exhibition => (
+            <div key={exhibition.sys.id} className='mb-8'>
               <div>
-                <Link to={`/exhibition/${event.sys.id}`} className='text-lg'>
-                  {event.image && (
+                <Link
+                  to={`/exhibition/${exhibition.sys.id}`}
+                  className='text-lg'
+                >
+                  {exhibition.image && (
                     <ContentfulImage
-                      alt={event.name}
-                      image={event.image}
+                      alt={exhibition.name}
+                      image={exhibition.image}
                       width={471}
                       height={265}
                       quality={80}
                       behaviour='fill'
                     />
                   )}
-                  {event.name}
+                  {exhibition.name}
                 </Link>
-                <div className='current-type'>
-                  {/* {node.type.map(t => (
-                    <Badge variant='info' key={t.name}>
-                      {t.name}
-                    </Badge>
-                  ))} */}
-                </div>
-                <ExhibitionInformation event={event} type='current' />
+                <ExhibitionInformation exhibition={exhibition} type='current' />
               </div>
             </div>
           ))}
@@ -78,7 +129,7 @@ const PageTerraInChina = () => {
         </div>
         <div>
           <H2>{t('heading.news')}</H2>
-          {data.newsNewsCollection.items.map(news => (
+          {data.news.items.map(news => (
             <div key={news.sys.id} className='mb-8'>
               <div>
                 <Link to={`/news/${news.sys.id}`} className='text-lg'>
@@ -109,9 +160,7 @@ const PageTerraInChina = () => {
               </div>
             </div>
           ))}
-          <Link to='/terra-in-china/news/page/1'>
-            {t('view-all.news')}
-          </Link>
+          <Link to='/terra-in-china/news/page/1'>{t('view-all.news')}</Link>
         </div>
       </div>
     </>

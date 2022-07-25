@@ -4,21 +4,16 @@ import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { BagData } from '~/routes/$locale/bag'
 import { BagContext } from '~/states/bag'
 import { CheckoutContent } from '~/utils/checkout'
-import { ShippingRates } from '~/utils/contentful'
 import Button from '../button'
 import { H3 } from '../globals'
 import CheckoutAmounts from './checkout/amounts'
 import CheckoutDelivery from './checkout/delivery'
 import CheckoutSuppliers from './checkout/suppliers'
 
-type Props = {
-  country: string
-  rates: ShippingRates
-}
-
-const BagCheckout: React.FC<Props> = ({ country, rates }) => {
+const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
   const { t, i18n } = useTranslation('bag')
 
   const [formState, setFormState] = useState<{
@@ -87,8 +82,8 @@ const BagCheckout: React.FC<Props> = ({ country, rates }) => {
     }
   }
 
-  const data = useLoaderData()
-  const stripePromise = loadStripe(data.env.STRIPE_KEY_PUBLIC)
+  const { env } = useLoaderData<BagData>()
+  const stripePromise = loadStripe(env.STRIPE_KEY_PUBLIC)
   const actionData = useActionData()
   useEffect(() => {
     const redirect = async (id: string) => {

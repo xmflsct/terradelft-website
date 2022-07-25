@@ -44,6 +44,7 @@
     "object": "{{object}} by {{artist}}",
     "reach-terra": "Reach Terra",
     "shop": "Online shop",
+    "shop_page": "Online shop page {{page}}",
     "terra-in-china-exhibitions-page": "Terra in China exhibitions page {{page}}",
     "terra-in-china-news-page": "Terra in China news page {{page}}",
     "terra-in-china": "Terra in China",

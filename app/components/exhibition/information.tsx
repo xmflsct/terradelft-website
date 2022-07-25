@@ -5,22 +5,37 @@ import { EventsEvent } from '~/utils/contentful'
 import { relativeTime } from '~/utils/formatNumber'
 
 type Props = {
-  event: EventsEvent
+  exhibition: Pick<EventsEvent, 'datetimeStart' | 'datetimeEnd'> &
+    Partial<
+      Pick<
+        EventsEvent,
+        'typeCollection' | 'organizerCollection' | 'locationCollection'
+      >
+    >
   type?: 'current' | 'upcoming'
 }
 
-const ExhibitionInformation: React.FC<Props> = ({ event, type }) => {
+const ExhibitionInformation: React.FC<Props> = ({ exhibition, type }) => {
   const { t, i18n } = useTranslation('exhibition')
 
   const datetimeType = type === 'current' ? 'End' : 'Start'
 
   return (
-    <div className='event-information'>
-      <div className='information-dates'>
+    <div>
+      <div className='flex flex-row gap-2 my-1'>
+        {exhibition.typeCollection?.items.map(type => (
+          <span
+            key={type.name}
+            children={type.name}
+            className='bg-secondary text-white rounded-md text-xs font-semibold px-2 py-1'
+          />
+        ))}
+      </div>
+      <div>
         <FontAwesomeIcon icon={faClock} size='sm' fixedWidth />{' '}
         {type ? (
           <>
-            {new Date(event[`datetime${datetimeType}`]).toLocaleDateString(
+            {new Date(exhibition[`datetime${datetimeType}`]).toLocaleDateString(
               i18n.language,
               {
                 weekday: 'short',
@@ -34,7 +49,7 @@ const ExhibitionInformation: React.FC<Props> = ({ event, type }) => {
               {t(`datetime.${datetimeType}`, {
                 datetime: relativeTime(
                   i18n.language,
-                  event[`datetime${datetimeType}`]
+                  exhibition[`datetime${datetimeType}`]
                 )
               })}
               )
@@ -43,40 +58,46 @@ const ExhibitionInformation: React.FC<Props> = ({ event, type }) => {
         ) : (
           <>
             {' '}
-            {new Date(event.datetimeStart).toLocaleDateString(i18n.language, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}
+            {new Date(exhibition.datetimeStart).toLocaleDateString(
+              i18n.language,
+              {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              }
+            )}
             {' - '}
-            {new Date(event.datetimeEnd).toLocaleDateString(i18n.language, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}
+            {new Date(exhibition.datetimeEnd).toLocaleDateString(
+              i18n.language,
+              {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              }
+            )}
           </>
         )}
       </div>
       {type !== 'upcoming' && (
         <>
-          {event.organizerCollection?.items.length ? (
-            <dl className='information-organizer'>
+          {exhibition.organizerCollection?.items.length ? (
+            <dl>
               <dt>
                 <FontAwesomeIcon icon={faIdBadge} size='sm' fixedWidth />{' '}
                 {t('organizer')}
               </dt>
-              {event.organizerCollection.items.map(organizer => (
+              {exhibition.organizerCollection.items.map(organizer => (
                 <dd key={organizer.name}>{organizer.name}</dd>
               ))}
             </dl>
           ) : null}
-          {event.locationCollection?.items.length ? (
-            <dl className='information-location'>
+          {exhibition.locationCollection?.items.length ? (
+            <dl>
               <dt>
                 <FontAwesomeIcon icon={faMap} size='sm' fixedWidth />{' '}
                 {t('location')}
               </dt>
-              {event.locationCollection.items.map(location => (
+              {exhibition.locationCollection.items.map(location => (
                 <dd key={location.name}>{location.name}</dd>
               ))}
             </dl>

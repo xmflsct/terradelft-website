@@ -52,7 +52,7 @@ const Navigation = () => {
         children={t('pages.index')}
       />
       <NavLink
-        to='/shop'
+        to='/shop/page/1'
         className={styleNavItem(['/object/'])}
         children={t('pages.shop')}
       />

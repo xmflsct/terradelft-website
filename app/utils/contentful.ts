@@ -1,4 +1,4 @@
-import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
+import { ApolloClient, InMemoryCache, QueryOptions } from '@apollo/client'
 import { Document } from '@contentful/rich-text-types'
 import { DataFunctionArgs } from '@remix-run/server-runtime'
 
@@ -18,6 +18,7 @@ export const apolloClient = ({
   }
 
   return new ApolloClient({
+    ssrMode: true,
     cache: new InMemoryCache(),
     uri: `https://graphql.contentful.com/content/v1/spaces/${CONTENTFUL_SPACE}/environments/migration`,
     headers: {
@@ -28,26 +29,29 @@ export const apolloClient = ({
 }
 
 export let cached = false
-export const cacheQuery = async (
+export const cacheQuery = async <T = unknown>(
+  query: QueryOptions,
   duration: number, // In minutes
-  { request }: DataFunctionArgs,
-  func: () => Promise<Object>
-): Promise<Object> => {
+  props: DataFunctionArgs
+): Promise<T> => {
+  const queryData = async () =>
+    (await apolloClient(props).query<T>(query).catch(logError)).data
+
   if (!duration) {
-    return await func()
+    return await queryData()
   }
 
   // @ts-ignore
   const cache = caches.default
 
-  const cacheUrl = new URL(request.url)
+  const cacheUrl = new URL(props.request.url)
   const cacheKey = new Request(cacheUrl.toString())
 
   const cacheMatch = (await cache.match(cacheKey)) as Response
 
   if (!cacheMatch) {
     cached = false
-    const queryResponse = await func()
+    const queryResponse = await queryData()
     const cacheResponse = new Response(JSON.stringify(queryResponse), {
       headers: { 'Cache-Control': `s-maxage=${duration * 60}` }
     })
@@ -65,6 +69,7 @@ const logError = (e: any) => {
     e?.clientErrors && console.log('client', e.clientErrors)
     e?.networkError && console.log('network', e.networkError.result?.errors)
   }
+  throw new Error()
 }
 
 export type CommonImage = {
@@ -79,17 +84,29 @@ export type CommonImage = {
 }
 export type CommonRichText = { json: Document; links: any }
 
+export type ObjectsVariation = { sys: { id: string }; variant: string }
+export type ObjectsColour = { sys: { id: string }; colour: string }
+export type ObjectsSize = { sys: { id: string }; size: string }
+
 export type ObjectsObjectVariation = {
   sys: { id: string }
   sku?: string
-  variant?: { [key: string]: string }
-  colour?: { [key: string]: string }
-  size?: { [key: string]: string }
+  variant?: { variant: string }
+  colour?: { colour: string }
+  size?: { size: string }
   priceOriginal: number
   priceSale?: number
   sellOnline: boolean
   stock: number
   image?: CommonImage
+}
+export type ObjectsObjectVariation_NameLocalized = Omit<
+  ObjectsObjectVariation,
+  'variant' | 'colour' | 'size'
+> & {
+  variant?: { [key: string]: string }
+  colour?: { [key: string]: string }
+  size?: { [key: string]: string }
 }
 
 export type ObjectsObject = {
@@ -119,6 +136,7 @@ export type ObjectsObject_NameLocalized = Omit<ObjectsObject, 'name'> & {
 }
 
 export type ObjectsArtist = {
+  sys: { id: string }
   slug: string
   artist: string
   image: CommonImage
@@ -180,7 +198,7 @@ export type AboutTerra = {
 
 export type ReachTerra = { description: CommonRichText }
 
-const richTextLinks = `
+export const richTextLinks = `
 links {
   assets {
     block {
@@ -230,616 +248,3 @@ links {
     }
   }
 }`
-
-const getObjectsArtist = async ({
-  context,
-  params: { locale, slug }
-}: DataFunctionArgs): Promise<Readonly<ObjectsArtist>> => {
-  return (
-    await apolloClient({ context }).query<{
-      objectsArtistCollection: { items: ObjectsArtist[] }
-    }>({
-      query: gql`
-      query {
-        objectsArtistCollection (locale: "${locale}", limit: 1, where: {
-          slug: "${slug}"
-        }) {
-          items {
-            artist
-            image {
-              url
-            }
-            biography {
-              json
-              ${richTextLinks}
-            }
-            linkedFrom {
-              objectsObjectCollection (locale: "nl") {
-                items {
-                  sys {
-                    id
-                  }
-                  name (locale: "${locale}")
-                  imagesCollection (limit: 1) {
-                    items {
-                      url
-                    }
-                  }
-                  priceSale
-                }
-              }
-            }
-          }
-        }
-      }
-    `
-    })
-  ).data.objectsArtistCollection.items[0]
-}
-
-const getObjectsArtists = async ({
-  context,
-  params: { locale }
-}: DataFunctionArgs): Promise<Readonly<ObjectsArtist[]>> => {
-  return (
-    await apolloClient({ context }).query<{
-      objectsArtistCollection: { items: ObjectsArtist[] }
-    }>({
-      query: gql`
-          query {
-            objectsArtistCollection (locale: "${locale}") {
-              items {
-                slug
-                artist
-                image {
-                  url
-                }
-              }
-            }
-          }
-        `
-    })
-  ).data.objectsArtistCollection.items
-}
-
-const getObjectsObject = async ({
-  context,
-  params: { locale, id }
-}: DataFunctionArgs): Promise<Readonly<ObjectsObject_NameLocalized>> => {
-  const object = {
-    ...(
-      await apolloClient({ context }).query<{
-        objectsObject: ObjectsObject
-      }>({
-        query: gql`
-          query {
-            objectsObject (locale: "${locale}", id: "${id}") {
-              sys {
-                id
-              }
-              name_nl: name (locale: "nl")
-              name_en: name (locale: "en")
-              description {
-                json
-                ${richTextLinks}
-              }
-              imagesCollection {
-                items {
-                  url
-                }
-              }
-              artist {
-                slug
-                artist
-                linkedFrom {
-                  objectsObjectCollection (locale: "nl") {
-                    items {
-                      sys {
-                        id
-                      }
-                      name (locale: "${locale}")
-                      imagesCollection (limit: 1) {
-                        items {
-                          url
-                        }
-                      }
-                      priceSale
-                    }
-                  }
-                }
-              }
-              kunstKoop
-              sellOnline
-              priceOriginal
-              priceSale
-              sku
-              stock
-              variationsCollection {
-                items {
-                  sys {
-                    id
-                  }
-                  sku
-                  variant {
-                    variant_nl: variant (locale: "nl")
-                    variant_en: variant (locale: "en")
-                  }
-                  colour {
-                    colour_nl: colour (locale: "nl")
-                    colour_en: colour (locale: "en")
-                  }
-                  size {
-                    size_nl: size (locale: "nl")
-                    size_en: size (locale: "en")
-                  }
-                  priceOriginal
-                  priceSale
-                  sellOnline
-                  stock
-                  image {
-                    url
-                  }
-                }
-              }
-              year {
-                year
-              }
-              techniqueCollection {
-                items {
-                  technique
-                }
-              }
-              materialCollection {
-                items {
-                  material
-                }
-              }
-              dimensionWidth
-              dimensionLength
-              dimensionHeight
-              dimensionDiameter
-              dimensionDepth
-            }
-          }
-        `
-      })
-    ).data.objectsObject
-  }
-
-  // @ts-ignore
-  object.name = { nl: object.name_nl, en: object.name_en }
-  // @ts-ignore
-  delete object.name_nl
-  // @ts-ignore
-  delete object.name_en
-
-  if (object.variationsCollection) {
-    object.variationsCollection = {
-      ...object.variationsCollection,
-      items: object.variationsCollection.items.map(item => ({
-        ...item,
-        variant: item.variant
-          ? { nl: item.variant.variant_nl, en: item.variant.variant_en }
-          : undefined,
-        colour: item.colour
-          ? { nl: item.colour.colour_nl, en: item.colour.colour_en }
-          : undefined,
-        size: item.size
-          ? { nl: item.size.size_nl, en: item.size.size_en }
-          : undefined
-      }))
-    }
-  }
-
-  // @ts-ignore
-  return object
-}
-
-const getObjectsObjects = async ({
-  context,
-  params: { locale }
-}: DataFunctionArgs): Promise<Readonly<ObjectsObject[]>> => {
-  return (
-    await apolloClient({ context }).query<{
-      objectsObjectCollection: { items: ObjectsObject[] }
-    }>({
-      query: gql`
-          query {
-            objectsObjectCollection (locale: "${locale}") {
-              items {
-                sys {
-                  id
-                }
-                name
-                imagesCollection (limit: 1) {
-                  items {
-                    url
-                  }
-                }
-                priceSale
-                sellOnline
-                stock
-                variationsCollection {
-                  items {
-                    sellOnline
-                    stock
-                  }
-                }
-              }
-            }
-          }
-        `
-    })
-  ).data.objectsObjectCollection.items.reduce(
-    (filtered: ObjectsObject[], item) => {
-      if (item.variationsCollection?.items.length) {
-        // Count only variations
-        if (
-          item.variationsCollection.items.filter(
-            variation => variation.sellOnline && (variation.stock ?? 0 > 0)
-          ).length
-        ) {
-          filtered.push(item)
-        }
-      } else {
-        // Count only root object
-        if (item.sellOnline && (item.stock ?? 0 > 0)) {
-          filtered.push(item)
-        }
-      }
-
-      return filtered
-    },
-    []
-  )
-}
-
-const getShippingRates = async ({
-  context,
-  params: { locale }
-}: DataFunctionArgs): Promise<Readonly<ShippingRates>> => {
-  return (
-    await apolloClient({ context }).query<{
-      shippingRatesCollection: { items: { rates: ShippingRates }[] }
-    }>({
-      query: gql`
-      query {
-        shippingRatesCollection (locale: "${locale}", limit: 1, where: {
-          year: "2022"
-        }) {
-          items {
-            rates
-          }
-        }
-      }
-    `
-    })
-  ).data.shippingRatesCollection.items[0].rates
-}
-
-const getEventsEvent = async ({
-  context,
-  params: { locale, id }
-}: DataFunctionArgs): Promise<Readonly<EventsEvent>> => {
-  return (
-    await apolloClient({ context }).query<{ eventsEvent: EventsEvent }>({
-      query: gql`
-      query {
-        eventsEvent (locale: "${locale}", id: "${id}") {
-          name
-          datetimeStart
-          datetimeEnd
-          datetimeAllDay
-          typeCollection {
-            items {
-              name
-            }
-          }
-          terraInChina
-          organizerCollection {
-            items {
-              name
-            }
-          }
-          locationCollection {
-            items {
-              name
-              location {
-                lat
-                lon
-              }
-              address
-            }
-          }
-          image {
-            url
-          }
-          description {
-            json
-            ${richTextLinks}
-          }
-        }
-      }
-    `
-    })
-  ).data.eventsEvent
-}
-
-const getEventsEvents = async ({
-  context,
-  params: { locale, page, terraInChina }
-}: DataFunctionArgs): Promise<
-  Readonly<{ total: number; items: EventsEvent[] }>
-> => {
-  const pageNum = parseInt(page || '0') - 1
-  const perPage = 9
-
-  const filterWhereTerraInChina =
-    terraInChina === 'true' ? 'terraInChina: true' : ''
-  let filterPagination: string
-  if (page) {
-    filterPagination = `
-      limit: ${perPage},
-      skip: ${perPage * pageNum},
-      where: {
-        datetimeEnd_lt: "${new Date().toISOString()}",
-        ${filterWhereTerraInChina}
-      }
-    `
-  } else {
-    filterPagination = `
-      where: {
-        datetimeEnd_gte: "${new Date().toISOString()}",
-        ${filterWhereTerraInChina}
-      }
-    `
-  }
-
-  const res = await apolloClient({ context }).query<{
-    eventsEventCollection: { total: number; items: EventsEvent[] }
-  }>({
-    query: gql`
-    query {
-      eventsEventCollection (
-        locale: "${locale}",
-        order: datetimeStart_DESC,
-        ${filterPagination}
-      ) {
-        total
-        items {
-          sys {
-            id
-          }
-          image {
-            url
-          }
-          name
-          datetimeStart
-          datetimeEnd
-          typeCollection {
-            items {
-              name
-            }
-          }
-        }
-      }
-    }
-  `
-  })
-  return {
-    total: Math.round(res.data.eventsEventCollection.total / 9),
-    items: res.data.eventsEventCollection.items
-  }
-}
-
-const getNewsNew = async ({
-  context,
-  params: { locale, id }
-}: DataFunctionArgs): Promise<Readonly<NewsNews>> => {
-  return (
-    await apolloClient({ context }).query<{ newsNews: NewsNews }>({
-      query: gql`
-      query {
-        newsNews (locale: "${locale}", id: "${id}") {
-          title
-          date
-          image {
-            url
-            description
-          }
-          terraInChina
-          content {
-            json
-            ${richTextLinks}
-          }
-        }
-      }
-    `
-    })
-  ).data.newsNews
-}
-
-const getNewsNews = async ({
-  context,
-  params: { locale, page, terraInChina }
-}: DataFunctionArgs): Promise<
-  Readonly<{ total: number; items: NewsNews[] }>
-> => {
-  const pageNum = parseInt(page || '0') - 1
-  const perPage = 9
-
-  const filterWhereTerraInChina =
-    terraInChina === 'true' ? 'terraInChina: true' : ''
-  const filterWhere = `
-    where: { ${filterWhereTerraInChina} }
-  `
-
-  const res = await apolloClient({ context }).query<{
-    newsNewsCollection: { total: number; items: NewsNews[] }
-  }>({
-    query: gql`
-    query {
-      newsNewsCollection (
-        locale: "${locale}",
-        order: date_DESC,
-        limit: ${perPage},
-        skip: ${perPage * pageNum},
-        ${filterWhere}
-      ) {
-        total
-        items {
-          sys {
-            id
-          }
-          title
-          date
-          image {
-            url
-          }
-        }
-      }
-    }
-  `
-  })
-  return {
-    total: Math.round(res.data.newsNewsCollection.total / 9),
-    items: res.data.newsNewsCollection.items
-  }
-}
-
-const getTerraInChina = async ({
-  context,
-  params: { locale }
-}: DataFunctionArgs): Promise<
-  Readonly<{
-    eventsEventCollection: { items: EventsEvent[] }
-    newsNewsCollection: { items: NewsNews[] }
-  }>
-> => {
-  return (
-    await apolloClient({ context }).query<{
-      eventsEventCollection: { items: EventsEvent[] }
-      newsNewsCollection: { items: NewsNews[] }
-    }>({
-      query: gql`
-      query {
-        eventsEventCollection (
-          locale: "${locale}"
-          where: { terraInChina: true },
-          limit: 6,
-          order: datetimeEnd_DESC
-        ) {
-          items {
-            sys {
-              id
-            }
-            image {
-              url
-            }
-            name
-            datetimeStart
-            datetimeEnd
-            typeCollection {
-              items {
-                name
-              }
-            }
-          }
-        }
-        newsNewsCollection (
-          locale: "${locale}",
-          where: { terraInChina: true },
-          limit: 6,
-          order: date_DESC
-        ) {
-          items {
-            sys {
-              id
-            }
-            title
-            date
-            image {
-              url
-            }
-          }
-        }
-      }
-    `
-    })
-  ).data
-}
-
-const getAboutTerra = async ({
-  context,
-  params: { locale }
-}: DataFunctionArgs): Promise<Readonly<AboutTerra>> => {
-  return (
-    await apolloClient({ context }).query<{
-      informationAboutTerra: AboutTerra
-    }>({
-      query: gql`
-      query {
-        informationAboutTerra ( locale: "${locale}", id: "7eZ2uEBMVW8HDUMlBXLxgx" ) {
-          columnLeft {
-            json
-            ${richTextLinks}
-          }
-          columnRight {
-            json
-            ${richTextLinks}
-          }
-          staffCollection {
-            items {
-              name
-              avatar {
-                url
-              }
-              biography {
-                json
-                ${richTextLinks}
-              }
-            }
-          }
-        }
-      }
-    `
-    })
-  ).data.informationAboutTerra
-}
-
-const getReachTerra = async ({
-  context,
-  params: { locale }
-}: DataFunctionArgs): Promise<Readonly<ReachTerra>> => {
-  return (
-    await apolloClient({ context }).query<{
-      informationReachTerra: ReachTerra
-    }>({
-      query: gql`
-      query {
-        informationReachTerra ( locale: "${locale}", id: "7Hr9VIqrByJWQpkMVgxwN6" ) {
-          description {
-            json
-            ${richTextLinks}
-          }
-        }
-      }
-    `
-    })
-  ).data.informationReachTerra
-}
-
-export {
-  getObjectsArtist,
-  getObjectsArtists,
-  getObjectsObject,
-  getObjectsObjects,
-  getShippingRates,
-  getEventsEvent,
-  getEventsEvents,
-  getNewsNew,
-  getNewsNews,
-  getTerraInChina,
-  getAboutTerra,
-  getReachTerra
-}

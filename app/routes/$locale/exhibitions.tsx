@@ -1,38 +1,88 @@
+import { gql, QueryOptions } from '@apollo/client'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import i18next from '~/i18next.server'
-import { cacheQuery, EventsEvent, getEventsEvents } from '~/utils/contentful'
+import { cacheQuery, EventsEvent } from '~/utils/contentful'
+import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const loader: LoaderFunction = async props =>
-  await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'exhibition')
-    const meta = { title: t('common:pages.exhibitions') }
+type Data = {
+  meta: { title: string }
+  data: {
+    exhibitions: {
+      total: number
+      items: Pick<
+        EventsEvent,
+        | 'sys'
+        | 'image'
+        | 'name'
+        | 'datetimeStart'
+        | 'datetimeEnd'
+        | 'typeCollection'
+      >[]
+    }
+  }
+}
+export const loader: LoaderFunction = async props => {
+  const query: QueryOptions<{ locale: string; datetimeEnd_gte: string }> = {
+    variables: {
+      locale: props.params.locale!,
+      datetimeEnd_gte: new Date().toISOString()
+    },
+    query: gql`
+      query Index($locale: String, $datetimeEnd_gte: DateTime) {
+        exhibitions: eventsEventCollection(
+          locale: $locale
+          order: datetimeStart_DESC
+          where: { datetimeEnd_gte: $datetimeEnd_gte }
+        ) {
+          total
+          items {
+            sys {
+              id
+            }
+            image {
+              url
+            }
+            name
+            datetimeStart
+            datetimeEnd
+            typeCollection {
+              items {
+                name
+              }
+            }
+          }
+        }
+      }
+    `
+  }
+  const data = await cacheQuery<Data['data']>(query, 30, props)
+  const meta = await loadMeta(props, { titleKey: 'pages.exhibitions' })
 
-    const data = await getEventsEvents(props)
-    return { meta, data }
-  })
+  return json({ meta, data })
+}
 
-export const meta: MetaFunction = ({ data: { meta } }) => ({
-  title: SEOTitle(meta.title),
-  keywords: SEOKeywords(meta.title),
-  description: 'Exhibitions'
-})
+export const meta: MetaFunction = ({ data }: { data: Data }) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title]),
+    description: data.meta.title
+  }
 export let handle = {
   i18n: 'exhibition'
 }
 
 const PageExhibitions = () => {
   const {
-    data: { items }
-  } = useLoaderData<{ data: { items: EventsEvent[] } }>()
+    data: { exhibitions }
+  } = useLoaderData<Data>()
   const { t, i18n } = useTranslation('exhibition')
 
   return (
@@ -40,51 +90,52 @@ const PageExhibitions = () => {
       <div className='grid grid-cols-6 gap-4 mb-4'>
         <div className='col-span-2'>
           <H2>{t('upcoming')}</H2>
-          {items
-            .filter(event => new Date(event.datetimeStart) > new Date())
-            .map(event => (
-              <div key={event.sys.id} className='mb-4'>
+          {exhibitions.items
+            .filter(
+              exhibition => new Date(exhibition.datetimeStart) > new Date()
+            )
+            .map(exhibition => (
+              <div key={exhibition.sys.id} className='mb-4'>
                 <div>
-                  <Link to={`/exhibition/${event.sys.id}`}>
-                    <p className='text-lg'>{event.name}</p>
+                  <Link to={`/exhibition/${exhibition.sys.id}`}>
+                    <p className='text-lg'>{exhibition.name}</p>
                   </Link>
-                  <ExhibitionInformation event={event} type='upcoming' />
+                  <ExhibitionInformation
+                    exhibition={exhibition}
+                    type='upcoming'
+                  />
                 </div>
               </div>
             ))}
         </div>
         <div className='col-span-4'>
           <H2>{t('current')}</H2>
-          {items
+          {exhibitions.items
             .filter(
-              event =>
-                new Date(event.datetimeEnd) >= new Date() &&
-                new Date(event.datetimeStart) <= new Date()
+              exbhition =>
+                new Date(exbhition.datetimeEnd) >= new Date() &&
+                new Date(exbhition.datetimeStart) <= new Date()
             )
-            .map(event => {
+            .map(exhibition => {
               return (
-                <div key={event.sys.id} className='flex flex-row gap-4'>
-                  {event.image && (
+                <div key={exhibition.sys.id} className='flex flex-row gap-4'>
+                  {exhibition.image && (
                     <ContentfulImage
-                      alt={event.name}
-                      image={event.image}
+                      alt={exhibition.name}
+                      image={exhibition.image}
                       width={309}
                       quality={80}
                       className='flex-1'
                     />
                   )}
                   <div className='flex-1'>
-                    <div className='current-type'>
-                      {/* {node.type.map(t => (
-                        <Badge variant='info' key={t.name}>
-                          {t.name}
-                        </Badge>
-                      ))} */}
-                    </div>
-                    <Link to={`/exhibition/${event.sys.id}`}>
-                      <H3>{event.name}</H3>
+                    <Link to={`/exhibition/${exhibition.sys.id}`}>
+                      <H3>{exhibition.name}</H3>
                     </Link>
-                    <ExhibitionInformation event={event} type='current' />
+                    <ExhibitionInformation
+                      exhibition={exhibition}
+                      type='current'
+                    />
                   </div>
                 </div>
               )

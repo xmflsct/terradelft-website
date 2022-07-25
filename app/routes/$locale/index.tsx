@@ -1,38 +1,86 @@
-import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { gql, QueryOptions } from '@apollo/client'
+import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
-import { shuffle, sortBy } from 'lodash'
+import { shuffle } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { H2 } from '~/components/globals'
-import GridObjectDefault from '~/components/grids/grid-object-default'
+import GridObjectDefault, {
+  objectsReduceSell
+} from '~/components/grids/grid-object-default'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import {
-  cached,
-  cacheQuery,
-  getObjectsArtists,
-  getObjectsObjects,
-  ObjectsArtist,
-  ObjectsObject
-} from '~/utils/contentful'
+import { cacheQuery, ObjectsArtist, ObjectsObject } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import sortArtists from '~/utils/sortArtists'
 
-export const headers = () => {
-  return {
-    'X-Cached': cached
+type Data = {
+  objects: {
+    items: Pick<
+      ObjectsObject,
+      | 'sys'
+      | 'name'
+      | 'imagesCollection'
+      | 'priceSale'
+      | 'sellOnline'
+      | 'stock'
+      | 'variationsCollection'
+    >[]
   }
+  artists: { items: Pick<ObjectsArtist, 'slug' | 'artist' | 'image'>[] }
 }
-export const loader: LoaderFunction = async props =>
-  await cacheQuery(30, props, async () => {
-    const objectsObjects = shuffle(await getObjectsObjects(props)).slice(0, 6)
-    const objectsArtists = await getObjectsArtists(props)
-    return {
-      objectsObjects,
-      objectsArtists: sortBy(
-        objectsArtists,
-        ({ artist }) => artist.match(new RegExp(/\b(\w+)\W*$/))![0]
+export const loader: LoaderFunction = async props => {
+  const query: QueryOptions<{ locale: string }> = {
+    variables: { locale: props.params.locale! },
+    query: gql`
+      query Index($locale: String) {
+        objects: objectsObjectCollection(locale: $locale, limit: 50) {
+          items {
+            sys {
+              id
+            }
+            name
+            imagesCollection(limit: 1) {
+              items {
+                url
+              }
+            }
+            priceSale
+            sellOnline
+            stock
+            variationsCollection(limit: 50) {
+              items {
+                priceSale
+                sellOnline
+                stock
+              }
+            }
+          }
+        }
+        artists: objectsArtistCollection(locale: $locale) {
+          items {
+            slug
+            artist
+            image {
+              url
+            }
+          }
+        }
+      }
+    `
+  }
+  const data = await cacheQuery<Data>(query, 30, props)
+
+  return json({
+    objects: {
+      ...data.objects,
+      items: shuffle(data.objects.items.reduce(objectsReduceSell, [])).slice(
+        0,
+        6
       )
-    }
+    },
+    artists: sortArtists(data.artists)
   })
+}
 
 export const meta: MetaFunction = () => ({
   title: SEOTitle(),
@@ -45,24 +93,21 @@ export let handle = {
 
 const PageIndex = () => {
   const { t } = useTranslation('index')
-  const data = useLoaderData<{
-    objectsObjects: ObjectsObject[]
-    objectsArtists: ObjectsArtist[]
-  }>()
+  const data = useLoaderData<Data>()
 
   return (
     <>
       <div className='section-online-shop mb-3'>
         <H2>{t('online-shop')}</H2>
         <GridObjectDefault
-          objects={data.objectsObjects}
+          objects={data.objects.items}
           // giftCard={data.giftCard}
         />
       </div>
       <div className='section-collection'>
         <H2>{t('collection')}</H2>
         <div className='grid grid-cols-6 gap-x-4 gap-y-8'>
-          {data.objectsArtists.map(artist => (
+          {data.artists.items.map(artist => (
             <div key={artist.artist} className='group cursor-pointer'>
               <Link to={`/artist/${artist.slug}`}>
                 <ContentfulImage

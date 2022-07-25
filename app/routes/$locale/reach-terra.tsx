@@ -1,30 +1,51 @@
+import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import RichText from '~/components/richText'
-import i18next from '~/i18next.server'
-import { cacheQuery, getReachTerra, ReachTerra } from '~/utils/contentful'
+import { cacheQuery, ReachTerra, richTextLinks } from '~/utils/contentful'
+import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const loader: LoaderFunction = async props =>
-  await cacheQuery(30, props, async () => {
-    const t = await i18next.getFixedT(props.request, 'common')
-    const meta = { title: t('pages.reach-terra') }
+type Data = {
+  meta: { title: string }
+  data: { page: ReachTerra }
+}
+export const loader: LoaderFunction = async props => {
+  const query: QueryOptions<{ locale: string }> = {
+    variables: { locale: props.params.locale! },
+    query: gql`
+      query Index($locale: String) {
+        page: informationReachTerra ( locale: $locale, id: "7Hr9VIqrByJWQpkMVgxwN6" ) {
+          description {
+            json
+            ${richTextLinks}
+          }
+        }
+      }
+    `
+  }
+  const data = await cacheQuery<Data['data']>(query, 30, props)
+  const meta = await loadMeta(props, { titleKey: 'pages.reach-terra' })
 
-    return { meta, data: await getReachTerra(props) }
-  })
+  return json({ meta, data })
+}
 
-export const meta: MetaFunction = ({ data: { meta, data } }) => ({
-  title: SEOTitle(meta.title),
-  keywords: SEOKeywords(meta.title),
-  description: documentToPlainTextString(data.description.json).substring(
-    0,
-    199
-  )
-})
+export const meta: MetaFunction = ({ data }: { data: Data }) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title]),
+    ...(data?.data?.page?.description?.json && {
+      description: documentToPlainTextString(
+        data.data.page.description.json
+      ).substring(0, 199)
+    })
+  }
 
 const PageReachTerra = () => {
-  const { data } = useLoaderData<{ data: ReachTerra }>()
+  const {
+    data: { page }
+  } = useLoaderData<Data>()
 
   return (
     <>
@@ -41,7 +62,7 @@ const PageReachTerra = () => {
           </div>
         </div>
         <div>
-          <RichText content={data.description} assetWidth={471} />
+          <RichText content={page.description} assetWidth={471} />
         </div>
       </div>
     </>

@@ -1,6 +1,6 @@
+import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import { LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { max } from 'lodash'
 import { useState } from 'react'
@@ -16,115 +16,263 @@ import RichText from '~/components/richText'
 import {
   cacheQuery,
   CommonImage,
-  getObjectsObject,
   ObjectsObjectVariation,
-  ObjectsObject_NameLocalized
+  ObjectsObject_NameLocalized,
+  richTextLinks
 } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const loader: LoaderFunction = async props =>
-  await cacheQuery(30, props, async () => await getObjectsObject(props))
+type Data = {
+  object: ObjectsObject_NameLocalized
+}
+export const loader: LoaderFunction = async props => {
+  const query: QueryOptions<{ locale: string; id: string }> = {
+    variables: { locale: props.params.locale!, id: props.params.id! },
+    query: gql`
+      query Exhibition($locale: String, $id: String!) {
+        object: objectsObject (locale: $locale, id: $id) {
+          sys {
+            id
+          }
+          name_nl: name (locale: "nl")
+          name_en: name (locale: "en")
+          description {
+            json
+            ${richTextLinks}
+          }
+          imagesCollection {
+            items {
+              url
+            }
+          }
+          artist {
+            slug
+            artist
+            linkedFrom {
+              objectsObjectCollection (locale: "nl") {
+                items {
+                  sys {
+                    id
+                  }
+                  name (locale: $locale)
+                  imagesCollection (limit: 1) {
+                    items {
+                      url
+                    }
+                  }
+                  priceSale
+                }
+              }
+            }
+          }
+          kunstKoop
+          sellOnline
+          priceOriginal
+          priceSale
+          sku
+          stock
+          variationsCollection {
+            items {
+              sys {
+                id
+              }
+              sku
+              variant {
+                variant_nl: variant (locale: "nl")
+                variant_en: variant (locale: "en")
+              }
+              colour {
+                colour_nl: colour (locale: "nl")
+                colour_en: colour (locale: "en")
+              }
+              size {
+                size_nl: size (locale: "nl")
+                size_en: size (locale: "en")
+              }
+              priceOriginal
+              priceSale
+              sellOnline
+              stock
+              image {
+                url
+              }
+            }
+          }
+          year {
+            year
+          }
+          techniqueCollection {
+            items {
+              technique
+            }
+          }
+          materialCollection {
+            items {
+              material
+            }
+          }
+          dimensionWidth
+          dimensionLength
+          dimensionHeight
+          dimensionDiameter
+          dimensionDepth
+        }
+      }
+    `
+  }
+  const data = await cacheQuery<Data>(query, 30, props)
 
-export const meta: MetaFunction = ({ data, params: { locale } }) => ({
-  title: SEOTitle(data.name[locale!]),
-  keywords: SEOKeywords([data.name[locale!]]),
-  ...(data.description && {
-    description: documentToPlainTextString(data.description.json).substring(
-      0,
-      199
-    )
-  })
-})
+  if (!data?.object) {
+    throw json('Not Found', { status: 404 })
+  }
+
+  const tempObj = { ...data.object }
+  tempObj.name = { nl: data.object.name_nl, en: data.object.name_en }
+  delete tempObj.name_nl
+  delete tempObj.name_en
+
+  if (tempObj.variationsCollection) {
+    tempObj.variationsCollection = {
+      ...tempObj.variationsCollection,
+      items: tempObj.variationsCollection.items.map(item => ({
+        ...item,
+        variant: item.variant
+          ? { nl: item.variant.variant_nl, en: item.variant.variant_en }
+          : undefined,
+        colour: item.colour
+          ? { nl: item.colour.colour_nl, en: item.colour.colour_en }
+          : undefined,
+        size: item.size
+          ? { nl: item.size.size_nl, en: item.size.size_en }
+          : undefined
+      }))
+    }
+  }
+
+  return json({ object: tempObj })
+}
+
+export const meta: MetaFunction = ({
+  data,
+  params: { locale }
+}: {
+  data: Data
+  params: any
+}) =>
+  data?.object && {
+    title: SEOTitle(data.object.name[locale!]),
+    keywords: SEOKeywords([data.object.name[locale!]]),
+    ...(data.object.description && {
+      description: documentToPlainTextString(
+        data.object.description.json
+      ).substring(0, 199)
+    })
+  }
 export const handle = {
   i18n: 'object',
-  structuredData: (
-    data: ObjectsObject_NameLocalized,
-    { locale }: any
-  ): WithContext<Product> => ({
+  structuredData: (data: Data, { locale }: any): WithContext<Product> => ({
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: data.name[locale],
-    image: data.imagesCollection?.items[0].url,
-    description:
-      data.description &&
-      documentToPlainTextString(data.description.json).substring(0, 199),
+    name: data.object.name[locale],
+    image: data.object.imagesCollection?.items[0].url,
+    ...(data.object.description && {
+      description: documentToPlainTextString(
+        data.object.description.json
+      ).substring(0, 199)
+    }),
     offers: {
       '@type': 'Offer',
-      price: data.variationsCollection?.items.length
-        ? max(data.variationsCollection.items.map(item => item.priceOriginal))
-        : data.priceSale
-        ? data.priceSale
-        : data.priceOriginal,
+      price: data.object.variationsCollection?.items.length
+        ? max(
+            data.object.variationsCollection.items.map(
+              item => item.priceOriginal
+            )
+          )
+        : data.object.priceSale
+        ? data.object.priceSale
+        : data.object.priceOriginal,
       priceCurrency: 'EUR'
     },
     subjectOf: {
       '@type': 'CreativeWork',
-      abstract:
-        data.description &&
-        documentToPlainTextString(data.description.json).substring(0, 199),
-      author: { '@type': 'Person', name: data.artist.artist },
-      ...(data.materialCollection?.items.length && {
-        material: data.materialCollection.items.map(
+      ...(data.object.description && {
+        abstract: documentToPlainTextString(
+          data.object.description.json
+        ).substring(0, 199)
+      }),
+      author: { '@type': 'Person', name: data.object.artist.artist },
+      ...(data.object.materialCollection?.items.length && {
+        material: data.object.materialCollection.items.map(
           material => material.material
         )
       })
     },
-    ...(data.dimensionDepth && {
-      depth: { '@type': 'QuantitativeValue', value: data.dimensionDepth }
+    ...(data.object.dimensionDepth && {
+      depth: { '@type': 'QuantitativeValue', value: data.object.dimensionDepth }
     }),
-    ...(data.dimensionHeight && {
-      height: { '@type': 'QuantitativeValue', value: data.dimensionHeight }
+    ...(data.object.dimensionHeight && {
+      height: {
+        '@type': 'QuantitativeValue',
+        value: data.object.dimensionHeight
+      }
     }),
-    ...(data.dimensionWidth && {
-      width: { '@type': 'QuantitativeValue', value: data.dimensionWidth }
+    ...(data.object.dimensionWidth && {
+      width: { '@type': 'QuantitativeValue', value: data.object.dimensionWidth }
     }),
-    ...(data.artist.linkedFrom.objectsObjectCollection.items.length && {
-      isRelatedTo: data.artist.linkedFrom.objectsObjectCollection.items.map(
-        item => ({
-          '@context': 'http://schema.org',
-          '@type': 'Product',
-          url: `https://www.terra-delft.nl/object/${item.sys.id}`,
-          name: item.name,
-          image: item.imagesCollection?.items[0].url,
-          offers: {
-            '@type': 'Offer',
-            price: item.variationsCollection?.items.length
-              ? max(
-                  item.variationsCollection.items.map(
-                    item => item.priceOriginal
+    ...(data.object.artist.linkedFrom.objectsObjectCollection.items.length && {
+      isRelatedTo:
+        data.object.artist.linkedFrom.objectsObjectCollection.items.map(
+          item => ({
+            '@context': 'http://schema.org',
+            '@type': 'Product',
+            url: `https://www.terra-delft.nl/object/${item.sys.id}`,
+            name: item.name,
+            image: item.imagesCollection?.items[0].url,
+            offers: {
+              '@type': 'Offer',
+              price: item.variationsCollection?.items.length
+                ? max(
+                    item.variationsCollection.items.map(
+                      item => item.priceOriginal
+                    )
                   )
+                : item.priceSale
+                ? item.priceSale
+                : item.priceOriginal,
+              priceCurrency: 'EUR'
+            },
+            subjectOf: {
+              '@type': 'CreativeWork',
+              abstract:
+                item.description &&
+                documentToPlainTextString(item.description.json),
+              author: { '@type': 'Person', name: data.object.artist.artist },
+              ...(item.materialCollection?.items.length && {
+                material: item.materialCollection.items.map(
+                  material => material.material
                 )
-              : item.priceSale
-              ? item.priceSale
-              : item.priceOriginal,
-            priceCurrency: 'EUR'
-          },
-          subjectOf: {
-            '@type': 'CreativeWork',
-            abstract:
-              item.description &&
-              documentToPlainTextString(item.description.json),
-            author: { '@type': 'Person', name: data.artist.artist },
-            ...(item.materialCollection?.items.length && {
-              material: item.materialCollection.items.map(
-                material => material.material
-              )
+              })
+            },
+            ...(item.dimensionDepth && {
+              depth: {
+                '@type': 'QuantitativeValue',
+                value: item.dimensionDepth
+              }
+            }),
+            ...(item.dimensionHeight && {
+              height: {
+                '@type': 'QuantitativeValue',
+                value: item.dimensionHeight
+              }
+            }),
+            ...(item.dimensionWidth && {
+              height: {
+                '@type': 'QuantitativeValue',
+                value: item.dimensionWidth
+              }
             })
-          },
-          ...(item.dimensionDepth && {
-            depth: { '@type': 'QuantitativeValue', value: item.dimensionDepth }
-          }),
-          ...(item.dimensionHeight && {
-            height: {
-              '@type': 'QuantitativeValue',
-              value: item.dimensionHeight
-            }
-          }),
-          ...(item.dimensionWidth && {
-            height: { '@type': 'QuantitativeValue', value: item.dimensionWidth }
           })
-        })
-      )
+        )
     })
   })
 }
@@ -138,8 +286,8 @@ export type SelectedVariation = {
 } | null
 
 const PageObject = () => {
+  const { object } = useLoaderData<Data>()
   const { t, i18n } = useTranslation('object')
-  const objectsObject = useLoaderData<ObjectsObject_NameLocalized>()
 
   const [selectedVariation, setSelectedVariation] =
     useState<SelectedVariation>()
@@ -150,82 +298,76 @@ const PageObject = () => {
     <>
       <div className='grid grid-cols-2 gap-4'>
         <ObjectImages
-          images={objectsObject.imagesCollection?.items}
+          images={object.imagesCollection?.items}
           selectedVariation={selectedVariation}
         />
         <div>
           <H1>
-            {typeof objectsObject.name !== 'string' &&
-              objectsObject.name[i18n.language]}
+            {typeof object.name !== 'string' && object.name[i18n.language]}
           </H1>
           <H3>
             {t('artist')}{' '}
-            <Link to={objectsObject.artist.slug}>
-              {objectsObject.artist.artist}
-            </Link>
+            <Link to={object.artist.slug}>{object.artist.artist}</Link>
           </H3>
           <ObjectSell
-            object={objectsObject}
+            object={object}
             setSelectedVariation={setSelectedVariation}
           />
           <table className='table-auto mb-4'>
             <tbody>
-              {objectsObject.year && (
-                <ObjectAttribute
-                  type={t('year')}
-                  value={objectsObject.year.year}
-                />
+              {object.year && (
+                <ObjectAttribute type={t('year')} value={object.year.year} />
               )}
-              {objectsObject.techniqueCollection && (
+              {object.techniqueCollection && (
                 <ObjectAttribute
                   type={t('technique')}
-                  value={objectsObject.techniqueCollection.items.map(
+                  value={object.techniqueCollection.items.map(
                     item => item.technique
                   )}
                 />
               )}
-              {objectsObject.materialCollection && (
+              {object.materialCollection && (
                 <ObjectAttribute
                   type={t('material')}
-                  value={objectsObject.materialCollection.items.map(
+                  value={object.materialCollection.items.map(
                     item => item.material
                   )}
                 />
               )}
-              {objectsObject.dimensionWidth && (
+              {object.dimensionWidth && (
                 <ObjectAttribute
                   type={t('dimensionWidth')}
-                  value={objectsObject.dimensionWidth}
+                  value={object.dimensionWidth}
                 />
               )}
-              {objectsObject.dimensionLength && (
+              {object.dimensionLength && (
                 <ObjectAttribute
                   type={t('dimensionLength')}
-                  value={objectsObject.dimensionLength}
+                  value={object.dimensionLength}
                 />
               )}
-              {objectsObject.dimensionHeight && (
+              {object.dimensionHeight && (
                 <ObjectAttribute
                   type={t('dimensionHeight')}
-                  value={objectsObject.dimensionHeight}
+                  value={object.dimensionHeight}
                 />
               )}
-              {objectsObject.dimensionDiameter && (
+              {object.dimensionDiameter && (
                 <ObjectAttribute
                   type={t('dimensionDiameter')}
-                  value={objectsObject.dimensionDiameter}
+                  value={object.dimensionDiameter}
                 />
               )}
-              {objectsObject.dimensionDepth && (
+              {object.dimensionDepth && (
                 <ObjectAttribute
                   type={t('dimensionDepth')}
-                  value={objectsObject.dimensionDepth}
+                  value={object.dimensionDepth}
                 />
               )}
             </tbody>
           </table>
           <RichText
-            content={objectsObject.description}
+            content={object.description}
             className='mt-2'
             assetWidth={634}
           />
@@ -251,13 +393,12 @@ const PageObject = () => {
           </div>
         </div>
       </div>
-      {objectsObject.artist.linkedFrom.objectsObjectCollection.items.length >
-        0 && (
+      {object.artist.linkedFrom.objectsObjectCollection.items.length > 0 && (
         <div className='mt-8'>
-          <H2>{t('related', { artist: objectsObject.artist.artist })}</H2>
+          <H2>{t('related', { artist: object.artist.artist })}</H2>
           <GridObjectDefault
-            objects={objectsObject.artist.linkedFrom.objectsObjectCollection.items.filter(
-              o => o.sys.id !== objectsObject.sys.id
+            objects={object.artist.linkedFrom.objectsObjectCollection.items.filter(
+              o => o.sys.id !== object.sys.id
             )}
           />
         </div>

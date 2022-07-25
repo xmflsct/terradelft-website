@@ -49,6 +49,7 @@ const Pagination: React.FC<Props> = ({ basePath, page, total }) => {
         .filter(i => i > 0 && i <= total)
         .map(i => (
           <Link
+            key={i}
             to={`${basePath}/${i}`}
             children={i}
             className={current === i ? active : inactive}

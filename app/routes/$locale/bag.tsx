@@ -1,5 +1,7 @@
+import { gql, QueryOptions } from '@apollo/client'
 import {
   ActionFunction,
+  json,
   LoaderFunction,
   MetaFunction
 } from '@remix-run/cloudflare'
@@ -9,7 +11,7 @@ import BagCheckout from '~/components/bag/checkout'
 import BagList from '~/components/bag/list'
 import { H1 } from '~/components/globals'
 import checkout from '~/utils/checkout'
-import { cacheQuery, getShippingRates, ShippingRates } from '~/utils/contentful'
+import { cacheQuery, ShippingRates } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const action: ActionFunction = async ({ context, request }) => {
@@ -35,17 +37,36 @@ export const action: ActionFunction = async ({ context, request }) => {
   }
 }
 
+export type BagData = {
+  env: { STRIPE_KEY_PUBLIC: string }
+  country: string
+  rates: ShippingRates
+}
 export const loader: LoaderFunction = async props => {
-  return {
-    env: { STRIPE_KEY_PUBLIC: props.context.STRIPE_KEY_PUBLIC },
-    // @ts-ignore
-    country: props.request.cf?.country || 'NL',
-    rates: await cacheQuery(
-      300,
-      props,
-      async () => await getShippingRates(props)
-    )
+  const query: QueryOptions<{ locale: string }> = {
+    variables: { locale: props.params.locale! },
+    query: gql`
+      query Index($locale: String) {
+        shippingRates: shippingRatesCollection(
+          locale: $locale
+          limit: 1
+          where: { year: "2022" }
+        ) {
+          items {
+            rates
+          }
+        }
+      }
+    `
   }
+  const data = await cacheQuery<{
+    shippingRates: { items: { rates: ShippingRates }[] }
+  }>(query, 30, props)
+  const env = { STRIPE_KEY_PUBLIC: props.context.STRIPE_KEY_PUBLIC }
+  // @ts-ignore
+  const country = props.request.cf?.country || 'NL'
+
+  return json({ env, country, rates: data.shippingRates.items[0].rates })
 }
 
 export const meta: MetaFunction = () => ({
@@ -58,10 +79,7 @@ export let handle = {
 }
 
 const PageBag = () => {
-  const data = useLoaderData<{
-    country: string
-    rates: ShippingRates
-  }>()
+  const data = useLoaderData<BagData>()
   const { t } = useTranslation('bag')
 
   return (
