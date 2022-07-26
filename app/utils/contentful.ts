@@ -91,9 +91,9 @@ export type ObjectsSize = { sys: { id: string }; size: string }
 export type ObjectsObjectVariation = {
   sys: { id: string }
   sku?: string
-  variant?: { variant: string }
-  colour?: { colour: string }
-  size?: { size: string }
+  variant?: { sys: { id: string }; variant: string }
+  colour?: { sys: { id: string }; colour: string }
+  size?: { sys: { id: string }; size: string }
   priceOriginal: number
   priceSale?: number
   sellOnline: boolean
