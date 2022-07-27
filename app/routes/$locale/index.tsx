@@ -3,17 +3,24 @@ import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { shuffle } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import { H2 } from '~/components/globals'
+import { H2, H3 } from '~/components/globals'
 import GridObjectDefault, {
   objectsReduceSell
 } from '~/components/grids/grid-object-default'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import { cacheQuery, ObjectsArtist, ObjectsObject } from '~/utils/contentful'
+import RichText from '~/components/richText'
+import {
+  Announcement,
+  cacheQuery,
+  ObjectsArtist,
+  ObjectsObject
+} from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import sortArtists from '~/utils/sortArtists'
 
 type Data = {
+  announcements?: { items: Announcement[] }
   objects: {
     items: Pick<
       ObjectsObject,
@@ -33,6 +40,17 @@ export const loader: LoaderFunction = async props => {
     variables: { locale: props.params.locale! },
     query: gql`
       query Index($locale: String) {
+        announcements: announcementCollection(
+          locale: $locale
+          where: { enabled: true }
+        ) {
+          items {
+            title
+            content {
+              json
+            }
+          }
+        }
         objects: objectsObjectCollection(locale: $locale, limit: 50) {
           items {
             sys {
@@ -70,7 +88,8 @@ export const loader: LoaderFunction = async props => {
   }
   const data = await cacheQuery<Data>(query, 30, props)
 
-  return json({
+  return json<Data>({
+    announcements: data.announcements,
     objects: {
       ...data.objects,
       items: shuffle(data.objects.items.reduce(objectsReduceSell, [])).slice(
@@ -97,6 +116,19 @@ const PageIndex = () => {
 
   return (
     <>
+      {data.announcements?.items.length && (
+        <div className='grid grid-cols-6 gap-4 mb-2'>
+          {data.announcements.items.map((announcement, index) => (
+            <div
+              key={index}
+              className='col-start-2 col-span-4 border-2 border-dotted border-secondary px-4 py-2 mb-2'
+            >
+              <H3 className='text-center'>{announcement.title}</H3>
+              <RichText content={announcement.content} assetWidth={200} />
+            </div>
+          ))}
+        </div>
+      )}
       <div className='section-online-shop mb-3'>
         <H2>{t('online-shop')}</H2>
         <GridObjectDefault

@@ -198,6 +198,8 @@ export type AboutTerra = {
 
 export type ReachTerra = { description: CommonRichText }
 
+export type Announcement = { title: string; content: CommonRichText }
+
 export const richTextLinks = `
 links {
   assets {
