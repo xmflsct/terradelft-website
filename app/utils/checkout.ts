@@ -321,7 +321,7 @@ const checkout = async ({
         }),
     shipping_options,
     locale: content.locale,
-    success_url: content.urls.success + '?session_id={CHECKOUT_SESSION_ID}',
+    success_url: content.urls.success + '/id/{CHECKOUT_SESSION_ID}',
     cancel_url: content.urls.cancel,
     phone_number_collection: { enabled: true }
   }
