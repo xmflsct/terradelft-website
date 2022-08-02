@@ -5,7 +5,7 @@ const sortArtists = ({
   items,
   ...rest
 }: Readonly<{
-  items: Readonly<Pick<ObjectsArtist, 'artist'>[]>
+  items: Readonly<ObjectsArtist[]>
 }>) => {
   return {
     ...rest,

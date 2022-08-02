@@ -1,23 +1,24 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import type { Event, WithContext } from 'schema-dts'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
-import { cacheQuery, EventsEvent, richTextLinks } from '~/utils/contentful'
+import { cacheQuery, EventsEvent, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  exhibition: Omit<EventsEvent, 'sys' | 'datetimeAllDay' | 'terraInChina'>
-}
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string; id: string }> = {
-    variables: { locale: props.params.locale!, id: props.params.id! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{
+    exhibition: Omit<EventsEvent, 'sys' | 'datetimeAllDay' | 'terraInChina'>
+  }>({
+    ...args,
+    variables: { id: args.params.id! },
     query: gql`
-      query Exhibition($locale: String, $id: String!) {
+      query PageExhibition($locale: String, $id: String!) {
         exhibition: eventsEvent (locale: $locale, id: $id) {
           name
           datetimeStart
@@ -47,13 +48,12 @@ export const loader: LoaderFunction = async props => {
           }
           description {
             json
-            ${richTextLinks}
+            ${RICH_TEXT_LINKS}
           }
         }
       }
     `
-  }
-  const data = await cacheQuery<Data>(query, 30, props)
+  })
 
   if (!data?.exhibition) {
     throw json('Not Found', { status: 404 })
@@ -61,18 +61,23 @@ export const loader: LoaderFunction = async props => {
   return json(data)
 }
 
-export const meta: MetaFunction = ({ data }: { data: Data }) =>
-  data?.exhibition && {
-    title: SEOTitle(data.exhibition.name),
-    keywords: SEOKeywords([data.exhibition.name]),
-    ...(data.exhibition.description && {
-      description: documentToPlainTextString(
-        data.exhibition.description.json
-      ).substring(0, 199)
-    })
-  }
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.exhibition.name),
+  keywords: SEOKeywords([data.exhibition.name]),
+  ...(data.exhibition.description && {
+    description: documentToPlainTextString(
+      data.exhibition.description.json
+    ).substring(0, 199)
+  })
+})
 export const handle = {
-  structuredData: ({ exhibition }: Data): WithContext<Event> =>
+  structuredData: ({
+    exhibition
+  }: LoaderData<typeof loader>): WithContext<Event> =>
     exhibition && {
       '@context': 'https://schema.org',
       '@type': 'Event',
@@ -105,7 +110,7 @@ export const handle = {
 }
 
 const PageExhibition = () => {
-  const { exhibition } = useLoaderData<Data>()
+  const { exhibition } = useLoaderData<typeof loader>()
 
   return (
     <div className='grid grid-cols-6 gap-4'>

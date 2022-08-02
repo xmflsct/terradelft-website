@@ -1,6 +1,6 @@
-import { gql, QueryOptions } from '@apollo/client'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { shuffle } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { H2, H3 } from '~/components/globals'
@@ -19,27 +19,17 @@ import {
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import sortArtists from '~/utils/sortArtists'
 
-type Data = {
-  announcements?: { items: Announcement[] }
-  objects: {
-    items: Pick<
-      ObjectsObject,
-      | 'sys'
-      | 'name'
-      | 'imagesCollection'
-      | 'priceSale'
-      | 'sellOnline'
-      | 'stock'
-      | 'variationsCollection'
-    >[]
-  }
-  artists: { items: Pick<ObjectsArtist, 'slug' | 'artist' | 'image'>[] }
-}
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string }> = {
-    variables: { locale: props.params.locale! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{
+    announcements?: { items: Announcement[] }
+    objects: {
+      items: ObjectsObject[]
+    }
+    artists: { items: ObjectsArtist[] }
+  }>({
+    ...args,
     query: gql`
-      query Index($locale: String) {
+      query PageIndex($locale: String!) {
         announcements: announcementCollection(
           locale: $locale
           where: { enabled: true }
@@ -85,10 +75,9 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<Data>(query, 30, props)
+  })
 
-  return json<Data>({
+  return json({
     announcements: data.announcements,
     objects: {
       ...data.objects,
@@ -112,7 +101,7 @@ export let handle = {
 
 const PageIndex = () => {
   const { t } = useTranslation('index')
-  const data = useLoaderData<Data>()
+  const data = useLoaderData<typeof loader>()
 
   return (
     <>

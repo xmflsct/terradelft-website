@@ -1,7 +1,7 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { max } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,20 +16,21 @@ import RichText from '~/components/richText'
 import {
   cacheQuery,
   CommonImage,
+  ObjectsObject,
   ObjectsObjectVariation,
-  ObjectsObject_NameLocalized,
-  richTextLinks
+  RICH_TEXT_LINKS
 } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  object: ObjectsObject_NameLocalized
-}
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string; id: string }> = {
-    variables: { locale: props.params.locale!, id: props.params.id! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{
+    object: Omit<ObjectsObject, 'name'> & { name_nl?: string; name_en?: string }
+  }>({
+    ...args,
+    variables: { id: args.params.id },
     query: gql`
-      query Exhibition($locale: String, $id: String!) {
+      query PageObject($locale: String, $id: String!) {
         object: objectsObject (locale: $locale, id: $id) {
           sys {
             id
@@ -38,7 +39,7 @@ export const loader: LoaderFunction = async props => {
           name_en: name (locale: "en")
           description {
             json
-            ${richTextLinks}
+            ${RICH_TEXT_LINKS}
           }
           imagesCollection {
             items {
@@ -119,160 +120,169 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<Data>(query, 30, props)
+  })
 
   if (!data?.object) {
     throw json('Not Found', { status: 404 })
   }
 
-  const tempObj = { ...data.object }
-  tempObj.name = { nl: data.object.name_nl, en: data.object.name_en }
+  const tempObj = {
+    ...data.object,
+    name: { nl: data.object.name_nl, en: data.object.name_en }
+  }
   delete tempObj.name_nl
   delete tempObj.name_en
 
   if (tempObj.variationsCollection) {
     tempObj.variationsCollection = {
       ...tempObj.variationsCollection,
-      items: tempObj.variationsCollection.items.map(item => ({
-        ...item,
-        variant: item.variant
-          ? { nl: item.variant.variant_nl, en: item.variant.variant_en }
-          : undefined,
-        colour: item.colour
-          ? { nl: item.colour.colour_nl, en: item.colour.colour_en }
-          : undefined,
-        size: item.size
-          ? { nl: item.size.size_nl, en: item.size.size_en }
-          : undefined
-      }))
+      items: tempObj.variationsCollection.items.map(
+        (
+          item: Omit<ObjectsObjectVariation, 'variant'> & {
+            variant?: { variant_nl?: string; variant_en?: string }
+            colour?: { colour_nl?: string; colour_en?: string }
+            size?: { size_nl?: string; size_en?: string }
+          }
+        ) => ({
+          ...item,
+          variant: item.variant
+            ? { nl: item.variant.variant_nl, en: item.variant.variant_en }
+            : undefined,
+          colour: item.colour
+            ? { nl: item.colour.colour_nl, en: item.colour.colour_en }
+            : undefined,
+          size: item.size
+            ? { nl: item.size.size_nl, en: item.size.size_en }
+            : undefined
+        })
+      )
     }
   }
 
-  return json({ object: tempObj })
+  return json(tempObj)
 }
 
 export const meta: MetaFunction = ({
-  data,
+  data: object,
   params: { locale }
 }: {
-  data: Data
-  params: any
-}) =>
-  data?.object && {
-    title: SEOTitle(data.object.name[locale!]),
-    keywords: SEOKeywords([data.object.name[locale!]]),
-    ...(data.object.description && {
-      description: documentToPlainTextString(
-        data.object.description.json
-      ).substring(0, 199)
-    })
-  }
+  data: LoaderData<typeof loader>
+  params: LoaderArgs['params']
+}) => ({
+  title: SEOTitle(object.name[locale]),
+  keywords: SEOKeywords([object.name[locale] || '']),
+  ...(object.description && {
+    description: documentToPlainTextString(object.description.json).substring(
+      0,
+      199
+    )
+  })
+})
 export const handle = {
   i18n: 'object',
-  structuredData: (data: Data, { locale }: any): WithContext<Product> => ({
+  structuredData: (
+    object: LoaderData<typeof loader>,
+    { locale }: { locale: 'en' | 'nl' }
+  ): WithContext<Product> => ({
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: data.object.name[locale],
-    image: data.object.imagesCollection?.items[0].url,
-    ...(data.object.description && {
-      description: documentToPlainTextString(
-        data.object.description.json
-      ).substring(0, 199)
+    name: object.name[locale],
+    image: object.imagesCollection?.items[0].url,
+    ...(object.description && {
+      description: documentToPlainTextString(object.description.json).substring(
+        0,
+        199
+      )
     }),
     offers: {
       '@type': 'Offer',
-      price: data.object.variationsCollection?.items.length
-        ? max(
-            data.object.variationsCollection.items.map(
-              item => item.priceOriginal
-            )
-          )
-        : data.object.priceSale
-        ? data.object.priceSale
-        : data.object.priceOriginal,
+      price: object.variationsCollection?.items.length
+        ? max(object.variationsCollection.items.map(item => item.priceOriginal))
+        : object.priceSale
+        ? object.priceSale
+        : object.priceOriginal,
       priceCurrency: 'EUR'
     },
     subjectOf: {
       '@type': 'CreativeWork',
-      ...(data.object.description && {
-        abstract: documentToPlainTextString(
-          data.object.description.json
-        ).substring(0, 199)
+      ...(object.description && {
+        abstract: documentToPlainTextString(object.description.json).substring(
+          0,
+          199
+        )
       }),
-      author: { '@type': 'Person', name: data.object.artist.artist },
-      ...(data.object.materialCollection?.items.length && {
-        material: data.object.materialCollection.items.map(
+      author: { '@type': 'Person', name: object.artist.artist },
+      ...(object.materialCollection?.items.length && {
+        material: object.materialCollection.items.map(
           material => material.material
         )
       })
     },
-    ...(data.object.dimensionDepth && {
-      depth: { '@type': 'QuantitativeValue', value: data.object.dimensionDepth }
+    ...(object.dimensionDepth && {
+      depth: { '@type': 'QuantitativeValue', value: object.dimensionDepth }
     }),
-    ...(data.object.dimensionHeight && {
+    ...(object.dimensionHeight && {
       height: {
         '@type': 'QuantitativeValue',
-        value: data.object.dimensionHeight
+        value: object.dimensionHeight
       }
     }),
-    ...(data.object.dimensionWidth && {
-      width: { '@type': 'QuantitativeValue', value: data.object.dimensionWidth }
+    ...(object.dimensionWidth && {
+      width: { '@type': 'QuantitativeValue', value: object.dimensionWidth }
     }),
-    ...(data.object.artist.linkedFrom.objectsObjectCollection.items.length && {
-      isRelatedTo:
-        data.object.artist.linkedFrom.objectsObjectCollection.items.map(
-          item => ({
-            '@context': 'http://schema.org',
-            '@type': 'Product',
-            url: `https://www.terra-delft.nl/object/${item.sys.id}`,
-            name: item.name,
-            image: item.imagesCollection?.items[0].url,
-            offers: {
-              '@type': 'Offer',
-              price: item.variationsCollection?.items.length
-                ? max(
-                    item.variationsCollection.items.map(
-                      item => item.priceOriginal
-                    )
+    ...(object.artist.linkedFrom.objectsObjectCollection.items.length && {
+      isRelatedTo: object.artist.linkedFrom.objectsObjectCollection.items.map(
+        item => ({
+          '@context': 'http://schema.org',
+          '@type': 'Product',
+          url: `https://www.terra-delft.nl/object/${item.sys.id}`,
+          name: item.name,
+          image: item.imagesCollection?.items[0].url,
+          offers: {
+            '@type': 'Offer',
+            price: item.variationsCollection?.items.length
+              ? max(
+                  item.variationsCollection.items.map(
+                    item => item.priceOriginal
                   )
-                : item.priceSale
-                ? item.priceSale
-                : item.priceOriginal,
-              priceCurrency: 'EUR'
-            },
-            subjectOf: {
-              '@type': 'CreativeWork',
-              abstract:
-                item.description &&
-                documentToPlainTextString(item.description.json),
-              author: { '@type': 'Person', name: data.object.artist.artist },
-              ...(item.materialCollection?.items.length && {
-                material: item.materialCollection.items.map(
-                  material => material.material
                 )
-              })
-            },
-            ...(item.dimensionDepth && {
-              depth: {
-                '@type': 'QuantitativeValue',
-                value: item.dimensionDepth
-              }
-            }),
-            ...(item.dimensionHeight && {
-              height: {
-                '@type': 'QuantitativeValue',
-                value: item.dimensionHeight
-              }
-            }),
-            ...(item.dimensionWidth && {
-              height: {
-                '@type': 'QuantitativeValue',
-                value: item.dimensionWidth
-              }
+              : item.priceSale
+              ? item.priceSale
+              : item.priceOriginal,
+            priceCurrency: 'EUR'
+          },
+          subjectOf: {
+            '@type': 'CreativeWork',
+            abstract:
+              item.description &&
+              documentToPlainTextString(item.description.json),
+            author: { '@type': 'Person', name: object.artist.artist },
+            ...(item.materialCollection?.items.length && {
+              material: item.materialCollection.items.map(
+                material => material.material
+              )
             })
+          },
+          ...(item.dimensionDepth && {
+            depth: {
+              '@type': 'QuantitativeValue',
+              value: item.dimensionDepth
+            }
+          }),
+          ...(item.dimensionHeight && {
+            height: {
+              '@type': 'QuantitativeValue',
+              value: item.dimensionHeight
+            }
+          }),
+          ...(item.dimensionWidth && {
+            height: {
+              '@type': 'QuantitativeValue',
+              value: item.dimensionWidth
+            }
           })
-        )
+        })
+      )
     })
   })
 }
@@ -286,7 +296,7 @@ export type SelectedVariation = {
 } | null
 
 const PageObject = () => {
-  const { object } = useLoaderData<Data>()
+  const object = useLoaderData<typeof loader>()
   const { t, i18n } = useTranslation('object')
 
   const [selectedVariation, setSelectedVariation] =

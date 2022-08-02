@@ -1,4 +1,4 @@
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useSubmit } from '@remix-run/react'
 import { find, inRange, maxBy, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
@@ -12,6 +12,7 @@ import { currency } from '~/utils/formatNumber'
 import { getSellableObjects, SellableObject } from '~/utils/kv'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
 type Options = {
   prices: {
@@ -23,27 +24,20 @@ type Options = {
   variants: { label: string; value: string; isDisabled: boolean }[]
   colours: { label: string; value: string; isDisabled: boolean }[]
 }
-type Data = {
-  meta: { title: string }
-  data: {
-    options: Options
-    objects: SellableObject[]
-    page?: { total: number; current: number }
-  }
-}
-export const loader: LoaderFunction = async props => {
-  const page = parseInt(props.params.page || '') - 1
+
+export const loader = async (args: LoaderArgs) => {
+  const page = parseInt(args.params.page || '') - 1
   if (page < 0) {
     throw json('Not Found', { status: 404 })
   }
 
-  const meta = await loadMeta(props, {
+  const meta = await loadMeta(args, {
     titleKey: 'pages.shop',
-    titleOptions: { context: 'page', page: props.params.page }
+    titleOptions: { context: 'page', page: args.params.page }
   })
 
-  const locale = await i18next.getLocale(props.request)
-  const objects = await getSellableObjects(props)
+  const locale = await i18next.getLocale(args.request)
+  const objects = await getSellableObjects(args)
   const options: Options = {
     prices: [
       {
@@ -82,7 +76,7 @@ export const loader: LoaderFunction = async props => {
     colours: []
   }
 
-  const url = new URL(props.request.url)
+  const url = new URL(args.request.url)
   const searchParams = {
     price_min: url.searchParams.get('price[min]'),
     price_max: url.searchParams.get('price[max]'),
@@ -301,10 +295,7 @@ export const loader: LoaderFunction = async props => {
       options.colours,
       ({ label, isDisabled }) => label && isDisabled
     )
-    return json<Data>({
-      meta,
-      data: { options, objects: reducedObjects }
-    })
+    return json({ meta, data: { options, objects: reducedObjects } })
   }
 
   const perPage = 48
@@ -314,7 +305,7 @@ export const loader: LoaderFunction = async props => {
   )
   options.variants = sortBy(options.variants, ({ label }) => label)
   options.colours = sortBy(options.colours, ({ label }) => label)
-  return json<Data>({
+  return json({
     meta,
     data: {
       options,
@@ -324,19 +315,21 @@ export const loader: LoaderFunction = async props => {
   })
 }
 
-export const meta: MetaFunction = ({ data: { meta } }: { data: Data }) => ({
+export const meta: MetaFunction = ({
+  data: { meta }
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
   title: SEOTitle(meta.title),
   keywords: SEOKeywords([meta.title]),
   description: 'Terra Delft Website'
 })
-export let handle = {
-  i18n: 'shop'
-}
+export let handle = { i18n: 'shop' }
 
 const PageShopPage: React.FC = () => {
   const {
     data: { options, objects, page }
-  } = useLoaderData<Data>()
+  } = useLoaderData<typeof loader>()
 
   const { t } = useTranslation('shop')
 

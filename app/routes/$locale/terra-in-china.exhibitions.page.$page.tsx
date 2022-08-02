@@ -1,6 +1,6 @@
-import { gql, QueryOptions } from '@apollo/client'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useParams } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
@@ -10,45 +10,30 @@ import Pagination from '~/components/pagination'
 import { cacheQuery, EventsEvent } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  meta: { title: string }
-  data: {
-    exbhitions: {
-      total: number
-      items: Pick<
-        EventsEvent,
-        | 'sys'
-        | 'image'
-        | 'name'
-        | 'datetimeStart'
-        | 'datetimeEnd'
-        | 'typeCollection'
-      >[]
-    }
-  }
-}
-export const loader: LoaderFunction = async props => {
-  const page = parseInt(props.params.page || '') - 1
+export const loader = async (args: LoaderArgs) => {
+  const page = parseInt(args.params.page || '') - 1
   if (page < 0) {
     throw json('Not Found', { status: 404 })
   }
+
   const perPage = 9
 
-  const query: QueryOptions<{
-    locale: string
-    limit: number
-    skip: number
-    datetimeEnd_lt: string
-  }> = {
+  const data = await cacheQuery<{
+    exbhitions: {
+      total: number
+      items: EventsEvent[]
+    }
+  }>({
+    ...args,
     variables: {
-      locale: props.params.locale!,
       limit: perPage,
       skip: perPage * page,
       datetimeEnd_lt: new Date().toISOString()
     },
     query: gql`
-      query ExhibitionPage(
+      query PageTerraInChinaExhibitionsPage(
         $locale: String
         $limit: Int
         $skip: Int
@@ -81,11 +66,10 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<Data['data']>(query, 30, props)
-  const meta = await loadMeta(props, {
+  })
+  const meta = await loadMeta(args, {
     titleKey: 'pages.terra-in-china-exhibitions-page',
-    titleOptions: { page: props.params.page }
+    titleOptions: { page: args.params.page }
   })
 
   if (!data?.exbhitions?.items?.length) {
@@ -103,19 +87,22 @@ export const loader: LoaderFunction = async props => {
   })
 }
 
-export const meta: MetaFunction = ({ data }: { data: Data }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    description: data.meta.title
-  }
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.meta.title),
+  keywords: SEOKeywords([data.meta.title]),
+  description: data.meta.title
+})
 
-const PageTerraInChinaExhibitions = () => {
+const PageTerraInChinaExhibitionsPage = () => {
   const {
     data: {
       exbhitions: { total, items }
     }
-  } = useLoaderData<Data>()
+  } = useLoaderData<typeof loader>()
   const { page } = useParams()
   const { t } = useTranslation()
 
@@ -153,4 +140,4 @@ const PageTerraInChinaExhibitions = () => {
   )
 }
 
-export default PageTerraInChinaExhibitions
+export default PageTerraInChinaExhibitionsPage

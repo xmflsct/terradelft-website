@@ -1,51 +1,50 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import RichText from '~/components/richText'
-import { cacheQuery, ReachTerra, richTextLinks } from '~/utils/contentful'
+import { cacheQuery, ReachTerra, RICH_TEXT_LINKS } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  meta: { title: string }
-  data: { page: ReachTerra }
-}
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string }> = {
-    variables: { locale: props.params.locale! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{ page: ReachTerra }>({
+    ...args,
     query: gql`
-      query Index($locale: String) {
+      query PageReachTerra($locale: String) {
         page: informationReachTerra ( locale: $locale, id: "7Hr9VIqrByJWQpkMVgxwN6" ) {
           description {
             json
-            ${richTextLinks}
+            ${RICH_TEXT_LINKS}
           }
         }
       }
     `
-  }
-  const data = await cacheQuery<Data['data']>(query, 30, props)
-  const meta = await loadMeta(props, { titleKey: 'pages.reach-terra' })
+  })
+  const meta = await loadMeta(args, { titleKey: 'pages.reach-terra' })
 
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({ data }: { data: Data }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    ...(data?.data?.page?.description?.json && {
-      description: documentToPlainTextString(
-        data.data.page.description.json
-      ).substring(0, 199)
-    })
-  }
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.meta.title),
+  keywords: SEOKeywords([data.meta.title]),
+  ...(data?.data?.page?.description?.json && {
+    description: documentToPlainTextString(
+      data.data.page.description.json
+    ).substring(0, 199)
+  })
+})
 
 const PageReachTerra = () => {
   const {
     data: { page }
-  } = useLoaderData<Data>()
+  } = useLoaderData<typeof loader>()
 
   return (
     <>

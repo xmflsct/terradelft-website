@@ -1,8 +1,8 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H2, H3 } from '~/components/globals'
@@ -11,32 +11,16 @@ import { Link } from '~/components/link'
 import { cacheQuery, EventsEvent } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  meta: { title: string }
-  data: {
-    exhibitions: {
-      total: number
-      items: Pick<
-        EventsEvent,
-        | 'sys'
-        | 'image'
-        | 'name'
-        | 'datetimeStart'
-        | 'datetimeEnd'
-        | 'typeCollection'
-      >[]
-    }
-  }
-}
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string; datetimeEnd_gte: string }> = {
-    variables: {
-      locale: props.params.locale!,
-      datetimeEnd_gte: new Date().toISOString()
-    },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{
+    exhibitions: { total: number; items: EventsEvent[] }
+  }>({
+    ...args,
+    variables: { datetimeEnd_gte: new Date().toISOString() },
     query: gql`
-      query Index($locale: String, $datetimeEnd_gte: DateTime) {
+      query PageExhibitions($locale: String!, $datetimeEnd_gte: DateTime) {
         exhibitions: eventsEventCollection(
           locale: $locale
           order: datetimeStart_DESC
@@ -62,27 +46,27 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<Data['data']>(query, 30, props)
-  const meta = await loadMeta(props, { titleKey: 'pages.exhibitions' })
+  })
+  const meta = await loadMeta(args, { titleKey: 'pages.exhibitions' })
 
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({ data }: { data: Data }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    description: data.meta.title
-  }
-export let handle = {
-  i18n: 'exhibition'
-}
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.meta.title),
+  keywords: SEOKeywords([data.meta.title]),
+  description: data.meta.title
+})
+export let handle = { i18n: 'exhibition' }
 
 const PageExhibitions = () => {
   const {
     data: { exhibitions }
-  } = useLoaderData<Data>()
+  } = useLoaderData<typeof loader>()
   const { t, i18n } = useTranslation('exhibition')
 
   return (

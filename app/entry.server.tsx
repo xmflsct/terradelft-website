@@ -1,40 +1,37 @@
 import { RemixServer } from '@remix-run/react'
 import type { EntryContext } from '@remix-run/server-runtime'
+import * as Sentry from '@sentry/remix'
 import { createInstance } from 'i18next'
 import { renderToString } from 'react-dom/server'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import i18next from './i18next.server'
-import i18n from './i18n' // your i18n configuration file
+import i18n from './i18n'
 
 import en from 'public/locales/en'
 import nl from 'public/locales/nl'
+import { cached } from './utils/contentful'
+import { kved } from './utils/kv'
+
+Sentry.init({
+  dsn: 'https://4ceea32ca6aa4b839d8a40df1187227b@o389581.ingest.sentry.io/6620031',
+  tracesSampleRate: 0.5
+})
 
 export default async function handleRequest(
   request: Request,
-  statusCode: number,
+  status: number,
   headers: Headers,
   context: EntryContext
 ) {
-  // First, we create a new instance of i18next so every request will have a
-  // completely unique instance and not share any state
-  let instance = createInstance()
+  const instance = createInstance()
 
-  // Then we could detect locale from the request
-  let lng = await i18next.getLocale(request)
-  // And here we detect what namespaces the routes about to render want to use
-  let ns = i18next.getRouteNamespaces(context)
+  const lng = await i18next.getLocale(request)
+  const ns = i18next.getRouteNamespaces(context)
 
   await instance
-    .use(initReactI18next) // Tell our instance to use react-i18next
-    .init({
-      ...i18n, // spread the configuration
-      lng, // The locale we detected above
-      ns, // The namespaces the routes about to render wants to use
-      resources: { en, nl }
-    })
+    .use(initReactI18next)
+    .init({ ...i18n, lng, ns, resources: { en, nl } })
 
-  // Then you can render your app wrapped in the I18nextProvider as in the
-  // entry.client file
   let markup = renderToString(
     <I18nextProvider i18n={instance}>
       <RemixServer context={context} url={request.url} />
@@ -42,9 +39,8 @@ export default async function handleRequest(
   )
 
   headers.set('Content-Type', 'text/html')
+  headers.set('X-Cached', `${cached}`)
+  headers.set('X-KVed', `${kved}`)
 
-  return new Response('<!DOCTYPE html>' + markup, {
-    status: statusCode,
-    headers: headers
-  })
+  return new Response('<!DOCTYPE html>' + markup, { status, headers })
 }

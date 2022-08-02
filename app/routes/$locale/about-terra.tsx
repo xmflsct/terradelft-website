@@ -1,32 +1,32 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import { H1, H2, H4 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
-import { AboutTerra, cacheQuery, richTextLinks } from '~/utils/contentful'
+import { AboutTerra, cacheQuery, RICH_TEXT_LINKS } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  meta: { title: string }
-  data: { page: AboutTerra }
-}
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string }> = {
-    variables: { locale: props.params.locale! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{ page: AboutTerra }>({
+    ...args,
     query: gql`
-      query Index($locale: String) {
-        page: informationAboutTerra ( locale: $locale, id: "7eZ2uEBMVW8HDUMlBXLxgx" ) {
+      query PageAboutTerra($locale: String) {
+        page: informationAboutTerra (
+          locale: $locale,
+          id: "7eZ2uEBMVW8HDUMlBXLxgx"
+        ) {
           columnLeft {
             json
-            ${richTextLinks}
+            ${RICH_TEXT_LINKS}
           }
           columnRight {
             json
-            ${richTextLinks}
+            ${RICH_TEXT_LINKS}
           }
           staffCollection {
             items {
@@ -36,38 +36,38 @@ export const loader: LoaderFunction = async props => {
               }
               biography {
                 json
-                ${richTextLinks}
+                ${RICH_TEXT_LINKS}
               }
             }
           }
         }
       }
     `
-  }
-  const data = await cacheQuery<Data['data']>(query, 30, props)
-  const meta = await loadMeta(props, { titleKey: 'pages.about-terra' })
+  })
+  const meta = await loadMeta(args, { titleKey: 'pages.about-terra' })
 
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({ data }: { data: Data }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    ...(data.data?.page?.columnLeft?.json && {
-      description: documentToPlainTextString(
-        data.data.page.columnLeft.json
-      ).substring(0, 199)
-    })
-  }
-export let handle = {
-  i18n: 'aboutTerra'
-}
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.meta.title),
+  keywords: SEOKeywords([data.meta.title]),
+  ...(data.data?.page?.columnLeft?.json && {
+    description: documentToPlainTextString(
+      data.data.page.columnLeft.json
+    ).substring(0, 199)
+  })
+})
+export let handle = { i18n: 'aboutTerra' }
 
 const PageAboutTerra = () => {
   const {
     data: { page }
-  } = useLoaderData<Data>()
+  } = useLoaderData<typeof loader>()
   const { t } = useTranslation('aboutTerra')
 
   return (

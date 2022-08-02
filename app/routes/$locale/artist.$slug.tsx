@@ -1,26 +1,28 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import type { Person, WithContext } from 'schema-dts'
 import { H1, H2 } from '~/components/globals'
 import GridObjectDefault from '~/components/grids/grid-object-default'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
-import { cacheQuery, ObjectsArtist, richTextLinks } from '~/utils/contentful'
+import { cacheQuery, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Artist = Pick<
-  ObjectsArtist,
-  'artist' | 'image' | 'biography' | 'linkedFrom'
->
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string; slug: string }> = {
-    variables: { locale: props.params.locale!, slug: props.params.slug! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{ artists: { items: ObjectsArtist[] } }>({
+    ...args,
+    variables: { slug: args.params.slug! },
     query: gql`
-      query Artist($locale: String, $slug: String) {
-        artists: objectsArtistCollection (locale: $locale, limit: 1, where: {slug: $slug}) {
+      query PageArtist($locale: String, $slug: String) {
+        artists: objectsArtistCollection (
+          locale: $locale,
+          limit: 1,
+          where: {slug: $slug}
+        ) {
           items {
             artist
             image {
@@ -28,7 +30,7 @@ export const loader: LoaderFunction = async props => {
             }
             biography {
               json
-              ${richTextLinks}
+              ${RICH_TEXT_LINKS}
             }
             linkedFrom {
               objectsObjectCollection (locale: "nl") {
@@ -50,33 +52,35 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<{
-    artists: { items: Artist[] }
-  }>(query, 30, props)
+  })
 
   if (!data?.artists?.items?.length) {
     throw json('Not Found', { status: 404 })
   }
-  return json({
-    data: data.artists.items[0]
-  })
+  return json(data.artists.items[0])
 }
 
-export const meta: MetaFunction = ({ data }: { data: Artist }) =>
-  data && {
-    title: SEOTitle(data.artist),
-    keywords: SEOKeywords([data.artist]),
-    ...(data.biography && {
-      description: documentToPlainTextString(data.biography.json).substring(
-        0,
-        199
-      )
-    })
-  }
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.artist),
+  keywords: SEOKeywords([data.artist]),
+  ...(data.biography && {
+    description: documentToPlainTextString(data.biography.json).substring(
+      0,
+      199
+    )
+  })
+})
 export const handle = {
   i18n: 'artist',
-  structuredData: ({ data }: { data: Artist }): WithContext<Person> =>
+  structuredData: ({
+    data
+  }: {
+    data: LoaderData<typeof loader>
+  }): WithContext<Person> =>
     data && {
       '@context': 'https://schema.org',
       '@type': 'Person',
@@ -92,7 +96,7 @@ export const handle = {
 }
 
 const PageArtist = () => {
-  const { data: artist } = useLoaderData<{ data: Artist }>()
+  const artist = useLoaderData<typeof loader>()
   const { t } = useTranslation('artist')
 
   return (

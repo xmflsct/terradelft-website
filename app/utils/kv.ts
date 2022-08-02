@@ -1,11 +1,13 @@
-import { gql } from '@apollo/client'
-import { DataFunctionArgs, json } from '@remix-run/cloudflare'
+import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { gql } from 'graphql-request'
 import { max, min } from 'lodash'
 import {
-  apolloClient,
+  graphqlRequest,
   ObjectsObject,
   ObjectsObjectVariation
 } from './contentful'
+
+export let kved: boolean | undefined = undefined
 
 export type SellableObject = Pick<
   ObjectsObject,
@@ -32,19 +34,19 @@ export type SellableObject = Pick<
 }
 
 const getSellableObjects = async (
-  props: DataFunctionArgs
+  args: LoaderArgs
 ): Promise<SellableObject[]> => {
-  if (!props.params.locale) {
+  if (!args.params.locale) {
     throw json('Locale missing', { status: 400 })
   }
 
   let objects: SellableObject[] | null =
-    await props.context.TERRADELFT_WEBSITE.get(
-      `objects_${props.params.locale}`,
-      { type: 'json' }
-    )
+    await args.context.TERRADELFT_WEBSITE.get(`objects_${args.params.locale}`, {
+      type: 'json'
+    })
 
   if (objects === null) {
+    kved = false
     objects = []
     const perPage = 60
     let total: number | undefined = undefined
@@ -53,67 +55,67 @@ const getSellableObjects = async (
       total === undefined || page <= Math.round(total / perPage);
       page++
     ) {
-      const { data } = await apolloClient(props)
-        .query<{ objects: { total: number; items: SellableObject[] } }>({
-          variables: {
-            locale: props.params.locale,
-            limit: perPage,
-            skip: perPage * page
-          },
-          query: gql`
-            query Shop($locale: String, $limit: Int, $skip: Int) {
-              objects: objectsObjectCollection(
-                locale: $locale
-                limit: $limit
-                skip: $skip
-              ) {
-                total
-                items {
-                  sys {
-                    id
+      const data = await graphqlRequest<{
+        objects: { total: number; items: SellableObject[] }
+      }>({
+        ...args,
+        variables: {
+          locale: args.params.locale,
+          limit: perPage,
+          skip: perPage * page
+        },
+        query: gql`
+          query Shop($locale: String, $limit: Int, $skip: Int) {
+            objects: objectsObjectCollection(
+              locale: $locale
+              limit: $limit
+              skip: $skip
+            ) {
+              total
+              items {
+                sys {
+                  id
+                }
+                name
+                imagesCollection(limit: 1) {
+                  items {
+                    url
                   }
-                  name
-                  imagesCollection(limit: 1) {
-                    items {
-                      url
+                }
+                artist {
+                  slug
+                  artist
+                }
+                priceOriginal
+                priceSale
+                sellOnline
+                stock
+                variationsCollection(limit: 50) {
+                  items {
+                    priceOriginal
+                    priceSale
+                    sellOnline
+                    stock
+                    variant {
+                      sys {
+                        id
+                      }
+                      variant
                     }
-                  }
-                  artist {
-                    slug
-                    artist
-                  }
-                  priceOriginal
-                  priceSale
-                  sellOnline
-                  stock
-                  variationsCollection(limit: 50) {
-                    items {
-                      priceOriginal
-                      priceSale
-                      sellOnline
-                      stock
-                      variant {
-                        sys {
-                          id
-                        }
-                        variant
+                    colour {
+                      sys {
+                        id
                       }
-                      colour {
-                        sys {
-                          id
-                        }
-                        colour
-                      }
+                      colour
                     }
                   }
                 }
               }
             }
-          `
-        })
-        .catch(err => {
-          throw json(err, { status: 500 })
-        })
+          }
+        `
+      })
+
       if (total === undefined) {
         total = data.objects.total
       }
@@ -168,11 +170,13 @@ const getSellableObjects = async (
       []
     )
 
-    await props.context.TERRADELFT_WEBSITE.put(
-      `objects_${props.params.locale}`,
+    await args.context.TERRADELFT_WEBSITE.put(
+      `objects_${args.params.locale}`,
       JSON.stringify(objects),
       { expirationTtl: 60 * 10 }
     )
+  } else {
+    kved = true
   }
 
   return objects

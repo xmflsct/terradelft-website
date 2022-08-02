@@ -1,6 +1,6 @@
-import { gql, QueryOptions } from '@apollo/client'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H2 } from '~/components/globals'
@@ -9,29 +9,16 @@ import { Link } from '~/components/link'
 import { cacheQuery, EventsEvent, NewsNews } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  meta: { title: string }
-  data: {
-    exhibitions: {
-      items: Pick<
-        EventsEvent,
-        | 'sys'
-        | 'image'
-        | 'name'
-        | 'datetimeStart'
-        | 'datetimeEnd'
-        | 'typeCollection'
-      >[]
-    }
-    news: { items: Pick<NewsNews, 'sys' | 'image' | 'title' | 'date'>[] }
-  }
-}
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string }> = {
-    variables: { locale: props.params.locale! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{
+    exhibitions: { items: EventsEvent[] }
+    news: { items: NewsNews[] }
+  }>({
+    ...args,
     query: gql`
-      query Index($locale: String) {
+      query PageTerraInChina($locale: String) {
         exhibitions: eventsEventCollection(
           locale: $locale
           where: { terraInChina: true }
@@ -74,25 +61,25 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<Data['data']>(query, 30, props)
-  const meta = await loadMeta(props, { titleKey: 'pages.terra-in-china' })
+  })
+  const meta = await loadMeta(args, { titleKey: 'pages.terra-in-china' })
 
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({ data }: { data: Data }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    description: data.meta.title
-  }
-export let handle = {
-  i18n: ['terraInChina', 'news']
-}
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.meta.title),
+  keywords: SEOKeywords([data.meta.title]),
+  description: data.meta.title
+})
+export let handle = { i18n: ['terraInChina', 'news'] }
 
 const PageTerraInChina = () => {
-  const { data } = useLoaderData<Data>()
+  const { data } = useLoaderData<typeof loader>()
   const { t, i18n } = useTranslation('terraInChina')
 
   return (

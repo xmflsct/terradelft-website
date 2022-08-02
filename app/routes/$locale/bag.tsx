@@ -1,11 +1,11 @@
-import { gql, QueryOptions } from '@apollo/client'
 import {
-  ActionFunction,
+  ActionArgs,
   json,
-  LoaderFunction,
+  LoaderArgs,
   MetaFunction
 } from '@remix-run/cloudflare'
 import { Form, useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import BagCheckout from '~/components/bag/checkout'
 import BagList from '~/components/bag/list'
@@ -14,7 +14,7 @@ import checkout from '~/utils/checkout'
 import { cacheQuery, ShippingRates } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const action: ActionFunction = async ({ context, request }) => {
+export const action = async ({ context, request }: ActionArgs) => {
   const formData = await request.formData()
   const json = formData.get('json')?.toString()
 
@@ -42,11 +42,13 @@ export type BagData = {
   country: string
   rates: ShippingRates
 }
-export const loader: LoaderFunction = async props => {
-  const query: QueryOptions<{ locale: string }> = {
-    variables: { locale: props.params.locale! },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{
+    shippingRates: { items: { rates: ShippingRates }[] }
+  }>({
+    ...args,
     query: gql`
-      query Index($locale: String) {
+      query PageBag($locale: String) {
         shippingRates: shippingRatesCollection(
           locale: $locale
           limit: 1
@@ -58,13 +60,10 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<{
-    shippingRates: { items: { rates: ShippingRates }[] }
-  }>(query, 30, props)
-  const env = { STRIPE_KEY_PUBLIC: props.context.STRIPE_KEY_PUBLIC }
+  })
+  const env = { STRIPE_KEY_PUBLIC: args.context.STRIPE_KEY_PUBLIC as string }
   // @ts-ignore
-  const country = props.request.cf?.country || 'NL'
+  const country: string = props.request.cf?.country || 'NL'
 
   return json({ env, country, rates: data.shippingRates.items[0].rates })
 }
@@ -74,12 +73,10 @@ export const meta: MetaFunction = () => ({
   keywords: SEOKeywords(),
   description: 'Terra Delft Website'
 })
-export let handle = {
-  i18n: ['bag', 'object']
-}
+export let handle = { i18n: ['bag', 'object'] }
 
 const PageBag = () => {
-  const data = useLoaderData<BagData>()
+  const data = useLoaderData<typeof loader>()
   const { t } = useTranslation('bag')
 
   return (

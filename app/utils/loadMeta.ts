@@ -1,4 +1,4 @@
-import { DataFunctionArgs } from '@remix-run/cloudflare'
+import { LoaderArgs } from '@remix-run/cloudflare'
 import i18next from '~/i18next.server'
 
 type Props = {
@@ -7,10 +7,10 @@ type Props = {
 }
 
 const loadMeta = async (
-  props: DataFunctionArgs,
+  args: LoaderArgs,
   { titleKey, titleOptions }: Props
 ): Promise<{ title: string }> => {
-  const t = await i18next.getFixedT(props.request, 'common')
+  const t = await i18next.getFixedT(args.request, 'common')
   const meta = { title: t(titleKey, titleOptions) }
 
   return meta

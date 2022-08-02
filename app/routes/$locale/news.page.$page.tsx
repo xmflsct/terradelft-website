@@ -1,6 +1,6 @@
-import { gql, QueryOptions } from '@apollo/client'
-import { json, LoaderFunction, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useParams } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
@@ -9,31 +9,26 @@ import Pagination from '~/components/pagination'
 import { cacheQuery, NewsNews } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
-type Data = {
-  meta: { title: string }
-  data: {
+export const loader = async (args: LoaderArgs) => {
+  const page = parseInt(args.params.page || '') - 1
+  if (page < 0) {
+    throw json('Not Found', { status: 404 })
+  }
+
+  const perPage = 9
+
+  const data = await cacheQuery<{
     news: {
       total: number
       items: Pick<NewsNews, 'sys' | 'title' | 'date' | 'image'>[]
     }
-  }
-}
-export const loader: LoaderFunction = async props => {
-  const page = parseInt(props.params.page || '') - 1
-  if (page < 0) {
-    throw json('Not Found', { status: 404 })
-  }
-  const perPage = 9
-
-  const query: QueryOptions<{ locale: string; limit: number; skip: number }> = {
-    variables: {
-      locale: props.params.locale!,
-      limit: perPage,
-      skip: perPage * page
-    },
+  }>({
+    ...args,
+    variables: { limit: perPage, skip: perPage * page },
     query: gql`
-      query NewsPage($locale: String, $limit: Int, $skip: Int) {
+      query PageNewsPage($locale: String, $limit: Int, $skip: Int) {
         news: newsNewsCollection(
           locale: $locale
           order: date_DESC
@@ -54,11 +49,10 @@ export const loader: LoaderFunction = async props => {
         }
       }
     `
-  }
-  const data = await cacheQuery<Data['data']>(query, 30, props)
-  const meta = await loadMeta(props, {
+  })
+  const meta = await loadMeta(args, {
     titleKey: 'pages.news',
-    titleOptions: { context: 'page', page: props.params.page }
+    titleOptions: { context: 'page', page: args.params.page }
   })
 
   if (!data?.news?.items?.length) {
@@ -76,22 +70,23 @@ export const loader: LoaderFunction = async props => {
   })
 }
 
-export const meta: MetaFunction = ({ data }: { data: Data }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    description: 'News'
-  }
-export let handle = {
-  i18n: 'news'
-}
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) => ({
+  title: SEOTitle(data.meta.title),
+  keywords: SEOKeywords([data.meta.title]),
+  description: 'News'
+})
+export let handle = { i18n: 'news' }
 
-const PageNews = () => {
+const PageNewsPage = () => {
   const {
     data: {
       news: { total, items }
     }
-  } = useLoaderData<Data>()
+  } = useLoaderData<typeof loader>()
   const { page } = useParams()
   const { t, i18n } = useTranslation('news')
 
@@ -133,4 +128,4 @@ const PageNews = () => {
   )
 }
 
-export default PageNews
+export default PageNewsPage

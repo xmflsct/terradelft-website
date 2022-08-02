@@ -1,50 +1,58 @@
-import { ApolloClient, InMemoryCache, QueryOptions } from '@apollo/client'
 import { Document } from '@contentful/rich-text-types'
-import { DataFunctionArgs } from '@remix-run/server-runtime'
+import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
+import { Context } from '~/root'
 
-export type Context = {
-  CONTENTFUL_SPACE?: string
-  CONTENTFUL_KEY?: string
-  STRIPE_KEY_PRIVATE?: string
+type GraphQLRequest = {
+  context: LoaderArgs['context'] & Context
+  params: LoaderArgs['params']
+  query: RequestDocument
+  variables?: Variables
 }
 
-export const apolloClient = ({
-  context: { CONTENTFUL_SPACE, CONTENTFUL_KEY }
-}: {
-  context: Context
-}) => {
-  if (!CONTENTFUL_SPACE || !CONTENTFUL_KEY) {
-    throw new Error('Contentful secrets missing')
+export let cached: boolean | undefined = undefined
+
+export const graphqlRequest = async <T = unknown>({
+  context,
+  params,
+  query,
+  variables
+}: GraphQLRequest) => {
+  if (!context.CONTENTFUL_SPACE || !context.CONTENTFUL_KEY) {
+    throw json('Missing Contentful config', { status: 500 })
   }
 
-  return new ApolloClient({
-    ssrMode: true,
-    cache: new InMemoryCache(),
-    uri: `https://graphql.contentful.com/content/v1/spaces/${CONTENTFUL_SPACE}/environments/migration`,
-    headers: {
-      Authorization: `Bearer ${CONTENTFUL_KEY}`
-    },
-    defaultOptions: { query: { errorPolicy: 'ignore' } }
-  })
+  const preview = context.ENVIRONMENT !== 'PRODUCTION'
+  const locale = params.locale
+
+  if (!locale) {
+    throw json('Missing locale', { status: 500 })
+  }
+
+  return new GraphQLClient(
+    `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/migration`,
+    {
+      fetch,
+      headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
+      errorPolicy: preview ? 'ignore' : 'ignore'
+    }
+  ).request<T>(query, { ...variables, preview, locale })
 }
 
-export let cached = false
-export const cacheQuery = async <T = unknown>(
-  query: QueryOptions,
-  duration: number, // In minutes
-  props: DataFunctionArgs
-): Promise<T> => {
-  const queryData = async () =>
-    (await apolloClient(props).query<T>(query).catch(logError)).data
+export const cacheQuery = async <T = unknown>({
+  ttlMinutes = 60,
+  ...rest
+}: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
+  const queryData = async () => await graphqlRequest<T>(rest)
 
-  if (!duration) {
+  if (!ttlMinutes) {
     return await queryData()
   }
 
   // @ts-ignore
   const cache = caches.default
 
-  const cacheUrl = new URL(props.request.url)
+  const cacheUrl = new URL(rest.request.url)
   const cacheKey = new Request(cacheUrl.toString())
 
   const cacheMatch = (await cache.match(cacheKey)) as Response
@@ -53,7 +61,7 @@ export const cacheQuery = async <T = unknown>(
     cached = false
     const queryResponse = await queryData()
     const cacheResponse = new Response(JSON.stringify(queryResponse), {
-      headers: { 'Cache-Control': `s-maxage=${duration * 60}` }
+      headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 60}` }
     })
     cache.put(cacheKey, cacheResponse)
     return queryResponse
@@ -61,15 +69,6 @@ export const cacheQuery = async <T = unknown>(
     cached = true
     return await cacheMatch.json()
   }
-}
-
-const logError = (e: any) => {
-  if (process.env.NODE_ENV === 'development') {
-    e?.graphqlErrors && console.log('GraphQL', e.graphqlErrors)
-    e?.clientErrors && console.log('client', e.clientErrors)
-    e?.networkError && console.log('network', e.networkError.result?.errors)
-  }
-  throw new Error()
 }
 
 export type CommonImage = {
@@ -82,7 +81,7 @@ export type CommonImage = {
   // width: number
   // height: number
 }
-export type CommonRichText = { json: Document; links: any }
+export type CommonRichText = { json: Document; links?: any }
 
 export type ObjectsVariation = { sys: { id: string }; variant: string }
 export type ObjectsColour = { sys: { id: string }; colour: string }
@@ -91,9 +90,9 @@ export type ObjectsSize = { sys: { id: string }; size: string }
 export type ObjectsObjectVariation = {
   sys: { id: string }
   sku?: string
-  variant?: { sys: { id: string }; variant: string }
-  colour?: { sys: { id: string }; colour: string }
-  size?: { sys: { id: string }; size: string }
+  variant?: ObjectsVariation
+  colour?: ObjectsColour
+  size?: ObjectsSize
   priceOriginal: number
   priceSale?: number
   sellOnline: boolean
@@ -200,53 +199,54 @@ export type ReachTerra = { description: CommonRichText }
 
 export type Announcement = { title: string; content: CommonRichText }
 
-export const richTextLinks = `
-links {
-  assets {
-    block {
-      sys {
-        id
+export const RICH_TEXT_LINKS = gql`
+  links {
+    assets {
+      block {
+        sys {
+          id
+        }
+        url
+        description
       }
-      url
-      description
+    }
+    entries {
+      inline {
+        sys {
+          id
+        }
+        ... on EventsEvent {
+          name
+        }
+        ... on NewsNews {
+          title
+        }
+        ... on ObjectsArtist {
+          slug
+          artist
+        }
+        ... on ObjectsObject {
+          name
+        }
+      }
+      hyperlink {
+        sys {
+          id
+        }
+        ... on EventsEvent {
+          name
+        }
+        ... on NewsNews {
+          title
+        }
+        ... on ObjectsArtist {
+          slug
+          artist
+        }
+        ... on ObjectsObject {
+          name
+        }
+      }
     }
   }
-  entries {
-    inline {
-      sys {
-        id
-      }
-      ... on EventsEvent {
-        name
-      }
-      ... on NewsNews {
-        title
-      }
-      ... on ObjectsArtist {
-        slug
-        artist
-      }
-      ... on ObjectsObject {
-        name
-      }
-    }
-    hyperlink {
-      sys {
-        id
-      }
-      ... on EventsEvent {
-        name
-      }
-      ... on NewsNews {
-        title
-      }
-      ... on ObjectsArtist {
-        slug
-        artist
-      }
-      ... on ObjectsObject {
-        name
-      }
-    }
-  }
-}`
+`

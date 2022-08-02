@@ -1,7 +1,9 @@
-import { gql } from '@apollo/client'
+import { LoaderArgs } from '@remix-run/cloudflare'
+import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
+import { Context } from '~/root'
 import { TDObject } from '~/states/bag'
-import { apolloClient, Context, ShippingRates } from './contentful'
+import { graphqlRequest, ShippingRates } from './contentful'
 
 export type CheckoutContent = {
   objects: TDObject[]
@@ -36,10 +38,10 @@ type ShippingOptions = {
 }[]
 
 const verifyContentful = async ({
-  context,
-  content: { amounts, delivery, locale, objects }
+  args,
+  content: { amounts, delivery, objects }
 }: {
-  context: Context
+  args: LoaderArgs
   content: CheckoutContent
 }): Promise<ShippingOptions> => {
   if (
@@ -49,8 +51,6 @@ const verifyContentful = async ({
   ) {
     throw new Error('No object provided')
   }
-
-  const client = apolloClient({ context })
 
   const contentType = {
     main: 'objectsObjectCollection',
@@ -77,9 +77,18 @@ const verifyContentful = async ({
   for (const type in ids) {
     const typed = type as keyof typeof contentType
     if (ids[typed] && ids[typed]?.length) {
-      const items = (
-        await client.query({
-          query: gql`
+      const data = await graphqlRequest<{
+        [key: string]: {
+          items: {
+            sys: { id: string }
+            stock: number
+            priceOriginal?: number
+            priceSale?: number
+          }[]
+        }
+      }>({
+        ...args,
+        query: gql`
             query {
               ${contentType[typed]} (where: { sys: { id_in: [${ids[typed]}] } }) {
                 items {
@@ -93,15 +102,9 @@ const verifyContentful = async ({
               }
             }
           `
-        })
-      ).data[contentType[typed]].items as {
-        sys: { id: string }
-        stock?: number
-        priceOriginal?: number
-        priceSale: number
-      }[]
+      })
 
-      for (const item of items) {
+      for (const item of data[contentType[typed]].items) {
         const objectIndex = objects.findIndex(
           i => i.contentful_id === item.sys.id
         )
@@ -130,21 +133,23 @@ const verifyContentful = async ({
 
   // Check delivery
   if (delivery.method !== 'pickup') {
-    const rates = (
-      await client.query<{
-        shippingRatesCollection: { items: { rates: ShippingRates }[] }
-      }>({
-        query: gql`
-          query {
-            shippingRatesCollection(where: { year: "2022" }) {
-              items {
-                rates
-              }
+    const {
+      shippingRatesCollection: { items }
+    } = await graphqlRequest<{
+      shippingRatesCollection: { items: { rates: ShippingRates }[] }
+    }>({
+      ...args,
+      query: gql`
+        query {
+          shippingRatesCollection(where: { year: "2022" }) {
+            items {
+              rates
             }
           }
-        `
-      })
-    ).data.shippingRatesCollection.items[0].rates
+        }
+      `
+    })
+    const rates = items[0].rates
 
     let countryCodeIndex = rates.findIndex(rate =>
       rate.countryCode.includes(delivery.countryCode || '')
@@ -190,17 +195,17 @@ const verifyContentful = async ({
 }
 
 const checkout = async ({
-  context,
+  args,
   content
 }: {
-  context: Context
+  args: LoaderArgs
   content: CheckoutContent
 }) => {
-  if (!context.STRIPE_KEY_PRIVATE) {
+  if (!args.context.STRIPE_KEY_PRIVATE) {
     throw new Error('Missing stripe private key')
   }
 
-  const shipping_options = await verifyContentful({ context, content })
+  const shipping_options = await verifyContentful({ args, content })
 
   const translations: {
     [key: string]: {
@@ -348,7 +353,7 @@ const checkout = async ({
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${context.STRIPE_KEY_PRIVATE}`
+      Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}`
     },
     body
   })
