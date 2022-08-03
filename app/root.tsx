@@ -98,3 +98,5 @@ export function CatchBoundary() {
     </html>
   )
 }
+
+export const unstable_shouldReload = () => false
