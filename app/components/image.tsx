@@ -1,4 +1,5 @@
 import { DOMAttributes } from 'react'
+import classNames from '~/utils/classNames'
 import { CommonImage } from '~/utils/contentful'
 
 declare namespace ContentfulImageTransform {
@@ -35,7 +36,7 @@ type Props = {
   eager?: boolean
 } & Pick<DOMAttributes<HTMLDivElement>, 'onClick'>
 
-const imagePropsMap = {
+const propsMap = {
   width: 'w',
   height: 'h',
   behaviour: 'fit',
@@ -75,121 +76,104 @@ const ContentfulImage: React.FC<Props> = ({
     )
   }
 
-  let mimeType = image.contentType // extract mimeType from image.url
-  const query = { smaller: {}, default: {}, larger: {} }
+  const queries = [{}, {}, {}] // smaller, default, larger
 
   // should only allow ContentfulImage.Query props
-  function addToQuery(queries: string[], prop: Record<string, string>) {
-    queries.forEach(q => {
-      // @ts-ignore
-      query[q] = { ...query[q], ...prop }
+  const addToQuery = (
+    prop: Record<string, string>,
+    qs: ('smaller' | 'default' | 'larger')[] = ['smaller', 'default', 'larger']
+  ) => {
+    const mapping = { smaller: 0, default: 1, larger: 2 }
+    qs.forEach(q => {
+      queries[mapping[q]] = { ...queries[mapping[q]], ...prop }
     })
   }
 
   if (quality) {
-    addToQuery(Object.keys(query), {
-      [imagePropsMap['quality']]: quality.toString()
-    })
+    addToQuery({ [propsMap['quality']]: quality.toString() })
   }
 
   if (width) {
-    addToQuery(['smaller'], {
-      [imagePropsMap['width']]: (width / 2).toString()
-    })
-    addToQuery(['default'], {
-      [imagePropsMap['width']]: width.toString()
-    })
-    addToQuery(['larger'], {
-      [imagePropsMap['width']]: (width * 2).toString()
-    })
+    addToQuery({ [propsMap['width']]: (width / 2).toString() }, ['smaller'])
+    addToQuery({ [propsMap['width']]: width.toString() }, ['default'])
+    addToQuery({ [propsMap['width']]: (width * 2).toString() }, ['larger'])
   }
 
   if (height) {
-    addToQuery(['smaller'], {
-      [imagePropsMap['height']]: (height / 2).toString()
-    })
-    addToQuery(['default'], {
-      [imagePropsMap['height']]: height.toString()
-    })
-    addToQuery(['larger'], {
-      [imagePropsMap['height']]: (height * 2).toString()
-    })
+    addToQuery({ [propsMap['height']]: (height / 2).toString() }, ['smaller'])
+    addToQuery({ [propsMap['height']]: height.toString() }, ['default'])
+    addToQuery({ [propsMap['height']]: (height * 2).toString() }, ['larger'])
   }
 
   if (behaviour) {
-    addToQuery(Object.keys(query), {
-      [imagePropsMap['behaviour']]: behaviour.toString()
-    })
+    addToQuery({ [propsMap['behaviour']]: behaviour.toString() })
   }
 
   if (focusArea) {
-    addToQuery(Object.keys(query), {
-      [imagePropsMap['focusArea']]: focusArea.toString()
-    })
+    addToQuery({ [propsMap['focusArea']]: focusArea.toString() })
   }
 
   if (radius) {
-    addToQuery(Object.keys(query), {
-      [imagePropsMap['radius']]: radius.toString()
-    })
-  }
-
-  if (format) {
-    if (format === '8bit') {
-      addToQuery(Object.keys(query), { fm: 'png' })
-      addToQuery(Object.keys(query), { fl: 'png8' })
-      mimeType = 'image/png'
-    } else if (format === 'progressive') {
-      addToQuery(Object.keys(query), { fm: 'jpg' })
-      addToQuery(Object.keys(query), {
-        fl: 'progressive'
-      })
-      mimeType = 'image/jpg'
-    } else {
-      addToQuery(Object.keys(query), {
-        [imagePropsMap['format']]: format.toString()
-      })
-      mimeType = `image/${format}`
-    }
+    addToQuery({ [propsMap['radius']]: radius.toString() })
   }
 
   if (quality) {
-    addToQuery(Object.keys(query), {
-      [imagePropsMap['quality']]: quality.toString()
-    })
+    addToQuery({ [propsMap['quality']]: quality.toString() })
   }
 
   if (backgroundColor) {
-    addToQuery(Object.keys(query), {
-      [imagePropsMap['backgroundColor']]: backgroundColor.toString()
-    })
+    addToQuery({ [propsMap['backgroundColor']]: backgroundColor.toString() })
   }
 
-  const transformSrc = `${image.url}?${new URLSearchParams(
-    query.default
-  ).toString()}`
-  const transformSrcSet =
-    `${image.url}?${new URLSearchParams(query.smaller).toString()} ${Math.round(
-      width / 2
-    )}w, ` +
-    `${image.url}?${new URLSearchParams(query.default).toString()} ${Math.round(
-      width
-    )}w, ` +
-    `${image.url}?${new URLSearchParams(query.larger).toString()} ${Math.round(
-      width * 2
-    )}w, `
+  const formatJPG = { fm: 'jpg', fl: 'progressive' }
+  const formatWEBP = { fm: 'webp' }
+
+  const transformSrc = `${image.url}?${new URLSearchParams({
+    ...queries[1],
+    ...formatJPG
+  }).toString()}`
+  const transformSrcSetJPG =
+    `${image.url}?${new URLSearchParams({
+      ...queries[0],
+      ...formatJPG
+    }).toString()} ${Math.round(width / 2)}w, ` +
+    `${image.url}?${new URLSearchParams({
+      ...queries[1],
+      ...formatJPG
+    }).toString()} ${Math.round(width)}w, ` +
+    `${image.url}?${new URLSearchParams({
+      ...queries[2],
+      ...formatJPG
+    }).toString()} ${Math.round(width * 2)}w, `
+  const transformSrcSetWEBP =
+    `${image.url}?${new URLSearchParams({
+      ...queries[0],
+      ...formatWEBP
+    }).toString()} ${Math.round(width / 2)}w, ` +
+    `${image.url}?${new URLSearchParams({
+      ...queries[1],
+      ...formatWEBP
+    }).toString()} ${Math.round(width)}w, ` +
+    `${image.url}?${new URLSearchParams({
+      ...queries[2],
+      ...formatWEBP
+    }).toString()} ${Math.round(width * 2)}w, `
 
   return (
-    <img
-      className={className + ' object-cover bg-placeholder'}
-      width={width}
-      height={height}
-      src={transformSrc}
-      srcSet={transformSrcSet}
-      alt={alt || image.title}
-      decoding={decoding}
-      loading={eager ? 'eager' : 'lazy'}
-    />
+    <picture className={classNames('object-cover bg-placeholder', className)}>
+      <source type='image/webp' srcSet={transformSrcSetWEBP} />
+      <source type='image/jpeg' srcSet={transformSrcSetJPG} />
+      <img
+        width={width}
+        height={height}
+        src={transformSrc}
+        srcSet={transformSrcSetJPG}
+        alt={alt || image.title}
+        decoding={decoding}
+        loading={eager ? 'eager' : 'lazy'}
+        className='mx-auto'
+      />
+    </picture>
   )
 }
 

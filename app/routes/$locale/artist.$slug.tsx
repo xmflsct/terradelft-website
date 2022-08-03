@@ -5,8 +5,8 @@ import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import type { Person, WithContext } from 'schema-dts'
 import { H1, H2 } from '~/components/globals'
-import GridObjectDefault from '~/components/grids/grid-object-default'
 import ContentfulImage from '~/components/image'
+import ObjectsGrid from '~/components/objectsGrid'
 import RichText from '~/components/richText'
 import { cacheQuery, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
@@ -120,7 +120,7 @@ const PageArtist = () => {
       {artist.linkedFrom.objectsObjectCollection.items.length ? (
         <>
           <H2>{t('objects-by', { artist: artist.artist })}</H2>
-          <GridObjectDefault
+          <ObjectsGrid
             objects={artist.linkedFrom.objectsObjectCollection.items}
           />
         </>

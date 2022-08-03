@@ -4,15 +4,14 @@ import { gql } from 'graphql-request'
 import { shuffle } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { H2, H3 } from '~/components/globals'
-import GridObjectDefault, {
-  objectsReduceSell
-} from '~/components/grids/grid-object-default'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
+import ObjectsGrid, { objectsReduceSell } from '~/components/objectsGrid'
 import RichText from '~/components/richText'
 import {
   Announcement,
   cacheQuery,
+  GiftCard,
   ObjectsArtist,
   ObjectsObject
 } from '~/utils/contentful'
@@ -22,6 +21,7 @@ import sortArtists from '~/utils/sortArtists'
 export const loader = async (args: LoaderArgs) => {
   const data = await cacheQuery<{
     announcements?: { items: Announcement[] }
+    giftCard: GiftCard
     objects: {
       items: ObjectsObject[]
     }
@@ -38,6 +38,13 @@ export const loader = async (args: LoaderArgs) => {
             title
             content {
               json
+            }
+          }
+        }
+        giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
+          imagesCollection(limit: 1) {
+            items {
+              url
             }
           }
         }
@@ -79,11 +86,12 @@ export const loader = async (args: LoaderArgs) => {
 
   return json({
     announcements: data.announcements,
+    giftCard: data.giftCard,
     objects: {
       ...data.objects,
       items: shuffle(data.objects.items.reduce(objectsReduceSell, [])).slice(
         0,
-        6
+        5
       )
     },
     artists: sortArtists(data.artists)
@@ -120,10 +128,7 @@ const PageIndex = () => {
       )}
       <div className='section-online-shop mb-3'>
         <H2>{t('online-shop')}</H2>
-        <GridObjectDefault
-          objects={data.objects.items}
-          // giftCard={data.giftCard}
-        />
+        <ObjectsGrid giftCard={data.giftCard} objects={data.objects.items} />
       </div>
       <div className='section-collection'>
         <H2>{t('collection')}</H2>

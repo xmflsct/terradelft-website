@@ -1,13 +1,15 @@
 import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useSubmit } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import { find, inRange, maxBy, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { H4 } from '~/components/globals'
-import GridObjectDefault from '~/components/grids/grid-object-default'
+import ObjectsGrid from '~/components/objectsGrid'
 import Pagination from '~/components/pagination'
 import i18next from '~/i18next.server'
+import { cacheQuery, GiftCard } from '~/utils/contentful'
 import { currency } from '~/utils/formatNumber'
 import { getSellableObjects, SellableObject } from '~/utils/kv'
 import loadMeta from '~/utils/loadMeta'
@@ -295,8 +297,27 @@ export const loader = async (args: LoaderArgs) => {
       options.colours,
       ({ label, isDisabled }) => label && isDisabled
     )
-    return json({ meta, data: { options, objects: reducedObjects } })
+    return json({
+      meta,
+      giftCard: null,
+      data: { options, objects: reducedObjects, page: null }
+    })
   }
+
+  const { giftCard } = await cacheQuery<{ giftCard: GiftCard }>({
+    ...args,
+    query: gql`
+      query PageIndex($locale: String!) {
+        giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
+          imagesCollection(limit: 1) {
+            items {
+              url
+            }
+          }
+        }
+      }
+    `
+  })
 
   const perPage = 48
   options.artists = sortBy(
@@ -307,6 +328,7 @@ export const loader = async (args: LoaderArgs) => {
   options.colours = sortBy(options.colours, ({ label }) => label)
   return json({
     meta,
+    giftCard,
     data: {
       options,
       objects: objects.slice(perPage * page, perPage * (page + 1)),
@@ -328,6 +350,7 @@ export let handle = { i18n: 'shop' }
 
 const PageShopPage: React.FC = () => {
   const {
+    giftCard,
     data: { options, objects, page }
   } = useLoaderData<typeof loader>()
 
@@ -415,7 +438,7 @@ const PageShopPage: React.FC = () => {
           }
         />
       </form>
-      <GridObjectDefault objects={objects} />
+      <ObjectsGrid giftCard={giftCard} objects={objects} />
       {page && (
         <Pagination
           basePath='/shop/page'

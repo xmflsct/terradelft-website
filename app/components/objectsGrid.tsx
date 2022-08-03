@@ -1,7 +1,11 @@
 import { useTranslation } from 'react-i18next'
-import { ObjectsObject, ObjectsObjectVariation } from '~/utils/contentful'
-import ContentfulImage from '../image'
-import { Link } from '../link'
+import {
+  GiftCard,
+  ObjectsObject,
+  ObjectsObjectVariation
+} from '~/utils/contentful'
+import ContentfulImage from './image'
+import { Link } from './link'
 
 type Reduced = Pick<ObjectsObject, 'sellOnline' | 'stock'> & {
   variationsCollection?: {
@@ -35,34 +39,33 @@ type Props = {
     ObjectsObject,
     'sys' | 'imagesCollection' | 'priceSale' | 'name'
   >[]
-  giftCard?: boolean
+  giftCard?: GiftCard | null
 }
 
-const GridObjectDefault: React.FC<Props> = ({ objects, giftCard = false }) => {
+const ObjectsGrid: React.FC<Props> = ({ objects, giftCard }) => {
   const { t } = useTranslation()
 
   return (
     <div className='grid grid-cols-6 gap-x-4 gap-y-8'>
-      {/* {giftCard ? (
-        <div className='grid-item'>
+      {giftCard ? (
+        <div className='group cursor-pointer'>
           <Link to='/gift-card'>
             <ContentfulImage
-              alt={d.artist}
-              image={d.image}
-              width={180}
-              height={180}
-              quality={85}
+              image={giftCard.imagesCollection.items[0]}
+              width={148}
+              height={148}
+              quality={80}
               behaviour='fill'
               focusArea='faces'
               className='group-hover:opacity-50'
             />
-            <p className='item-name' style={{ fontWeight: 'bold' }}>
+            <p className='mt-2 font-bold text-secondary text-center group-hover:underline underline-offset-4'>
               {t('common:gift-card.name')}
               <br />€ 20 - 100
             </p>
           </Link>
         </div>
-      ) : null} */}
+      ) : null}
       {objects.map(object => {
         return (
           <div key={object.sys.id} className='group cursor-pointer'>
@@ -96,4 +99,4 @@ const GridObjectDefault: React.FC<Props> = ({ objects, giftCard = false }) => {
   )
 }
 
-export default GridObjectDefault
+export default ObjectsGrid

@@ -83,6 +83,14 @@ export type CommonImage = {
 }
 export type CommonRichText = { json: Document; links?: any }
 
+export type GiftCard = {
+  imagesCollection: { items: CommonImage[] }
+  defaultAmounts: string[]
+  customAmountAllow: boolean
+  customAmountMinimum?: number
+  description: CommonRichText
+}
+
 export type ObjectsVariation = { sys: { id: string }; variant: string }
 export type ObjectsColour = { sys: { id: string }; colour: string }
 export type ObjectsSize = { sys: { id: string }; size: string }
