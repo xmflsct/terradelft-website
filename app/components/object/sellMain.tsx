@@ -6,6 +6,7 @@ import { ObjectsObject_NameLocalized } from '~/utils/contentful'
 import Button from '../button'
 import FormField from '../formField'
 import Price from './price'
+import { selectStyle } from './sell'
 
 type Props = {
   object: ObjectsObject_NameLocalized
@@ -48,13 +49,7 @@ const SellMain: React.FC<Props> = ({ object }) => {
           defaultValue={{ value: 1, label: 1 }}
           isSearchable={false}
           onChange={e => e && setAmount(e.value)}
-          styles={{
-            control: provided => ({
-              ...provided,
-              borderTopLeftRadius: '0px',
-              borderBottomLeftRadius: '0px'
-            })
-          }}
+          styles={selectStyle}
         />
       </FormField>
       <Price

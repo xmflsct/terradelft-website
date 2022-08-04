@@ -11,14 +11,20 @@ import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { SelectedVariation } from '~/routes/$locale/object.$id'
 import { BagContext } from '~/states/bag'
-import { ObjectsObject_NameLocalized } from '~/utils/contentful'
+import {
+  ObjectsObjectVariation_NameLocalized,
+  ObjectsObject_NameLocalized
+} from '~/utils/contentful'
 import { currency } from '~/utils/formatNumber'
 import Button from '../button'
 import FormField from '../formField'
 import Price from './price'
+import { selectStyle } from './sell'
 
 type Props = {
-  object: ObjectsObject_NameLocalized
+  object: Omit<ObjectsObject_NameLocalized, 'variationsCollection'> & {
+    variationsCollection: { items: ObjectsObjectVariation_NameLocalized[] }
+  }
   setSelectedVariation: Dispatch<SetStateAction<SelectedVariation | undefined>>
 }
 
@@ -165,9 +171,9 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
       setSelectedVariation({
         image: variation.image,
         sku: variation.sku,
-        variant: variation.variant?.variant,
-        colour: variation.colour?.colour,
-        size: variation.size?.size
+        variant: variation.variant?.[i18n.language],
+        colour: variation.colour?.[i18n.language],
+        size: variation.size?.[i18n.language]
       })
 
       variation.stock > 0 && setAmount(1)
@@ -226,13 +232,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 }
                 isClearable
                 isSearchable={false}
-                styles={{
-                  control: provided => ({
-                    ...provided,
-                    borderTopLeftRadius: '0px',
-                    borderBottomLeftRadius: '0px'
-                  })
-                }}
+                styles={selectStyle}
               />
             </FormField>
           )}
@@ -249,13 +249,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 }
                 isClearable
                 isSearchable={false}
-                styles={{
-                  control: provided => ({
-                    ...provided,
-                    borderTopLeftRadius: '0px',
-                    borderBottomLeftRadius: '0px'
-                  })
-                }}
+                styles={selectStyle}
               />
             </FormField>
           )}
@@ -272,13 +266,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 }
                 isClearable
                 isSearchable={false}
-                styles={{
-                  control: provided => ({
-                    ...provided,
-                    borderTopLeftRadius: '0px',
-                    borderBottomLeftRadius: '0px'
-                  })
-                }}
+                styles={selectStyle}
               />
             </FormField>
           )}
@@ -301,6 +289,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                   ? variation.stock === 0
                   : false
               }
+              styles={selectStyle}
             />
           </FormField>
           {commonIDs.length === 1 && variation ? (

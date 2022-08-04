@@ -32,6 +32,8 @@ export type Context = {
   STRIPE_KEY_PRIVATE?: string
   STRIPE_KEY_PUBLIC?: string
   TERRADELFT_WEBSITE?: KVNamespace
+  SENDGRID_EMAIL?: string
+  SENDGRID_KEY?: string
 }
 
 export const loader = async ({ request }: LoaderArgs) => {

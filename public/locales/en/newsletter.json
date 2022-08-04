@@ -9,7 +9,7 @@
   "button": {
     "default": "Subscribe",
     "submitting": "Please wait",
-    "success": "Thank you!",
+    "success": "Thank you for subscribing!",
     "fail": "Please try again or contact us"
   }
 }

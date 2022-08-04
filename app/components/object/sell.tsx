@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CSSObjectWithLabel } from 'react-select'
 import kunstkoop from '~/images/kunstkoop.png'
 import { SelectedVariation } from '~/routes/$locale/object.$id'
 import { ObjectsObject_NameLocalized } from '~/utils/contentful'
@@ -10,6 +11,17 @@ import SellVariations from './sellVariations'
 type Props = {
   object: ObjectsObject_NameLocalized
   setSelectedVariation: Dispatch<SetStateAction<SelectedVariation | undefined>>
+}
+
+export const selectStyle = {
+  container: (provided: CSSObjectWithLabel) => ({ ...provided, flexGrow: 1 }),
+  control: (provided: CSSObjectWithLabel) => ({
+    ...provided,
+    borderColor: '#ddd',
+    borderTopLeftRadius: '0px',
+    borderBottomLeftRadius: '0px',
+    height: '100%'
+  })
 }
 
 const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {

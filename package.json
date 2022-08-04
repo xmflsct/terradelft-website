@@ -27,7 +27,7 @@
     "@remix-run/cloudflare-pages": "^1.6.7",
     "@remix-run/react": "^1.6.7",
     "@sentry/remix": "^7.8.1",
-    "@stripe/stripe-js": "^1.34.0",
+    "@stripe/stripe-js": "^1.35.0",
     "get-youtube-id": "^1.0.1",
     "graphql": "^16.5.0",
     "graphql-request": "^4.3.0",

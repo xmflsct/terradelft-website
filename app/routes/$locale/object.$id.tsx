@@ -22,6 +22,7 @@ import {
 } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
+import { ObjectContact } from './object.contact'
 
 export const loader = async (args: LoaderArgs) => {
   const data = await cacheQuery<{
@@ -302,11 +303,9 @@ const PageObject = () => {
   const [selectedVariation, setSelectedVariation] =
     useState<SelectedVariation>()
 
-  const [toggleContact, setToggleContact] = useState(false)
-
   return (
     <>
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 items-start'>
         <ObjectImages
           images={object.imagesCollection?.items}
           selectedVariation={selectedVariation}
@@ -381,26 +380,10 @@ const PageObject = () => {
             className='mt-2'
             assetWidth={634}
           />
-          <div className='object-contact'>
-            {/* <button
-              onClick={() => setToggleContact(!toggleContact)}
-              aria-expanded={toggleContact}
-              className={toggleContact ? 'd-none' : ''}
-            >
-              {t('contact.button')}
-            </button> */}
-            {/* <Collapse in={toggleContact}>
-              <div>
-                {toggleContact && (
-                  <ObjectContact
-                    object={{
-                      name: object.name
-                    }}
-                  />
-                )}
-              </div>
-            </Collapse> */}
-          </div>
+          <ObjectContact
+            object={object}
+            selectedVariation={selectedVariation}
+          />
         </div>
       </div>
       {object.artist.linkedFrom.objectsObjectCollection.items.length > 0 && (
