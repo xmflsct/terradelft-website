@@ -83,6 +83,7 @@ const richTextOptions = ({
                 allowFullScreen
                 width={assetWidth || 400}
                 height={((assetWidth || 400) / 16) * 9}
+                className='max-w-full'
               />
             </span>
           )

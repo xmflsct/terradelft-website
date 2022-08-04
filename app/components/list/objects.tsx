@@ -4,8 +4,8 @@ import {
   ObjectsObject,
   ObjectsObjectVariation
 } from '~/utils/contentful'
-import ContentfulImage from './image'
-import { Link } from './link'
+import ContentfulImage from '../image'
+import { Link } from '../link'
 
 type Reduced = Pick<ObjectsObject, 'sellOnline' | 'stock'> & {
   variationsCollection?: {
@@ -42,18 +42,18 @@ type Props = {
   giftCard?: GiftCard | null
 }
 
-const ObjectsGrid: React.FC<Props> = ({ objects, giftCard }) => {
+const ListObjects: React.FC<Props> = ({ objects, giftCard }) => {
   const { t } = useTranslation()
 
   return (
-    <div className='grid grid-cols-6 gap-x-4 gap-y-8'>
+    <div className='grid grid-cols-2 lg:grid-cols-6 gap-x-4 gap-y-4 lg:gap-y-8'>
       {giftCard ? (
         <div className='group cursor-pointer'>
           <Link to='/gift-card'>
             <ContentfulImage
               image={giftCard.imagesCollection.items[0]}
-              width={148}
-              height={148}
+              width={164}
+              height={164}
               quality={80}
               behaviour='fill'
               focusArea='faces'
@@ -74,8 +74,8 @@ const ObjectsGrid: React.FC<Props> = ({ objects, giftCard }) => {
                 {object.imagesCollection?.items.length && (
                   <ContentfulImage
                     image={object.imagesCollection.items[0]}
-                    width={148}
-                    height={148}
+                    width={164}
+                    height={164}
                     quality={80}
                     behaviour='fill'
                     focusArea='faces'
@@ -99,4 +99,4 @@ const ObjectsGrid: React.FC<Props> = ({ objects, giftCard }) => {
   )
 }
 
-export default ObjectsGrid
+export default ListObjects

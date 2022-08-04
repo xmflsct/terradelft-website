@@ -2,6 +2,7 @@ import {
   json,
   LinksFunction,
   LoaderArgs,
+  MetaFunction,
   redirect
 } from '@remix-run/cloudflare'
 import {
@@ -49,6 +50,11 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const handle = {
   i18n: 'common'
 }
+
+export const meta: MetaFunction = () => ({
+  charset: 'utf-8',
+  viewport: 'width=device-width,initial-scale=1'
+})
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: styles }]
@@ -98,5 +104,3 @@ export function CatchBoundary() {
     </html>
   )
 }
-
-export const unstable_shouldReload = () => false

@@ -4,7 +4,7 @@ const Footer = () => {
   const { t } = useTranslation()
 
   return (
-    <footer className='mt-8 pt-4 text-sm border-t border-t-secondary border-dashed flex flex-row'>
+    <footer className='mt-8 pt-4 text-sm border-t border-t-secondary border-dashed flex flex-col lg:flex-row leading-6'>
       <div className='flex-1 text-left'>
         <p>
           {t('footer.left.copyright')}
@@ -16,7 +16,7 @@ const Footer = () => {
           {t('footer.left.opening.3')}
         </p>
       </div>
-      <div className='flex-1 text-center'>
+      <div className='flex-1 mt-4 lg:m-0 text-left lg:text-center'>
         <p>
           {t('footer.center.address')}
           <br />
@@ -25,7 +25,7 @@ const Footer = () => {
           {t('footer.center.email')}
         </p>
       </div>
-      <div className='flex-1 text-right'>
+      <div className='flex-1 mt-4 lg:m-0 text-left lg:text-right'>
         <p>
           Made with ♥ by{' '}
           <a

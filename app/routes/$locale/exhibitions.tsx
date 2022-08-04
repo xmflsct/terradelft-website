@@ -72,7 +72,7 @@ const PageExhibitions = () => {
   return (
     <>
       <div className='grid grid-cols-6 gap-4 mb-4'>
-        <div className='col-span-2'>
+        <div className='col-span-6 lg:col-span-2 order-2 lg:order-1'>
           <H2>{t('upcoming')}</H2>
           {exhibitions.items
             .filter(
@@ -92,7 +92,7 @@ const PageExhibitions = () => {
               </div>
             ))}
         </div>
-        <div className='col-span-4'>
+        <div className='col-span-6 lg:col-span-4 order-1 lg:order-2'>
           <H2>{t('current')}</H2>
           {exhibitions.items
             .filter(
@@ -102,7 +102,7 @@ const PageExhibitions = () => {
             )
             .map(exhibition => {
               return (
-                <div key={exhibition.sys.id} className='flex flex-row gap-4'>
+                <div key={exhibition.sys.id} className='flex flex-col lg:flex-row gap-4'>
                   {exhibition.image && (
                     <ContentfulImage
                       alt={exhibition.name}

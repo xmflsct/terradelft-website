@@ -48,7 +48,7 @@ const PageReachTerra = () => {
 
   return (
     <>
-      <div className='grid grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
         <div>
           <div>
             <iframe
@@ -56,7 +56,7 @@ const PageReachTerra = () => {
               title='Google Maps'
               frameBorder='0'
               allowFullScreen
-              className='w-full'
+              className='max-w-full'
             />
           </div>
         </div>

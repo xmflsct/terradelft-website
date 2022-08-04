@@ -90,10 +90,7 @@ const PageTerraInChina = () => {
           {data.exhibitions.items.map(exhibition => (
             <div key={exhibition.sys.id} className='mb-8'>
               <div>
-                <Link
-                  to={`/exhibition/${exhibition.sys.id}`}
-                  className='text-lg'
-                >
+                <Link to={`/exhibition/${exhibition.sys.id}`}>
                   {exhibition.image && (
                     <ContentfulImage
                       alt={exhibition.name}
@@ -104,7 +101,7 @@ const PageTerraInChina = () => {
                       behaviour='fill'
                     />
                   )}
-                  {exhibition.name}
+                  <p className='text-lg truncate mt-1'>{exhibition.name}</p>
                 </Link>
                 <ExhibitionInformation exhibition={exhibition} type='current' />
               </div>
@@ -130,7 +127,7 @@ const PageTerraInChina = () => {
                       behaviour='fill'
                     />
                   )}
-                  {news.title}
+                  <p className='text-lg truncate mt-1'>{news.title}</p>
                 </Link>
                 <p>
                   {t('news:published', {

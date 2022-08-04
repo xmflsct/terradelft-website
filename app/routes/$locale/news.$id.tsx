@@ -73,8 +73,12 @@ const PageNews = () => {
   const { t, i18n } = useTranslation('news')
 
   return (
-    <div className='grid grid-cols-6 gap-4'>
-      <H1 className={news.image ? 'col-span-6' : 'col-span-4 col-start-2'}>
+    <div className='grid grid-cols-6 gap-4 items-start'>
+      <H1
+        className={
+          news.image ? 'col-span-6' : 'col-span-6 lg:col-span-4 lg:col-start-2'
+        }
+      >
         {news.title}
       </H1>
       {news.image && (
@@ -83,10 +87,16 @@ const PageNews = () => {
           image={news.image}
           width={309}
           quality={80}
-          className='col-span-2'
+          className='col-span-6 lg:col-span-2'
         />
       )}
-      <div className={news.image ? 'col-span-4' : 'col-span-4 col-start-2'}>
+      <div
+        className={
+          news.image
+            ? 'col-span-6 lg:col-span-4'
+            : 'col-span-6 lg:col-span-4 lg:col-start-2'
+        }
+      >
         <p>
           {t('published', {
             date: new Date(news.date).toLocaleDateString(i18n.language, {

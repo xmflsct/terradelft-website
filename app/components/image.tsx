@@ -171,7 +171,7 @@ const ContentfulImage: React.FC<Props> = ({
         alt={alt || image.title}
         decoding={decoding}
         loading={eager ? 'eager' : 'lazy'}
-        className='mx-auto'
+        className='w-full mx-auto'
       />
     </picture>
   )

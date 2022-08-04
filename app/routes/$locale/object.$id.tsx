@@ -8,10 +8,10 @@ import { useTranslation } from 'react-i18next'
 import type { Product, WithContext } from 'schema-dts'
 import { H1, H2, H3 } from '~/components/globals'
 import { Link } from '~/components/link'
+import ListObjects from '~/components/list/objects'
 import ObjectAttribute from '~/components/object/attribute'
 import ObjectImages from '~/components/object/images'
 import ObjectSell from '~/components/object/sell'
-import ObjectsGrid from '~/components/objectsGrid'
 import RichText from '~/components/richText'
 import {
   cacheQuery,
@@ -306,7 +306,7 @@ const PageObject = () => {
 
   return (
     <>
-      <div className='grid grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
         <ObjectImages
           images={object.imagesCollection?.items}
           selectedVariation={selectedVariation}
@@ -406,7 +406,7 @@ const PageObject = () => {
       {object.artist.linkedFrom.objectsObjectCollection.items.length > 0 && (
         <div className='mt-8'>
           <H2>{t('related', { artist: object.artist.artist })}</H2>
-          <ObjectsGrid
+          <ListObjects
             objects={object.artist.linkedFrom.objectsObjectCollection.items.filter(
               o => o.sys.id !== object.sys.id
             )}

@@ -5,7 +5,7 @@ type Props = PropsWithChildren & { className?: string }
 const H1: React.FC<Props> = props => {
   return (
     <h1
-      className={`text-3xl mb-2 ${props.className}`}
+      className={`text-3xl mb-4 ${props.className}`}
       children={props.children}
     />
   )
@@ -13,7 +13,7 @@ const H1: React.FC<Props> = props => {
 const H2: React.FC<Props> = props => {
   return (
     <h2
-      className={`text-2xl mb-2 ${props.className}`}
+      className={`text-2xl mb-4 ${props.className}`}
       children={props.children}
     />
   )

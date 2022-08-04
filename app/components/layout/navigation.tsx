@@ -27,12 +27,14 @@ const Navigation = () => {
     (paths: string[]) =>
     ({ isActive }: { isActive: boolean }) =>
       isActive ||
-      paths.map(path => pathname.includes(path)).filter(path => path).length > 0
+      paths
+        .map(path => pathname.slice(3).startsWith(path))
+        .filter(path => path).length > 0
         ? 'flex-1 text-center p-2 bg-secondary text-background border border-secondary'
         : 'flex-1 text-center p-2 bg-background text-secondary border border-secondary'
 
   return (
-    <nav className='flex flex-row gap-4'>
+    <nav className='flex flex-col lg:flex-row gap-4'>
       <div className='hidden'>
         <form action={`${locationOrigin}/search`}>
           {/* <InputGroup>

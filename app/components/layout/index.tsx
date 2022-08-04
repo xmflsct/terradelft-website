@@ -1,7 +1,6 @@
 // import { config } from '@fortawesome/fontawesome-svg-core'
-import React, { useReducer } from 'react'
+import React from 'react'
 import BagProvider from '~/states/bag'
-import Announcement from './announcement'
 import Footer from './footer'
 import Header from './header'
 
@@ -13,9 +12,8 @@ const Layout: React.FC<React.PropsWithChildren> = props => {
 
   return (
     <BagProvider>
-      <div className='max-w-5xl mx-auto border border-secondary p-8 my-8'>
+      <div className='max-w-5xl m-0 lg:mx-auto lg:my-8 p-4 lg:p-8 lg:border lg:border-secondary'>
         <Header />
-        {/* <Announcement /> */}
         <main className='my-4' {...props} />
         <Footer />
       </div>

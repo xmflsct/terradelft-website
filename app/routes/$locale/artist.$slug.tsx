@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import type { Person, WithContext } from 'schema-dts'
 import { H1, H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
-import ObjectsGrid from '~/components/objectsGrid'
+import ListObjects from '~/components/list/objects'
 import RichText from '~/components/richText'
 import { cacheQuery, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
@@ -102,7 +102,7 @@ const PageArtist = () => {
   return (
     <>
       <H1>{artist.artist}</H1>
-      <div className='flex flex-row gap-4 mb-8'>
+      <div className='flex flex-col lg:flex-row gap-4 mb-8'>
         <div className='flex-1'>
           <ContentfulImage
             alt={artist.artist}
@@ -120,7 +120,7 @@ const PageArtist = () => {
       {artist.linkedFrom.objectsObjectCollection.items.length ? (
         <>
           <H2>{t('objects-by', { artist: artist.artist })}</H2>
-          <ObjectsGrid
+          <ListObjects
             objects={artist.linkedFrom.objectsObjectCollection.items}
           />
         </>

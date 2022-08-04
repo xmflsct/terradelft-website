@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { H4 } from '~/components/globals'
-import ObjectsGrid from '~/components/objectsGrid'
+import ListObjects from '~/components/list/objects'
 import Pagination from '~/components/pagination'
 import i18next from '~/i18next.server'
 import { cacheQuery, GiftCard } from '~/utils/contentful'
@@ -28,14 +28,14 @@ type Options = {
 }
 
 export const loader = async (args: LoaderArgs) => {
-  const page = parseInt(args.params.page || '') - 1
-  if (page < 0) {
+  const page = parseInt(args.params.page || '')
+  if (page < 1) {
     throw json('Not Found', { status: 404 })
   }
 
   const meta = await loadMeta(args, {
     titleKey: 'pages.shop',
-    titleOptions: { context: 'page', page: args.params.page }
+    titleOptions: { context: 'page', page }
   })
 
   const locale = await i18next.getLocale(args.request)
@@ -331,7 +331,10 @@ export const loader = async (args: LoaderArgs) => {
     giftCard,
     data: {
       options,
-      objects: objects.slice(perPage * page, perPage * (page + 1)),
+      objects: objects.slice(
+        page === 1 ? 0 : perPage * page - perPage - 1,
+        perPage * page - 1
+      ),
       page: { total: Math.round(objects.length / perPage), current: page }
     }
   })
@@ -385,7 +388,7 @@ const PageShopPage: React.FC = () => {
   return (
     <>
       <H4>{t('filters')}</H4>
-      <form className='grid grid-cols-4 gap-4 mb-8'>
+      <form className='grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
         <ReactSelect
           name='price'
           isClearable
@@ -438,12 +441,15 @@ const PageShopPage: React.FC = () => {
           }
         />
       </form>
-      <ObjectsGrid giftCard={giftCard} objects={objects} />
+      <ListObjects
+        giftCard={page?.current === 1 ? giftCard : undefined}
+        objects={objects}
+      />
       {page && (
         <Pagination
           basePath='/shop/page'
           total={page.total}
-          page={page.current.toString()}
+          page={page.current}
         />
       )}
     </>

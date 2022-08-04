@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import ObjectsGrid, { objectsReduceSell } from '~/components/objectsGrid'
+import ListObjects, { objectsReduceSell } from '~/components/list/objects'
 import RichText from '~/components/richText'
 import {
   Announcement,
@@ -114,11 +114,11 @@ const PageIndex = () => {
   return (
     <>
       {data.announcements?.items.length && (
-        <div className='grid grid-cols-6 gap-4 mb-2'>
+        <div className='lg:grid lg:grid-cols-6 gap-4 mb-4'>
           {data.announcements.items.map((announcement, index) => (
             <div
               key={index}
-              className='col-start-2 col-span-4 border-2 border-dotted border-secondary px-4 py-2 mb-2'
+              className='lg:col-start-2 lg:col-span-4 border-2 border-dotted border-secondary px-4 py-2 mb-2'
             >
               <H3 className='text-center'>{announcement.title}</H3>
               <RichText content={announcement.content} assetWidth={200} />
@@ -128,19 +128,19 @@ const PageIndex = () => {
       )}
       <div className='section-online-shop mb-3'>
         <H2>{t('online-shop')}</H2>
-        <ObjectsGrid giftCard={data.giftCard} objects={data.objects.items} />
+        <ListObjects giftCard={data.giftCard} objects={data.objects.items} />
       </div>
       <div className='section-collection'>
         <H2>{t('collection')}</H2>
-        <div className='grid grid-cols-6 gap-x-4 gap-y-8'>
+        <div className='grid grid-cols-2 lg:grid-cols-6 gap-x-4 gap-y-4 lg:gap-y-8'>
           {data.artists.items.map(artist => (
             <div key={artist.artist} className='group cursor-pointer'>
               <Link to={`/artist/${artist.slug}`}>
                 <ContentfulImage
                   alt={artist.artist}
                   image={artist.image}
-                  width={148}
-                  height={148}
+                  width={164}
+                  height={164}
                   quality={80}
                   behaviour='fill'
                   focusArea='faces'

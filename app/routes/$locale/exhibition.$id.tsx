@@ -113,9 +113,9 @@ const PageExhibition = () => {
   const { exhibition } = useLoaderData<typeof loader>()
 
   return (
-    <div className='grid grid-cols-6 gap-4'>
+    <div className='grid grid-cols-6 gap-4 items-start'>
       <H1
-        className={exhibition.image ? 'col-span-6' : 'col-span-4 col-start-2'}
+        className={exhibition.image ? 'col-span-6' : 'col-span-6 lg:col-span-4 lg:col-start-2'}
       >
         {exhibition.name}
       </H1>
@@ -125,11 +125,11 @@ const PageExhibition = () => {
           image={exhibition.image}
           width={309}
           quality={80}
-          className='col-span-2'
+          className='col-span-6 lg:col-span-2'
         />
       )}
       <div
-        className={exhibition.image ? 'col-span-4' : 'col-span-4 col-start-2'}
+        className={exhibition.image ? 'col-span-6 lg:col-span-4' : 'col-span-6 lg:col-span-4 lg:col-start-2'}
       >
         <ExhibitionInformation exhibition={exhibition} />
         <RichText

@@ -1,10 +1,9 @@
 import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData, useParams } from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import { H1 } from '~/components/globals'
-import ContentfulImage from '~/components/image'
-import { Link } from '~/components/link'
+import ListNews from '~/components/list/news'
 import Pagination from '~/components/pagination'
 import { cacheQuery, NewsNews } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
@@ -12,12 +11,12 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const page = parseInt(args.params.page || '') - 1
+  const page = parseInt(args.params.page || '')
   if (page < 0) {
     throw json('Not Found', { status: 404 })
   }
 
-  const perPage = 9
+  const perPage = 12
 
   const data = await cacheQuery<{
     news: {
@@ -26,7 +25,7 @@ export const loader = async (args: LoaderArgs) => {
     }
   }>({
     ...args,
-    variables: { limit: perPage, skip: perPage * page },
+    variables: { limit: perPage, skip: perPage * (page - 1) },
     query: gql`
       query PageNewsPage($locale: String, $limit: Int, $skip: Int) {
         news: newsNewsCollection(
@@ -52,7 +51,7 @@ export const loader = async (args: LoaderArgs) => {
   })
   const meta = await loadMeta(args, {
     titleKey: 'pages.news',
-    titleOptions: { context: 'page', page: args.params.page }
+    titleOptions: { context: 'page', page }
   })
 
   if (!data?.news?.items?.length) {
@@ -64,7 +63,7 @@ export const loader = async (args: LoaderArgs) => {
       ...data,
       news: {
         ...data.news,
-        total: Math.round(data.news.total / perPage)
+        page: { total: Math.round(data.news.total / perPage), current: page }
       }
     }
   })
@@ -84,46 +83,20 @@ export let handle = { i18n: 'news' }
 const PageNewsPage = () => {
   const {
     data: {
-      news: { total, items }
+      news: { page, items }
     }
   } = useLoaderData<typeof loader>()
-  const { page } = useParams()
-  const { t, i18n } = useTranslation('news')
+  const { t } = useTranslation('news')
 
   return (
     <>
-      <H1>{t('common:pages.news', { context: 'page', page })}</H1>
-      <div className='grid grid-cols-3 gap-x-4 gap-y-8'>
-        {items?.map(news => {
-          return (
-            <div key={news.sys.id}>
-              <Link to={`/news/${news.sys.id}`}>
-                <ContentfulImage
-                  alt={news.title}
-                  image={news.image}
-                  width={309}
-                  height={309}
-                  quality={80}
-                  behaviour='fill'
-                  focusArea='faces'
-                  className='mb-2'
-                />
-                <p className='text-lg truncate'>{news.title}</p>
-              </Link>
-              <p>
-                {t('published', {
-                  date: new Date(news.date).toLocaleDateString(i18n.language, {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                  })
-                })}
-              </p>
-            </div>
-          )
-        })}
-      </div>
-      <Pagination basePath='/news/page' page={page!} total={total} />
+      <H1>{t('common:pages.news', { context: 'page', page: page.current })}</H1>
+      <ListNews news={items} />
+      <Pagination
+        basePath='/news/page'
+        page={page.current}
+        total={page.total}
+      />
     </>
   )
 }

@@ -73,7 +73,7 @@ const PageAboutTerra = () => {
   return (
     <>
       <H1>{t('common:pages.about-terra')}</H1>
-      <div className='grid grid-cols-2 gap-4'>
+      <div className='lg:grid lg:grid-cols-2 gap-4'>
         <RichText content={page.columnLeft} assetWidth={471} />
         <RichText content={page.columnRight} assetWidth={471} />
       </div>
@@ -81,7 +81,7 @@ const PageAboutTerra = () => {
         <H2>{t('staff')}</H2>
         {page.staffCollection?.items.map(staff => (
           <div key={staff.name} className='grid grid-cols-6 gap-4 mb-8'>
-            <div className='col-span-1'>
+            <div className='col-span-2 lg:col-span-1'>
               <ContentfulImage
                 alt={staff.name}
                 image={staff.avatar}
@@ -90,7 +90,10 @@ const PageAboutTerra = () => {
               />
               <H4 className='mt-1 text-center'>{staff.name}</H4>
             </div>
-            <RichText content={staff.biography} className='col-span-5' />
+            <RichText
+              content={staff.biography}
+              className='col-span-6 lg:col-span-5'
+            />
           </div>
         ))}
       </div>
