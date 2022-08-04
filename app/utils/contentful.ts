@@ -130,8 +130,8 @@ export type ObjectsObject = {
   stock?: number
   variationsCollection?: { items: ObjectsObjectVariation[] }
   year?: { year: number }
-  techniqueCollection?: { items: { technique: string }[] }
-  materialCollection?: { items: { material: string }[] }
+  techniqueCollection?: { items: { sys: { id: string }; technique: string }[] }
+  materialCollection?: { items: { sys: { id: string }; material: string }[] }
   dimensionWidth?: number
   dimensionLength?: number
   dimensionHeight?: number

@@ -76,7 +76,7 @@ export default function Root() {
         <Links />
         <StructuredData />
       </head>
-      <body className='bg-background text-primary'>
+      <body className='scroll-smooth bg-background text-primary'>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
@@ -96,7 +96,7 @@ export function CatchBoundary() {
         <Meta />
         <Links />
       </head>
-      <body className='bg-background text-primary'>
+      <body className='scroll-smooth bg-background text-primary'>
         <Layout>
           <H1>{t('pages.404')}</H1>
           <img src={notFound} />

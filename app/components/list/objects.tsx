@@ -1,3 +1,4 @@
+import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
 import {
   GiftCard,
@@ -98,5 +99,20 @@ const ListObjects: React.FC<Props> = ({ objects, giftCard }) => {
     </div>
   )
 }
+
+export const LIST_OBJECT_DETAILS = gql`
+  fragment ListObjectDetails on ObjectsObject {
+    sys {
+      id
+    }
+    imagesCollection(limit: 1) {
+      items {
+        url
+      }
+    }
+    priceSale
+    name(locale: $locale)
+  }
+`
 
 export default ListObjects

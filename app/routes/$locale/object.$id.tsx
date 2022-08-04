@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import type { Product, WithContext } from 'schema-dts'
 import { H1, H2, H3 } from '~/components/globals'
 import { Link } from '~/components/link'
-import ListObjects from '~/components/list/objects'
+import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
 import ObjectAttribute from '~/components/object/attribute'
 import ObjectImages from '~/components/object/images'
 import ObjectSell from '~/components/object/sell'
@@ -31,6 +31,7 @@ export const loader = async (args: LoaderArgs) => {
     ...args,
     variables: { id: args.params.id },
     query: gql`
+      ${LIST_OBJECT_DETAILS}
       query PageObject($locale: String, $id: String!) {
         object: objectsObject (locale: $locale, id: $id) {
           sys {
@@ -53,16 +54,7 @@ export const loader = async (args: LoaderArgs) => {
             linkedFrom {
               objectsObjectCollection (locale: "nl") {
                 items {
-                  sys {
-                    id
-                  }
-                  name (locale: $locale)
-                  imagesCollection (limit: 1) {
-                    items {
-                      url
-                    }
-                  }
-                  priceSale
+                  ...ListObjectDetails
                 }
               }
             }
@@ -105,11 +97,17 @@ export const loader = async (args: LoaderArgs) => {
           }
           techniqueCollection {
             items {
+              sys {
+                id
+              }
               technique
             }
           }
           materialCollection {
             items {
+              sys {
+                id
+              }
               material
             }
           }
@@ -330,17 +328,19 @@ const PageObject = () => {
               {object.techniqueCollection && (
                 <ObjectAttribute
                   type={t('technique')}
-                  value={object.techniqueCollection.items.map(
-                    item => item.technique
-                  )}
+                  value={object.techniqueCollection.items.map(item => ({
+                    id: item.sys.id,
+                    value: item.technique
+                  }))}
                 />
               )}
               {object.materialCollection && (
                 <ObjectAttribute
                   type={t('material')}
-                  value={object.materialCollection.items.map(
-                    item => item.material
-                  )}
+                  value={object.materialCollection.items.map(item => ({
+                    id: item.sys.id,
+                    value: item.material
+                  }))}
                 />
               )}
               {object.dimensionWidth && (
@@ -386,7 +386,7 @@ const PageObject = () => {
           />
         </div>
       </div>
-      {object.artist.linkedFrom.objectsObjectCollection.items.length > 0 && (
+      {object.artist.linkedFrom.objectsObjectCollection.items.length > 1 && (
         <div className='mt-8'>
           <H2>{t('related', { artist: object.artist.artist })}</H2>
           <ListObjects

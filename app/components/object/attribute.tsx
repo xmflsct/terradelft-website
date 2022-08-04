@@ -4,7 +4,7 @@ import { Link } from '../link'
 
 type Props = {
   type: string
-  value: number | string[]
+  value: number | { id: string; value: string }[]
 }
 
 const ObjectAttribute: React.FC<Props> = ({ type, value }) => {
@@ -24,9 +24,13 @@ const ObjectAttribute: React.FC<Props> = ({ type, value }) => {
       ) : (
         // Technique and material, many references
         <td>
-          {value.map((d, i) => (
+          {value.map(({ id, value }, i) => (
             <span key={i}>
-              <Link to={`/object/attribute/${type}/${d}`}>{d}</Link>
+              <Link
+                to={`/object/${type.toLowerCase()}/${value.toLowerCase()}/${id}/page/1`}
+              >
+                {value}
+              </Link>
               {i !== value.length - 1 && ', '}
             </span>
           ))}

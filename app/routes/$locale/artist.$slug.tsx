@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import type { Person, WithContext } from 'schema-dts'
 import { H1, H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
-import ListObjects from '~/components/list/objects'
+import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
 import RichText from '~/components/richText'
 import { cacheQuery, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
@@ -17,6 +17,7 @@ export const loader = async (args: LoaderArgs) => {
     ...args,
     variables: { slug: args.params.slug! },
     query: gql`
+      ${LIST_OBJECT_DETAILS}
       query PageArtist($locale: String, $slug: String) {
         artists: objectsArtistCollection (
           locale: $locale,
@@ -33,18 +34,9 @@ export const loader = async (args: LoaderArgs) => {
               ${RICH_TEXT_LINKS}
             }
             linkedFrom {
-              objectsObjectCollection (locale: "nl") {
+              objectsObjectCollection(locale: "nl") {
                 items {
-                  sys {
-                    id
-                  }
-                  name (locale: $locale)
-                  imagesCollection (limit: 1) {
-                    items {
-                      url
-                    }
-                  }
-                  priceSale
+                  ...ListObjectDetails
                 }
               }
             }
