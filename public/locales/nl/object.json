@@ -1,29 +1,30 @@
 {
+  "option-default": "Normaal",
+  "artist": "Kunstenaar",
+  "variant": "Variant",
+  "colour": "Kleur",
+  "size": "Afmeting",
+  "year": "Jaar",
+  "technique": "Techniek",
+  "material": "Materiaal",
+  "design": "Design",
+  "dimensionWidth": "Breedte",
+  "dimensionLength": "Lengte",
+  "dimensionHeight": "Hoogte",
+  "dimensionDiameter": "Diameter",
+  "dimensionDepth": "Diepte",
+  "amount": "Aantal",
+  "price": "Prijs",
+  "on-sale": "Aanbieding",
+  "out-of-stock": "Verkocht",
   "add-to-bag": "In winkelmand",
-  "add-button": {
-    "add-to-bag": "In winkelmand",
-    "select-variation": "Selecteer opties",
-    "out-of-stock": "Verkocht"
-  },
+  "select-variation": "Selecteer opties",
   "contact": {
     "button": "Vraag over dit object?",
-    "heading": "Stuur ons uw vraag hieronder",
     "form": {
       "subject": {
         "label": "Onderwerpen",
         "value": "Vraag over {{name}}"
-      },
-      "sku": {
-        "label": "SKU"
-      },
-      "variant": {
-        "label": "Variant"
-      },
-      "colour": {
-        "label": "Kleur"
-      },
-      "size": {
-        "label": "Afmeting"
       },
       "name": {
         "label": "Naam"
@@ -40,8 +41,7 @@
       "button": {
         "default": "Sturen",
         "submitting": "Wacht alsjeblieft",
-        "success": "Dank u! We nemen spoedig contact met u op",
-        "fail": "Probeer het opnieuw of neem contact met ons op"
+        "success": "Dank u! We nemen spoedig contact met u op"
       }
     }
   },
