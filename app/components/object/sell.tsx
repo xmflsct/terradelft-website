@@ -17,7 +17,7 @@ export const selectStyle = {
   container: (provided: CSSObjectWithLabel) => ({ ...provided, flexGrow: 1 }),
   control: (provided: CSSObjectWithLabel) => ({
     ...provided,
-    borderColor: '#ddd',
+    borderColor: '#e8e8e8',
     borderTopLeftRadius: '0px',
     borderBottomLeftRadius: '0px',
     height: '100%'

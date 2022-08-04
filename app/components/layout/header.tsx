@@ -1,13 +1,9 @@
-import {
-  faGlobeEurope,
-  faSearch,
-  faShoppingBag
-} from '@fortawesome/free-solid-svg-icons'
+import { faGlobeEurope, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import Navigation from './navigation'
 import { useTranslation } from 'react-i18next'
-import { Link as RemixLink, useMatches, useParams } from '@remix-run/react'
+import { Link as RemixLink, useMatches } from '@remix-run/react'
 import { Link } from '~/components/link'
 import logoEnLarge from '~/images/logo/en/large.png'
 import logoEnSmall from '~/images/logo/en/small.png'
@@ -15,13 +11,15 @@ import logoNlLarge from '~/images/logo/nl/large.png'
 import logoNlSmall from '~/images/logo/nl/small.png'
 import i18n from '~/i18n'
 import { BagContext } from '~/states/bag'
+import classNames from '~/utils/classNames'
 
-const Header = () => {
+const Header: React.FC = () => {
   const matches = useMatches()
   const {
     i18n: { language },
     t
   } = useTranslation()
+  const [toggleNav, setToggleNav] = useState(false)
   // const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
   // const [miniBag, setMiniBag] = useState(false)
   // const [locationOrigin, setLocationOrigin] = useState()
@@ -41,40 +39,61 @@ const Header = () => {
   // }, [])
 
   return (
-    <header className='mb-8'>
-      <div className='block lg:hidden'>
-        <button
-        // className={`hamburger hamburger--collapse ${
-        //   stateMobileMenu ? 'is-active' : ''
-        // }`}
-        // aria-label='Menu'
-        // onClick={() => dispatch()}
-        >
-          <span className='hamburger-box'>
-            <span className='hamburger-inner' />
-          </span>
-        </button>
-      </div>
-      <div className='flex flex-row mb-2'>
+    <header
+      className={classNames(
+        'z-50 sticky top-0 lg:relative lg:top-auto bg-background',
+        'border-b-2 border-secondary lg:border-none',
+        'mb-4 lg:mb-8',
+        'pt-4 pb-2 lg:p-0'
+      )}
+    >
+      <div className='flex flex-row mb-0 lg:mb-4'>
+        <div className='flex-1 block lg:hidden'>
+          <button
+            aria-label='Mobile hamburger menu'
+            className='p-2'
+            onClick={() => {
+              toggleNav === false &&
+                typeof window !== undefined &&
+                window.scrollTo(0, 0)
+              setToggleNav(!toggleNav)
+            }}
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='w-6 h-6'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M4 6h16M4 12h16M4 18h16'
+              />
+            </svg>
+          </button>
+        </div>
         <div className='flex-2'>
-          <Link to='/'>
+          <Link to='/' className='flex flex-col items-center'>
             {language === 'nl' && (
               <>
                 <img src={logoNlLarge} className='hidden lg:block' />
-                <img src={logoNlSmall} className='block lg:hidden' />
+                <img src={logoNlSmall} className='block lg:hidden w-9/12' />
               </>
             )}
             {language === 'en' && (
               <>
                 <img src={logoEnLarge} className='hidden lg:block' />
-                <img src={logoEnSmall} className='block lg:hidden' />
+                <img src={logoEnSmall} className='block lg:hidden w-9/12' />
               </>
             )}
           </Link>
         </div>
         <div className='flex-1'>
-          <div className='justify-content-end h-100'>
-            <div className='language-switcher'>
+          <div className='flex flex-row gap-2 lg:gap-4 justify-end'>
+            <div className='text-center text-primary hover:text-secondary'>
               {i18n.supportedLngs
                 .filter(locale => locale !== language)
                 .map(locale => (
@@ -100,8 +119,11 @@ const Header = () => {
                   </RemixLink>
                 ))}
             </div>
-            <div className='bag-link'>
-              <Link to='/bag'>
+            <div className='text-center'>
+              <Link
+                to='/bag'
+                className='!text-primary hover:!text-secondary hover:no-underline'
+              >
                 <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
                 <span className='small-block'>{` (${objects.reduce(
                   (total, obj) => obj.amount + total,
@@ -109,8 +131,9 @@ const Header = () => {
                 )})`}</span>
               </Link>
             </div>
-            <div className='search-box align-self-end'>
-              {/* <Form
+          </div>
+          <div className='search-box align-self-end'>
+            {/* <Form
                 action={`${locationOrigin}${t(
                   'common:slug.static.search.slug',
                   {
@@ -132,7 +155,6 @@ const Header = () => {
                   <Form.Control name='query' placeholder='Search' />
                 </InputGroup>
               </Form> */}
-            </div>
           </div>
         </div>
       </div>
@@ -149,7 +171,7 @@ const Header = () => {
       >
         <div>{t('common:header.mini-bag')}</div>
       </CSSTransition> */}
-      <Navigation />
+      <Navigation toggleNav={toggleNav} />
     </header>
   )
 }

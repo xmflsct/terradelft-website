@@ -11,6 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import getYouTubeID from 'get-youtube-id'
+import classNames from '~/utils/classNames'
 import { CommonImage, CommonRichText } from '~/utils/contentful'
 import ContentfulImage from './image'
 import { Link } from './link'
@@ -202,7 +203,13 @@ const RichText: React.FC<Props> = ({ content, className, assetWidth }) => {
 
   return (
     <article
-      className={`prose prose-neutral max-w-none ${className}`}
+      className={classNames(
+        'prose prose-neutral max-w-none',
+        'prose-li:m-0',
+        'marker:prose-li:text-stone-700',
+        '[&>p]:prose-li:m-0',
+        className
+      )}
       children={documentToReactComponents(
         content.json,
         richTextOptions({ links: content.links, assetWidth })

@@ -65,7 +65,7 @@ const ContentfulImage: React.FC<Props> = ({
   if (!image) {
     return (
       <div
-        className='relative pb-100 bg-placeholder'
+        className='relative pb-100 bg-stone-200'
         children={
           <span
             className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-background text-3xl'
@@ -160,7 +160,7 @@ const ContentfulImage: React.FC<Props> = ({
     }).toString()} ${Math.round(width * 2)}w, `
 
   return (
-    <picture className={classNames('object-cover bg-placeholder', className)}>
+    <picture className={classNames('object-cover bg-stone-200', className)}>
       <source type='image/webp' srcSet={transformSrcSetWEBP} />
       <source type='image/jpeg' srcSet={transformSrcSetJPG} />
       <img

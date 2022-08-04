@@ -14,7 +14,7 @@ const FormField: React.FC<PropsWithChildren & Props> = ({
     case 'horizontal':
       return (
         <div className='h-10 my-4 flex flex-row items-stretch'>
-          <span className='bg-placeholder px-4 inline-flex items-center rounded-l'>
+          <span className='bg-stone-200 px-4 inline-flex items-center rounded-l'>
             {label}
           </span>
           <div className='flex-1 flex flex-row justify-items-stretch'>

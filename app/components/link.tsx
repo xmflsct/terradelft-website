@@ -5,6 +5,7 @@ import {
 } from '@remix-run/react/dist/components'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
+import classNames from '~/utils/classNames'
 
 const Link: React.FC<PropsWithChildren & RemixLinkProps> = props => {
   if (!props.to) {
@@ -20,7 +21,10 @@ const Link: React.FC<PropsWithChildren & RemixLinkProps> = props => {
   return (
     <RemixLink
       {...props}
-      className={`text-secondary underline-offset-4 no-underline hover:underline ${props.className}`}
+      className={classNames(
+        'text-secondary underline-offset-4 no-underline hover:underline',
+        props.className
+      )}
       to={`/${language}${to === '/' ? '' : to}`}
     />
   )

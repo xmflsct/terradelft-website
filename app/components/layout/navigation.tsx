@@ -2,51 +2,48 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Menu, Transition } from '@headlessui/react'
 import { useLocation } from '@remix-run/react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import classNames from '~/utils/classNames'
 import { NavLink } from '../link'
 
-// const activeChildren = (location, children) => {
-//   if (location.pathname.includes(children)) {
-//     return { className: 'active-children' }
-//   }
-// }
+type Props = {
+  toggleNav: boolean
+}
 
-const Navigation = () => {
-  const { t, i18n } = useTranslation('common')
+const Navigation: React.FC<Props> = ({ toggleNav }) => {
+  const { t } = useTranslation('common')
   const { pathname } = useLocation()
-
-  const [locationOrigin, setLocationOrigin] = useState<string>()
-
-  useEffect(() => {
-    setLocationOrigin(window.location.origin)
-  }, [])
 
   const styleNavItem =
     (paths: string[]) =>
     ({ isActive }: { isActive: boolean }) =>
       isActive ||
-      paths
-        .map(path => pathname.slice(3).startsWith(path))
-        .filter(path => path).length > 0
+      paths.map(path => pathname.slice(3).startsWith(path)).filter(path => path)
+        .length > 0
         ? 'flex-1 text-center p-2 bg-secondary text-background border border-secondary'
         : 'flex-1 text-center p-2 bg-background text-secondary border border-secondary'
 
   return (
-    <nav className='flex flex-col lg:flex-row gap-4'>
-      <div className='hidden'>
+    <nav
+      className={classNames(
+        'py-4 lg:p-0',
+        `${toggleNav ? 'flex' : 'hidden'} lg:flex`,
+        'flex-col lg:flex-row gap-4'
+      )}
+    >
+      {/* <div className='hidden'>
         <form action={`${locationOrigin}/search`}>
-          {/* <InputGroup>
+          <InputGroup>
             <InputGroup.Text>
               <Button variant='link' type='submit'>
                 <FontAwesomeIcon icon={faSearch} size='sm' fixedWidth />
               </Button>
             </InputGroup.Text>
             <Form.Control name='query' placeholder='Search' />
-          </InputGroup> */}
+          </InputGroup>
         </form>
-      </div>
+      </div> */}
       <NavLink
         to='/'
         end
@@ -101,7 +98,7 @@ const Navigation = () => {
               leaveFrom='transform opacity-100 scale-100'
               leaveTo='transform opacity-0 scale-95'
             >
-              <Menu.Items className='z-50 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col p-2'>
+              <Menu.Items className='z-50 origin-top-right absolute right-0 mt-2 w-full lg:w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col gap-4 p-4'>
                 <Menu.Item
                   children={
                     <NavLink

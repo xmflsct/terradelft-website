@@ -60,7 +60,6 @@ export const ObjectContact: React.FC<Props> = ({
   const location = useLocation()
   const params = useParams()
   const { t } = useTranslation('object')
-  console.log('selected', selectedVariation)
   const objectContact = useFetcher()
 
   useEffect(() => {
@@ -78,7 +77,9 @@ export const ObjectContact: React.FC<Props> = ({
             className={classNames(
               'peer',
               'flex w-full justify-between items-center',
-              'px-4 py-2'
+              'px-4 py-2',
+              'bg-stone-200',
+              open ? 'rounded-tl rounded-tr' : 'rounded'
             )}
           >
             <span>{t('contact.button')}</span>
@@ -90,8 +91,12 @@ export const ObjectContact: React.FC<Props> = ({
           </Disclosure.Button>
           <Disclosure.Panel
             children={
-              <div>
-                <H4>{t('contact.heading')}</H4>
+              <div
+                className={classNames(
+                  'px-4 py-2',
+                  'border border-stone-200 rounded-bl rounded-br'
+                )}
+              >
                 <objectContact.Form
                   method='post'
                   action={`/${params.locale}/object/contact`}
@@ -142,7 +147,7 @@ export const ObjectContact: React.FC<Props> = ({
                         name='sub'
                         type='text'
                         required
-                        className='p-2 border border-placeholder rounded w-full'
+                        className='p-2 border border-stone-200 rounded w-full'
                       />
                     }
                   />
@@ -155,7 +160,7 @@ export const ObjectContact: React.FC<Props> = ({
                         name='name'
                         type='text'
                         required
-                        className='p-2 border border-placeholder rounded w-full'
+                        className='p-2 border border-stone-200 rounded w-full'
                       />
                     }
                   />
@@ -168,7 +173,7 @@ export const ObjectContact: React.FC<Props> = ({
                         name='email'
                         type='email'
                         required
-                        className='p-2 border border-placeholder rounded w-full'
+                        className='p-2 border border-stone-200 rounded w-full'
                       />
                     }
                   />
@@ -181,7 +186,7 @@ export const ObjectContact: React.FC<Props> = ({
                         name='question'
                         rows={5}
                         required
-                        className='p-2 border border-placeholder rounded w-full'
+                        className='p-2 border border-stone-200 rounded w-full'
                       />
                     }
                   />

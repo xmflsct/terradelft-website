@@ -96,7 +96,7 @@ const PageNewsletter = () => {
               name='firstName'
               type='text'
               required
-              className='p-2 border border-placeholder rounded w-full lg:w-96'
+              className='p-2 border border-stone-200 rounded w-full lg:w-96'
             />
           </FormField>
 
@@ -105,7 +105,7 @@ const PageNewsletter = () => {
               name='lastName'
               type='text'
               required
-              className='p-2 border border-placeholder rounded w-full lg:w-96'
+              className='p-2 border border-stone-200 rounded w-full lg:w-96'
             />
           </FormField>
 
@@ -114,7 +114,7 @@ const PageNewsletter = () => {
               name='email'
               type='email'
               required
-              className='p-2 border border-placeholder rounded w-full lg:w-96'
+              className='p-2 border border-stone-200 rounded w-full lg:w-96'
             />
           </FormField>
 
@@ -122,7 +122,7 @@ const PageNewsletter = () => {
             <select
               name='country'
               required
-              className='p-2 border border-placeholder founded w-full lg:w-96'
+              className='p-2 border border-stone-200 founded w-full lg:w-96'
             >
               {countriesOptions.map((country, index) => (
                 <option key={index} value={country} children={country} />

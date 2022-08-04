@@ -103,7 +103,7 @@ const PageTerraInChina = () => {
                   )}
                   <p className='text-lg truncate mt-1'>{exhibition.name}</p>
                 </Link>
-                <ExhibitionInformation exhibition={exhibition} type='current' />
+                <ExhibitionInformation exhibition={exhibition} />
               </div>
             </div>
           ))}

@@ -21,23 +21,10 @@
   "select-variation": "Select options",
   "contact": {
     "button": "Question about this object?",
-    "heading": "Send us your inquiry below",
     "form": {
       "subject": {
         "label": "Subject",
-        "value": "Inquiry about {{name}}"
-      },
-      "sku": {
-        "label": "SKU"
-      },
-      "variant": {
-        "label": "Variant"
-      },
-      "colour": {
-        "label": "Colour"
-      },
-      "size": {
-        "label": "Size"
+        "value": "Inquiry about {{- name}}"
       },
       "name": {
         "label": "Name"
@@ -52,10 +39,9 @@
         "label": "Yes, I accept that Terra Delft handles my information"
       },
       "button": {
-        "default": "Send",
+        "default": "Send inquiry",
         "submitting": "Please wait",
-        "success": "Thank you! We will contact you shortly",
-        "fail": "Please try again or contact us"
+        "success": "Thank you! We will contact you shortly"
       }
     }
   },

@@ -14,8 +14,8 @@ import checkout from '~/utils/checkout'
 import { cacheQuery, ShippingRates } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const action = async ({ context, request }: ActionArgs) => {
-  const formData = await request.formData()
+export const action = async (args: ActionArgs) => {
+  const formData = await args.request.formData()
   const json = formData.get('json')?.toString()
 
   if (!json) {
@@ -29,7 +29,7 @@ export const action = async ({ context, request }: ActionArgs) => {
     return { error: 'Parsing json failed' }
   }
 
-  const res = (await checkout({ context, content: parsedJson })) as any
+  const res = (await checkout({ args, content: parsedJson })) as any
   if (res?.id) {
     return res.id
   } else {
@@ -63,7 +63,7 @@ export const loader = async (args: LoaderArgs) => {
   })
   const env = { STRIPE_KEY_PUBLIC: args.context.STRIPE_KEY_PUBLIC as string }
   // @ts-ignore
-  const country: string = props.request.cf?.country || 'NL'
+  const country: string = args.request.cf?.country || 'NL'
 
   return json({ env, country, rates: data.shippingRates.items[0].rates })
 }
