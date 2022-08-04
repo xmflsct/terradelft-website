@@ -70,6 +70,7 @@ const CheckoutDelivery: React.FC<Props> = ({
           value='pickup'
           checked={delivery.method === 'pickup'}
           onChange={() => {}}
+          className='mr-2'
         />
         {t('pick-up')}
         {t('free')}
@@ -88,6 +89,7 @@ const CheckoutDelivery: React.FC<Props> = ({
             value='shipment'
             checked={delivery.method === 'shipment'}
             onChange={() => {}}
+            className='mr-2'
           />
           {t('shipping')}
           <div style={{ flex: '1', marginLeft: '0.5rem' }}>

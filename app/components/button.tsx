@@ -3,6 +3,7 @@ import {
   DetailedHTMLProps,
   PropsWithChildren
 } from 'react'
+import classNames from '~/utils/classNames'
 
 const Button: React.FC<
   PropsWithChildren &
@@ -10,11 +11,14 @@ const Button: React.FC<
       ButtonHTMLAttributes<HTMLButtonElement>,
       HTMLButtonElement
     >
-> = props => {
+> = ({ className, ...rest }) => {
   return (
     <button
-      className='border-2 border-secondary text-secondary font-bold rounded my-2 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-inherit disabled:hover:text-secondary hover:bg-secondary hover:text-white'
-      {...props}
+      className={classNames(
+        'border-2 border-secondary text-secondary font-bold rounded my-2 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-inherit disabled:hover:text-secondary hover:bg-secondary hover:text-white',
+        className
+      )}
+      {...rest}
     />
   )
 }

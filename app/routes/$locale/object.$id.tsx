@@ -377,7 +377,7 @@ const PageObject = () => {
           </table>
           <RichText
             content={object.description}
-            className='mt-2'
+            className='my-2'
             assetWidth={634}
           />
           <ObjectContact

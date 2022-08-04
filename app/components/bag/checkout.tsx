@@ -113,7 +113,11 @@ const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
         value={JSON.stringify(checkoutContent)}
       />
 
-      <Button type='submit' disabled={transition.state === 'submitting'}>
+      <Button
+        type='submit'
+        disabled={transition.state === 'submitting'}
+        className='my-4 w-full'
+      >
         {(transition.state === 'submitting' && t('button.wait')) ||
           (formState.submitCount !== 0 && t('button.retry')) ||
           t('button.submit')}

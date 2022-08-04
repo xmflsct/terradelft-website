@@ -37,7 +37,6 @@ export const loader = async (args: LoaderArgs) => {
           }
         }
       }>({
-        ttlMinutes: 0,
         ...args,
         variables: {
           id: args.params.id,
@@ -79,7 +78,6 @@ export const loader = async (args: LoaderArgs) => {
           }
         }
       }>({
-        ttlMinutes: 0,
         ...args,
         variables: {
           id: args.params.id,

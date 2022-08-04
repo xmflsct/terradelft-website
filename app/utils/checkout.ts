@@ -160,7 +160,7 @@ const verifyContentful = async ({
     return rates[countryCodeIndex].rates.map(rate => ({
       shipping_rate_data: {
         display_name: `${rate.method}${
-          rate.description ? ` (${rate.description})` : null
+          rate.description ? ` (${rate.description})` : ''
         }`,
         type: 'fixed_amount',
         fixed_amount: {

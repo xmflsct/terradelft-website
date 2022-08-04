@@ -120,7 +120,7 @@ const PageIndex = () => {
               key={index}
               className='lg:col-start-2 lg:col-span-4 border-2 border-dotted border-secondary px-4 py-2 mb-2'
             >
-              <H3 className='text-center'>{announcement.title}</H3>
+              <H3 className='text-center font-bold'>{announcement.title}</H3>
               <RichText content={announcement.content} assetWidth={200} />
             </div>
           ))}
