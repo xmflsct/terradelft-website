@@ -1,7 +1,6 @@
 import { LoaderArgs } from '@remix-run/cloudflare'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
-import { Context } from '~/root'
 import { TDObject } from '~/states/bag'
 import { graphqlRequest, ShippingRates } from './contentful'
 
@@ -207,27 +206,31 @@ const checkout = async ({
 
   const shipping_options = await verifyContentful({ args, content })
 
-  const translations: {
-    [key: string]: {
-      SKU: string
-      colour: string
-      size: string
-      variant: string
-    }
+  const translated: {
+    artist: string
+    SKU: string
+    colour: string
+    size: string
+    variant: string
+    normal: string
   } = {
     nl: {
+      artist: 'Kunstenaar: ',
       SKU: 'SKU: ',
       colour: 'Kleur: ',
       size: 'Afmeting: ',
-      variant: 'Variant: '
+      variant: 'Variant: ',
+      normal: 'Normaal'
     },
     en: {
+      artist: 'Artist: ',
       SKU: 'SKU: ',
       colour: 'Colour: ',
       size: 'Size: ',
-      variant: 'Variant: '
+      variant: 'Variant: ',
+      normal: 'Normal'
     }
-  }
+  }[content.locale as 'nl' | 'en']
 
   let line_items = []
   for (const object of content.objects) {
@@ -240,13 +243,14 @@ const checkout = async ({
               ? object.priceSale * 10 * 10
               : object.priceOriginal * 10 * 10,
             product_data: {
-              name:
-                object.name[content.locale].replace('&', ' ') +
-                ' - ' +
-                object.artist.artist.replace('&', ' '),
-              ...(object.sku && {
-                description: `${translations[content.locale].SKU}${object.sku}`
-              }),
+              name: new Array(
+                object.name[content.locale],
+                `${translated.artist}${object.artist.artist}`,
+                object.sku ? `${translated.SKU}${object.sku}` : undefined
+              )
+                .filter(f => f)
+                .join(' | ')
+                .replace('&', '%26'),
               images: [object.image?.url]
             }
           },
@@ -261,32 +265,29 @@ const checkout = async ({
               ? object.priceSale * 10 * 10
               : object.priceOriginal * 10 * 10,
             product_data: {
-              name:
-                object.name[content.locale].replace('&', ' ') +
-                ' - ' +
-                object.artist.artist.replace('&', ' '),
-              description: [
-                object.sku
-                  ? `${translations[content.locale].SKU}${object.sku}`
-                  : null,
-                object.colour
-                  ? `${translations[content.locale].colour}${
-                      object.colour[content.locale]
+              name: new Array(
+                object.name[content.locale],
+                `${translated.artist}${object.artist.artist}`,
+                object.sku ? `${translated.SKU}${object.sku}` : undefined,
+                object.variant !== undefined
+                  ? `${translated.variant}${
+                      object.variant?.[content.locale] || translated.normal
                     }`
-                  : null,
-                object.size
-                  ? `${translations[content.locale].size}${
-                      object.size[content.locale]
+                  : undefined,
+                object.colour !== undefined
+                  ? `${translated.colour}${
+                      object.colour?.[content.locale] || translated.normal
                     }`
-                  : null,
-                object.variant
-                  ? `${translations[content.locale].variant}${
-                      object.variant[content.locale]
+                  : undefined,
+                object.size !== undefined
+                  ? `${translated.size}${
+                      object.size?.[content.locale] || translated.normal
                     }`
-                  : null
-              ]
-                .filter(d => d)
-                .join(', '),
+                  : undefined
+              )
+                .filter(f => f)
+                .join(' | ')
+                .replace('&', '%26'),
               images: [object.image?.url]
             }
           },
@@ -358,6 +359,7 @@ const checkout = async ({
     body
   })
   const result = await res.json()
+  console.log('result', result)
   return result
 }
 

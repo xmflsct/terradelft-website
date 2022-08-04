@@ -4,7 +4,7 @@ const Footer = () => {
   const { t } = useTranslation()
 
   return (
-    <footer className='mt-8 pt-4 text-sm border-t border-t-secondary border-dashed flex flex-col lg:flex-row leading-6'>
+    <footer className='mt-8 mb-8 lg:mb-0 pt-4 text-sm border-t border-t-secondary border-dashed flex flex-col lg:flex-row leading-6'>
       <div className='flex-1 text-left'>
         <p>
           {t('footer.left.copyright')}

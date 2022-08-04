@@ -25,7 +25,7 @@ const BagList: React.FC = () => {
 
   return (
     <>
-      {objects.map((object, index) => {
+      {objects.map(object => {
         return (
           <div
             key={object.contentful_id}
@@ -50,9 +50,7 @@ const BagList: React.FC = () => {
                 <tbody>
                   {object.artist ? (
                     <tr>
-                      <th className='text-left py-1 pr-4'>
-                        {t('object:artist')}
-                      </th>
+                      <th className='text-left pr-4'>{t('object:artist')}</th>
                       <td>
                         <Link to={`/artist/${object.artist.slug}`}>
                           {object.artist.artist}
@@ -60,34 +58,35 @@ const BagList: React.FC = () => {
                       </td>
                     </tr>
                   ) : null}
-                  {object.variant && (
+                  {object.variant !== undefined && (
                     <tr>
-                      <th className='text-left py-1 pr-4'>
-                        {t('object:variant')}
-                      </th>
-                      <td>{object.variant[i18n.language]}</td>
+                      <th className='text-left pr-4'>{t('object:variant')}</th>
+                      <td>
+                        {object.variant?.[i18n.language] ||
+                          t('object:option-default')}
+                      </td>
                     </tr>
                   )}
-                  {object.colour && (
+                  {object.colour !== undefined && (
                     <tr>
-                      <th className='text-left py-1 pr-4'>
-                        {t('object:colour')}
-                      </th>
-                      <td>{object.colour[i18n.language]}</td>
+                      <th className='text-left pr-4'>{t('object:colour')}</th>
+                      <td>
+                        {object.colour?.[i18n.language] ||
+                          t('object:option-default')}
+                      </td>
                     </tr>
                   )}
-                  {object.size && (
+                  {object.size !== undefined && (
                     <tr>
-                      <th className='text-left py-1 pr-4'>
-                        {t('object:size')}
-                      </th>
-                      <td>{object.size[i18n.language]}</td>
+                      <th className='text-left pr-4'>{t('object:size')}</th>
+                      <td>
+                        {object.size?.[i18n.language] ||
+                          t('object:option-default')}
+                      </td>
                     </tr>
                   )}
                   <tr>
-                    <th className='text-left py-1 pr-4'>
-                      {t('object:price')}
-                    </th>
+                    <th className='text-left pr-4'>{t('object:price')}</th>
                     <td>
                       {currency(
                         object.priceSale || object.priceOriginal,
@@ -123,7 +122,7 @@ const BagList: React.FC = () => {
               />
               <div className='absolute top-0 right-0'>
                 <Button
-                  className='text-secondary px-2 py-1 rounded hover:bg-secondary hover:text-white'
+                  className='text-secondary px-2 py-1 rounded hover:bg-secondary hover:text-white border-none'
                   onClick={() => objectsRemove(object.contentful_id)}
                 >
                   <FontAwesomeIcon icon={faTimes} />

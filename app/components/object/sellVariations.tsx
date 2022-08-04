@@ -104,7 +104,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
         delete d[typeKey]
       } else if (dValue.length < sellVariations.length) {
         d[typeKey].push({
-          label: t('option-default'),
+          label: t('object:option-default'),
           value: difference(variationsRange, dValue),
           isDisabled: false
         })
