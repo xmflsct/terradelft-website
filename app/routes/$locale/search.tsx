@@ -15,7 +15,7 @@ import { Link } from '~/components/link'
 import cache from '~/utils/cache'
 import classNames from '~/utils/classNames'
 import loadMeta from '~/utils/loadMeta'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 type HighlightResult = {

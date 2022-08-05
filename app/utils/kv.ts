@@ -114,7 +114,7 @@ const getSellableObjects = async (
             }
           }
         `
-      })
+      })()
 
       if (total === undefined) {
         total = data.objects.total
