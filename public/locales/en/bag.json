@@ -1,0 +1,20 @@
+{
+  "list-empty": "Seems like your shopping bag is empty.",
+  "delivery-method": "Delivery method",
+  "phone-number": "Phone number",
+  "summary": "Summary",
+  "pick-up": "Pick up at Terra Delft Gallery",
+  "shipping": "Ship to",
+  "select-country": "Select country",
+  "free-for-above": "Free for above {{amount}}",
+  "free": "Free",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "delivery-fee": "Delivery fee",
+  "total": "Total",
+  "button": {
+    "submit": "Checkout",
+    "retry": "Please try again",
+    "wait": "Please wait"
+  }
+}

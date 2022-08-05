@@ -1,0 +1,15 @@
+{
+  "heading": "Schrijf je in voor de nieuwsbrief van Terra Delft",
+  "description": "Bedankt voor het abonneren op onze nieuwsbrief. Vul dan onderstaand formulier in.",
+  "first-name": "Voornaam",
+  "last-name": "Achternaam",
+  "email": "E-mailadres",
+  "country": "Land/Regio",
+  "GDPR": "Ja, ik accepteer dat Terra Delft met mijn gegevens omgaat",
+  "button": {
+    "default": "Inschrijven",
+    "submitting": "Wacht alsjeblieft",
+    "success": "Heel hartelijk bedankt!",
+    "fail": "Probeer het opnieuw of neem contact met ons op"
+  }
+}

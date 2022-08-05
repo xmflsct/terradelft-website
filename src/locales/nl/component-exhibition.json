@@ -1,8 +1,0 @@
-{
-  "datetime": {
-    "Start": "Begint {{datetime}}",
-    "End": "Eindigt {{datetime}}"
-  },
-  "organizer": "Organisator",
-  "location": "Locatie"
-}

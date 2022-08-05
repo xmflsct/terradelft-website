@@ -1,0 +1,4 @@
+{
+  "amount": "Cadeaubon € {{amount}}",
+  "minimum": "Minimaal € {{amount}}"
+}
