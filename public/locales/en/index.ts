@@ -12,6 +12,6 @@ export default {
   object: require('./object.json'),
   search: require('./search.json'),
   shop: require('./shop.json'),
-  terraInChina: require('./terraInChina.json'),
+  china: require('./china.json'),
   thankYou: require('./thankYou.json')
 }

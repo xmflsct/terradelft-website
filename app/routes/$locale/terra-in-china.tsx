@@ -80,11 +80,11 @@ export const meta: MetaFunction = ({
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title])
   }
-export let handle = { i18n: ['terraInChina', 'news'] }
+export let handle = { i18n: ['china', 'news'] }
 
 const PageTerraInChina = () => {
   const { data } = useLoaderData<typeof loader>()
-  const { t, i18n } = useTranslation('terraInChina')
+  const { t, i18n } = useTranslation('china')
 
   return (
     <>
