@@ -29,7 +29,7 @@ export const graphqlRequest = <T = unknown>({
 
   return async () =>
     await new GraphQLClient(
-      `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/migration`,
+      `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/master`,
       {
         fetch,
         headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
