@@ -101,7 +101,7 @@ const verifyContentful = async ({
               }
             }
           `
-      })
+      })()
 
       for (const item of data[contentType[typed]].items) {
         const objectIndex = objects.findIndex(
@@ -147,7 +147,7 @@ const verifyContentful = async ({
           }
         }
       `
-    })
+    })()
     const rates = items[0].rates
 
     let countryCodeIndex = rates.findIndex(rate =>
