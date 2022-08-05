@@ -1,7 +1,4 @@
 {
-  "slug": "$t(translation:slug.static.search.slug)",
-  "name": "$t(translation:slug.static.search.name)",
-  "content": {
-    "heading": "Zoekresultaat van {{query}}"
-  }
+  "heading": "Zoekresultaat van {{query}}",
+  "summary": "{{total}} resultaten gevonden, top {{count}} resultaten weergegeven"
 }

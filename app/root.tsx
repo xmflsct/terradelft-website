@@ -31,9 +31,11 @@ export type Context = {
   CONTENTFUL_KEY?: string
   STRIPE_KEY_PRIVATE?: string
   STRIPE_KEY_PUBLIC?: string
-  TERRADELFT_WEBSITE?: KVNamespace
   SENDGRID_EMAIL?: string
   SENDGRID_KEY?: string
+  ALGOLIA_APP_ID?: string
+  ALGOLIA_API_KEY?: string
+  TERRADELFT_WEBSITE?: KVNamespace
 }
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -65,12 +67,14 @@ export const links: LinksFunction = () => {
 export default function Root() {
   const { locale } = useLoaderData<typeof loader>()
 
-  const { i18n } = useTranslation()
+  const {
+    i18n: { dir }
+  } = useTranslation()
 
   useChangeLanguage(locale)
 
   return (
-    <html lang={locale} dir={i18n.dir()}>
+    <html lang={locale} dir={dir()}>
       <head>
         <Meta />
         <Links />

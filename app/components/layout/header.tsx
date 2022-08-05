@@ -1,9 +1,13 @@
-import { faGlobeEurope, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
+import {
+  faGlobeEurope,
+  faSearch,
+  faShoppingBag
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useContext, useState } from 'react'
 import Navigation from './navigation'
 import { useTranslation } from 'react-i18next'
-import { Link as RemixLink, useMatches } from '@remix-run/react'
+import { Form, Link as RemixLink, useMatches } from '@remix-run/react'
 import { Link } from '~/components/link'
 import logoEnLarge from '~/images/logo/en/large.png'
 import logoEnSmall from '~/images/logo/en/small.png'
@@ -12,11 +16,12 @@ import logoNlSmall from '~/images/logo/nl/small.png'
 import i18n from '~/i18n'
 import { BagContext } from '~/states/bag'
 import classNames from '~/utils/classNames'
+import Search from './search'
 
 const Header: React.FC = () => {
   const matches = useMatches()
   const {
-    i18n: { language },
+    i18n: { language, changeLanguage },
     t
   } = useTranslation()
   const [toggleNav, setToggleNav] = useState(false)
@@ -91,7 +96,7 @@ const Header: React.FC = () => {
             )}
           </Link>
         </div>
-        <div className='flex-1'>
+        <div className='flex-1 flex flex-col justify-between'>
           <div className='flex flex-row gap-2 lg:gap-4 justify-end'>
             <div className='text-center text-primary hover:text-secondary'>
               {i18n.supportedLngs
@@ -102,6 +107,7 @@ const Header: React.FC = () => {
                     to={`/${locale}${matches[
                       matches.length - 1
                     ].pathname.replace(new RegExp(/^\/[a-z][a-z]/), '')}`}
+                    onClick={() => changeLanguage(locale)}
                   >
                     <FontAwesomeIcon
                       icon={faGlobeEurope}
@@ -132,30 +138,7 @@ const Header: React.FC = () => {
               </Link>
             </div>
           </div>
-          <div className='search-box align-self-end'>
-            {/* <Form
-                action={`${locationOrigin}${t(
-                  'common:slug.static.search.slug',
-                  {
-                    locale: i18n.language
-                  }
-                )}`}
-              >
-                <InputGroup>
-                  <InputGroup.Text
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      borderRadius: 0,
-                      borderBottom: '#394c50 1px solid'
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faSearch} size='sm' fixedWidth />
-                  </InputGroup.Text>
-                  <Form.Control name='query' placeholder='Search' />
-                </InputGroup>
-              </Form> */}
-          </div>
+          <Search type='header' />
         </div>
       </div>
       {/* <CSSTransition

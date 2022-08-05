@@ -6,6 +6,7 @@ import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import classNames from '~/utils/classNames'
 import { NavLink } from '../link'
+import Search from './search'
 
 type Props = {
   toggleNav: boolean
@@ -131,6 +132,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
           </>
         )}
       </Menu>
+      <Search type='navigation' />
     </nav>
   )
 }

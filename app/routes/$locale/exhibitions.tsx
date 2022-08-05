@@ -94,36 +94,41 @@ const PageExhibitions = () => {
         </div>
         <div className='col-span-6 lg:col-span-4 order-1 lg:order-2'>
           <H2>{t('current')}</H2>
-          {exhibitions.items
-            .filter(
-              exbhition =>
-                new Date(exbhition.datetimeEnd) >= new Date() &&
-                new Date(exbhition.datetimeStart) <= new Date()
-            )
-            .map(exhibition => {
-              return (
-                <div key={exhibition.sys.id} className='flex flex-col lg:flex-row gap-4'>
-                  {exhibition.image && (
-                    <ContentfulImage
-                      alt={exhibition.name}
-                      image={exhibition.image}
-                      width={309}
-                      quality={80}
-                      className='flex-1'
-                    />
-                  )}
-                  <div className='flex-1'>
-                    <Link to={`/exhibition/${exhibition.sys.id}`}>
-                      <H3>{exhibition.name}</H3>
-                    </Link>
-                    <ExhibitionInformation
-                      exhibition={exhibition}
-                      type='current'
-                    />
-                  </div>
-                </div>
+          <div className='flex flex-col gap-4 lg:gap-8'>
+            {exhibitions.items
+              .filter(
+                exbhition =>
+                  new Date(exbhition.datetimeEnd) >= new Date() &&
+                  new Date(exbhition.datetimeStart) <= new Date()
               )
-            })}
+              .map(exhibition => {
+                return (
+                  <div
+                    key={exhibition.sys.id}
+                    className='flex flex-col lg:flex-row gap-4'
+                  >
+                    {exhibition.image && (
+                      <ContentfulImage
+                        alt={exhibition.name}
+                        image={exhibition.image}
+                        width={309}
+                        quality={80}
+                        className='flex-1'
+                      />
+                    )}
+                    <div className='flex-1'>
+                      <Link to={`/exhibition/${exhibition.sys.id}`}>
+                        <H3>{exhibition.name}</H3>
+                      </Link>
+                      <ExhibitionInformation
+                        exhibition={exhibition}
+                        type='current'
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+          </div>
         </div>
       </div>
       <div>
