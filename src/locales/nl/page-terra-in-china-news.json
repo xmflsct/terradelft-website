@@ -1,7 +1,0 @@
-{
-  "slug": "$t(translation:slug.static.terra-in-china-news.slug)",
-  "name": "$t(translation:slug.static.terra-in-china-news.name)",
-  "content": {
-    "heading": "$t(name)"
-  }
-}

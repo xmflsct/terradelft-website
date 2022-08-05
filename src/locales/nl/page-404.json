@@ -1,7 +1,0 @@
-{
-  "slug": "$t(translation:slug.static.404.slug)",
-  "name": "$t(translation:slug.static.404.name)",
-  "content": {
-    "heading": "404 Wat zoek je?"
-  }
-}

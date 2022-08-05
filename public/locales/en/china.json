@@ -1,0 +1,10 @@
+{
+  "heading": {
+    "events": "$t(common:pages.exhibitions)",
+    "news": "$t(common:pages.news)"
+  },
+  "view-all": {
+    "events": "View all events of Terra in China →",
+    "news": "View all news of Terra in China →"
+  }
+}

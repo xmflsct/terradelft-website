@@ -1,26 +1,22 @@
 {
-  "include": ["./src/**/*"],
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "target": "esnext",
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react",
-    "lib": ["dom", "esnext"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "strict": true,
-    "strictFunctionTypes": false,
+    "lib": ["DOM", "DOM.Iterable", "ES2019"],
+    "isolatedModules": true,
     "esModuleInterop": true,
-    "baseUrl": "./src",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "target": "ES2019",
+    "strict": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
     "paths": {
-      "@api/*": ["api/*"],
-      "@components/*": ["components/*"],
-      "@images/*": ["images/*"],
-      "@pages/*": ["pages/*"],
-      "@state/*": ["state/*"],
-      "@utils/*": ["utils/*"]
-    }
+      "~/*": ["./app/*"]
+    },
+
+    // Remix takes care of building everything in `remix build`.
+    "noEmit": true
   }
 }

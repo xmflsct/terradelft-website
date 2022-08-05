@@ -1,0 +1,12 @@
+{
+  "current": "Nu",
+  "upcoming": "Verwacht",
+  "archive": "Archief →",
+  "archive_wordpress": "Archief vóór 2020",
+  "datetime": {
+    "Start": "Begint {{datetime}}",
+    "End": "Eindigt {{datetime}}"
+  },
+  "organizer": "Organisator",
+  "location": "Locatie"
+}
