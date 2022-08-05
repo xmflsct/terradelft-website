@@ -79,7 +79,7 @@ const PageThankYou: React.FC = () => {
         <tbody>
           <tr>
             <th className='p-1 text-left'>Item</th>
-            <th className='p-1 text-right'>Quantity</th>
+            <th className='p-1 text-center'>Quantity</th>
             <th className='p-1 text-right'>Price</th>
             <th className='p-1 text-right'>Amount</th>
           </tr>
@@ -89,7 +89,7 @@ const PageThankYou: React.FC = () => {
               className='border-t border-stone-300 hover:bg-stone-300 hover:cursor-pointer'
             >
               <td className='p-1'>{item.description}</td>
-              <td className='p-1 text-right'>{item.quantity}</td>
+              <td className='p-1 text-center'>{item.quantity}</td>
               <td className='p-1 text-right'>
                 {currency(
                   item.amount_total / item.quantity / 10 / 10,

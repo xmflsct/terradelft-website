@@ -42,7 +42,13 @@ const BagList: React.FC = () => {
             </div>
             <div className='col-span-7 relative'>
               <div className='text-xl font-medium pr-12'>
-                <Link to={`/object/${object.contentful_id_url}`}>
+                <Link
+                  to={
+                    object.type === 'giftcard'
+                      ? '/gift-card'
+                      : `/object/${object.contentful_id_url}`
+                  }
+                >
                   {object.name[i18n.language]}
                 </Link>
               </div>

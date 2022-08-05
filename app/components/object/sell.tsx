@@ -3,13 +3,18 @@ import { useTranslation } from 'react-i18next'
 import { CSSObjectWithLabel } from 'react-select'
 import kunstkoop from '~/images/kunstkoop.png'
 import { SelectedVariation } from '~/routes/$locale/object.$id'
-import { ObjectsObject_NameLocalized } from '~/utils/contentful'
+import {
+  ObjectsObjectVariation_NameLocalized,
+  ObjectsObject_NameLocalized
+} from '~/utils/contentful'
 import ObjectPrice from './price'
 import SellMain from './sellMain'
 import SellVariations from './sellVariations'
 
 type Props = {
-  object: ObjectsObject_NameLocalized
+  object: Omit<ObjectsObject_NameLocalized, 'variationsCollection'> & {
+    variationsCollection: { items: ObjectsObjectVariation_NameLocalized[] }
+  }
   setSelectedVariation: Dispatch<SetStateAction<SelectedVariation | undefined>>
 }
 
@@ -17,7 +22,7 @@ export const selectStyle = {
   container: (provided: CSSObjectWithLabel) => ({ ...provided, flexGrow: 1 }),
   control: (provided: CSSObjectWithLabel) => ({
     ...provided,
-    borderColor: '#e8e8e8',
+    borderColor: '#e7e5e4',
     borderTopLeftRadius: '0px',
     borderBottomLeftRadius: '0px',
     height: '100%'

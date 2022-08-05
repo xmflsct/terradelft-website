@@ -39,16 +39,16 @@ type ObjectGiftCard = {
   type: 'giftcard'
   contentful_id: string
   contentful_id_url: string
-  artist: undefined
+  artist?: undefined
   image?: CommonImage
   priceOriginal: number
-  priceSale: undefined
+  priceSale?: undefined
   stock: number
   amount: number
   name: { [key: string]: string }
-  colour: undefined
-  size: undefined
-  variant: undefined
+  colour?: undefined
+  size?: undefined
+  variant?: undefined
 }
 
 export type TDObject = ObjectMain | ObjectVariation | ObjectGiftCard
