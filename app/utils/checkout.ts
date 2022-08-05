@@ -359,7 +359,6 @@ const checkout = async ({
     body
   })
   const result = await res.json()
-  console.log('result', result)
   return result
 }
 

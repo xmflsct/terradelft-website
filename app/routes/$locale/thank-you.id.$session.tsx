@@ -66,7 +66,6 @@ export let handle = { i18n: 'thankYou' }
 const PageThankYou: React.FC = () => {
   const { session, line_items } = useLoaderData<typeof loader>()
   const { t, i18n } = useTranslation('thankYou')
-  console.log(session)
 
   useEffect(() => {
     localStorage.setItem('objects', JSON.stringify([]))

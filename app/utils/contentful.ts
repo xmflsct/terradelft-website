@@ -191,16 +191,20 @@ export const RICH_TEXT_LINKS = gql`
           id
         }
         ... on EventsEvent {
+          __typename
           name
         }
         ... on NewsNews {
+          __typename
           title
         }
         ... on ObjectsArtist {
+          __typename
           slug
           artist
         }
         ... on ObjectsObject {
+          __typename
           name
         }
       }
@@ -209,16 +213,20 @@ export const RICH_TEXT_LINKS = gql`
           id
         }
         ... on EventsEvent {
+          __typename
           name
         }
         ... on NewsNews {
+          __typename
           title
         }
         ... on ObjectsArtist {
+          __typename
           slug
           artist
         }
         ... on ObjectsObject {
+          __typename
           name
         }
       }
