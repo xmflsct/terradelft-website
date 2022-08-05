@@ -319,7 +319,9 @@ const PageObject = () => {
           </H1>
           <H3>
             {t('artist')}{' '}
-            <Link to={object.artist.slug}>{object.artist.artist}</Link>
+            <Link to={`/artist/${object.artist.slug}`}>
+              {object.artist.artist}
+            </Link>
           </H3>
           <ObjectSell
             object={object}
