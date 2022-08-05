@@ -141,14 +141,14 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: MetaFunction = ({
-  data: { meta }
+  data
 }: {
   data: LoaderData<typeof loader>
-}) => ({
-  title: SEOTitle(meta.title),
-  keywords: SEOKeywords([meta.title]),
-  description: 'Terra Delft Website'
-})
+}) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title])
+  }
 
 const PageObjectAttribute: React.FC = () => {
   const {

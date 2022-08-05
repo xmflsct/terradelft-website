@@ -49,16 +49,17 @@ export const meta: MetaFunction = ({
   data
 }: {
   data: LoaderData<typeof loader>
-}) => ({
-  title: SEOTitle(data.news.title),
-  keywords: SEOKeywords([data.news.title]),
-  ...(data.news.content && {
-    description: documentToPlainTextString(data.news.content.json).substring(
-      0,
-      199
-    )
-  })
-})
+}) =>
+  data?.news && {
+    title: SEOTitle(data.news.title),
+    keywords: SEOKeywords([data.news.title]),
+    ...(data.news.content && {
+      description: documentToPlainTextString(data.news.content.json).substring(
+        0,
+        199
+      )
+    })
+  }
 export const handle = {
   structuredData: ({
     news

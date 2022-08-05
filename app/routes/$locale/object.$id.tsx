@@ -171,16 +171,17 @@ export const meta: MetaFunction = ({
 }: {
   data: LoaderData<typeof loader>
   params: LoaderArgs['params']
-}) => ({
-  title: SEOTitle(object.name[locale]),
-  keywords: SEOKeywords([object.name[locale] || '']),
-  ...(object.description && {
-    description: documentToPlainTextString(object.description.json).substring(
-      0,
-      199
-    )
-  })
-})
+}) =>
+  object && {
+    title: SEOTitle(object.name[locale]),
+    keywords: SEOKeywords([object.name[locale] || '']),
+    ...(object.description && {
+      description: documentToPlainTextString(object.description.json).substring(
+        0,
+        199
+      )
+    })
+  }
 export const handle = {
   i18n: 'object',
   structuredData: (

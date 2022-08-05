@@ -6,7 +6,7 @@ import {
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import { H1 } from '~/components/globals'
@@ -14,6 +14,9 @@ import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
 import cache from '~/utils/cache'
 import classNames from '~/utils/classNames'
+import loadMeta from '~/utils/loadMeta'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
 type HighlightResult = {
   fullyHighlighted: boolean
@@ -77,11 +80,14 @@ export const loader = async (args: LoaderArgs) => {
   const query = new URL(args.request.url).searchParams.get('query')
   if (!query)
     return json({
-      hits: [],
-      hitsPerPage: 0,
-      nbHits: 0,
-      nbPages: 0,
-      query: null
+      meta: { title: '' },
+      data: {
+        hits: [],
+        hitsPerPage: 0,
+        nbHits: 0,
+        nbPages: 0,
+        query: null
+      }
     })
 
   const url = new URL(
@@ -110,13 +116,26 @@ export const loader = async (args: LoaderArgs) => {
         })
       ).json()
   })
+  const meta = await loadMeta(args, {
+    titleKey: 'pages.search',
+    titleOptions: { query: data.query }
+  })
 
-  return json(data)
+  return json({ meta, data })
 }
+
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title)
+  }
 export let handle = { i18n: 'search' }
 
 const PageSearch: React.FC = () => {
-  const data = useLoaderData<typeof loader>()
+  const { data } = useLoaderData<typeof loader>()
   const { t } = useTranslation('search')
 
   if (!data.query) {

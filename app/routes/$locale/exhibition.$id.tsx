@@ -73,15 +73,16 @@ export const meta: MetaFunction = ({
   data
 }: {
   data: LoaderData<typeof loader>
-}) => ({
-  title: SEOTitle(data.exhibition.name),
-  keywords: SEOKeywords([data.exhibition.name]),
-  ...(data.exhibition.description && {
-    description: documentToPlainTextString(
-      data.exhibition.description.json
-    ).substring(0, 199)
-  })
-})
+}) =>
+  data?.exhibition && {
+    title: SEOTitle(data.exhibition.name),
+    keywords: SEOKeywords([data.exhibition.name]),
+    ...(data.exhibition.description && {
+      description: documentToPlainTextString(
+        data.exhibition.description.json
+      ).substring(0, 199)
+    })
+  }
 export const handle = {
   structuredData: ({
     exhibition

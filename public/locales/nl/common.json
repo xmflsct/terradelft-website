@@ -48,7 +48,7 @@
     "terra-in-china-news-page": "Terra in China nieuws pagina {{page}}",
     "terra-in-china": "Terra in China",
     "gift-card": "Terra Delft Cadeaubon",
-    "search": "Zoekresultaat",
+    "search": "Zoekresultaat van {{query}}",
     "thank-you": "Bedankt voor je bestelling!",
     "objects-attribute": "Objecten met {{type}} over {{value}}"
   },

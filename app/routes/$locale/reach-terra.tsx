@@ -35,15 +35,16 @@ export const meta: MetaFunction = ({
   data
 }: {
   data: LoaderData<typeof loader>
-}) => ({
-  title: SEOTitle(data.meta.title),
-  keywords: SEOKeywords([data.meta.title]),
-  ...(data?.data?.page?.description?.json && {
-    description: documentToPlainTextString(
-      data.data.page.description.json
-    ).substring(0, 199)
-  })
-})
+}) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title]),
+    ...(data?.data?.page?.description?.json && {
+      description: documentToPlainTextString(
+        data.data.page.description.json
+      ).substring(0, 199)
+    })
+  }
 
 const PageReachTerra = () => {
   const {

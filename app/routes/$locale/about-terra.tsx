@@ -57,15 +57,16 @@ export const meta: MetaFunction = ({
   data
 }: {
   data: LoaderData<typeof loader>
-}) => ({
-  title: SEOTitle(data.meta.title),
-  keywords: SEOKeywords([data.meta.title]),
-  ...(data.data?.page?.columnLeft?.json && {
-    description: documentToPlainTextString(
-      data.data.page.columnLeft.json
-    ).substring(0, 199)
-  })
-})
+}) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title]),
+    ...(data.data?.page?.columnLeft?.json && {
+      description: documentToPlainTextString(
+        data.data.page.columnLeft.json
+      ).substring(0, 199)
+    })
+  }
 export let handle = { i18n: 'aboutTerra' }
 
 const PageAboutTerra = () => {

@@ -77,11 +77,12 @@ export const meta: MetaFunction = ({
   data
 }: {
   data: LoaderData<typeof loader>
-}) => ({
-  title: SEOTitle(data.meta.title),
-  keywords: SEOKeywords([data.meta.title]),
-  description: 'News'
-})
+}) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title]),
+    description: 'News'
+  }
 export let handle = { i18n: 'news' }
 
 const PageNewsPage = () => {

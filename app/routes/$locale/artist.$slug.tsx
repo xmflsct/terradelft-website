@@ -64,16 +64,19 @@ export const meta: MetaFunction = ({
   data
 }: {
   data: LoaderData<typeof loader>
-}) => ({
-  title: SEOTitle(data.artist),
-  keywords: SEOKeywords([data.artist]),
-  ...(data.biography && {
-    description: documentToPlainTextString(data.biography.json).substring(
-      0,
-      199
-    )
-  })
-})
+}) =>
+  data?.artist
+    ? {
+        title: SEOTitle(data.artist),
+        keywords: SEOKeywords([data.artist]),
+        ...(data.biography && {
+          description: documentToPlainTextString(data.biography.json).substring(
+            0,
+            199
+          )
+        })
+      }
+    : {}
 export const handle = {
   i18n: 'artist',
   structuredData: ({

@@ -17,6 +17,7 @@ import { H1 } from '~/components/globals'
 import i18next from '~/i18next.server'
 import sendEmail from '~/utils/sendEmail'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (props: LoaderArgs) => {
   const t = await i18next.getFixedT(props.request, 'common')
@@ -67,11 +68,15 @@ export const action = async ({ context, request }: ActionArgs) => {
   return await sendEmail({ context, data })
 }
 
-export const meta: MetaFunction = ({ data: { meta } }) => ({
-  title: SEOTitle(meta.title),
-  keywords: SEOKeywords(meta.title),
-  description: meta.title
-})
+export const meta: MetaFunction = ({
+  data
+}: {
+  data: LoaderData<typeof loader>
+}) =>
+  data?.meta && {
+    title: SEOTitle(data.meta.title),
+    keywords: SEOKeywords([data.meta.title])
+  }
 export let handle = {
   i18n: 'newsletter'
 }
