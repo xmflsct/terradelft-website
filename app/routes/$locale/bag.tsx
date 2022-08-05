@@ -51,8 +51,9 @@ export const loader = async (args: LoaderArgs) => {
     req: graphqlRequest({
       ...args,
       query: gql`
-        query PageBag($locale: String) {
+        query PageBag($preview: Boolean, $locale: String) {
           shippingRates: shippingRatesCollection(
+            preview: $preview
             locale: $locale
             limit: 1
             where: { year: "2022" }

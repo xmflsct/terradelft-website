@@ -21,8 +21,8 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       variables: { id: args.params.id },
       query: gql`
-        query PageNews($locale: String, $id: String!) {
-          news: newsNews (locale: $locale, id: $id) {
+        query PageNews($preview: Boolean, $locale: String, $id: String!) {
+          news: newsNews(preview: $preview, locale: $locale, id: $id) {
             title
             date
             image {

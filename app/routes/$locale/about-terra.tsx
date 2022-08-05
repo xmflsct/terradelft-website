@@ -18,9 +18,10 @@ export const loader = async (args: LoaderArgs) => {
     req: graphqlRequest({
       ...args,
       query: gql`
-        query PageAboutTerra($locale: String) {
-          page: informationAboutTerra (
-            locale: $locale,
+        query PageAboutTerra($preview: Boolean, $locale: String) {
+          page: informationAboutTerra(
+            preview: $preview
+            locale: $locale
             id: "7eZ2uEBMVW8HDUMlBXLxgx"
           ) {
             columnLeft {

@@ -32,8 +32,9 @@ export const loader = async (args: LoaderArgs) => {
     req: graphqlRequest({
       ...args,
       query: gql`
-        query PageIndex($locale: String!) {
+        query PageIndex($preview: Boolean, $locale: String!) {
           announcements: announcementCollection(
+            preview: $preview
             locale: $locale
             where: { enabled: true }
           ) {
@@ -44,14 +45,22 @@ export const loader = async (args: LoaderArgs) => {
               }
             }
           }
-          giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
+          giftCard(
+            preview: $preview
+            locale: $locale
+            id: "owqoj0fTsXPwPeo6VMb2Z"
+          ) {
             imagesCollection(limit: 1) {
               items {
                 url
               }
             }
           }
-          objects: objectsObjectCollection(locale: $locale, limit: 50) {
+          objects: objectsObjectCollection(
+            preview: $preview
+            locale: $locale
+            limit: 50
+          ) {
             items {
               sys {
                 id
@@ -74,7 +83,7 @@ export const loader = async (args: LoaderArgs) => {
               }
             }
           }
-          artists: objectsArtistCollection(locale: $locale) {
+          artists: objectsArtistCollection(preview: $preview, locale: $locale) {
             items {
               slug
               artist

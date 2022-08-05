@@ -30,8 +30,14 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       variables: { limit: perPage, skip: perPage * (page - 1) },
       query: gql`
-        query PageNewsPage($locale: String, $limit: Int, $skip: Int) {
+        query PageNewsPage(
+          $preview: Boolean
+          $locale: String
+          $limit: Int
+          $skip: Int
+        ) {
           news: newsNewsCollection(
+            preview: $preview
             locale: $locale
             order: date_DESC
             limit: $limit

@@ -15,8 +15,12 @@ export const loader = async (args: LoaderArgs) => {
     req: graphqlRequest({
       ...args,
       query: gql`
-        query PageReachTerra($locale: String) {
-          page: informationReachTerra ( locale: $locale, id: "7Hr9VIqrByJWQpkMVgxwN6" ) {
+        query PageReachTerra($preview: Boolean, $locale: String) {
+          page: informationReachTerra(
+            preview: $preview
+            locale: $locale
+            id: "7Hr9VIqrByJWQpkMVgxwN6"
+          ) {
             description {
               json
               ${RICH_TEXT_LINKS}

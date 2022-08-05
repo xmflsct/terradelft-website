@@ -49,12 +49,17 @@ export const loader = async (args: LoaderArgs) => {
           query: gql`
             ${LIST_OBJECT_DETAILS}
             query PageObjectAttributeTechnique(
+              $preview: Boolean
               $locale: String
               $id: String!
               $limit: Int
               $skip: Int
             ) {
-              type: objectsTechnique(locale: $locale, id: $id) {
+              type: objectsTechnique(
+                preview: $preview
+                locale: $locale
+                id: $id
+              ) {
                 linkedFrom {
                   objectsObjectCollection(
                     locale: "nl"
@@ -93,12 +98,17 @@ export const loader = async (args: LoaderArgs) => {
           query: gql`
             ${LIST_OBJECT_DETAILS}
             query PageObjectAttributeMaterial(
+              $preview: Boolean
               $locale: String
               $id: String!
               $limit: Int
               $skip: Int
             ) {
-              type: objectsMaterial(locale: $locale, id: $id) {
+              type: objectsMaterial(
+                preview: $preview
+                locale: $locale
+                id: $id
+              ) {
                 linkedFrom {
                   objectsObjectCollection(
                     locale: "nl"

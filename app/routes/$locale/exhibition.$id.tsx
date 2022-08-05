@@ -25,8 +25,8 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       variables: { id: args.params.id! },
       query: gql`
-        query PageExhibition($locale: String, $id: String!) {
-          exhibition: eventsEvent (locale: $locale, id: $id) {
+        query PageExhibition($preview: Boolean, $locale: String, $id: String!) {
+          exhibition: eventsEvent(preview: $preview, locale: $locale, id: $id) {
             name
             datetimeStart
             datetimeEnd

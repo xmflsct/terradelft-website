@@ -25,10 +25,11 @@ export const loader = async (args: LoaderArgs) => {
       variables: { slug: args.params.slug! },
       query: gql`
         ${LIST_OBJECT_DETAILS}
-        query PageArtist($locale: String, $slug: String) {
+        query PageArtist($preview: Boolean, $locale: String, $slug: String) {
           artists: objectsArtistCollection (
-            locale: $locale,
-            limit: 1,
+            preview: $preview
+            locale: $locale
+            limit: 1
             where: {slug: $slug}
           ) {
             items {

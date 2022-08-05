@@ -23,8 +23,13 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       variables: { datetimeEnd_gte: new Date().toISOString() },
       query: gql`
-        query PageExhibitions($locale: String!, $datetimeEnd_gte: DateTime) {
+        query PageExhibitions(
+          $preview: Boolean
+          $locale: String!
+          $datetimeEnd_gte: DateTime
+        ) {
           exhibitions: eventsEventCollection(
+            preview: $preview
             locale: $locale
             order: datetimeStart_DESC
             where: { datetimeEnd_gte: $datetimeEnd_gte }

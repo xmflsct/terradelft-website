@@ -21,8 +21,9 @@ export const loader = async (args: LoaderArgs) => {
     req: graphqlRequest({
       ...args,
       query: gql`
-        query PageTerraInChina($locale: String) {
+        query PageTerraInChina($preview: Boolean, $locale: String) {
           exhibitions: eventsEventCollection(
+            preview: $preview
             locale: $locale
             where: { terraInChina: true }
             limit: 6
@@ -46,6 +47,7 @@ export const loader = async (args: LoaderArgs) => {
             }
           }
           news: newsNewsCollection(
+            preview: $preview
             locale: $locale
             where: { terraInChina: true }
             limit: 6

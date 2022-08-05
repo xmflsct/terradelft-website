@@ -35,8 +35,8 @@ export const loader = async (args: LoaderArgs) => {
       variables: { id: args.params.id },
       query: gql`
         ${LIST_OBJECT_DETAILS}
-        query PageObject($locale: String, $id: String!) {
-          object: objectsObject (locale: $locale, id: $id) {
+        query PageObject($preview: Boolean, $locale: String, $id: String!) {
+          object: objectsObject (preview: $preview, locale: $locale, id: $id) {
             sys {
               id
             }

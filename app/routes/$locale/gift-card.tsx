@@ -22,23 +22,27 @@ export const loader = async (args: LoaderArgs) => {
     req: graphqlRequest({
       ...args,
       query: gql`
-    query PageIndex($locale: String!) {
-      giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
-        imagesCollection(limit: 5) {
-          items {
-            url
+        query PageGiftCard($preview: Boolean, $locale: String!) {
+          giftCard(
+            preview: $preview
+            locale: $locale
+            id: "owqoj0fTsXPwPeo6VMb2Z"
+          ) {
+            imagesCollection(limit: 5) {
+              items {
+                url
+              }
+            }
+            defaultAmounts
+            customAmountAllow
+            customAmountMinimum
+            description {
+              json
+              ${RICH_TEXT_LINKS}
+            }
           }
         }
-        defaultAmounts
-        customAmountAllow
-        customAmountMinimum
-        description {
-          json
-          ${RICH_TEXT_LINKS}
-        }
-      }
-    }
-  `
+      `
     })
   })
 

@@ -310,8 +310,12 @@ export const loader = async (args: LoaderArgs) => {
     req: graphqlRequest({
       ...args,
       query: gql`
-        query PageIndex($locale: String!) {
-          giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
+        query PageIndex($preview: Boolean, $locale: String!) {
+          giftCard(
+            preview: $preview
+            locale: $locale
+            id: "owqoj0fTsXPwPeo6VMb2Z"
+          ) {
             imagesCollection(limit: 1) {
               items {
                 url

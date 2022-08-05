@@ -32,12 +32,14 @@ export const loader = async (args: LoaderArgs) => {
       },
       query: gql`
         query PageExhibitionsPage(
+          $preview: Boolean
           $locale: String
           $limit: Int
           $skip: Int
           $datetimeEnd_lt: DateTime
         ) {
           exbhitions: eventsEventCollection(
+            preview: $preview
             locale: $locale
             order: datetimeStart_DESC
             limit: $limit
