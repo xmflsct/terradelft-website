@@ -7,52 +7,60 @@ import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
-import { cacheQuery, EventsEvent, RICH_TEXT_LINKS } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import {
+  EventsEvent,
+  graphqlRequest,
+  RICH_TEXT_LINKS
+} from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{
+  const data = await cache<{
     exhibition: Omit<EventsEvent, 'sys' | 'datetimeAllDay' | 'terraInChina'>
   }>({
     ...args,
-    variables: { id: args.params.id! },
-    query: gql`
-      query PageExhibition($locale: String, $id: String!) {
-        exhibition: eventsEvent (locale: $locale, id: $id) {
-          name
-          datetimeStart
-          datetimeEnd
-          typeCollection {
-            items {
-              name
-            }
-          }
-          organizerCollection {
-            items {
-              name
-            }
-          }
-          locationCollection {
-            items {
-              name
-              address
-              location {
-                lat
-                lon
+    req: graphqlRequest({
+      ...args,
+      variables: { id: args.params.id! },
+      query: gql`
+        query PageExhibition($locale: String, $id: String!) {
+          exhibition: eventsEvent (locale: $locale, id: $id) {
+            name
+            datetimeStart
+            datetimeEnd
+            typeCollection {
+              items {
+                name
               }
             }
-          }
-          image {
-            url
-          }
-          description {
-            json
-            ${RICH_TEXT_LINKS}
+            organizerCollection {
+              items {
+                name
+              }
+            }
+            locationCollection {
+              items {
+                name
+                address
+                location {
+                  lat
+                  lon
+                }
+              }
+            }
+            image {
+              url
+            }
+            description {
+              json
+              ${RICH_TEXT_LINKS}
+            }
           }
         }
-      }
-    `
+      `
+    })
   })
 
   if (!data?.exhibition) {
@@ -115,7 +123,11 @@ const PageExhibition = () => {
   return (
     <div className='grid grid-cols-6 gap-4 items-start'>
       <H1
-        className={exhibition.image ? 'col-span-6' : 'col-span-6 lg:col-span-4 lg:col-start-2'}
+        className={
+          exhibition.image
+            ? 'col-span-6'
+            : 'col-span-6 lg:col-span-4 lg:col-start-2'
+        }
       >
         {exhibition.name}
       </H1>
@@ -129,7 +141,11 @@ const PageExhibition = () => {
         />
       )}
       <div
-        className={exhibition.image ? 'col-span-6 lg:col-span-4' : 'col-span-6 lg:col-span-4 lg:col-start-2'}
+        className={
+          exhibition.image
+            ? 'col-span-6 lg:col-span-4'
+            : 'col-span-6 lg:col-span-4 lg:col-start-2'
+        }
       >
         <ExhibitionInformation exhibition={exhibition} />
         <RichText

@@ -9,7 +9,8 @@ import { H4 } from '~/components/globals'
 import ListObjects from '~/components/list/objects'
 import Pagination from '~/components/pagination'
 import i18next from '~/i18next.server'
-import { cacheQuery, GiftCard } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { GiftCard, graphqlRequest } from '~/utils/contentful'
 import { currency } from '~/utils/formatNumber'
 import { getSellableObjects, SellableObject } from '~/utils/kv'
 import loadMeta from '~/utils/loadMeta'
@@ -304,19 +305,22 @@ export const loader = async (args: LoaderArgs) => {
     })
   }
 
-  const { giftCard } = await cacheQuery<{ giftCard: GiftCard }>({
+  const { giftCard } = await cache<{ giftCard: GiftCard }>({
     ...args,
-    query: gql`
-      query PageIndex($locale: String!) {
-        giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
-          imagesCollection(limit: 1) {
-            items {
-              url
+    req: graphqlRequest({
+      ...args,
+      query: gql`
+        query PageIndex($locale: String!) {
+          giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
+            imagesCollection(limit: 1) {
+              items {
+                url
+              }
             }
           }
         }
-      }
-    `
+      `
+    })
   })
 
   const perPage = 48

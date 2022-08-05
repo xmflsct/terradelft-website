@@ -6,61 +6,65 @@ import ExhibitionInformation from '~/components/exhibition/information'
 import { H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import { cacheQuery, EventsEvent, NewsNews } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { EventsEvent, graphqlRequest, NewsNews } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{
+  const data = await cache<{
     exhibitions: { items: EventsEvent[] }
     news: { items: NewsNews[] }
   }>({
     ...args,
-    query: gql`
-      query PageTerraInChina($locale: String) {
-        exhibitions: eventsEventCollection(
-          locale: $locale
-          where: { terraInChina: true }
-          limit: 6
-          order: datetimeEnd_DESC
-        ) {
-          items {
-            sys {
-              id
-            }
-            image {
-              url
-            }
-            name
-            datetimeStart
-            datetimeEnd
-            typeCollection {
-              items {
-                name
+    req: graphqlRequest({
+      ...args,
+      query: gql`
+        query PageTerraInChina($locale: String) {
+          exhibitions: eventsEventCollection(
+            locale: $locale
+            where: { terraInChina: true }
+            limit: 6
+            order: datetimeEnd_DESC
+          ) {
+            items {
+              sys {
+                id
+              }
+              image {
+                url
+              }
+              name
+              datetimeStart
+              datetimeEnd
+              typeCollection {
+                items {
+                  name
+                }
               }
             }
           }
-        }
-        news: newsNewsCollection(
-          locale: $locale
-          where: { terraInChina: true }
-          limit: 6
-          order: date_DESC
-        ) {
-          items {
-            sys {
-              id
+          news: newsNewsCollection(
+            locale: $locale
+            where: { terraInChina: true }
+            limit: 6
+            order: date_DESC
+          ) {
+            items {
+              sys {
+                id
+              }
+              image {
+                url
+              }
+              title
+              date
             }
-            image {
-              url
-            }
-            title
-            date
           }
         }
-      }
-    `
+      `
+    })
   })
   const meta = await loadMeta(args, { titleKey: 'pages.terra-in-china' })
 

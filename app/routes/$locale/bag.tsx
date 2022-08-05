@@ -10,8 +10,9 @@ import { useTranslation } from 'react-i18next'
 import BagCheckout from '~/components/bag/checkout'
 import BagList from '~/components/bag/list'
 import { H1 } from '~/components/globals'
+import cache from '~/utils/cache'
 import checkout from '~/utils/checkout'
-import { cacheQuery, ShippingRates } from '~/utils/contentful'
+import { graphqlRequest, ShippingRates } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const action = async (args: ActionArgs) => {
@@ -43,23 +44,26 @@ export type BagData = {
   rates: ShippingRates
 }
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{
+  const data = await cache<{
     shippingRates: { items: { rates: ShippingRates }[] }
   }>({
     ...args,
-    query: gql`
-      query PageBag($locale: String) {
-        shippingRates: shippingRatesCollection(
-          locale: $locale
-          limit: 1
-          where: { year: "2022" }
-        ) {
-          items {
-            rates
+    req: graphqlRequest({
+      ...args,
+      query: gql`
+        query PageBag($locale: String) {
+          shippingRates: shippingRatesCollection(
+            locale: $locale
+            limit: 1
+            where: { year: "2022" }
+          ) {
+            items {
+              rates
+            }
           }
         }
-      }
-    `
+      `
+    })
   })
   const env = { STRIPE_KEY_PUBLIC: args.context.STRIPE_KEY_PUBLIC as string }
   // @ts-ignore

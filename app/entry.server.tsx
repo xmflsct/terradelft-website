@@ -9,8 +9,8 @@ import i18n from './i18n'
 
 import en from 'public/locales/en'
 import nl from 'public/locales/nl'
-import { cached } from './utils/contentful'
 import { kved } from './utils/kv'
+import { cached } from './utils/cache'
 
 Sentry.init({
   dsn: 'https://4ceea32ca6aa4b839d8a40df1187227b@o389581.ingest.sentry.io/6620031',

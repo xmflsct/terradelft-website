@@ -13,29 +13,33 @@ import Price from '~/components/object/price'
 import { selectStyle } from '~/components/object/sell'
 import RichText from '~/components/richText'
 import { BagContext } from '~/states/bag'
-import { cacheQuery, GiftCard, RICH_TEXT_LINKS } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { GiftCard, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{ giftCard: GiftCard }>({
+  const data = await cache<{ giftCard: GiftCard }>({
     ...args,
-    query: gql`
-      query PageIndex($locale: String!) {
-        giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
-          imagesCollection(limit: 5) {
-            items {
-              url
-            }
-          }
-          defaultAmounts
-          customAmountAllow
-          customAmountMinimum
-          description {
-            json
-            ${RICH_TEXT_LINKS}
+    req: graphqlRequest({
+      ...args,
+      query: gql`
+    query PageIndex($locale: String!) {
+      giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
+        imagesCollection(limit: 5) {
+          items {
+            url
           }
         }
+        defaultAmounts
+        customAmountAllow
+        customAmountMinimum
+        description {
+          json
+          ${RICH_TEXT_LINKS}
+        }
       }
-    `
+    }
+  `
+    })
   })
 
   return json(data)

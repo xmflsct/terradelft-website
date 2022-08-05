@@ -6,43 +6,47 @@ import { useTranslation } from 'react-i18next'
 import { H1, H2, H4 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
-import { AboutTerra, cacheQuery, RICH_TEXT_LINKS } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { AboutTerra, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{ page: AboutTerra }>({
+  const data = await cache<{ page: AboutTerra }>({
     ...args,
-    query: gql`
-      query PageAboutTerra($locale: String) {
-        page: informationAboutTerra (
-          locale: $locale,
-          id: "7eZ2uEBMVW8HDUMlBXLxgx"
-        ) {
-          columnLeft {
-            json
-            ${RICH_TEXT_LINKS}
-          }
-          columnRight {
-            json
-            ${RICH_TEXT_LINKS}
-          }
-          staffCollection {
-            items {
-              name
-              avatar {
-                url
-              }
-              biography {
-                json
-                ${RICH_TEXT_LINKS}
+    req: graphqlRequest({
+      ...args,
+      query: gql`
+        query PageAboutTerra($locale: String) {
+          page: informationAboutTerra (
+            locale: $locale,
+            id: "7eZ2uEBMVW8HDUMlBXLxgx"
+          ) {
+            columnLeft {
+              json
+              ${RICH_TEXT_LINKS}
+            }
+            columnRight {
+              json
+              ${RICH_TEXT_LINKS}
+            }
+            staffCollection {
+              items {
+                name
+                avatar {
+                  url
+                }
+                biography {
+                  json
+                  ${RICH_TEXT_LINKS}
+                }
               }
             }
           }
         }
-      }
-    `
+      `
+    })
   })
   const meta = await loadMeta(args, { titleKey: 'pages.about-terra' })
 

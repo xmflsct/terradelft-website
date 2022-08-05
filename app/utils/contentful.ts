@@ -10,9 +10,7 @@ type GraphQLRequest = {
   variables?: Variables
 }
 
-export let cached: boolean | undefined = undefined
-
-export const graphqlRequest = async <T = unknown>({
+export const graphqlRequest = <T = unknown>({
   context,
   params,
   query,
@@ -29,46 +27,15 @@ export const graphqlRequest = async <T = unknown>({
     throw json('Missing locale', { status: 500 })
   }
 
-  return new GraphQLClient(
-    `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/migration`,
-    {
-      fetch,
-      headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
-      errorPolicy: preview ? 'ignore' : 'ignore'
-    }
-  ).request<T>(query, { ...variables, preview, locale })
-}
-
-export const cacheQuery = async <T = unknown>({
-  ttlMinutes = 60,
-  ...rest
-}: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
-  const queryData = async () => await graphqlRequest<T>(rest)
-
-  if (!ttlMinutes) {
-    return await queryData()
-  }
-
-  // @ts-ignore
-  const cache = caches.default
-
-  const cacheUrl = new URL(rest.request.url)
-  const cacheKey = new Request(cacheUrl.toString())
-
-  const cacheMatch = (await cache.match(cacheKey)) as Response
-
-  if (!cacheMatch) {
-    cached = false
-    const queryResponse = await queryData()
-    const cacheResponse = new Response(JSON.stringify(queryResponse), {
-      headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 60}` }
-    })
-    cache.put(cacheKey, cacheResponse)
-    return queryResponse
-  } else {
-    cached = true
-    return await cacheMatch.json()
-  }
+  return async () =>
+    await new GraphQLClient(
+      `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/migration`,
+      {
+        fetch,
+        headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
+        errorPolicy: preview ? 'ignore' : 'ignore'
+      }
+    ).request<T>(query, { ...variables, preview, locale })
 }
 
 export type CommonImage = {

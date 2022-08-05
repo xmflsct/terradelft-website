@@ -8,42 +8,50 @@ import { H1, H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
 import RichText from '~/components/richText'
-import { cacheQuery, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import {
+  graphqlRequest,
+  ObjectsArtist,
+  RICH_TEXT_LINKS
+} from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{ artists: { items: ObjectsArtist[] } }>({
+  const data = await cache<{ artists: { items: ObjectsArtist[] } }>({
     ...args,
-    variables: { slug: args.params.slug! },
-    query: gql`
-      ${LIST_OBJECT_DETAILS}
-      query PageArtist($locale: String, $slug: String) {
-        artists: objectsArtistCollection (
-          locale: $locale,
-          limit: 1,
-          where: {slug: $slug}
-        ) {
-          items {
-            artist
-            image {
-              url
-            }
-            biography {
-              json
-              ${RICH_TEXT_LINKS}
-            }
-            linkedFrom {
-              objectsObjectCollection(locale: "nl") {
-                items {
-                  ...ListObjectDetails
+    req: graphqlRequest({
+      ...args,
+      variables: { slug: args.params.slug! },
+      query: gql`
+        ${LIST_OBJECT_DETAILS}
+        query PageArtist($locale: String, $slug: String) {
+          artists: objectsArtistCollection (
+            locale: $locale,
+            limit: 1,
+            where: {slug: $slug}
+          ) {
+            items {
+              artist
+              image {
+                url
+              }
+              biography {
+                json
+                ${RICH_TEXT_LINKS}
+              }
+              linkedFrom {
+                objectsObjectCollection(locale: "nl") {
+                  items {
+                    ...ListObjectDetails
+                  }
                 }
               }
             }
           }
         }
-      }
-    `
+      `
+    })
   })
 
   if (!data?.artists?.items?.length) {

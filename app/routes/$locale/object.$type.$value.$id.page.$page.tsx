@@ -6,7 +6,8 @@ import { H1 } from '~/components/globals'
 import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
 import Pagination from '~/components/pagination'
 import i18next from '~/i18next.server'
-import { cacheQuery, ObjectsObject } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { graphqlRequest, ObjectsObject } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
@@ -30,7 +31,7 @@ export const loader = async (args: LoaderArgs) => {
   switch (args.params.type) {
     case technique[0]:
     case technique[1]:
-      data = await cacheQuery<{
+      data = await cache<{
         type: {
           linkedFrom: {
             objectsObjectCollection: { total: number; items: ObjectsObject[] }
@@ -38,40 +39,43 @@ export const loader = async (args: LoaderArgs) => {
         }
       }>({
         ...args,
-        variables: {
-          id: args.params.id,
-          limit: perPage,
-          skip: perPage * (page - 1)
-        },
-        query: gql`
-          ${LIST_OBJECT_DETAILS}
-          query PageObjectAttributeTechnique(
-            $locale: String
-            $id: String!
-            $limit: Int
-            $skip: Int
-          ) {
-            type: objectsTechnique(locale: $locale, id: $id) {
-              linkedFrom {
-                objectsObjectCollection(
-                  locale: "nl"
-                  limit: $limit
-                  skip: $skip
-                ) {
-                  total
-                  items {
-                    ...ListObjectDetails
+        req: graphqlRequest({
+          ...args,
+          variables: {
+            id: args.params.id,
+            limit: perPage,
+            skip: perPage * (page - 1)
+          },
+          query: gql`
+            ${LIST_OBJECT_DETAILS}
+            query PageObjectAttributeTechnique(
+              $locale: String
+              $id: String!
+              $limit: Int
+              $skip: Int
+            ) {
+              type: objectsTechnique(locale: $locale, id: $id) {
+                linkedFrom {
+                  objectsObjectCollection(
+                    locale: "nl"
+                    limit: $limit
+                    skip: $skip
+                  ) {
+                    total
+                    items {
+                      ...ListObjectDetails
+                    }
                   }
                 }
               }
             }
-          }
-        `
+          `
+        })
       })
       break
     case material[0]:
     case material[1]:
-      data = await cacheQuery<{
+      data = await cache<{
         type: {
           linkedFrom: {
             objectsObjectCollection: { total: number; items: ObjectsObject[] }
@@ -79,35 +83,38 @@ export const loader = async (args: LoaderArgs) => {
         }
       }>({
         ...args,
-        variables: {
-          id: args.params.id,
-          limit: perPage,
-          skip: perPage * (page - 1)
-        },
-        query: gql`
-          ${LIST_OBJECT_DETAILS}
-          query PageObjectAttributeMaterial(
-            $locale: String
-            $id: String!
-            $limit: Int
-            $skip: Int
-          ) {
-            type: objectsMaterial(locale: $locale, id: $id) {
-              linkedFrom {
-                objectsObjectCollection(
-                  locale: "nl"
-                  limit: $limit
-                  skip: $skip
-                ) {
-                  total
-                  items {
-                    ...ListObjectDetails
+        req: graphqlRequest({
+          ...args,
+          variables: {
+            id: args.params.id,
+            limit: perPage,
+            skip: perPage * (page - 1)
+          },
+          query: gql`
+            ${LIST_OBJECT_DETAILS}
+            query PageObjectAttributeMaterial(
+              $locale: String
+              $id: String!
+              $limit: Int
+              $skip: Int
+            ) {
+              type: objectsMaterial(locale: $locale, id: $id) {
+                linkedFrom {
+                  objectsObjectCollection(
+                    locale: "nl"
+                    limit: $limit
+                    skip: $skip
+                  ) {
+                    total
+                    items {
+                      ...ListObjectDetails
+                    }
                   }
                 }
               }
             }
-          }
-        `
+          `
+        })
       })
       break
     default:

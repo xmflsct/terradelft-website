@@ -7,32 +7,36 @@ import type { Article, WithContext } from 'schema-dts'
 import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
-import { cacheQuery, NewsNews, RICH_TEXT_LINKS } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { graphqlRequest, NewsNews, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{
+  const data = await cache<{
     news: Omit<NewsNews, 'sys' | 'terraInChina'>
   }>({
     ...args,
-    variables: { id: args.params.id },
-    query: gql`
-      query PageNews($locale: String, $id: String!) {
-        news: newsNews (locale: $locale, id: $id) {
-          title
-          date
-          image {
-            url
-            description
-          }
-          content {
-            json
-            ${RICH_TEXT_LINKS}
+    req: graphqlRequest({
+      ...args,
+      variables: { id: args.params.id },
+      query: gql`
+        query PageNews($locale: String, $id: String!) {
+          news: newsNews (locale: $locale, id: $id) {
+            title
+            date
+            image {
+              url
+              description
+            }
+            content {
+              json
+              ${RICH_TEXT_LINKS}
+            }
           }
         }
-      }
-    `
+      `
+    })
   })
 
   if (!data?.news) {

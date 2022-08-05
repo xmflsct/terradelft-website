@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next'
 import { H1 } from '~/components/globals'
 import ListNews from '~/components/list/news'
 import Pagination from '~/components/pagination'
-import { cacheQuery, NewsNews } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { graphqlRequest, NewsNews } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
@@ -18,37 +19,44 @@ export const loader = async (args: LoaderArgs) => {
 
   const perPage = 12
 
-  const data = await cacheQuery<{
+  const data = await cache<{
     news: {
       total: number
       items: Pick<NewsNews, 'sys' | 'title' | 'date' | 'image'>[]
     }
   }>({
     ...args,
-    variables: { limit: perPage, skip: perPage * (page - 1) },
-    query: gql`
-      query PageTerraInChinaNewsPage($locale: String, $limit: Int, $skip: Int) {
-        news: newsNewsCollection(
-          locale: $locale
-          order: date_DESC
-          limit: $limit
-          skip: $skip
-          where: { terraInChina: true }
+    req: graphqlRequest({
+      ...args,
+      variables: { limit: perPage, skip: perPage * (page - 1) },
+      query: gql`
+        query PageTerraInChinaNewsPage(
+          $locale: String
+          $limit: Int
+          $skip: Int
         ) {
-          total
-          items {
-            sys {
-              id
-            }
-            title
-            date
-            image {
-              url
+          news: newsNewsCollection(
+            locale: $locale
+            order: date_DESC
+            limit: $limit
+            skip: $skip
+            where: { terraInChina: true }
+          ) {
+            total
+            items {
+              sys {
+                id
+              }
+              title
+              date
+              image {
+                url
+              }
             }
           }
         }
-      }
-    `
+      `
+    })
   })
   const meta = await loadMeta(args, {
     titleKey: 'pages.terra-in-china-news-page',

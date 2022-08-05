@@ -13,9 +13,10 @@ import ObjectAttribute from '~/components/object/attribute'
 import ObjectImages from '~/components/object/images'
 import ObjectSell from '~/components/object/sell'
 import RichText from '~/components/richText'
+import cache from '~/utils/cache'
 import {
-  cacheQuery,
   CommonImage,
+  graphqlRequest,
   ObjectsObject,
   ObjectsObjectVariation,
   RICH_TEXT_LINKS
@@ -25,100 +26,103 @@ import { LoaderData } from '~/utils/unwrapLoaderData'
 import { ObjectContact } from './object.contact'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{
+  const data = await cache<{
     object: Omit<ObjectsObject, 'name'> & { name_nl?: string; name_en?: string }
   }>({
     ...args,
-    variables: { id: args.params.id },
-    query: gql`
-      ${LIST_OBJECT_DETAILS}
-      query PageObject($locale: String, $id: String!) {
-        object: objectsObject (locale: $locale, id: $id) {
-          sys {
-            id
-          }
-          name_nl: name (locale: "nl")
-          name_en: name (locale: "en")
-          description {
-            json
-            ${RICH_TEXT_LINKS}
-          }
-          imagesCollection {
-            items {
-              url
+    req: graphqlRequest({
+      ...args,
+      variables: { id: args.params.id },
+      query: gql`
+        ${LIST_OBJECT_DETAILS}
+        query PageObject($locale: String, $id: String!) {
+          object: objectsObject (locale: $locale, id: $id) {
+            sys {
+              id
             }
-          }
-          artist {
-            slug
-            artist
-            linkedFrom {
-              objectsObjectCollection (locale: "nl") {
-                items {
-                  ...ListObjectDetails
-                }
-              }
+            name_nl: name (locale: "nl")
+            name_en: name (locale: "en")
+            description {
+              json
+              ${RICH_TEXT_LINKS}
             }
-          }
-          kunstKoop
-          sellOnline
-          priceOriginal
-          priceSale
-          sku
-          stock
-          variationsCollection {
-            items {
-              sys {
-                id
-              }
-              sku
-              variant {
-                variant_nl: variant (locale: "nl")
-                variant_en: variant (locale: "en")
-              }
-              colour {
-                colour_nl: colour (locale: "nl")
-                colour_en: colour (locale: "en")
-              }
-              size {
-                size_nl: size (locale: "nl")
-                size_en: size (locale: "en")
-              }
-              priceOriginal
-              priceSale
-              sellOnline
-              stock
-              image {
+            imagesCollection {
+              items {
                 url
               }
             }
-          }
-          year {
-            year
-          }
-          techniqueCollection {
-            items {
-              sys {
-                id
+            artist {
+              slug
+              artist
+              linkedFrom {
+                objectsObjectCollection (locale: "nl") {
+                  items {
+                    ...ListObjectDetails
+                  }
+                }
               }
-              technique
             }
-          }
-          materialCollection {
-            items {
-              sys {
-                id
+            kunstKoop
+            sellOnline
+            priceOriginal
+            priceSale
+            sku
+            stock
+            variationsCollection {
+              items {
+                sys {
+                  id
+                }
+                sku
+                variant {
+                  variant_nl: variant (locale: "nl")
+                  variant_en: variant (locale: "en")
+                }
+                colour {
+                  colour_nl: colour (locale: "nl")
+                  colour_en: colour (locale: "en")
+                }
+                size {
+                  size_nl: size (locale: "nl")
+                  size_en: size (locale: "en")
+                }
+                priceOriginal
+                priceSale
+                sellOnline
+                stock
+                image {
+                  url
+                }
               }
-              material
             }
+            year {
+              year
+            }
+            techniqueCollection {
+              items {
+                sys {
+                  id
+                }
+                technique
+              }
+            }
+            materialCollection {
+              items {
+                sys {
+                  id
+                }
+                material
+              }
+            }
+            dimensionWidth
+            dimensionLength
+            dimensionHeight
+            dimensionDiameter
+            dimensionDepth
           }
-          dimensionWidth
-          dimensionLength
-          dimensionHeight
-          dimensionDiameter
-          dimensionDepth
         }
-      }
-    `
+      `
+    })
   })
 
   if (!data?.object) {

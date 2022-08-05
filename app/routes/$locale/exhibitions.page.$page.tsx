@@ -2,13 +2,11 @@ import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
-import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
-import ContentfulImage from '~/components/image'
-import { Link } from '~/components/link'
 import ListExhibitions from '~/components/list/exhibitions'
 import Pagination from '~/components/pagination'
-import { cacheQuery, EventsEvent } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { EventsEvent, graphqlRequest } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
@@ -21,49 +19,52 @@ export const loader = async (args: LoaderArgs) => {
 
   const perPage = 12
 
-  const data = await cacheQuery<{
+  const data = await cache<{
     exbhitions: { total: number; items: EventsEvent[] }
   }>({
     ...args,
-    variables: {
-      limit: perPage,
-      skip: perPage * (page - 1),
-      datetimeEnd_lt: new Date().toISOString()
-    },
-    query: gql`
-      query PageExhibitionsPage(
-        $locale: String
-        $limit: Int
-        $skip: Int
-        $datetimeEnd_lt: DateTime
-      ) {
-        exbhitions: eventsEventCollection(
-          locale: $locale
-          order: datetimeStart_DESC
-          limit: $limit
-          skip: $skip
-          where: { datetimeEnd_lt: $datetimeEnd_lt }
+    req: graphqlRequest({
+      ...args,
+      variables: {
+        limit: perPage,
+        skip: perPage * (page - 1),
+        datetimeEnd_lt: new Date().toISOString()
+      },
+      query: gql`
+        query PageExhibitionsPage(
+          $locale: String
+          $limit: Int
+          $skip: Int
+          $datetimeEnd_lt: DateTime
         ) {
-          total
-          items {
-            sys {
-              id
-            }
-            image {
-              url
-            }
-            name
-            datetimeStart
-            datetimeEnd
-            typeCollection {
-              items {
-                name
+          exbhitions: eventsEventCollection(
+            locale: $locale
+            order: datetimeStart_DESC
+            limit: $limit
+            skip: $skip
+            where: { datetimeEnd_lt: $datetimeEnd_lt }
+          ) {
+            total
+            items {
+              sys {
+                id
+              }
+              image {
+                url
+              }
+              name
+              datetimeStart
+              datetimeEnd
+              typeCollection {
+                items {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `
+      `
+    })
   })
   const meta = await loadMeta(args, {
     titleKey: 'pages.exhibitions',

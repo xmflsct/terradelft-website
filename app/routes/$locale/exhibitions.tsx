@@ -8,44 +8,48 @@ import ExhibitionInformation from '~/components/exhibition/information'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import { cacheQuery, EventsEvent } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { EventsEvent, graphqlRequest } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{
+  const data = await cache<{
     exhibitions: { total: number; items: EventsEvent[] }
   }>({
     ...args,
-    variables: { datetimeEnd_gte: new Date().toISOString() },
-    query: gql`
-      query PageExhibitions($locale: String!, $datetimeEnd_gte: DateTime) {
-        exhibitions: eventsEventCollection(
-          locale: $locale
-          order: datetimeStart_DESC
-          where: { datetimeEnd_gte: $datetimeEnd_gte }
-        ) {
-          total
-          items {
-            sys {
-              id
-            }
-            image {
-              url
-            }
-            name
-            datetimeStart
-            datetimeEnd
-            typeCollection {
-              items {
-                name
+    req: graphqlRequest({
+      ...args,
+      variables: { datetimeEnd_gte: new Date().toISOString() },
+      query: gql`
+        query PageExhibitions($locale: String!, $datetimeEnd_gte: DateTime) {
+          exhibitions: eventsEventCollection(
+            locale: $locale
+            order: datetimeStart_DESC
+            where: { datetimeEnd_gte: $datetimeEnd_gte }
+          ) {
+            total
+            items {
+              sys {
+                id
+              }
+              image {
+                url
+              }
+              name
+              datetimeStart
+              datetimeEnd
+              typeCollection {
+                items {
+                  name
+                }
               }
             }
           }
         }
-      }
-    `
+      `
+    })
   })
   const meta = await loadMeta(args, { titleKey: 'pages.exhibitions' })
 

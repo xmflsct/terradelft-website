@@ -8,10 +8,11 @@ import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
 import ListObjects, { objectsReduceSell } from '~/components/list/objects'
 import RichText from '~/components/richText'
+import cache from '~/utils/cache'
 import {
   Announcement,
-  cacheQuery,
   GiftCard,
+  graphqlRequest,
   ObjectsArtist,
   ObjectsObject
 } from '~/utils/contentful'
@@ -19,7 +20,7 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import sortArtists from '~/utils/sortArtists'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{
+  const data = await cache<{
     announcements?: { items: Announcement[] }
     giftCard: GiftCard
     objects: {
@@ -28,60 +29,63 @@ export const loader = async (args: LoaderArgs) => {
     artists: { items: ObjectsArtist[] }
   }>({
     ...args,
-    query: gql`
-      query PageIndex($locale: String!) {
-        announcements: announcementCollection(
-          locale: $locale
-          where: { enabled: true }
-        ) {
-          items {
-            title
-            content {
-              json
-            }
-          }
-        }
-        giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
-          imagesCollection(limit: 1) {
+    req: graphqlRequest({
+      ...args,
+      query: gql`
+        query PageIndex($locale: String!) {
+          announcements: announcementCollection(
+            locale: $locale
+            where: { enabled: true }
+          ) {
             items {
-              url
+              title
+              content {
+                json
+              }
             }
           }
-        }
-        objects: objectsObjectCollection(locale: $locale, limit: 50) {
-          items {
-            sys {
-              id
-            }
-            name
+          giftCard(locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
             imagesCollection(limit: 1) {
               items {
                 url
               }
             }
-            priceSale
-            sellOnline
-            stock
-            variationsCollection(limit: 50) {
-              items {
-                priceSale
-                sellOnline
-                stock
+          }
+          objects: objectsObjectCollection(locale: $locale, limit: 50) {
+            items {
+              sys {
+                id
+              }
+              name
+              imagesCollection(limit: 1) {
+                items {
+                  url
+                }
+              }
+              priceSale
+              sellOnline
+              stock
+              variationsCollection(limit: 50) {
+                items {
+                  priceSale
+                  sellOnline
+                  stock
+                }
+              }
+            }
+          }
+          artists: objectsArtistCollection(locale: $locale) {
+            items {
+              slug
+              artist
+              image {
+                url
               }
             }
           }
         }
-        artists: objectsArtistCollection(locale: $locale) {
-          items {
-            slug
-            artist
-            image {
-              url
-            }
-          }
-        }
-      }
-    `
+      `
+    })
   })
 
   return json({

@@ -101,12 +101,14 @@ export const loader = async (args: LoaderArgs) => {
   }>({
     ...args,
     req: async () =>
-      await fetch(url, {
-        headers: {
-          'X-Algolia-Application-Id': args.context.ALGOLIA_APP_ID,
-          'X-Algolia-API-Key': args.context.ALGOLIA_API_KEY
-        }
-      })
+      (
+        await fetch(url, {
+          headers: {
+            'X-Algolia-Application-Id': args.context.ALGOLIA_APP_ID,
+            'X-Algolia-API-Key': args.context.ALGOLIA_API_KEY
+          }
+        })
+      ).json()
   })
 
   return json(data)

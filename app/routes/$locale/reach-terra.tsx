@@ -3,24 +3,28 @@ import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import RichText from '~/components/richText'
-import { cacheQuery, ReachTerra, RICH_TEXT_LINKS } from '~/utils/contentful'
+import cache from '~/utils/cache'
+import { graphqlRequest, ReachTerra, RICH_TEXT_LINKS } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderArgs) => {
-  const data = await cacheQuery<{ page: ReachTerra }>({
+  const data = await cache<{ page: ReachTerra }>({
     ...args,
-    query: gql`
-      query PageReachTerra($locale: String) {
-        page: informationReachTerra ( locale: $locale, id: "7Hr9VIqrByJWQpkMVgxwN6" ) {
-          description {
-            json
-            ${RICH_TEXT_LINKS}
+    req: graphqlRequest({
+      ...args,
+      query: gql`
+        query PageReachTerra($locale: String) {
+          page: informationReachTerra ( locale: $locale, id: "7Hr9VIqrByJWQpkMVgxwN6" ) {
+            description {
+              json
+              ${RICH_TEXT_LINKS}
+            }
           }
         }
-      }
-    `
+      `
+    })
   })
   const meta = await loadMeta(args, { titleKey: 'pages.reach-terra' })
 

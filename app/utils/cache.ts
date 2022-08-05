@@ -1,18 +1,16 @@
-type Args = {
-  ttlMinutes?: number
-  req: () => Promise<Response>
-  request: Request
-}
+export let cached: boolean | undefined = undefined
 
 const cache = async <T = unknown>({
   ttlMinutes = 60,
   req,
   request
-}: Args): Promise<T> => {
-  const makeRequest = async () => (await req()).json<T>()
-
+}: {
+  ttlMinutes?: number
+  req: () => Promise<T>
+  request: Request
+}): Promise<T> => {
   if (!ttlMinutes) {
-    return await makeRequest()
+    return await req()
   }
 
   // @ts-ignore
@@ -25,7 +23,7 @@ const cache = async <T = unknown>({
 
   if (!cacheMatch) {
     console.log('⚠️ Not cached')
-    const queryResponse = await makeRequest()
+    const queryResponse = await req()
     const cacheResponse = new Response(JSON.stringify(queryResponse), {
       headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 60}` }
     })
