@@ -1,7 +1,7 @@
-import { Context } from '~/root'
+import { LoaderArgs } from "@remix-run/cloudflare"
 
 type Args = {
-  context: Context
+  context: LoaderArgs['context']
   data: {
     type: string
     name: string

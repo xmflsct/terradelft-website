@@ -20,7 +20,7 @@ declare namespace ContentfulImageTransform {
 }
 
 type Props = {
-  image?: { title?: CommonImage['title']; url: CommonImage['url'] }
+  image: Pick<CommonImage, 'url' | 'title'> | undefined | null
   alt?: string
   width: number
   height?: number

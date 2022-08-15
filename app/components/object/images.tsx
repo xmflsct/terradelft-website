@@ -5,45 +5,45 @@ import { SelectedVariation } from '~/routes/$locale/object.$id'
 import { CommonImage } from '~/utils/contentful'
 import ContentfulImage from '../image'
 
-const MouseZoom: React.FC<{ image: CommonImage }> = ({ image }) => {
-  const containerPosition = useRef(null)
-  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>()
+// const MouseZoom: React.FC<{ image: CommonImage }> = ({ image }) => {
+//   const containerPosition = useRef(null)
+//   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>()
 
-  return (
-    <div
-      className='mouse-zoom'
-      onMouseMove={e => setMousePosition({ x: e.pageX, y: e.pageY })}
-      onMouseLeave={() => setMousePosition(undefined)}
-      role='presentation'
-    >
-      {mousePosition !== null && (
-        <div
-          ref={containerPosition}
-          className='zoom-image'
-          style={{
-            backgroundImage: `url(${image})`,
-            transform: 'scale(3)',
-            transformOrigin: `${
-              containerPosition.current
-                ? ((mousePosition.x -
-                    containerPosition.current.getBoundingClientRect().left) /
-                    containerPosition.current.getBoundingClientRect().width) *
-                  100
-                : 0
-            }% ${
-              containerPosition.current
-                ? ((mousePosition.y -
-                    containerPosition.current.getBoundingClientRect().top) /
-                    containerPosition.current.getBoundingClientRect().height) *
-                  100
-                : 0
-            }%`
-          }}
-        />
-      )}
-    </div>
-  )
-}
+//   return (
+//     <div
+//       className='mouse-zoom'
+//       onMouseMove={e => setMousePosition({ x: e.pageX, y: e.pageY })}
+//       onMouseLeave={() => setMousePosition(undefined)}
+//       role='presentation'
+//     >
+//       {mousePosition !== null && (
+//         <div
+//           ref={containerPosition}
+//           className='zoom-image'
+//           style={{
+//             backgroundImage: `url(${image})`,
+//             transform: 'scale(3)',
+//             transformOrigin: `${
+//               containerPosition.current
+//                 ? ((mousePosition.x -
+//                     containerPosition.current.getBoundingClientRect().left) /
+//                     containerPosition.current.getBoundingClientRect().width) *
+//                   100
+//                 : 0
+//             }% ${
+//               containerPosition.current
+//                 ? ((mousePosition.y -
+//                     containerPosition.current.getBoundingClientRect().top) /
+//                     containerPosition.current.getBoundingClientRect().height) *
+//                   100
+//                 : 0
+//             }%`
+//           }}
+//         />
+//       )}
+//     </div>
+//   )
+// }
 
 type Props = {
   images?: CommonImage[]

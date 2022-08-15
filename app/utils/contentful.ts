@@ -1,10 +1,9 @@
 import { Document } from '@contentful/rich-text-types'
 import { json, LoaderArgs } from '@remix-run/cloudflare'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
-import { Context } from '~/root'
 
 type GraphQLRequest = {
-  context: LoaderArgs['context'] & Context
+  context: LoaderArgs['context']
   params: LoaderArgs['params']
   query: RequestDocument
   variables?: Variables
@@ -51,7 +50,7 @@ export type CommonImage = {
 export type CommonRichText = { json: Document; links?: any }
 
 export type GiftCard = {
-  imagesCollection: { items: CommonImage[] }
+  imagesCollection?: { items: (CommonImage | null)[] }
   defaultAmounts: string[]
   customAmountAllow: boolean
   customAmountMinimum?: number
@@ -87,7 +86,7 @@ export type ObjectsObject = {
   sys: { id: string }
   name: string
   description?: CommonRichText
-  imagesCollection?: { items: CommonImage[] }
+  imagesCollection?: { items: (CommonImage | null)[] }
   artist: ObjectsArtist
   kunstKoop: boolean
   sellOnline: boolean
@@ -113,7 +112,7 @@ export type ObjectsArtist = {
   sys: { id: string }
   slug: string
   artist: string
-  image: CommonImage
+  image?: CommonImage
   biography: CommonRichText
   linkedFrom: { objectsObjectCollection: { items: ObjectsObject[] } }
 }
