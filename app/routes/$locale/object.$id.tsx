@@ -148,13 +148,13 @@ export const loader = async (args: LoaderArgs) => {
           }
         ) => ({
           ...item,
-          variant: item.variant
+          variant: item?.variant
             ? { nl: item.variant.variant_nl, en: item.variant.variant_en }
             : undefined,
-          colour: item.colour
+          colour: item?.colour
             ? { nl: item.colour.colour_nl, en: item.colour.colour_en }
             : undefined,
-          size: item.size
+          size: item?.size
             ? { nl: item.size.size_nl, en: item.size.size_en }
             : undefined
         })
@@ -191,7 +191,7 @@ export const handle = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: object.name[locale],
-    image: object.imagesCollection?.items[0].url,
+    image: object.imagesCollection?.items[0]?.url,
     ...(object.description && {
       description: documentToPlainTextString(object.description.json).substring(
         0,
@@ -203,8 +203,8 @@ export const handle = {
       price: object.variationsCollection?.items.length
         ? max(object.variationsCollection.items.map(item => item.priceOriginal))
         : object.priceSale
-        ? object.priceSale
-        : object.priceOriginal,
+          ? object.priceSale
+          : object.priceOriginal,
       priceCurrency: 'EUR'
     },
     subjectOf: {
@@ -241,18 +241,18 @@ export const handle = {
           '@type': 'Product',
           url: `https://www.terra-delft.nl/object/${item.sys.id}`,
           name: item.name,
-          image: item.imagesCollection?.items[0].url,
+          image: item.imagesCollection?.items[0]?.url,
           offers: {
             '@type': 'Offer',
             price: item.variationsCollection?.items.length
               ? max(
-                  item.variationsCollection.items.map(
-                    item => item.priceOriginal
-                  )
+                item.variationsCollection.items.map(
+                  item => item.priceOriginal
                 )
+              )
               : item.priceSale
-              ? item.priceSale
-              : item.priceOriginal,
+                ? item.priceSale
+                : item.priceOriginal,
             priceCurrency: 'EUR'
           },
           subjectOf: {

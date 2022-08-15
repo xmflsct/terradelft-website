@@ -25,19 +25,6 @@ import notFound from '~/images/404.jpg'
 import styles from '~/styles/app.css'
 import { SEOTitle } from '~/utils/seo'
 
-export type Context = {
-  ENVIRONMENT?: 'PRODUCTION' | 'PREVIEW'
-  CONTENTFUL_SPACE?: string
-  CONTENTFUL_KEY?: string
-  STRIPE_KEY_PRIVATE?: string
-  STRIPE_KEY_PUBLIC?: string
-  SENDGRID_EMAIL?: string
-  SENDGRID_KEY?: string
-  ALGOLIA_APP_ID?: string
-  ALGOLIA_API_KEY?: string
-  TERRADELFT_WEBSITE?: KVNamespace
-}
-
 export const loader = async ({ request }: LoaderArgs) => {
   const locale = await i18next.getLocale(request)
 

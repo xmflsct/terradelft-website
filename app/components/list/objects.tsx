@@ -52,7 +52,7 @@ const ListObjects: React.FC<Props> = ({ objects, giftCard }) => {
         <div className='group cursor-pointer'>
           <Link to='/gift-card'>
             <ContentfulImage
-              image={giftCard.imagesCollection.items[0]}
+              image={giftCard.imagesCollection?.items[0]}
               width={164}
               height={164}
               quality={80}

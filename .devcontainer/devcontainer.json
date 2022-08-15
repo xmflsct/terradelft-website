@@ -1,0 +1,11 @@
+{
+	"name": "Node.js & TypeScript",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "16-bullseye"
+		}
+	},
+	"postCreateCommand": "yarn global add wrangler && yarn",
+	"remoteUser": "node"
+}

@@ -6,7 +6,7 @@ type ObjectMain = {
   contentful_id: string
   contentful_id_url: string
   artist: Pick<ObjectsArtist, 'slug' | 'artist'>
-  image?: CommonImage
+  image: CommonImage | undefined | null
   priceOriginal: number
   priceSale?: number
   stock: number
@@ -23,7 +23,7 @@ type ObjectVariation = {
   contentful_id: string
   contentful_id_url: string
   artist: Pick<ObjectsArtist, 'slug' | 'artist'>
-  image?: CommonImage
+  image: CommonImage | undefined | null
   priceOriginal: number
   priceSale?: number
   stock: number
@@ -40,7 +40,7 @@ type ObjectGiftCard = {
   contentful_id: string
   contentful_id_url: string
   artist?: undefined
-  image?: CommonImage
+  image: CommonImage | undefined | null
   priceOriginal: number
   priceSale?: undefined
   stock: number
@@ -54,13 +54,13 @@ type ObjectGiftCard = {
 export type TDObject = ObjectMain | ObjectVariation | ObjectGiftCard
 export type TDDelivery =
   | {
-      method: 'pickup'
-      shipment: null
-    }
+    method: 'pickup'
+    shipment: null
+  }
   | {
-      method: 'shipment'
-      shipment: { value: string; label: string }
-    }
+    method: 'shipment'
+    shipment: { value: string; label: string }
+  }
 export type BagState = {
   objects: TDObject[]
   delivery: TDDelivery
@@ -73,10 +73,10 @@ export type BagState = {
 const initBagState: BagState = {
   objects: [],
   delivery: { method: 'pickup', shipment: null },
-  objectsAdd: () => {},
-  objectsRemove: () => {},
-  updateDeliveryMethod: () => {},
-  updateDeliveryShipmentCountry: () => {}
+  objectsAdd: () => { },
+  objectsRemove: () => { },
+  updateDeliveryMethod: () => { },
+  updateDeliveryShipmentCountry: () => { }
 }
 
 export const BagContext = createContext<BagState>(initBagState)

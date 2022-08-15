@@ -1,5 +1,4 @@
 import { RemixServer } from '@remix-run/react'
-import type { EntryContext } from '@remix-run/server-runtime'
 import * as Sentry from '@sentry/remix'
 import { createInstance } from 'i18next'
 import { renderToString } from 'react-dom/server'
@@ -11,6 +10,7 @@ import en from 'public/locales/en'
 import nl from 'public/locales/nl'
 import { kved } from './utils/kv'
 import { cached } from './utils/cache'
+import { EntryContext } from '@remix-run/cloudflare'
 
 Sentry.init({
   dsn: 'https://4ceea32ca6aa4b839d8a40df1187227b@o389581.ingest.sentry.io/6620031',
