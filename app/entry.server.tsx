@@ -28,9 +28,7 @@ export default async function handleRequest(
   const lng = await i18next.getLocale(request)
   const ns = i18next.getRouteNamespaces(context)
 
-  await instance
-    .use(initReactI18next)
-    .init({ ...i18n, lng, ns, resources: { en, nl } })
+  await instance.use(initReactI18next).init({ ...i18n, lng, ns, resources: { en, nl } })
 
   let markup = renderToString(
     <I18nextProvider i18n={instance}>

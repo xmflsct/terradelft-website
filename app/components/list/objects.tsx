@@ -1,45 +1,11 @@
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
-import {
-  GiftCard,
-  ObjectsObject,
-  ObjectsObjectVariation
-} from '~/utils/contentful'
+import { GiftCard, ObjectsObject } from '~/utils/contentful'
 import ContentfulImage from '../image'
 import { Link } from '../link'
 
-type Reduced = Pick<ObjectsObject, 'sellOnline' | 'stock'> & {
-  variationsCollection?: {
-    items: Pick<ObjectsObjectVariation, 'sellOnline' | 'stock'>[]
-  }
-}
-
-export const objectsReduceSell = (filtered: Reduced[], item: Reduced) => {
-  if (item.variationsCollection?.items.length) {
-    // Count only variations
-    if (
-      item.variationsCollection.items.filter(
-        variation =>
-          variation && variation.sellOnline && (variation.stock ?? 0 > 0)
-      ).length
-    ) {
-      filtered.push(item)
-    }
-  } else {
-    // Count only root object
-    if (item.sellOnline && (item.stock ?? 0 > 0)) {
-      filtered.push(item)
-    }
-  }
-
-  return filtered
-}
-
 type Props = {
-  objects: Pick<
-    ObjectsObject,
-    'sys' | 'imagesCollection' | 'priceSale' | 'name'
-  >[]
+  objects: Pick<ObjectsObject, 'sys' | 'imagesCollection' | 'priceSale' | 'name'>[]
   giftCard?: GiftCard | null
 }
 

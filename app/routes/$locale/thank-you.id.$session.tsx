@@ -14,12 +14,9 @@ export const loader = async (args: LoaderArgs) => {
   }
 
   const session = await (
-    await fetch(
-      `https://api.stripe.com/v1/checkout/sessions/${args.params.session}`,
-      {
-        headers: { Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}` }
-      }
-    )
+    await fetch(`https://api.stripe.com/v1/checkout/sessions/${args.params.session}`, {
+      headers: { Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}` }
+    })
   ).json<{
     amount_total: number
     payment_status: 'paid' | 'unpaid'
@@ -52,11 +49,7 @@ export const loader = async (args: LoaderArgs) => {
   return json({ meta, session, line_items })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title])
@@ -91,10 +84,7 @@ const PageThankYou: React.FC = () => {
               <td className='p-1'>{item.description}</td>
               <td className='p-1 text-center'>{item.quantity}</td>
               <td className='p-1 text-right'>
-                {currency(
-                  item.amount_total / item.quantity / 10 / 10,
-                  i18n.language
-                )}
+                {currency(item.amount_total / item.quantity / 10 / 10, i18n.language)}
               </td>
               <td className='p-1 text-right'>
                 {currency(item.amount_total / 10 / 10, i18n.language)}

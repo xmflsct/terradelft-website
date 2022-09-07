@@ -1,10 +1,4 @@
-import {
-  json,
-  LinksFunction,
-  LoaderArgs,
-  MetaFunction,
-  redirect
-} from '@remix-run/cloudflare'
+import { json, LinksFunction, LoaderArgs, MetaFunction, redirect } from '@remix-run/cloudflare'
 import {
   Links,
   LiveReload,

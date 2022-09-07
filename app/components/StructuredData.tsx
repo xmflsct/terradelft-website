@@ -19,9 +19,7 @@ const StructuredData: React.FC = () => {
   }
 
   const renderedScript =
-    structuredData.length === 1
-      ? JSON.stringify(structuredData[0])
-      : JSON.stringify(structuredData)
+    structuredData.length === 1 ? JSON.stringify(structuredData[0]) : JSON.stringify(structuredData)
 
   return (
     <script

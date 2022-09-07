@@ -25,12 +25,8 @@ const CheckoutDelivery: React.FC<Props> = ({
   shipmentMethods
 }) => {
   const { t, i18n } = useTranslation('bag')
-  const {
-    delivery,
-    objects,
-    updateDeliveryMethod,
-    updateDeliveryShipmentCountry
-  } = useContext(BagContext)
+  const { delivery, objects, updateDeliveryMethod, updateDeliveryShipmentCountry } =
+    useContext(BagContext)
 
   const [countryNames, setCountryNames] = useState<
     {
@@ -47,9 +43,7 @@ const CheckoutDelivery: React.FC<Props> = ({
         label: v
       })
     })
-    const defaultCountry = tempCountries.find(
-      c => c.value === countries.alpha2ToNumeric(country)
-    )
+    const defaultCountry = tempCountries.find(c => c.value === countries.alpha2ToNumeric(country))
     if (defaultCountry) {
       updateDeliveryShipmentCountry(defaultCountry)
     }
@@ -138,10 +132,8 @@ const CheckoutDelivery: React.FC<Props> = ({
                     Number.isFinite(method.freeForTotal) &&
                     subtotal >= method.freeForTotal
                       ? t('free')
-                      : objects.filter(object => object.type !== 'giftcard')
-                          .length === 0 &&
-                        countries.alpha2ToNumeric('NL') ===
-                          delivery.shipment.value
+                      : objects.filter(object => object.type !== 'giftcard').length === 0 &&
+                        countries.alpha2ToNumeric('NL') === delivery.shipment.value
                       ? currency(2, i18n.language)
                       : currency(method.price, i18n.language))}
                 </div>

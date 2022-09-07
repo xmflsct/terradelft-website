@@ -154,9 +154,7 @@ export const loader = async (args: LoaderArgs) => {
           colour: item?.colour
             ? { nl: item.colour.colour_nl, en: item.colour.colour_en }
             : undefined,
-          size: item?.size
-            ? { nl: item.size.size_nl, en: item.size.size_en }
-            : undefined
+          size: item?.size ? { nl: item.size.size_nl, en: item.size.size_en } : undefined
         })
       )
     }
@@ -176,10 +174,7 @@ export const meta: MetaFunction = ({
     title: SEOTitle(object.name[locale]),
     keywords: SEOKeywords([object.name[locale] || '']),
     ...(object.description && {
-      description: documentToPlainTextString(object.description.json).substring(
-        0,
-        199
-      )
+      description: documentToPlainTextString(object.description.json).substring(0, 199)
     })
   }
 export const handle = {
@@ -193,33 +188,25 @@ export const handle = {
     name: object.name[locale],
     image: object.imagesCollection?.items[0]?.url,
     ...(object.description && {
-      description: documentToPlainTextString(object.description.json).substring(
-        0,
-        199
-      )
+      description: documentToPlainTextString(object.description.json).substring(0, 199)
     }),
     offers: {
       '@type': 'Offer',
       price: object.variationsCollection?.items.length
         ? max(object.variationsCollection.items.map(item => item.priceOriginal))
         : object.priceSale
-          ? object.priceSale
-          : object.priceOriginal,
+        ? object.priceSale
+        : object.priceOriginal,
       priceCurrency: 'EUR'
     },
     subjectOf: {
       '@type': 'CreativeWork',
       ...(object.description && {
-        abstract: documentToPlainTextString(object.description.json).substring(
-          0,
-          199
-        )
+        abstract: documentToPlainTextString(object.description.json).substring(0, 199)
       }),
       author: { '@type': 'Person', name: object.artist.artist },
       ...(object.materialCollection?.items.length && {
-        material: object.materialCollection.items.map(
-          material => material.material
-        )
+        material: object.materialCollection.items.map(material => material.material)
       })
     },
     ...(object.dimensionDepth && {
@@ -235,58 +222,48 @@ export const handle = {
       width: { '@type': 'QuantitativeValue', value: object.dimensionWidth }
     }),
     ...(object.artist.linkedFrom.objectsObjectCollection.items.length && {
-      isRelatedTo: object.artist.linkedFrom.objectsObjectCollection.items.map(
-        item => ({
-          '@context': 'http://schema.org',
-          '@type': 'Product',
-          url: `https://www.terra-delft.nl/object/${item.sys.id}`,
-          name: item.name,
-          image: item.imagesCollection?.items[0]?.url,
-          offers: {
-            '@type': 'Offer',
-            price: item.variationsCollection?.items.length
-              ? max(
-                item.variationsCollection.items.map(
-                  item => item.priceOriginal
-                )
-              )
-              : item.priceSale
-                ? item.priceSale
-                : item.priceOriginal,
-            priceCurrency: 'EUR'
-          },
-          subjectOf: {
-            '@type': 'CreativeWork',
-            abstract:
-              item.description &&
-              documentToPlainTextString(item.description.json),
-            author: { '@type': 'Person', name: object.artist.artist },
-            ...(item.materialCollection?.items.length && {
-              material: item.materialCollection.items.map(
-                material => material.material
-              )
-            })
-          },
-          ...(item.dimensionDepth && {
-            depth: {
-              '@type': 'QuantitativeValue',
-              value: item.dimensionDepth
-            }
-          }),
-          ...(item.dimensionHeight && {
-            height: {
-              '@type': 'QuantitativeValue',
-              value: item.dimensionHeight
-            }
-          }),
-          ...(item.dimensionWidth && {
-            height: {
-              '@type': 'QuantitativeValue',
-              value: item.dimensionWidth
-            }
+      isRelatedTo: object.artist.linkedFrom.objectsObjectCollection.items.map(item => ({
+        '@context': 'http://schema.org',
+        '@type': 'Product',
+        url: `https://www.terra-delft.nl/object/${item.sys.id}`,
+        name: item.name,
+        image: item.imagesCollection?.items[0]?.url,
+        offers: {
+          '@type': 'Offer',
+          price: item.variationsCollection?.items.length
+            ? max(item.variationsCollection.items.map(item => item.priceOriginal))
+            : item.priceSale
+            ? item.priceSale
+            : item.priceOriginal,
+          priceCurrency: 'EUR'
+        },
+        subjectOf: {
+          '@type': 'CreativeWork',
+          abstract: item.description && documentToPlainTextString(item.description.json),
+          author: { '@type': 'Person', name: object.artist.artist },
+          ...(item.materialCollection?.items.length && {
+            material: item.materialCollection.items.map(material => material.material)
           })
+        },
+        ...(item.dimensionDepth && {
+          depth: {
+            '@type': 'QuantitativeValue',
+            value: item.dimensionDepth
+          }
+        }),
+        ...(item.dimensionHeight && {
+          height: {
+            '@type': 'QuantitativeValue',
+            value: item.dimensionHeight
+          }
+        }),
+        ...(item.dimensionWidth && {
+          height: {
+            '@type': 'QuantitativeValue',
+            value: item.dimensionWidth
+          }
         })
-      )
+      }))
     })
   })
 }
@@ -303,8 +280,7 @@ const PageObject = () => {
   const object = useLoaderData<typeof loader>()
   const { t, i18n } = useTranslation('object')
 
-  const [selectedVariation, setSelectedVariation] =
-    useState<SelectedVariation>()
+  const [selectedVariation, setSelectedVariation] = useState<SelectedVariation>()
 
   return (
     <>
@@ -314,24 +290,14 @@ const PageObject = () => {
           selectedVariation={selectedVariation}
         />
         <div>
-          <H1>
-            {typeof object.name !== 'string' && object.name[i18n.language]}
-          </H1>
+          <H1>{typeof object.name !== 'string' && object.name[i18n.language]}</H1>
           <H3>
-            {t('artist')}{' '}
-            <Link to={`/artist/${object.artist.slug}`}>
-              {object.artist.artist}
-            </Link>
+            {t('artist')} <Link to={`/artist/${object.artist.slug}`}>{object.artist.artist}</Link>
           </H3>
-          <ObjectSell
-            object={object}
-            setSelectedVariation={setSelectedVariation}
-          />
+          <ObjectSell object={object} setSelectedVariation={setSelectedVariation} />
           <table className='table-auto mb-4'>
             <tbody>
-              {object.year && (
-                <ObjectAttribute type={t('year')} value={object.year.year} />
-              )}
+              {object.year && <ObjectAttribute type={t('year')} value={object.year.year} />}
               {object.techniqueCollection && (
                 <ObjectAttribute
                   type={t('technique')}
@@ -351,46 +317,24 @@ const PageObject = () => {
                 />
               )}
               {object.dimensionWidth && (
-                <ObjectAttribute
-                  type={t('dimensionWidth')}
-                  value={object.dimensionWidth}
-                />
+                <ObjectAttribute type={t('dimensionWidth')} value={object.dimensionWidth} />
               )}
               {object.dimensionLength && (
-                <ObjectAttribute
-                  type={t('dimensionLength')}
-                  value={object.dimensionLength}
-                />
+                <ObjectAttribute type={t('dimensionLength')} value={object.dimensionLength} />
               )}
               {object.dimensionHeight && (
-                <ObjectAttribute
-                  type={t('dimensionHeight')}
-                  value={object.dimensionHeight}
-                />
+                <ObjectAttribute type={t('dimensionHeight')} value={object.dimensionHeight} />
               )}
               {object.dimensionDiameter && (
-                <ObjectAttribute
-                  type={t('dimensionDiameter')}
-                  value={object.dimensionDiameter}
-                />
+                <ObjectAttribute type={t('dimensionDiameter')} value={object.dimensionDiameter} />
               )}
               {object.dimensionDepth && (
-                <ObjectAttribute
-                  type={t('dimensionDepth')}
-                  value={object.dimensionDepth}
-                />
+                <ObjectAttribute type={t('dimensionDepth')} value={object.dimensionDepth} />
               )}
             </tbody>
           </table>
-          <RichText
-            content={object.description}
-            className='my-2'
-            assetWidth={634}
-          />
-          <ObjectContact
-            object={object}
-            selectedVariation={selectedVariation}
-          />
+          <RichText content={object.description} className='my-2' assetWidth={634} />
+          <ObjectContact object={object} selectedVariation={selectedVariation} />
         </div>
       </div>
       {object.artist.linkedFrom.objectsObjectCollection.items.length > 1 && (

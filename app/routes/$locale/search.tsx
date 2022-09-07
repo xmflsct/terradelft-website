@@ -110,8 +110,8 @@ export const loader = async (args: LoaderArgs) => {
       (
         await fetch(url, {
           headers: {
-            'X-Algolia-Application-Id': args.context.ALGOLIA_APP_ID,
-            'X-Algolia-API-Key': args.context.ALGOLIA_API_KEY
+            'X-Algolia-Application-Id': args.context.ALGOLIA_APP_ID as string,
+            'X-Algolia-API-Key': args.context.ALGOLIA_API_KEY as string
           }
         })
       ).json()
@@ -124,11 +124,7 @@ export const loader = async (args: LoaderArgs) => {
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title)
   }
@@ -187,7 +183,7 @@ const PageSearch: React.FC = () => {
         {image ? (
           <div className='basis-1/5 lg:basis-1/6'>
             <ContentfulImage
-              image={{ url: image }}
+              image={{ url: image, title: 'Search image' }}
               width={157}
               height={157}
               quality={80}
@@ -199,9 +195,7 @@ const PageSearch: React.FC = () => {
       </>
     )
   }
-  const renderHitResult = (
-    hit: SearchArtist | SearchObject | SearchEvent | SearchNews
-  ) => {
+  const renderHitResult = (hit: SearchArtist | SearchObject | SearchEvent | SearchNews) => {
     switch (hit.__type) {
       case 'artist':
         return result({

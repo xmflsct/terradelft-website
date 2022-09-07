@@ -54,13 +54,13 @@ type ObjectGiftCard = {
 export type TDObject = ObjectMain | ObjectVariation | ObjectGiftCard
 export type TDDelivery =
   | {
-    method: 'pickup'
-    shipment: null
-  }
+      method: 'pickup'
+      shipment: null
+    }
   | {
-    method: 'shipment'
-    shipment: { value: string; label: string }
-  }
+      method: 'shipment'
+      shipment: { value: string; label: string }
+    }
 export type BagState = {
   objects: TDObject[]
   delivery: TDDelivery
@@ -73,10 +73,10 @@ export type BagState = {
 const initBagState: BagState = {
   objects: [],
   delivery: { method: 'pickup', shipment: null },
-  objectsAdd: () => { },
-  objectsRemove: () => { },
-  updateDeliveryMethod: () => { },
-  updateDeliveryShipmentCountry: () => { }
+  objectsAdd: () => {},
+  objectsRemove: () => {},
+  updateDeliveryMethod: () => {},
+  updateDeliveryShipmentCountry: () => {}
 }
 
 export const BagContext = createContext<BagState>(initBagState)
@@ -111,9 +111,7 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
   }, [delivery])
 
   const objectsAdd = (object: TDObject) => {
-    const foundIndex = objects.findIndex(
-      obj => obj.contentful_id === object.contentful_id
-    )
+    const foundIndex = objects.findIndex(obj => obj.contentful_id === object.contentful_id)
     if (foundIndex === -1) {
       setObjects([...objects, object])
     } else {
@@ -121,11 +119,7 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }
   const objectsRemove = (contentful_id: string) => {
-    setObjects(
-      objects
-        .filter(object => object.contentful_id !== contentful_id)
-        .filter(o => o)
-    )
+    setObjects(objects.filter(object => object.contentful_id !== contentful_id).filter(o => o))
   }
 
   const updateDeliveryMethod = (method: TDDelivery['method']) => {

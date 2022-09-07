@@ -7,15 +7,15 @@ import { graphqlRequest, ShippingRates } from './contentful'
 export type CheckoutContent = {
   objects: TDObject[]
   delivery:
-    | {
-        method: 'pickup'
-        name: string
-      }
-    | {
-        method: 'shipment'
-        countryCode: string
-        countryA2: string
-      }
+  | {
+    method: 'pickup'
+    name: string
+  }
+  | {
+    method: 'shipment'
+    countryCode: string
+    countryA2: string
+  }
   amounts: {
     subtotal: number
     discount?: number
@@ -158,18 +158,17 @@ const verifyContentful = async ({
 
     return rates[countryCodeIndex].rates.map(rate => ({
       shipping_rate_data: {
-        display_name: `${rate.method}${
-          rate.description ? ` (${rate.description})` : ''
-        }`,
+        display_name: `${rate.method}${rate.description ? ` (${rate.description})` : ''
+          }`,
         type: 'fixed_amount',
         fixed_amount: {
           amount:
             rate.freeForTotal && subtotal >= rate.freeForTotal
               ? 0
               : objects.filter(object => object.type !== 'giftcard').length ===
-                  0 && delivery.countryA2 === 'NL'
-              ? 200
-              : rate.price * 10 * 10,
+                0 && delivery.countryA2 === 'NL'
+                ? 200
+                : rate.price * 10 * 10,
           currency: 'eur'
         },
         ...(rate.description && {
@@ -270,19 +269,16 @@ const checkout = async ({
                 `${translated.artist}${object.artist.artist}`,
                 object.sku ? `${translated.SKU}${object.sku}` : undefined,
                 object.variant !== undefined
-                  ? `${translated.variant}${
-                      object.variant?.[content.locale] || translated.normal
-                    }`
+                  ? `${translated.variant}${object.variant?.[content.locale] || translated.normal
+                  }`
                   : undefined,
                 object.colour !== undefined
-                  ? `${translated.colour}${
-                      object.colour?.[content.locale] || translated.normal
-                    }`
+                  ? `${translated.colour}${object.colour?.[content.locale] || translated.normal
+                  }`
                   : undefined,
                 object.size !== undefined
-                  ? `${translated.size}${
-                      object.size?.[content.locale] || translated.normal
-                    }`
+                  ? `${translated.size}${object.size?.[content.locale] || translated.normal
+                  }`
                   : undefined
               )
                 .filter(f => f)
@@ -316,15 +312,15 @@ const checkout = async ({
     line_items: line_items,
     ...(content.delivery.method === 'shipment'
       ? {
-          shipping_address_collection: {
-            allowed_countries: [content.delivery.countryA2]
-          }
+        shipping_address_collection: {
+          allowed_countries: [content.delivery.countryA2]
         }
+      }
       : {
-          shipping_address_collection: {
-            allowed_countries: ['NL']
-          }
-        }),
+        shipping_address_collection: {
+          allowed_countries: ['NL']
+        }
+      }),
     shipping_options,
     locale: content.locale,
     success_url: content.urls.success + '/id/{CHECKOUT_SESSION_ID}',

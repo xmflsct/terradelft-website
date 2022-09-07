@@ -45,25 +45,16 @@ export const loader = async (args: LoaderArgs) => {
   return json(data)
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.news && {
     title: SEOTitle(data.news.title),
     keywords: SEOKeywords([data.news.title]),
     ...(data.news.content && {
-      description: documentToPlainTextString(data.news.content.json).substring(
-        0,
-        199
-      )
+      description: documentToPlainTextString(data.news.content.json).substring(0, 199)
     })
   }
 export const handle = {
-  structuredData: ({
-    news
-  }: LoaderData<typeof loader>): WithContext<Article> => ({
+  structuredData: ({ news }: LoaderData<typeof loader>): WithContext<Article> => ({
     '@context': 'https://schema.org',
     '@type': 'Article',
     name: news.title,
@@ -79,11 +70,7 @@ const PageNews = () => {
 
   return (
     <div className='grid grid-cols-6 gap-4 items-start'>
-      <H1
-        className={
-          news.image ? 'col-span-6' : 'col-span-6 lg:col-span-4 lg:col-start-2'
-        }
-      >
+      <H1 className={news.image ? 'col-span-6' : 'col-span-6 lg:col-span-4 lg:col-start-2'}>
         {news.title}
       </H1>
       {news.image && (
@@ -97,9 +84,7 @@ const PageNews = () => {
       )}
       <div
         className={
-          news.image
-            ? 'col-span-6 lg:col-span-4'
-            : 'col-span-6 lg:col-span-4 lg:col-start-2'
+          news.image ? 'col-span-6 lg:col-span-4' : 'col-span-6 lg:col-span-4 lg:col-start-2'
         }
       >
         <p>

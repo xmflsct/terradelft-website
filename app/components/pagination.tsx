@@ -1,8 +1,4 @@
-import {
-  faAngleLeft,
-  faAngleRight,
-  faEllipsis
-} from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft, faAngleRight, faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from '~/utils/classNames'
 import { Link } from './link'
@@ -41,9 +37,7 @@ const Pagination: React.FC<Props> = ({ basePath, page, total }) => {
             children='1'
             className={classNames(inactive, 'hidden lg:block')}
           />
-          {page > 3 ? (
-            <FontAwesomeIcon icon={faEllipsis} className='text-disabled' />
-          ) : null}
+          {page > 3 ? <FontAwesomeIcon icon={faEllipsis} className='text-disabled' /> : null}
         </>
       ) : null}
       {Array(3)

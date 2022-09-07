@@ -27,10 +27,7 @@ const BagList: React.FC = () => {
     <>
       {objects.map(object => {
         return (
-          <div
-            key={object.contentful_id}
-            className='mb-4 grid grid-cols-12 gap-4'
-          >
+          <div key={object.contentful_id} className='mb-4 grid grid-cols-12 gap-4'>
             <div className='col-span-5'>
               <ContentfulImage
                 image={object.image}
@@ -58,52 +55,34 @@ const BagList: React.FC = () => {
                     <tr>
                       <th className='text-left pr-4'>{t('object:artist')}</th>
                       <td>
-                        <Link to={`/artist/${object.artist.slug}`}>
-                          {object.artist.artist}
-                        </Link>
+                        <Link to={`/artist/${object.artist.slug}`}>{object.artist.artist}</Link>
                       </td>
                     </tr>
                   ) : null}
                   {object.variant !== undefined && (
                     <tr>
                       <th className='text-left pr-4'>{t('object:variant')}</th>
-                      <td>
-                        {object.variant?.[i18n.language] ||
-                          t('object:option-default')}
-                      </td>
+                      <td>{object.variant?.[i18n.language] || t('object:option-default')}</td>
                     </tr>
                   )}
                   {object.colour !== undefined && (
                     <tr>
                       <th className='text-left pr-4'>{t('object:colour')}</th>
-                      <td>
-                        {object.colour?.[i18n.language] ||
-                          t('object:option-default')}
-                      </td>
+                      <td>{object.colour?.[i18n.language] || t('object:option-default')}</td>
                     </tr>
                   )}
                   {object.size !== undefined && (
                     <tr>
                       <th className='text-left pr-4'>{t('object:size')}</th>
-                      <td>
-                        {object.size?.[i18n.language] ||
-                          t('object:option-default')}
-                      </td>
+                      <td>{object.size?.[i18n.language] || t('object:option-default')}</td>
                     </tr>
                   )}
                   <tr>
                     <th className='text-left pr-4'>{t('object:price')}</th>
-                    <td>
-                      {currency(
-                        object.priceSale || object.priceOriginal,
-                        i18n.language
-                      )}
-                    </td>
+                    <td>{currency(object.priceSale || object.priceOriginal, i18n.language)}</td>
                   </tr>
                   <tr>
-                    <th className='text-left py-1 pr-4'>
-                      {t('object:amount')}
-                    </th>
+                    <th className='text-left py-1 pr-4'>{t('object:amount')}</th>
                     <td>
                       <ReactSelect
                         options={Array(object.stock === 1 ? 1 : 50)

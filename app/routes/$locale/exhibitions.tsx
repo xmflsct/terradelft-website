@@ -23,11 +23,7 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       variables: { datetimeEnd_gte: new Date().toISOString() },
       query: gql`
-        query PageExhibitions(
-          $preview: Boolean
-          $locale: String!
-          $datetimeEnd_gte: DateTime
-        ) {
+        query PageExhibitions($preview: Boolean, $locale: String!, $datetimeEnd_gte: DateTime) {
           exhibitions: eventsEventCollection(
             preview: $preview
             locale: $locale
@@ -61,11 +57,7 @@ export const loader = async (args: LoaderArgs) => {
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title]),
@@ -85,19 +77,14 @@ const PageExhibitions = () => {
         <div className='col-span-6 lg:col-span-2 order-2 lg:order-1'>
           <H2>{t('upcoming')}</H2>
           {exhibitions.items
-            .filter(
-              exhibition => new Date(exhibition.datetimeStart) > new Date()
-            )
+            .filter(exhibition => new Date(exhibition.datetimeStart) > new Date())
             .map(exhibition => (
               <div key={exhibition.sys.id} className='mb-4'>
                 <div>
                   <Link to={`/exhibition/${exhibition.sys.id}`}>
                     <p className='text-lg'>{exhibition.name}</p>
                   </Link>
-                  <ExhibitionInformation
-                    exhibition={exhibition}
-                    type='upcoming'
-                  />
+                  <ExhibitionInformation exhibition={exhibition} type='upcoming' />
                 </div>
               </div>
             ))}
@@ -113,10 +100,7 @@ const PageExhibitions = () => {
               )
               .map(exhibition => {
                 return (
-                  <div
-                    key={exhibition.sys.id}
-                    className='flex flex-col lg:flex-row gap-4'
-                  >
+                  <div key={exhibition.sys.id} className='flex flex-col lg:flex-row gap-4'>
                     {exhibition.image && (
                       <ContentfulImage
                         alt={exhibition.name}
@@ -130,10 +114,7 @@ const PageExhibitions = () => {
                       <Link to={`/exhibition/${exhibition.sys.id}`}>
                         <H3>{exhibition.name}</H3>
                       </Link>
-                      <ExhibitionInformation
-                        exhibition={exhibition}
-                        type='current'
-                      />
+                      <ExhibitionInformation exhibition={exhibition} type='current' />
                     </div>
                   </div>
                 )

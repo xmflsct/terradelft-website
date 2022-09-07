@@ -88,108 +88,101 @@ export const loader = async (args: LoaderArgs) => {
     colour: url.searchParams.get('colour')
   }
 
-  const reducedObjects = objects.reduce(
-    (reduced: SellableObject[], obj: SellableObject) => {
-      // First push all options
-      if (obj.artist?.artist) {
-        find(options.artists, a => a.value === obj.artist.slug) ||
-          options.artists.push({
-            label: obj.artist.artist,
-            value: obj.artist.slug,
+  const reducedObjects = objects.reduce((reduced: SellableObject[], obj: SellableObject) => {
+    // First push all options
+    if (obj.artist?.artist) {
+      find(options.artists, a => a.value === obj.artist.slug) ||
+        options.artists.push({
+          label: obj.artist.artist,
+          value: obj.artist.slug,
+          isDisabled: false
+        })
+    }
+    obj.variationsCollection?.items?.forEach(item => {
+      if (!item) return
+      if (item.variant?.variant) {
+        find(options.variants, v => v.value === item.variant?.sys.id) ||
+          options.variants.push({
+            label: item.variant.variant,
+            value: item.variant.sys.id,
             isDisabled: false
           })
       }
-      obj.variationsCollection?.items?.forEach(item => {
-        if (!item) return
-        if (item.variant?.variant) {
-          find(options.variants, v => v.value === item.variant?.sys.id) ||
-            options.variants.push({
-              label: item.variant.variant,
-              value: item.variant.sys.id,
-              isDisabled: false
-            })
-        }
-        if (item.colour?.colour) {
-          find(options.colours, c => c.value === item.colour?.sys.id) ||
-            options.colours.push({
-              label: item.colour.colour,
-              value: item.colour.sys.id,
-              isDisabled: false
-            })
-        }
-      })
+      if (item.colour?.colour) {
+        find(options.colours, c => c.value === item.colour?.sys.id) ||
+          options.colours.push({
+            label: item.colour.colour,
+            value: item.colour.sys.id,
+            isDisabled: false
+          })
+      }
+    })
 
-      if (
-        (searchParams.price_min && searchParams.price_max) ||
-        searchParams.artist ||
-        searchParams.variant ||
-        searchParams.colour
-      ) {
-        const matched: {
-          price: boolean | null
-          artist: boolean | null
-          variant: boolean | null
-          colour: boolean | null
-        } = {
-          price: null,
-          artist: null,
-          variant: null,
-          colour: null
-        }
+    if (
+      (searchParams.price_min && searchParams.price_max) ||
+      searchParams.artist ||
+      searchParams.variant ||
+      searchParams.colour
+    ) {
+      const matched: {
+        price: boolean | null
+        artist: boolean | null
+        variant: boolean | null
+        colour: boolean | null
+      } = {
+        price: null,
+        artist: null,
+        variant: null,
+        colour: null
+      }
 
-        if (searchParams.price_min && searchParams.price_max) {
-          if (obj.variationsCollection?.items?.length) {
-            matched.price =
-              (maxBy(
-                obj.variationsCollection.items,
-                item => item?.priceSale || -1
-              ) || -1) >= parseInt(searchParams.price_min) &&
-              (maxBy(
-                obj.variationsCollection.items,
-                item => item?.priceOriginal || -1
-              ) || -1) <= parseInt(searchParams.price_max)
-          } else {
-            const objPrice = obj.priceSale || obj.priceOriginal || -1
-            matched.price =
-              objPrice >= parseInt(searchParams.price_min) &&
-              objPrice <= parseInt(searchParams.price_max)
-          }
-        }
-
-        if (searchParams.artist) {
-          matched.artist = searchParams.artist === obj.artist?.slug
-        }
-
-        if (searchParams.variant) {
-          matched.variant = obj.variationsCollection?.items?.length
-            ? obj.variationsCollection.items.filter(
-                item => item?.variant?.sys.id === searchParams.variant
-              ).length > 0
-            : false
-        }
-
-        if (searchParams.colour) {
-          matched.colour = obj.variationsCollection?.items?.length
-            ? obj.variationsCollection.items.filter(
-                item => item?.colour?.sys.id === searchParams.colour
-              ).length > 0
-            : false
-        }
-
-        if (
-          matched.price !== false &&
-          matched.artist !== false &&
-          matched.variant !== false &&
-          matched.colour !== false
-        ) {
-          reduced.push(obj)
+      if (searchParams.price_min && searchParams.price_max) {
+        if (obj.variationsCollection?.items?.length) {
+          matched.price =
+            (maxBy(obj.variationsCollection.items, item => item?.priceSale || -1) || -1) >=
+              parseInt(searchParams.price_min) &&
+            (maxBy(obj.variationsCollection.items, item => item?.priceOriginal || -1) || -1) <=
+              parseInt(searchParams.price_max)
+        } else {
+          const objPrice = obj.priceSale || obj.priceOriginal || -1
+          matched.price =
+            objPrice >= parseInt(searchParams.price_min) &&
+            objPrice <= parseInt(searchParams.price_max)
         }
       }
 
-      return reduced
-    },
-    []
-  )
+      if (searchParams.artist) {
+        matched.artist = searchParams.artist === obj.artist?.slug
+      }
+
+      if (searchParams.variant) {
+        matched.variant = obj.variationsCollection?.items?.length
+          ? obj.variationsCollection.items.filter(
+              item => item?.variant?.sys.id === searchParams.variant
+            ).length > 0
+          : false
+      }
+
+      if (searchParams.colour) {
+        matched.colour = obj.variationsCollection?.items?.length
+          ? obj.variationsCollection.items.filter(
+              item => item?.colour?.sys.id === searchParams.colour
+            ).length > 0
+          : false
+      }
+
+      if (
+        matched.price !== false &&
+        matched.artist !== false &&
+        matched.variant !== false &&
+        matched.colour !== false
+      ) {
+        reduced.push(obj)
+      }
+    }
+
+    return reduced
+  }, [])
 
   if (
     (searchParams.price_min && searchParams.price_max) ||
@@ -224,13 +217,8 @@ export const loader = async (args: LoaderArgs) => {
           } else {
             if (
               (obj.priceRange.min &&
-                inRange(
-                  obj.priceRange.min,
-                  price.value.min,
-                  price.value.max
-                )) ||
-              (obj.priceRange.max &&
-                inRange(obj.priceRange.max, price.value.min, price.value.max))
+                inRange(obj.priceRange.min, price.value.min, price.value.max)) ||
+              (obj.priceRange.max && inRange(obj.priceRange.max, price.value.min, price.value.max))
             ) {
               return { ...price, hasObject: true }
             } else {
@@ -246,10 +234,8 @@ export const loader = async (args: LoaderArgs) => {
       obj.variationsCollection?.items?.forEach(item => {
         if (!item) return
         if (!searchParams.variant && item.variant?.variant) {
-          find(
-            reducedOptions.variants,
-            v => v.value === item.variant?.sys.id
-          ) || reducedOptions.variants.push({ value: item.variant?.sys.id })
+          find(reducedOptions.variants, v => v.value === item.variant?.sys.id) ||
+            reducedOptions.variants.push({ value: item.variant?.sys.id })
         }
         if (!searchParams.colour && item.colour?.colour) {
           find(reducedOptions.colours, c => c.value === item.colour?.sys.id) ||
@@ -266,38 +252,25 @@ export const loader = async (args: LoaderArgs) => {
     !searchParams.artist &&
       (options.artists = options.artists.map(artist => ({
         ...artist,
-        isDisabled:
-          reducedOptions.artists.filter(a => a.value === artist.value)
-            .length === 0
+        isDisabled: reducedOptions.artists.filter(a => a.value === artist.value).length === 0
       })))
     !searchParams.variant &&
       (options.variants = options.variants.map(variant => ({
         ...variant,
-        isDisabled:
-          reducedOptions.variants.filter(v => v.value === variant.value)
-            .length === 0
+        isDisabled: reducedOptions.variants.filter(v => v.value === variant.value).length === 0
       })))
     !searchParams.colour &&
       (options.colours = options.colours.map(colour => ({
         ...colour,
-        isDisabled:
-          reducedOptions.colours.filter(c => c.value === colour.value)
-            .length === 0
+        isDisabled: reducedOptions.colours.filter(c => c.value === colour.value).length === 0
       })))
 
     options.artists = sortBy(
       options.artists,
-      ({ label, isDisabled }) =>
-        label.match(new RegExp(/\b(\w+)\W*$/))![0] && isDisabled
+      ({ label, isDisabled }) => label.match(new RegExp(/\b(\w+)\W*$/))![0] && isDisabled
     )
-    options.variants = sortBy(
-      options.variants,
-      ({ label, isDisabled }) => label && isDisabled
-    )
-    options.colours = sortBy(
-      options.colours,
-      ({ label, isDisabled }) => label && isDisabled
-    )
+    options.variants = sortBy(options.variants, ({ label, isDisabled }) => label && isDisabled)
+    options.colours = sortBy(options.colours, ({ label, isDisabled }) => label && isDisabled)
     return json({
       meta,
       giftCard: null,
@@ -311,11 +284,7 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       query: gql`
         query PageIndex($preview: Boolean, $locale: String!) {
-          giftCard(
-            preview: $preview
-            locale: $locale
-            id: "owqoj0fTsXPwPeo6VMb2Z"
-          ) {
+          giftCard(preview: $preview, locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
             imagesCollection(limit: 1) {
               items {
                 url
@@ -339,20 +308,13 @@ export const loader = async (args: LoaderArgs) => {
     giftCard,
     data: {
       options,
-      objects: objects.slice(
-        page === 1 ? 0 : perPage * page - perPage - 1,
-        perPage * page - 1
-      ),
+      objects: objects.slice(page === 1 ? 0 : perPage * page - perPage - 1, perPage * page - 1),
       page: { total: Math.round(objects.length / perPage), current: page }
     }
   })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title])
@@ -402,9 +364,7 @@ const PageShopPage: React.FC = () => {
           isClearable
           options={options.prices}
           placeholder={t('prices')}
-          onChange={d =>
-            setSelected({ ...selected, price: d ? d.value : undefined })
-          }
+          onChange={d => setSelected({ ...selected, price: d ? d.value : undefined })}
         />
         <ReactSelect
           name='artist'
@@ -412,12 +372,9 @@ const PageShopPage: React.FC = () => {
           isSearchable
           options={options.artists}
           placeholder={t('artists')}
-          onChange={d =>
-            setSelected({ ...selected, artist: d ? d.value : undefined })
-          }
+          onChange={d => setSelected({ ...selected, artist: d ? d.value : undefined })}
           isDisabled={
-            !selected?.artist &&
-            options.artists.filter(artist => !artist.isDisabled).length === 0
+            !selected?.artist && options.artists.filter(artist => !artist.isDisabled).length === 0
           }
         />
         <ReactSelect
@@ -426,9 +383,7 @@ const PageShopPage: React.FC = () => {
           isSearchable
           options={options.variants}
           placeholder={t('variants')}
-          onChange={d =>
-            setSelected({ ...selected, variant: d ? d.value : undefined })
-          }
+          onChange={d => setSelected({ ...selected, variant: d ? d.value : undefined })}
           isDisabled={
             !selected?.variant &&
             options.variants.filter(variant => !variant.isDisabled).length === 0
@@ -440,26 +395,14 @@ const PageShopPage: React.FC = () => {
           isSearchable
           options={options.colours}
           placeholder={t('colours')}
-          onChange={d =>
-            setSelected({ ...selected, colour: d ? d.value : undefined })
-          }
+          onChange={d => setSelected({ ...selected, colour: d ? d.value : undefined })}
           isDisabled={
-            !selected?.colour &&
-            options.colours.filter(colour => !colour.isDisabled).length === 0
+            !selected?.colour && options.colours.filter(colour => !colour.isDisabled).length === 0
           }
         />
       </form>
-      <ListObjects
-        giftCard={page?.current === 1 ? giftCard : undefined}
-        objects={objects}
-      />
-      {page && (
-        <Pagination
-          basePath='/shop/page'
-          total={page.total}
-          page={page.current}
-        />
-      )}
+      <ListObjects giftCard={page?.current === 1 ? giftCard : undefined} objects={objects} />
+      {page && <Pagination basePath='/shop/page' total={page.total} page={page.current} />}
     </>
   )
 }

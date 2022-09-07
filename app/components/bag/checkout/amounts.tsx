@@ -17,16 +17,12 @@ const CheckoutAmounts: React.FC<Props> = ({ subtotal, discount }) => {
       <table className='table-auto my-2'>
         <tbody>
           <tr>
-            <th className='text-left py-1 pr-8'>
-              {t('subtotal')}
-            </th>
+            <th className='text-left py-1 pr-8'>{t('subtotal')}</th>
             <td>{currency(subtotal, i18n.language)}</td>
           </tr>
           {discount && discount > 0 ? (
             <tr>
-              <th className='text-left py-1 pr-8'>
-                {t('discount')}
-              </th>
+              <th className='text-left py-1 pr-8'>{t('discount')}</th>
               <td>- {currency(discount, i18n.language)}</td>
             </tr>
           ) : null}

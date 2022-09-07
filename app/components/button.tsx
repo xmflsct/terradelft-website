@@ -1,16 +1,8 @@
-import {
-  ButtonHTMLAttributes,
-  DetailedHTMLProps,
-  PropsWithChildren
-} from 'react'
+import { ButtonHTMLAttributes, DetailedHTMLProps, PropsWithChildren } from 'react'
 import classNames from '~/utils/classNames'
 
 const Button: React.FC<
-  PropsWithChildren &
-    DetailedHTMLProps<
-      ButtonHTMLAttributes<HTMLButtonElement>,
-      HTMLButtonElement
-    >
+  PropsWithChildren & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
 > = ({ className, ...rest }) => {
   return (
     <button

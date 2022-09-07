@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import ListObjects, { objectsReduceSell } from '~/components/list/objects'
+import ListObjects from '~/components/list/objects'
+import { objectsReduceSell } from '~/components/list/objectsReduceSell'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import {
@@ -23,9 +24,7 @@ export const loader = async (args: LoaderArgs) => {
   const data = await cache<{
     announcements?: { items: Announcement[] }
     giftCard: GiftCard
-    objects: {
-      items: ObjectsObject[]
-    }
+    objects: { items: ObjectsObject[] }
     artists: { items: ObjectsArtist[] }
   }>({
     ...args,
@@ -93,8 +92,7 @@ export const loader = async (args: LoaderArgs) => {
     announcements: data.announcements,
     giftCard: data.giftCard,
     objects: {
-      ...data.objects,
-      items: shuffle(data.objects.items.reduce(objectsReduceSell, [])).slice(0, 5)
+      items: shuffle(data.objects.items.reduce(objectsReduceSell<ObjectsObject>, [])).slice(0, 5)
     },
     artists: sortArtists(data.artists)
   })

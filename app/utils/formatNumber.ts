@@ -24,22 +24,22 @@ const relativeTime = (locale: string, date: string) => {
   const DIVISIONS: {
     amount: number
     name:
-      | 'seconds'
-      | 'minutes'
-      | 'hours'
-      | 'days'
-      | 'weeks'
-      | 'months'
-      | 'years'
+    | 'seconds'
+    | 'minutes'
+    | 'hours'
+    | 'days'
+    | 'weeks'
+    | 'months'
+    | 'years'
   }[] = [
-    { amount: 60, name: 'seconds' },
-    { amount: 60, name: 'minutes' },
-    { amount: 24, name: 'hours' },
-    { amount: 7, name: 'days' },
-    { amount: 4.34524, name: 'weeks' },
-    { amount: 12, name: 'months' },
-    { amount: Number.POSITIVE_INFINITY, name: 'years' }
-  ]
+      { amount: 60, name: 'seconds' },
+      { amount: 60, name: 'minutes' },
+      { amount: 24, name: 'hours' },
+      { amount: 7, name: 'days' },
+      { amount: 4.34524, name: 'weeks' },
+      { amount: 12, name: 'months' },
+      { amount: Number.POSITIVE_INFINITY, name: 'years' }
+    ]
 
   let duration = (new Date(date).getTime() - new Date().getTime()) / 1000
 

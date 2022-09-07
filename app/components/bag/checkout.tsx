@@ -42,16 +42,11 @@ const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
     }
   }, [delivery.shipment])
 
-  const subtotal = sumBy(
-    objects,
-    object => (object.priceOriginal * 10 * object.amount) / 10
-  )
+  const subtotal = sumBy(objects, object => (object.priceOriginal * 10 * object.amount) / 10)
   const amounts = {
     subtotal,
     discount: sumBy(objects, object =>
-      object.priceSale
-        ? (object.priceOriginal * 10 - object.priceSale * 10) / 10
-        : 0
+      object.priceSale ? (object.priceOriginal * 10 - object.priceSale * 10) / 10 : 0
     )
   }
 
@@ -76,9 +71,7 @@ const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
       success: `${typeof window !== 'undefined' && window.location.origin}/${
         i18n.language
       }/thank-you`,
-      cancel: `${typeof window !== 'undefined' && window.location.origin}/${
-        i18n.language
-      }/bag`
+      cancel: `${typeof window !== 'undefined' && window.location.origin}/${i18n.language}/bag`
     }
   }
 
@@ -107,17 +100,9 @@ const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
         shipmentMethods={shipmentMethods}
       />
 
-      <input
-        type='hidden'
-        name='json'
-        value={JSON.stringify(checkoutContent)}
-      />
+      <input type='hidden' name='json' value={JSON.stringify(checkoutContent)} />
 
-      <Button
-        type='submit'
-        disabled={transition.state === 'submitting'}
-        className='my-4 w-full'
-      >
+      <Button type='submit' disabled={transition.state === 'submitting'} className='my-4 w-full'>
         {(transition.state === 'submitting' && t('button.wait')) ||
           (formState.submitCount !== 0 && t('button.retry')) ||
           t('button.submit')}

@@ -1,8 +1,4 @@
-import {
-  faGlobeEurope,
-  faSearch,
-  faShoppingBag
-} from '@fortawesome/free-solid-svg-icons'
+import { faGlobeEurope, faSearch, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useContext, useState } from 'react'
 import Navigation from './navigation'
@@ -58,9 +54,7 @@ const Header: React.FC = () => {
             aria-label='Mobile hamburger menu'
             className='p-2'
             onClick={() => {
-              toggleNav === false &&
-                typeof window !== undefined &&
-                window.scrollTo(0, 0)
+              toggleNav === false && typeof window !== undefined && window.scrollTo(0, 0)
               setToggleNav(!toggleNav)
             }}
           >
@@ -104,32 +98,24 @@ const Header: React.FC = () => {
                 .map(locale => (
                   <RemixLink
                     key={locale}
-                    to={`/${locale}${matches[
-                      matches.length - 1
-                    ].pathname.replace(new RegExp(/^\/[a-z][a-z]/), '')}`}
+                    to={`/${locale}${matches[matches.length - 1].pathname.replace(
+                      new RegExp(/^\/[a-z][a-z]/),
+                      ''
+                    )}`}
                     onClick={() => changeLanguage(locale)}
                   >
-                    <FontAwesomeIcon
-                      icon={faGlobeEurope}
-                      size='sm'
-                      fixedWidth
-                    />
+                    <FontAwesomeIcon icon={faGlobeEurope} size='sm' fixedWidth />
                     <span className='hidden lg:contents'>
-                      {' ' +
-                        t(`common:header.language-switcher.long.${locale}`)}
+                      {' ' + t(`common:header.language-switcher.long.${locale}`)}
                     </span>
                     <span className='contents lg:hidden'>
-                      {' ' +
-                        t(`common:header.language-switcher.short.${locale}`)}
+                      {' ' + t(`common:header.language-switcher.short.${locale}`)}
                     </span>
                   </RemixLink>
                 ))}
             </div>
             <div className='text-center'>
-              <Link
-                to='/bag'
-                className='!text-primary hover:!text-secondary hover:no-underline'
-              >
+              <Link to='/bag' className='!text-primary hover:!text-secondary hover:no-underline'>
                 <FontAwesomeIcon icon={faShoppingBag} size='sm' fixedWidth />
                 <span className='small-block'>{` (${objects.reduce(
                   (total, obj) => obj.amount + total,
