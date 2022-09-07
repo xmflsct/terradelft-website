@@ -1,14 +1,6 @@
-import {
-  documentToReactComponents,
-  Options
-} from '@contentful/rich-text-react-renderer'
+import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
-import {
-  faCalendarDays,
-  faNewspaper,
-  faPalette,
-  faUser
-} from '@fortawesome/free-solid-svg-icons'
+import { faCalendarDays, faNewspaper, faPalette, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import getYouTubeID from 'get-youtube-id'
 import classNames from '~/utils/classNames'
@@ -16,13 +8,7 @@ import { CommonImage, CommonRichText } from '~/utils/contentful'
 import ContentfulImage from './image'
 import { Link } from './link'
 
-const richTextOptions = ({
-  links,
-  assetWidth
-}: {
-  links: any
-  assetWidth?: number
-}): Options => {
+const richTextOptions = ({ links, assetWidth }: { links: any; assetWidth?: number }): Options => {
   const assetMap = new Map()
   if (links?.assets?.block) {
     for (const asset of links.assets.block) {
@@ -61,9 +47,7 @@ const richTextOptions = ({
               quality={85}
               className={asset.description ? 'mb-0' : ''}
             />
-            {asset.description && (
-              <figcaption className='mt-1'>{asset.description}</figcaption>
-            )}
+            {asset.description && <figcaption className='mt-1'>{asset.description}</figcaption>}
           </div>
         )
       },
@@ -106,22 +90,14 @@ const richTextOptions = ({
           case 'EventsEvent':
             return (
               <Link to={`/exhibition/${entry.sys.id}`}>
-                <FontAwesomeIcon
-                  icon={faCalendarDays}
-                  className='mr-1'
-                  size='sm'
-                />
+                <FontAwesomeIcon icon={faCalendarDays} className='mr-1' size='sm' />
                 {(node.content[0] as Text).value}
               </Link>
             )
           case 'NewsNews':
             return (
               <Link to={`/news/${entry.sys.id}`}>
-                <FontAwesomeIcon
-                  icon={faNewspaper}
-                  className='mr-1'
-                  size='sm'
-                />
+                <FontAwesomeIcon icon={faNewspaper} className='mr-1' size='sm' />
                 {(node.content[0] as Text).value}
               </Link>
             )
@@ -151,22 +127,14 @@ const richTextOptions = ({
           case 'EventsEvent':
             return (
               <Link to={`/exhibition/${entry.sys.id}`}>
-                <FontAwesomeIcon
-                  icon={faCalendarDays}
-                  className='mr-1'
-                  size='sm'
-                />
+                <FontAwesomeIcon icon={faCalendarDays} className='mr-1' size='sm' />
                 {entry.name}
               </Link>
             )
           case 'NewsNews':
             return (
               <Link to={`/news/${entry.sys.id}`}>
-                <FontAwesomeIcon
-                  icon={faNewspaper}
-                  className='mr-1'
-                  size='sm'
-                />
+                <FontAwesomeIcon icon={faNewspaper} className='mr-1' size='sm' />
                 {entry.title}
               </Link>
             )

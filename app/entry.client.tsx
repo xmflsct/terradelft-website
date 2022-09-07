@@ -17,11 +17,7 @@ Sentry.init({
   tracesSampleRate: 0.5,
   integrations: [
     new Sentry.BrowserTracing({
-      routingInstrumentation: Sentry.remixRouterInstrumentation(
-        useEffect,
-        useLocation,
-        useMatches
-      )
+      routingInstrumentation: Sentry.remixRouterInstrumentation(useEffect, useLocation, useMatches)
     })
   ]
 })

@@ -28,11 +28,7 @@ const Footer = () => {
       <div className='flex-1 mt-4 lg:m-0 text-left lg:text-right'>
         <p>
           Made with ♥ by{' '}
-          <a
-            target='_blank'
-            href='https://xmflsct.com'
-            rel='noopener noreferrer'
-          >
+          <a target='_blank' href='https://xmflsct.com' rel='noopener noreferrer'>
             xmflsct.com
           </a>
         </p>

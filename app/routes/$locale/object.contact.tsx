@@ -52,10 +52,7 @@ type Props = {
   selectedVariation: SelectedVariation | undefined
 }
 
-export const ObjectContact: React.FC<Props> = ({
-  object,
-  selectedVariation
-}) => {
+export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) => {
   const location = useLocation()
   const params = useParams()
   const { t } = useTranslation('object')
@@ -91,40 +88,18 @@ export const ObjectContact: React.FC<Props> = ({
           <Disclosure.Panel
             children={
               <div
-                className={classNames(
-                  'px-4 py-2',
-                  'border border-stone-200 rounded-bl rounded-br'
-                )}
+                className={classNames('px-4 py-2', 'border border-stone-200 rounded-bl rounded-br')}
               >
-                <objectContact.Form
-                  method='post'
-                  action={`/${params.locale}/object/contact`}
-                >
+                <objectContact.Form method='post' action={`/${params.locale}/object/contact`}>
                   <input
                     type='hidden'
                     name='link'
                     value={`https://www.terra-delft.nl${location.pathname}`}
                   />
-                  <input
-                    type='hidden'
-                    name='sku'
-                    value={selectedVariation?.sku}
-                  />
-                  <input
-                    type='hidden'
-                    name='variant'
-                    value={selectedVariation?.variant}
-                  />
-                  <input
-                    type='hidden'
-                    name='colour'
-                    value={selectedVariation?.colour}
-                  />
-                  <input
-                    type='hidden'
-                    name='size'
-                    value={selectedVariation?.size}
-                  />
+                  <input type='hidden' name='sku' value={selectedVariation?.sku} />
+                  <input type='hidden' name='variant' value={selectedVariation?.variant} />
+                  <input type='hidden' name='colour' value={selectedVariation?.colour} />
+                  <input type='hidden' name='size' value={selectedVariation?.size} />
 
                   <input
                     type='hidden'
@@ -197,10 +172,7 @@ export const ObjectContact: React.FC<Props> = ({
 
                   <Button
                     type='submit'
-                    disabled={
-                      objectContact.state === ('submitting' || 'loading') ||
-                      sent
-                    }
+                    disabled={objectContact.state === ('submitting' || 'loading') || sent}
                   >
                     {objectContact.state === 'submitting'
                       ? t('contact.form.button.submitting')

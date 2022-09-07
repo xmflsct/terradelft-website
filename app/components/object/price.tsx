@@ -7,24 +7,16 @@ type Props = {
   showZero?: boolean
 }
 
-const ObjectPrice: React.FC<Props> = ({
-  priceSale,
-  priceOriginal,
-  showZero = false
-}) => {
+const ObjectPrice: React.FC<Props> = ({ priceSale, priceOriginal, showZero = false }) => {
   const { i18n } = useTranslation()
 
   return (
     <>
-      {!showZero &&
-      !(priceSale ?? 0 > 0) &&
-      !(priceOriginal ?? 0 > 0) ? null : (
+      {!showZero && !(priceSale ?? 0 > 0) && !(priceOriginal ?? 0 > 0) ? null : (
         <div className='text-xl'>
           {priceSale ? (
             <p>
-              <span className='text-secondary'>
-                {currency(priceSale, i18n.language)}
-              </span>
+              <span className='text-secondary'>{currency(priceSale, i18n.language)}</span>
               {priceOriginal && (
                 <span className='line-through'>
                   <s>{currency(priceOriginal, i18n.language)}</s>

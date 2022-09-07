@@ -1,12 +1,5 @@
 import { difference, findIndex, intersection, max, min, union } from 'lodash'
-import {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState
-} from 'react'
+import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { SelectedVariation } from '~/routes/$locale/object.$id'
@@ -145,10 +138,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           isDisabled:
             intersection(
               colour.value,
-              intersection(
-                selected?.variant || allIDs,
-                selected?.size || allIDs
-              )
+              intersection(selected?.variant || allIDs, selected?.size || allIDs)
             ).length < 1
         }))
       )
@@ -159,10 +149,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           isDisabled:
             intersection(
               size.value,
-              intersection(
-                selected?.variant || allIDs,
-                selected?.colour || allIDs
-              )
+              intersection(selected?.variant || allIDs, selected?.colour || allIDs)
             ).length < 1
         }))
       )
@@ -215,9 +202,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
 
   return (
     <div className='sell-variations'>
-      {(optionsVariant?.length ||
-        optionsColour?.length ||
-        optionsSize?.length) && (
+      {(optionsVariant?.length || optionsColour?.length || optionsSize?.length) && (
         <form onSubmit={onSubmit}>
           {optionsVariant?.length && (
             <FormField label={t('variant')}>
@@ -273,22 +258,14 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           <FormField label={t('amount')}>
             <ReactSelect
               options={Array(
-                commonIDs.length === 1 && variation
-                  ? variation.stock === 1
-                    ? 1
-                    : 99
-                  : 0
+                commonIDs.length === 1 && variation ? (variation.stock === 1 ? 1 : 99) : 0
               )
                 .fill(undefined)
                 .map((_, i) => ({ value: i + 1, label: i + 1 }))}
               value={amount ? { value: amount, label: amount } : undefined}
               onChange={e => e && setAmount(e.value)}
               isSearchable={false}
-              isDisabled={
-                commonIDs.length === 1 && variation
-                  ? variation.stock === 0
-                  : false
-              }
+              isDisabled={commonIDs.length === 1 && variation ? variation.stock === 0 : false}
               styles={selectStyle}
             />
           </FormField>
@@ -302,10 +279,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
               {priceOriginal.min === priceOriginal.max ? (
                 <Price priceOriginal={priceOriginal.max} />
               ) : (
-                `${currency(
-                  min([priceSale.min, priceOriginal.min])!,
-                  i18n.language
-                )} - ${currency(
+                `${currency(min([priceSale.min, priceOriginal.min])!, i18n.language)} - ${currency(
                   max([priceSale.max, priceOriginal.max])!,
                   i18n.language
                 )}`
@@ -314,13 +288,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           )}
           <Button
             type='submit'
-            disabled={
-              commonIDs.length !== 1
-                ? true
-                : !((variation?.stock ?? 0) > 0)
-                ? true
-                : false
-            }
+            disabled={commonIDs.length !== 1 ? true : !((variation?.stock ?? 0) > 0) ? true : false}
           >
             {commonIDs.length === 1
               ? (variation?.stock ?? 0) > 0

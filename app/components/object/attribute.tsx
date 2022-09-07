@@ -26,9 +26,7 @@ const ObjectAttribute: React.FC<Props> = ({ type, value }) => {
         <td>
           {value.map(({ id, value }, i) => (
             <span key={i}>
-              <Link
-                to={`/object/${type.toLowerCase()}/${value.toLowerCase()}/${id}/page/1`}
-              >
+              <Link to={`/object/${type.toLowerCase()}/${value.toLowerCase()}/${id}/page/1`}>
                 {value}
               </Link>
               {i !== value.length - 1 && ', '}

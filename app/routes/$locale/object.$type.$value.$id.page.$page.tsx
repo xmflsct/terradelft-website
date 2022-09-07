@@ -20,10 +20,7 @@ export const loader = async (args: LoaderArgs) => {
 
   const en = await i18next.getFixedT('en', 'object')
   const nl = await i18next.getFixedT('nl', 'object')
-  const technique = [
-    en('technique').toLowerCase(),
-    nl('technique').toLowerCase()
-  ]
+  const technique = [en('technique').toLowerCase(), nl('technique').toLowerCase()]
   const material = [en('material').toLowerCase(), nl('material').toLowerCase()]
   const perPage = 48
 
@@ -55,17 +52,9 @@ export const loader = async (args: LoaderArgs) => {
               $limit: Int
               $skip: Int
             ) {
-              type: objectsTechnique(
-                preview: $preview
-                locale: $locale
-                id: $id
-              ) {
+              type: objectsTechnique(preview: $preview, locale: $locale, id: $id) {
                 linkedFrom {
-                  objectsObjectCollection(
-                    locale: "nl"
-                    limit: $limit
-                    skip: $skip
-                  ) {
+                  objectsObjectCollection(locale: "nl", limit: $limit, skip: $skip) {
                     total
                     items {
                       ...ListObjectDetails
@@ -104,17 +93,9 @@ export const loader = async (args: LoaderArgs) => {
               $limit: Int
               $skip: Int
             ) {
-              type: objectsMaterial(
-                preview: $preview
-                locale: $locale
-                id: $id
-              ) {
+              type: objectsMaterial(preview: $preview, locale: $locale, id: $id) {
                 linkedFrom {
-                  objectsObjectCollection(
-                    locale: "nl"
-                    limit: $limit
-                    skip: $skip
-                  ) {
+                  objectsObjectCollection(locale: "nl", limit: $limit, skip: $skip) {
                     total
                     items {
                       ...ListObjectDetails
@@ -141,20 +122,14 @@ export const loader = async (args: LoaderArgs) => {
     data: {
       objects: data.type.linkedFrom.objectsObjectCollection.items,
       page: {
-        total: Math.round(
-          data?.type.linkedFrom.objectsObjectCollection.total / perPage
-        ),
+        total: Math.round(data?.type.linkedFrom.objectsObjectCollection.total / perPage),
         current: page
       }
     }
   })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title])

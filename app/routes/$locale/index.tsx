@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
-import ListObjects, { objectsReduceSell } from '~/components/list/objects'
+import ListObjects from '~/components/list/objects'
+import { objectsReduceSell } from '~/components/list/objectsReduceSell'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import {
@@ -23,9 +24,7 @@ export const loader = async (args: LoaderArgs) => {
   const data = await cache<{
     announcements?: { items: Announcement[] }
     giftCard: GiftCard
-    objects: {
-      items: ObjectsObject[]
-    }
+    objects: { items: ObjectsObject[] }
     artists: { items: ObjectsArtist[] }
   }>({
     ...args,
@@ -45,22 +44,14 @@ export const loader = async (args: LoaderArgs) => {
               }
             }
           }
-          giftCard(
-            preview: $preview
-            locale: $locale
-            id: "owqoj0fTsXPwPeo6VMb2Z"
-          ) {
+          giftCard(preview: $preview, locale: $locale, id: "owqoj0fTsXPwPeo6VMb2Z") {
             imagesCollection(limit: 1) {
               items {
                 url
               }
             }
           }
-          objects: objectsObjectCollection(
-            preview: $preview
-            locale: $locale
-            limit: 50
-          ) {
+          objects: objectsObjectCollection(preview: $preview, locale: $locale, limit: 50) {
             items {
               sys {
                 id
@@ -101,11 +92,7 @@ export const loader = async (args: LoaderArgs) => {
     announcements: data.announcements,
     giftCard: data.giftCard,
     objects: {
-      ...data.objects,
-      items: shuffle(data.objects.items.reduce(objectsReduceSell, [])).slice(
-        0,
-        5
-      )
+      items: shuffle(data.objects.items.reduce(objectsReduceSell<ObjectsObject>, [])).slice(0, 5)
     },
     artists: sortArtists(data.artists)
   })
@@ -126,7 +113,7 @@ const PageIndex = () => {
 
   return (
     <>
-      {data.announcements?.items.length && (
+      {data.announcements?.items.length ? (
         <div className='lg:grid lg:grid-cols-6 gap-4 mb-4'>
           {data.announcements.items.map((announcement, index) => (
             <div
@@ -138,7 +125,7 @@ const PageIndex = () => {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
       <div className='section-online-shop mb-3'>
         <H2>{t('online-shop')}</H2>
         <ListObjects giftCard={data.giftCard} objects={data.objects.items} />

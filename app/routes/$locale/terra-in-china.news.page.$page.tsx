@@ -80,11 +80,7 @@ export const loader = async (args: LoaderArgs) => {
   })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title])
@@ -101,15 +97,9 @@ const PageTerraInChinaNewsPage = () => {
 
   return (
     <>
-      <H1>
-        {t('common:pages.terra-in-china-news-page', { page: page.current })}
-      </H1>
+      <H1>{t('common:pages.terra-in-china-news-page', { page: page.current })}</H1>
       <ListNews news={items} />
-      <Pagination
-        basePath='/terra-in-china/news/page'
-        page={page.current}
-        total={page.total}
-      />
+      <Pagination basePath='/terra-in-china/news/page' page={page.current} total={page.total} />
     </>
   )
 }

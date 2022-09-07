@@ -9,11 +9,7 @@ import ContentfulImage from '~/components/image'
 import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
-import {
-  graphqlRequest,
-  ObjectsArtist,
-  RICH_TEXT_LINKS
-} from '~/utils/contentful'
+import { graphqlRequest, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
@@ -61,40 +57,26 @@ export const loader = async (args: LoaderArgs) => {
   return json(data.artists.items[0])
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.artist
     ? {
         title: SEOTitle(data.artist),
         keywords: SEOKeywords([data.artist]),
         ...(data.biography && {
-          description: documentToPlainTextString(data.biography.json).substring(
-            0,
-            199
-          )
+          description: documentToPlainTextString(data.biography.json).substring(0, 199)
         })
       }
     : {}
 export const handle = {
   i18n: 'artist',
-  structuredData: ({
-    data
-  }: {
-    data: LoaderData<typeof loader>
-  }): WithContext<Person> =>
+  structuredData: ({ data }: { data: LoaderData<typeof loader> }): WithContext<Person> =>
     data && {
       '@context': 'https://schema.org',
       '@type': 'Person',
       name: data.artist,
-      image: data.image.url,
+      image: data.image?.url,
       ...(data.biography && {
-        description: documentToPlainTextString(data.biography.json).substring(
-          0,
-          199
-        )
+        description: documentToPlainTextString(data.biography.json).substring(0, 199)
       })
     }
 }
@@ -108,25 +90,14 @@ const PageArtist = () => {
       <H1>{artist.artist}</H1>
       <div className='flex flex-col lg:flex-row gap-4 mb-8'>
         <div className='flex-1'>
-          <ContentfulImage
-            alt={artist.artist}
-            image={artist.image}
-            width={400}
-            quality={85}
-          />
+          <ContentfulImage alt={artist.artist} image={artist.image} width={400} quality={85} />
         </div>
-        <RichText
-          content={artist.biography}
-          className='flex-2'
-          assetWidth={628}
-        />
+        <RichText content={artist.biography} className='flex-2' assetWidth={628} />
       </div>
       {artist.linkedFrom.objectsObjectCollection.items.length ? (
         <>
           <H2>{t('objects-by', { artist: artist.artist })}</H2>
-          <ListObjects
-            objects={artist.linkedFrom.objectsObjectCollection.items}
-          />
+          <ListObjects objects={artist.linkedFrom.objectsObjectCollection.items} />
         </>
       ) : null}
     </>

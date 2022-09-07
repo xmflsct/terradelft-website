@@ -35,8 +35,7 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {
   if (object.variationsCollection?.items.length) {
     if (
       object.variationsCollection.items.filter(
-        variation =>
-          (variation.priceSale ?? 0 > 0) || variation.priceOriginal > 0
+        variation => (variation.priceSale ?? 0 > 0) || variation.priceOriginal > 0
       ).length <= 0
     ) {
       return null
@@ -50,18 +49,12 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {
   return (
     <div className='mb-2'>
       {object.variationsCollection?.items.length ? (
-        <SellVariations
-          object={object}
-          setSelectedVariation={setSelectedVariation}
-        />
+        <SellVariations object={object} setSelectedVariation={setSelectedVariation} />
       ) : object.stock ?? 0 > 0 ? (
         object.sellOnline ? (
           <SellMain object={object} />
         ) : (
-          <ObjectPrice
-            priceSale={object.priceSale}
-            priceOriginal={object.priceOriginal}
-          />
+          <ObjectPrice priceSale={object.priceSale} priceOriginal={object.priceOriginal} />
         )
       ) : object.stock === 0 ? (
         <div className='object-sold'>
@@ -70,11 +63,7 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {
       ) : null}
       {object.kunstKoop && (
         <div className='inline-block'>
-          <a
-            href='https://kunstkoop.nl/'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
+          <a href='https://kunstkoop.nl/' target='_blank' rel='noopener noreferrer'>
             <img src={kunstkoop} width={60} height={60} />
           </a>
         </div>

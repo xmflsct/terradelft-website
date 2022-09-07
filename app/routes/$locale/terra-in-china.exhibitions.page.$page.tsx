@@ -94,11 +94,7 @@ export const loader = async (args: LoaderArgs) => {
   })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title])
@@ -114,9 +110,7 @@ const PageTerraInChinaExhibitionsPage = () => {
 
   return (
     <>
-      <H1>
-        {t('pages.terra-in-china-exhibitions-page', { page: page.current })}
-      </H1>
+      <H1>{t('pages.terra-in-china-exhibitions-page', { page: page.current })}</H1>
       <ListExhibitions exhibitions={items} />
       <Pagination
         basePath='/terra-in-china/exhibitions/page'

@@ -46,7 +46,7 @@ import ContentfulImage from '../image'
 // }
 
 type Props = {
-  images?: CommonImage[]
+  images?: (CommonImage | null)[]
   selectedVariation?: SelectedVariation
 }
 
@@ -55,7 +55,7 @@ const ObjectImages: React.FC<Props> = ({ images, selectedVariation }) => {
   // const handleCarousel = (selectedIndex, e) => {
   //   setZoomIndex(selectedIndex)
   // }
-  const [zoom, setZoom] = useState<{ show: boolean; image?: CommonImage }>({
+  const [zoom, setZoom] = useState<{ show: boolean; image: CommonImage | undefined | null }>({
     show: false,
     image: undefined
   })
@@ -78,9 +78,7 @@ const ObjectImages: React.FC<Props> = ({ images, selectedVariation }) => {
         {images?.map((image, index) => (
           <div
             key={index}
-            className={`${
-              !selectedVariation && index === 0 ? 'col-span-3' : 'col-auto'
-            }`}
+            className={`${!selectedVariation && index === 0 ? 'col-span-3' : 'col-auto'}`}
           >
             <ContentfulImage
               key={index}

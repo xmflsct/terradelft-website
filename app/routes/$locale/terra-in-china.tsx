@@ -73,11 +73,7 @@ export const loader = async (args: LoaderArgs) => {
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title])
@@ -113,9 +109,7 @@ const PageTerraInChina = () => {
               </div>
             </div>
           ))}
-          <Link to='/terra-in-china/exhibitions/page/1'>
-            {t('view-all.events')}
-          </Link>
+          <Link to='/terra-in-china/exhibitions/page/1'>{t('view-all.events')}</Link>
         </div>
         <div>
           <H2>{t('heading.news')}</H2>
@@ -137,14 +131,11 @@ const PageTerraInChina = () => {
                 </Link>
                 <p>
                   {t('news:published', {
-                    date: new Date(news.date).toLocaleDateString(
-                      i18n.language,
-                      {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      }
-                    )
+                    date: new Date(news.date).toLocaleDateString(i18n.language, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })
                   })}
                 </p>
               </div>

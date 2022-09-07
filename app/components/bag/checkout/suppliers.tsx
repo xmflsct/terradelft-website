@@ -11,8 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 const CheckoutSuppliers: React.FC = () => {
   return (
     <div className='flex flex-row justify-around'>
-      <FontAwesomeIcon icon={faIdeal} size='2x' />{' '}
-      <FontAwesomeIcon icon={faApplePay} size='2x' />{' '}
+      <FontAwesomeIcon icon={faIdeal} size='2x' /> <FontAwesomeIcon icon={faApplePay} size='2x' />{' '}
       <FontAwesomeIcon icon={faGoogleWallet} size='2x' />{' '}
       <FontAwesomeIcon icon={faCcVisa} size='2x' />{' '}
       <FontAwesomeIcon icon={faCcMastercard} size='2x' />{' '}

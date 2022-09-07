@@ -20,8 +20,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
     (paths: string[]) =>
     ({ isActive }: { isActive: boolean }) =>
       isActive ||
-      paths.map(path => pathname.slice(3).startsWith(path)).filter(path => path)
-        .length > 0
+      paths.map(path => pathname.slice(3).startsWith(path)).filter(path => path).length > 0
         ? 'flex-1 text-center p-2 bg-secondary text-background border border-secondary'
         : 'flex-1 text-center p-2 bg-background text-secondary border border-secondary'
 
@@ -45,12 +44,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
           </InputGroup>
         </form>
       </div> */}
-      <NavLink
-        to='/'
-        end
-        className={styleNavItem(['/artist/'])}
-        children={t('pages.index')}
-      />
+      <NavLink to='/' end className={styleNavItem(['/artist/'])} children={t('pages.index')} />
       <NavLink
         to='/shop/page/1'
         className={styleNavItem(['/object/'])}
@@ -61,11 +55,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
         className={styleNavItem(['/exhibition/'])}
         children={t('pages.exhibitions')}
       />
-      <NavLink
-        to='/news/page/1'
-        className={styleNavItem(['/news/'])}
-        children={t('pages.news')}
-      />
+      <NavLink to='/news/page/1' className={styleNavItem(['/news/'])} children={t('pages.news')} />
       <NavLink
         to='/terra-in-china'
         className={styleNavItem([])}
@@ -83,10 +73,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
             <Menu.Button>
               <span>
                 {t('pages.about-us')}
-                <FontAwesomeIcon
-                  icon={open ? faChevronUp : faChevronDown}
-                  className='ml-2'
-                />
+                <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} className='ml-2' />
               </span>
             </Menu.Button>
 

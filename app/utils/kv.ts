@@ -41,7 +41,7 @@ const getSellableObjects = async (
   }
 
   let objects: SellableObject[] | null =
-    await args.context.TERRADELFT_WEBSITE.get(`objects_${args.params.locale}`, {
+    await (args.context.TERRADELFT_WEBSITE as KVNamespace).get(`objects_${args.params.locale}`, {
       type: 'json'
     })
 
@@ -170,7 +170,7 @@ const getSellableObjects = async (
       []
     )
 
-    await args.context.TERRADELFT_WEBSITE.put(
+    await (args.context.TERRADELFT_WEBSITE as KVNamespace).put(
       `objects_${args.params.locale}`,
       JSON.stringify(objects),
       { expirationTtl: 60 * 10 }

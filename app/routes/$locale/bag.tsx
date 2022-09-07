@@ -1,9 +1,4 @@
-import {
-  ActionArgs,
-  json,
-  LoaderArgs,
-  MetaFunction
-} from '@remix-run/cloudflare'
+import { ActionArgs, json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { Form, useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'

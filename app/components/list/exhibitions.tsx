@@ -4,10 +4,7 @@ import ContentfulImage from '../image'
 import { Link } from '../link'
 
 type Props = {
-  exhibitions: Pick<
-    EventsEvent,
-    'sys' | 'name' | 'image' | 'datetimeStart' | 'datetimeEnd'
-  >[]
+  exhibitions: Pick<EventsEvent, 'sys' | 'name' | 'image' | 'datetimeStart' | 'datetimeEnd'>[]
 }
 
 const ListExhibitions: React.FC<Props> = ({ exhibitions }) => {

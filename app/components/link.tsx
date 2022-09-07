@@ -1,8 +1,5 @@
 import { Link as RemixLink, NavLink as RemixNavLink } from '@remix-run/react'
-import {
-  RemixLinkProps,
-  RemixNavLinkProps
-} from '@remix-run/react/dist/components'
+import { RemixLinkProps, RemixNavLinkProps } from '@remix-run/react/dist/components'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import classNames from '~/utils/classNames'
@@ -35,12 +32,7 @@ const NavLink: React.FC<RemixNavLinkProps> = props => {
     i18n: { language }
   } = useTranslation()
 
-  return (
-    <RemixNavLink
-      {...props}
-      to={`/${language}${props.to === '/' ? '' : props.to}`}
-    />
-  )
+  return <RemixNavLink {...props} to={`/${language}${props.to === '/' ? '' : props.to}`} />
 }
 
 export { Link, NavLink }

@@ -60,9 +60,7 @@ const PageGiftCard: React.FC = () => {
   const { t } = useTranslation('giftCard')
 
   const [quantity, setQuantity] = useState<{ [k: string]: number | undefined }>(
-    Object.fromEntries(
-      giftCard.defaultAmounts.map(amount => [parseInt(amount), undefined])
-    )
+    Object.fromEntries(giftCard.defaultAmounts.map(amount => [parseInt(amount), undefined]))
   )
   const [amountCustom, setAmountCustom] = useState<number | undefined>(20)
   const [theAmount, setTheAmount] = useState<number>()
@@ -72,7 +70,7 @@ const PageGiftCard: React.FC = () => {
     <>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
         <div className='flex flex-col gap-4'>
-          {giftCard.imagesCollection.items.map((image, index) => (
+          {giftCard.imagesCollection?.items.map((image, index) => (
             <ContentfulImage key={index} image={image} width={471} />
           ))}
         </div>
@@ -89,7 +87,7 @@ const PageGiftCard: React.FC = () => {
                     contentful_id: `custom-gift-card-${amount}`,
                     contentful_id_url: '/gift-card',
                     priceOriginal: parseInt(amount),
-                    image: giftCard.imagesCollection.items[0],
+                    image: giftCard.imagesCollection?.items[0],
                     stock: 10,
                     amount: amt,
                     name: {
@@ -109,7 +107,7 @@ const PageGiftCard: React.FC = () => {
                   contentful_id: 'custom-gift-card-custom',
                   contentful_id_url: '/gift-card',
                   priceOriginal: theAmount,
-                  image: giftCard.imagesCollection.items[0],
+                  image: giftCard.imagesCollection?.items[0],
                   stock: 10,
                   amount: amountCustom,
                   // Locale dependent
@@ -128,9 +126,7 @@ const PageGiftCard: React.FC = () => {
                     .map((_, i) => ({ value: i, label: i }))}
                   value={{ value: quantity[amount], label: quantity[amount] }}
                   isSearchable={false}
-                  onChange={e =>
-                    e && setQuantity({ ...quantity, [amount]: e.value })
-                  }
+                  onChange={e => e && setQuantity({ ...quantity, [amount]: e.value })}
                   styles={selectStyle}
                 />
               </FormField>
@@ -149,9 +145,7 @@ const PageGiftCard: React.FC = () => {
                             setAmountCustom(undefined)
                           } else {
                             setTheAmountDirty(true)
-                            setAmountCustom(
-                              Math.ceil(parseFloat(e.target.value))
-                            )
+                            setAmountCustom(Math.ceil(parseFloat(e.target.value)))
                           }
                         }}
                         size={4}
@@ -183,20 +177,13 @@ const PageGiftCard: React.FC = () => {
             ) : null}
             <Price
               priceOriginal={
-                sumBy(
-                  Object.keys(quantity),
-                  amount => parseInt(amount) * (quantity[amount] || 0)
-                ) +
+                sumBy(Object.keys(quantity), amount => parseInt(amount) * (quantity[amount] || 0)) +
                 (amountCustom || 0) * (theAmount || 0)
               }
             />
             <Button type='submit'>{t('object:add-to-bag')}</Button>
           </form>
-          <RichText
-            content={giftCard.description}
-            className='mt-2'
-            assetWidth={634}
-          />
+          <RichText content={giftCard.description} className='mt-2' assetWidth={634} />
         </div>
       </div>
     </>

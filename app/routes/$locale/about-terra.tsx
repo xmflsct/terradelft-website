@@ -54,18 +54,12 @@ export const loader = async (args: LoaderArgs) => {
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title]),
     ...(data.data?.page?.columnLeft?.json && {
-      description: documentToPlainTextString(
-        data.data.page.columnLeft.json
-      ).substring(0, 199)
+      description: documentToPlainTextString(data.data.page.columnLeft.json).substring(0, 199)
     })
   }
 export let handle = { i18n: 'aboutTerra' }
@@ -88,18 +82,10 @@ const PageAboutTerra = () => {
         {page.staffCollection?.items.map(staff => (
           <div key={staff.name} className='grid grid-cols-6 gap-4 mb-8'>
             <div className='col-span-2 lg:col-span-1'>
-              <ContentfulImage
-                alt={staff.name}
-                image={staff.avatar}
-                width={309}
-                quality={80}
-              />
+              <ContentfulImage alt={staff.name} image={staff.avatar} width={309} quality={80} />
               <H4 className='mt-1 text-center'>{staff.name}</H4>
             </div>
-            <RichText
-              content={staff.biography}
-              className='col-span-6 lg:col-span-5'
-            />
+            <RichText content={staff.biography} className='col-span-6 lg:col-span-5' />
           </div>
         ))}
       </div>

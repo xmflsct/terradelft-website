@@ -8,11 +8,7 @@ import { H1 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
-import {
-  EventsEvent,
-  graphqlRequest,
-  RICH_TEXT_LINKS
-} from '~/utils/contentful'
+import { EventsEvent, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
@@ -69,24 +65,16 @@ export const loader = async (args: LoaderArgs) => {
   return json(data)
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.exhibition && {
     title: SEOTitle(data.exhibition.name),
     keywords: SEOKeywords([data.exhibition.name]),
     ...(data.exhibition.description && {
-      description: documentToPlainTextString(
-        data.exhibition.description.json
-      ).substring(0, 199)
+      description: documentToPlainTextString(data.exhibition.description.json).substring(0, 199)
     })
   }
 export const handle = {
-  structuredData: ({
-    exhibition
-  }: LoaderData<typeof loader>): WithContext<Event> =>
+  structuredData: ({ exhibition }: LoaderData<typeof loader>): WithContext<Event> =>
     exhibition && {
       '@context': 'https://schema.org',
       '@type': 'Event',
@@ -96,10 +84,7 @@ export const handle = {
       ...(exhibition.image && { image: exhibition.image.url }),
       description:
         exhibition.description &&
-        documentToPlainTextString(exhibition.description.json).substring(
-          0,
-          199
-        ),
+        documentToPlainTextString(exhibition.description.json).substring(0, 199),
       ...(exhibition.organizerCollection?.items.length && {
         organizer: exhibition.organizerCollection.items.map(organizer => ({
           '@type': 'Organization',
@@ -123,13 +108,7 @@ const PageExhibition = () => {
 
   return (
     <div className='grid grid-cols-6 gap-4 items-start'>
-      <H1
-        className={
-          exhibition.image
-            ? 'col-span-6'
-            : 'col-span-6 lg:col-span-4 lg:col-start-2'
-        }
-      >
+      <H1 className={exhibition.image ? 'col-span-6' : 'col-span-6 lg:col-span-4 lg:col-start-2'}>
         {exhibition.name}
       </H1>
       {exhibition.image && (
@@ -143,17 +122,11 @@ const PageExhibition = () => {
       )}
       <div
         className={
-          exhibition.image
-            ? 'col-span-6 lg:col-span-4'
-            : 'col-span-6 lg:col-span-4 lg:col-start-2'
+          exhibition.image ? 'col-span-6 lg:col-span-4' : 'col-span-6 lg:col-span-4 lg:col-start-2'
         }
       >
         <ExhibitionInformation exhibition={exhibition} />
-        <RichText
-          content={exhibition.description}
-          className='mt-2'
-          assetWidth={634}
-        />
+        <RichText content={exhibition.description} className='mt-2' assetWidth={634} />
       </div>
     </div>
   )

@@ -67,20 +67,12 @@ const updateObjects = async locale => {
   const objects = []
   const perPage = 24
   let total = undefined
-  for (
-    let page = 0;
-    total === undefined || page <= Math.round(total / perPage);
-    page++
-  ) {
+  for (let page = 0; total === undefined || page <= Math.round(total / perPage); page++) {
     console.log('🎨', 'page', page)
     const data = await graphqlClient.request(
       gql`
         query ($locale: String, $limit: Int, $skip: Int) {
-          objects: objectsObjectCollection(
-            locale: $locale
-            limit: $limit
-            skip: $skip
-          ) {
+          objects: objectsObjectCollection(locale: $locale, limit: $limit, skip: $skip) {
             total
             items {
               sys {
@@ -197,20 +189,12 @@ const updateEvents = async locale => {
   const perPage = 100
   let total = undefined
 
-  for (
-    let page = 0;
-    total === undefined || page <= Math.round(total / perPage);
-    page++
-  ) {
+  for (let page = 0; total === undefined || page <= Math.round(total / perPage); page++) {
     console.log('📅', 'page', page)
     const data = await graphqlClient.request(
       gql`
         query ($locale: String, $limit: Int, $skip: Int) {
-          events: eventsEventCollection(
-            locale: $locale
-            limit: $limit
-            skip: $skip
-          ) {
+          events: eventsEventCollection(locale: $locale, limit: $limit, skip: $skip) {
             total
             items {
               sys {
@@ -259,20 +243,12 @@ const updateNews = async locale => {
   const perPage = 100
   let total = undefined
 
-  for (
-    let page = 0;
-    total === undefined || page <= Math.round(total / perPage);
-    page++
-  ) {
+  for (let page = 0; total === undefined || page <= Math.round(total / perPage); page++) {
     console.log('📰', 'page', page)
     const data = await graphqlClient.request(
       gql`
         query ($locale: String, $limit: Int, $skip: Int) {
-          news: newsNewsCollection(
-            locale: $locale
-            limit: $limit
-            skip: $skip
-          ) {
+          news: newsNewsCollection(locale: $locale, limit: $limit, skip: $skip) {
             total
             items {
               sys {

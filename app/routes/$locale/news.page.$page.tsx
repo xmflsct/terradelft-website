@@ -30,12 +30,7 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       variables: { limit: perPage, skip: perPage * (page - 1) },
       query: gql`
-        query PageNewsPage(
-          $preview: Boolean
-          $locale: String
-          $limit: Int
-          $skip: Int
-        ) {
+        query PageNewsPage($preview: Boolean, $locale: String, $limit: Int, $skip: Int) {
           news: newsNewsCollection(
             preview: $preview
             locale: $locale
@@ -79,11 +74,7 @@ export const loader = async (args: LoaderArgs) => {
   })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && {
     title: SEOTitle(data.meta.title),
     keywords: SEOKeywords([data.meta.title]),
@@ -103,11 +94,7 @@ const PageNewsPage = () => {
     <>
       <H1>{t('common:pages.news', { context: 'page', page: page.current })}</H1>
       <ListNews news={items} />
-      <Pagination
-        basePath='/news/page'
-        page={page.current}
-        total={page.total}
-      />
+      <Pagination basePath='/news/page' page={page.current} total={page.total} />
     </>
   )
 }
