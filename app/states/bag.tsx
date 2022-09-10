@@ -68,6 +68,7 @@ export type BagState = {
   objectsRemove: (contentful_id: string) => void
   updateDeliveryMethod: (method: TDDelivery['method']) => void
   updateDeliveryShipmentCountry: (shipment: TDDelivery['shipment']) => void
+  checkTimestamp: () => void
 }
 
 const initBagState: BagState = {
@@ -76,7 +77,8 @@ const initBagState: BagState = {
   objectsAdd: () => {},
   objectsRemove: () => {},
   updateDeliveryMethod: () => {},
-  updateDeliveryShipmentCountry: () => {}
+  updateDeliveryShipmentCountry: () => {},
+  checkTimestamp: () => {}
 }
 
 export const BagContext = createContext<BagState>(initBagState)
@@ -131,6 +133,21 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
     setDelivery({ ...delivery, shipment })
   }
 
+  const checkTimestamp = () => {
+    const now = Date.now() / 1000
+    const stored = localStorage.getItem('timestamp')
+    if (stored) {
+      const diff = now - parseInt(stored)
+      console.log('diff', diff)
+
+      if (diff > 60 * 24) {
+        localStorage.setItem('objects', JSON.stringify([]))
+      }
+    }
+
+    localStorage.setItem('timestamp', (Date.now() / 1000).toString())
+  }
+
   return (
     <BagContext.Provider
       value={{
@@ -139,7 +156,8 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
         objectsRemove,
         delivery,
         updateDeliveryMethod,
-        updateDeliveryShipmentCountry
+        updateDeliveryShipmentCountry,
+        checkTimestamp
       }}
       children={children}
     />

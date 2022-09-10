@@ -1,6 +1,6 @@
 import { faGlobeEurope, faSearch, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Navigation from './navigation'
 import { useTranslation } from 'react-i18next'
 import { Form, Link as RemixLink, useMatches } from '@remix-run/react'
@@ -38,6 +38,10 @@ const Header: React.FC = () => {
   // useEffect(() => {
   //   setLocationOrigin(window.location.origin)
   // }, [])
+  const { checkTimestamp } = useContext(BagContext)
+  useEffect(() => {
+    checkTimestamp()
+  }, [])
 
   return (
     <header
