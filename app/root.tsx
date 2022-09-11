@@ -1,14 +1,5 @@
-import { json, LinksFunction, LoaderArgs, MetaFunction, redirect } from '@remix-run/cloudflare'
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Scripts,
-  ScrollRestoration,
-  useLoaderData,
-  Outlet
-} from '@remix-run/react'
-import { useChangeLanguage } from 'remix-i18next'
+import { LinksFunction, LoaderArgs, MetaFunction, redirect } from '@remix-run/cloudflare'
+import { Links, LiveReload, Meta, Scripts, ScrollRestoration, Outlet } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import { H1 } from '~/components/globals'
 import Layout from '~/components/layout'
@@ -29,7 +20,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     })
   }
 
-  return json({ locale })
+  return null
 }
 
 export const handle = {
@@ -46,16 +37,12 @@ export const links: LinksFunction = () => {
 }
 
 export default function Root() {
-  const { locale } = useLoaderData<typeof loader>()
-
   const {
-    i18n: { dir }
+    i18n: { dir, language }
   } = useTranslation()
 
-  useChangeLanguage(locale)
-
   return (
-    <html lang={locale} dir={dir()}>
+    <html lang={language} dir={dir()}>
       <head>
         <Meta />
         <Links />

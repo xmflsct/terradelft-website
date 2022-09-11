@@ -25,7 +25,13 @@ export default async function handleRequest(
 ) {
   const instance = createInstance()
 
-  const lng = await i18next.getLocale(request)
+  const url = new URL(request.url)
+  const attemptLocale = url.pathname.split('/')?.[1]
+  const lng = attemptLocale
+    ? i18n.supportedLngs.includes(attemptLocale)
+      ? attemptLocale
+      : 'nl'
+    : 'nl'
   const ns = i18next.getRouteNamespaces(context)
 
   await instance.use(initReactI18next).init({ ...i18n, lng, ns, resources: { en, nl } })
