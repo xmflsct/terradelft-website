@@ -175,6 +175,7 @@ const RichText: React.FC<Props> = ({ content, className, assetWidth }) => {
       className={classNames(
         'prose prose-neutral max-w-none',
         'prose-li:m-0',
+        'prose-img:my-auto',
         'marker:prose-li:text-stone-700',
         '[&>p]:prose-li:m-0',
         className
