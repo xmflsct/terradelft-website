@@ -68,7 +68,7 @@ const CheckoutDelivery: React.FC<Props> = ({
           className='mr-2'
         />
         {t('pick-up')}
-        {t('free')}
+        <span className='float-right'>{t('free')}</span>
       </div>
       <div>
         <div
