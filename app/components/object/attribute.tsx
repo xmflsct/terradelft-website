@@ -24,11 +24,9 @@ const ObjectAttribute: React.FC<Props> = ({ type, value }) => {
       ) : (
         // Technique and material, many references
         <td>
-          {value.map(({ id, value }, i) => (
+          {value.map(({ id, value: v }, i) => (
             <span key={i}>
-              <Link to={`/object/${type.toLowerCase()}/${value.toLowerCase()}/${id}/page/1`}>
-                {value}
-              </Link>
+              <Link to={`/object/${type.toLowerCase()}/${v.toLowerCase()}/${id}/page/1`}>{v}</Link>
               {i !== value.length - 1 && ', '}
             </span>
           ))}

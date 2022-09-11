@@ -58,5 +58,6 @@
       "en": "Gift Card € {{amount}}",
       "nl": "Cadeaubon € {{amount}}"
     }
-  }
+  },
+  "on-sale": "Aanbieding"
 }

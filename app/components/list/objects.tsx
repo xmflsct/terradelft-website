@@ -51,7 +51,7 @@ const ListObjects: React.FC<Props> = ({ objects, giftCard }) => {
                 )}
                 {object.priceSale && (
                   <span className='absolute bottom-0 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-secondary text-background text-sm font-semibold'>
-                    {t('object:on-sale')}
+                    {t('common:on-sale')}
                   </span>
                 )}
               </div>
