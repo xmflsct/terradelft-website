@@ -39,6 +39,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^11.18.3",
+    "react-medium-image-zoom": "^5.0.2",
     "react-select": "^5.4.0",
     "remix-i18next": "^4.1.1"
   },

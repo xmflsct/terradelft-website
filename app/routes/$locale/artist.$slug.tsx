@@ -32,6 +32,8 @@ export const loader = async (args: LoaderArgs) => {
               artist
               image {
                 url
+                width
+                height
               }
               biography {
                 json
@@ -90,7 +92,7 @@ const PageArtist = () => {
       <H1>{artist.artist}</H1>
       <div className='flex flex-col lg:flex-row gap-4 mb-8'>
         <div className='flex-1'>
-          <ContentfulImage alt={artist.artist} image={artist.image} width={400} quality={85} />
+          <ContentfulImage alt={artist.artist} image={artist.image} width={400} quality={85} zoomable />
         </div>
         <RichText content={artist.biography} className='flex-2' assetWidth={628} />
       </div>

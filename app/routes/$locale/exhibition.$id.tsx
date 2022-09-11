@@ -48,6 +48,9 @@ export const loader = async (args: LoaderArgs) => {
             }
             image {
               url
+              title
+              width
+              height
             }
             description {
               json
@@ -118,6 +121,7 @@ const PageExhibition = () => {
           width={309}
           quality={80}
           className='col-span-6 lg:col-span-2'
+          zoomable
         />
       )}
       <div

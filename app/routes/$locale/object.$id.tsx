@@ -49,6 +49,9 @@ export const loader = async (args: LoaderArgs) => {
             imagesCollection {
               items {
                 url
+                title
+                width
+                height
               }
             }
             artist {
@@ -92,6 +95,9 @@ export const loader = async (args: LoaderArgs) => {
                 stock
                 image {
                   url
+                  title
+                  width
+                  height
                 }
               }
             }

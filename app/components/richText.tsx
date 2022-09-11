@@ -46,6 +46,7 @@ const richTextOptions = ({ links, assetWidth }: { links: any; assetWidth?: numbe
               width={assetWidth || 400}
               quality={85}
               className={asset.description ? 'mb-0' : ''}
+              zoomable
             />
             {asset.description && <figcaption className='mt-1'>{asset.description}</figcaption>}
           </div>

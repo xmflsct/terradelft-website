@@ -48,6 +48,8 @@ export const loader = async (args: LoaderArgs) => {
             imagesCollection(limit: 1) {
               items {
                 url
+                width
+                height
               }
             }
           }
@@ -60,6 +62,9 @@ export const loader = async (args: LoaderArgs) => {
               imagesCollection(limit: 1) {
                 items {
                   url
+                  title
+                  width
+                  height
                 }
               }
               priceSale
@@ -80,6 +85,8 @@ export const loader = async (args: LoaderArgs) => {
               artist
               image {
                 url
+                width
+                height
               }
             }
           }
