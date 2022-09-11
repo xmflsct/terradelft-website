@@ -267,21 +267,22 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
               styles={selectStyle}
             />
           </FormField>
-          <p className='text-xl'>
-            {commonIDs.length === 1 && variation ? (
-              <Price
-                priceSale={(variation.priceSale ?? 0) * (amount || 1)}
-                priceOriginal={variation.priceOriginal * (amount || 1)}
-              />
-            ) : priceOriginal.min === priceOriginal.max ? (
-              <Price priceOriginal={priceOriginal.max} />
-            ) : (
-              `${currency(min([priceSale.min, priceOriginal.min])!, i18n.language)} - ${currency(
+
+          {commonIDs.length === 1 && variation ? (
+            <Price
+              priceSale={(variation.priceSale ?? 0) * (amount || 1)}
+              priceOriginal={variation.priceOriginal * (amount || 1)}
+            />
+          ) : priceOriginal.min === priceOriginal.max ? (
+            <Price priceOriginal={priceOriginal.max} />
+          ) : (
+            <p className='text-xl'>
+              {`${currency(min([priceSale.min, priceOriginal.min])!, i18n.language)} - ${currency(
                 max([priceSale.max, priceOriginal.max])!,
                 i18n.language
-              )}`
-            )}
-          </p>
+              )}`}
+            </p>
+          )}
           <Button
             type='submit'
             disabled={commonIDs.length !== 1 ? true : !((variation?.stock ?? 0) > 0) ? true : false}
