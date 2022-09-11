@@ -138,7 +138,6 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const stored = localStorage.getItem('timestamp')
     if (stored) {
       const diff = now - parseInt(stored)
-      console.log('diff', diff)
 
       if (diff > 60 * 24) {
         localStorage.setItem('objects', JSON.stringify([]))

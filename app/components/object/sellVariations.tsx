@@ -1,7 +1,7 @@
 import { difference, findIndex, intersection, max, min, union } from 'lodash'
 import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import ReactSelect from 'react-select'
+import Select from 'react-select'
 import { SelectedVariation } from '~/routes/$locale/object.$id'
 import { BagContext } from '~/states/bag'
 import {
@@ -44,20 +44,19 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
     max: max(sellVariations.map(v => v.priceSale))
   }
 
-  const [optionsVariant, setOptionsVariant] = useState<Options>()
-  const [optionsColour, setOptionsColour] = useState<Options>()
-  const [optionsSize, setOptionsSize] = useState<Options>()
+  type Option = { value: string[]; label: string; isDisabled: boolean }
+  const [optionsVariant, setOptionsVariant] = useState<Option[]>()
+  const [optionsColour, setOptionsColour] = useState<Option[]>()
+  const [optionsSize, setOptionsSize] = useState<Option[]>()
   const [selected, setSelected] = useState<{
-    variant?: string[]
-    colour?: string[]
-    size?: string[]
-  }>()
-  const [amount, setAmount] = useState<number | undefined>(undefined)
-
-  type Options = { value: string[]; label: string; isDisabled: boolean }[]
+    variant: Option | null
+    colour: Option | null
+    size: Option | null
+  }>({ variant: null, colour: null, size: null })
+  const [amount, setAmount] = useState<number | null>(null)
 
   useEffect(() => {
-    const d: { variant: Options; colour: Options; size: Options } = {
+    const d: { variant: Option[]; colour: Option[]; size: Option[] } = {
       variant: [],
       colour: [],
       size: []
@@ -104,22 +103,24 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
       }
     }
 
-    setOptionsVariant(d.variant)
-    setOptionsColour(d.colour)
-    setOptionsSize(d.size)
-  }, [])
+    setOptionsVariant(() => d.variant)
+    setOptionsColour(() => d.colour)
+    setOptionsSize(() => d.size)
+    setSelected({ variant: null, colour: null, size: null })
+    setAmount(null)
+  }, [object.sys.id])
 
   const commonIDs = intersection(
-    selected?.variant || allIDs,
-    selected?.colour || allIDs,
-    selected?.size || allIDs
+    selected?.variant?.value || allIDs,
+    selected?.colour?.value || allIDs,
+    selected?.size?.value || allIDs
   )
   const variation =
     commonIDs.length === 1
       ? sellVariations[sellVariations.findIndex(v => v.sys.id === commonIDs[0])]
       : undefined
 
-  useEffect(() => {
+  const updateOptions = () => {
     optionsVariant &&
       setOptionsVariant(
         optionsVariant.map(variant => ({
@@ -127,7 +128,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           isDisabled:
             intersection(
               variant.value,
-              intersection(selected?.colour || allIDs, selected?.size || allIDs)
+              intersection(selected?.colour?.value || allIDs, selected?.size?.value || allIDs)
             ).length < 1
         }))
       )
@@ -138,7 +139,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           isDisabled:
             intersection(
               colour.value,
-              intersection(selected?.variant || allIDs, selected?.size || allIDs)
+              intersection(selected?.variant?.value || allIDs, selected?.size?.value || allIDs)
             ).length < 1
         }))
       )
@@ -149,7 +150,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           isDisabled:
             intersection(
               size.value,
-              intersection(selected?.variant || allIDs, selected?.colour || allIDs)
+              intersection(selected?.variant?.value || allIDs, selected?.colour?.value || allIDs)
             ).length < 1
         }))
       )
@@ -166,9 +167,9 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
       variation.stock > 0 && setAmount(1)
     } else {
       setSelectedVariation(undefined)
-      setAmount(undefined)
+      setAmount(null)
     }
-  }, [selected?.variant, selected?.colour, selected?.size])
+  }
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -206,15 +207,14 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
         <form onSubmit={onSubmit}>
           {optionsVariant?.length && (
             <FormField label={t('variant')}>
-              <ReactSelect
+              <Select
                 name='variant'
                 options={optionsVariant}
-                defaultValue={undefined}
-                onChange={event =>
-                  event && event.value
-                    ? setSelected({ ...selected, variant: event.value })
-                    : setSelected({ ...selected, variant: undefined })
-                }
+                value={selected.variant}
+                onChange={event => {
+                  setSelected(value => ({ ...value, variant: event }))
+                  updateOptions()
+                }}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -223,15 +223,14 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           )}
           {optionsColour?.length && (
             <FormField label={t('colour')}>
-              <ReactSelect
+              <Select
                 name='colour'
                 options={optionsColour}
-                defaultValue={undefined}
-                onChange={event =>
-                  event && event.value
-                    ? setSelected({ ...selected, colour: event.value })
-                    : setSelected({ ...selected, colour: undefined })
-                }
+                value={selected.colour}
+                onChange={event => {
+                  setSelected(value => ({ ...value, colour: event }))
+                  updateOptions()
+                }}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -240,15 +239,14 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           )}
           {optionsSize?.length && (
             <FormField label={t('size')}>
-              <ReactSelect
+              <Select
                 name='size'
                 options={optionsSize}
-                defaultValue={undefined}
-                onChange={event =>
-                  event && event.value
-                    ? setSelected({ ...selected, size: event.value })
-                    : setSelected({ ...selected, size: undefined })
-                }
+                value={selected.size}
+                onChange={event => {
+                  setSelected(value => ({ ...value, size: event }))
+                  updateOptions()
+                }}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -256,7 +254,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
             </FormField>
           )}
           <FormField label={t('amount')}>
-            <ReactSelect
+            <Select
               options={Array(
                 commonIDs.length === 1 && variation ? (variation.stock === 1 ? 1 : 99) : 0
               )
@@ -269,23 +267,21 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
               styles={selectStyle}
             />
           </FormField>
-          {commonIDs.length === 1 && variation ? (
-            <Price
-              priceSale={(variation.priceSale ?? 0) * (amount || 1)}
-              priceOriginal={variation.priceOriginal * (amount || 1)}
-            />
-          ) : (
-            <p className='text-xl'>
-              {priceOriginal.min === priceOriginal.max ? (
-                <Price priceOriginal={priceOriginal.max} />
-              ) : (
-                `${currency(min([priceSale.min, priceOriginal.min])!, i18n.language)} - ${currency(
-                  max([priceSale.max, priceOriginal.max])!,
-                  i18n.language
-                )}`
-              )}
-            </p>
-          )}
+          <p className='text-xl'>
+            {commonIDs.length === 1 && variation ? (
+              <Price
+                priceSale={(variation.priceSale ?? 0) * (amount || 1)}
+                priceOriginal={variation.priceOriginal * (amount || 1)}
+              />
+            ) : priceOriginal.min === priceOriginal.max ? (
+              <Price priceOriginal={priceOriginal.max} />
+            ) : (
+              `${currency(min([priceSale.min, priceOriginal.min])!, i18n.language)} - ${currency(
+                max([priceSale.max, priceOriginal.max])!,
+                i18n.language
+              )}`
+            )}
+          </p>
           <Button
             type='submit'
             disabled={commonIDs.length !== 1 ? true : !((variation?.stock ?? 0) > 0) ? true : false}

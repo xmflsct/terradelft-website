@@ -59,7 +59,10 @@ const ObjectImages: React.FC<Props> = ({ images, selectedVariation }) => {
         )}
         {images?.map((image, index) =>
           image ? (
-            <div className={`${!selectedVariation && index === 0 ? 'col-span-3' : 'col-auto'}`}>
+            <div
+              key={index}
+              className={`${!selectedVariation && index === 0 ? 'col-span-3' : 'col-auto'}`}
+            >
               <ContentfulImage
                 image={image}
                 width={!selectedVariation && index === 0 ? 471 : 147}
