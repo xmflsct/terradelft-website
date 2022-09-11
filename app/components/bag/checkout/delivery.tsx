@@ -36,6 +36,7 @@ const CheckoutDelivery: React.FC<Props> = ({
   >()
   useEffect(() => {
     countries.registerLocale(require(`i18n-iso-countries/langs/en.json`))
+    countries.registerLocale(require(`i18n-iso-countries/langs/nl.json`))
     const tempCountries: { value: string; label: string }[] = []
     forIn(countries.getNames(i18n.language), (v, k) => {
       tempCountries.push({
