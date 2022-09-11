@@ -1,15 +1,20 @@
+import { LoaderArgs } from "@remix-run/cloudflare"
+
 export let cached: boolean | undefined = undefined
 
 const cache = async <T = unknown>({
   ttlMinutes = 60,
   req,
-  request
+  request,
+  context
 }: {
   ttlMinutes?: number
   req: () => Promise<T>
-  request: Request
+  request: Request,
+  context: LoaderArgs['context']
 }): Promise<T> => {
-  if (!ttlMinutes) {
+  const preview = context.ENVIRONMENT !== 'PRODUCTION'
+  if (preview && !ttlMinutes) {
     return await req()
   }
 

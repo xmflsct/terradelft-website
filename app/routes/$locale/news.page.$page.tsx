@@ -47,6 +47,9 @@ export const loader = async (args: LoaderArgs) => {
               date
               image {
                 url
+                title
+                width
+                height
               }
             }
           }

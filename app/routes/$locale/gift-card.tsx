@@ -31,6 +31,9 @@ export const loader = async (args: LoaderArgs) => {
             imagesCollection(limit: 5) {
               items {
                 url
+                title
+                width
+                height
               }
             }
             defaultAmounts

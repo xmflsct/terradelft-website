@@ -1,9 +1,9 @@
-import { faGlobeEurope, faSearch, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
+import { faGlobeEurope, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Navigation from './navigation'
 import { useTranslation } from 'react-i18next'
-import { Form, Link as RemixLink, useMatches } from '@remix-run/react'
+import { Link as RemixLink, useMatches } from '@remix-run/react'
 import { Link } from '~/components/link'
 import logoEnLarge from '~/images/logo/en/large.png'
 import logoEnSmall from '~/images/logo/en/small.png'
@@ -21,28 +21,18 @@ const Header: React.FC = () => {
     t
   } = useTranslation()
   const [toggleNav, setToggleNav] = useState(false)
-  // const { stateMobileMenu, dispatch } = useContext(ContextMobileMenu)
-  // const [miniBag, setMiniBag] = useState(false)
-  // const [locationOrigin, setLocationOrigin] = useState()
 
   const { objects } = useContext(BagContext)
 
-  // const prevBagLength = useRef(objects.length)
-  // useEffect(() => {
-  //   if (objects.length > prevBagLength.current) {
-  //     // setMiniBag(true)
-  //     prevBagLength.current = objects.length
-  //   }
-  // }, [objects.length, prevBagLength])
-
-  // useEffect(() => {
-  //   setLocationOrigin(window.location.origin)
-  // }, [])
+  const { checkTimestamp } = useContext(BagContext)
+  useEffect(() => {
+    checkTimestamp()
+  }, [])
 
   return (
     <header
       className={classNames(
-        'z-50 sticky top-0 lg:relative lg:top-auto bg-background',
+        'z-40 sticky top-0 lg:relative lg:top-auto bg-background',
         'border-b-2 border-secondary lg:border-none',
         'mb-4 lg:mb-8',
         'pt-4 pb-2 lg:p-0'
@@ -127,19 +117,6 @@ const Header: React.FC = () => {
           <Search type='header' />
         </div>
       </div>
-      {/* <CSSTransition
-        in={miniBag}
-        onEnter={() => {
-          setTimeout(() => {
-            setMiniBag(false)
-          }, 3000)
-        }}
-        timeout={350}
-        className='mini-bag'
-        classNames='mini-bag'
-      >
-        <div>{t('common:header.mini-bag')}</div>
-      </CSSTransition> */}
       <Navigation toggleNav={toggleNav} />
     </header>
   )

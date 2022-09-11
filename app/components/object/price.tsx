@@ -13,24 +13,24 @@ const ObjectPrice: React.FC<Props> = ({ priceSale, priceOriginal, showZero = fal
   return (
     <>
       {!showZero && !(priceSale ?? 0 > 0) && !(priceOriginal ?? 0 > 0) ? null : (
-        <div className='text-xl'>
+        <p className='text-xl'>
           {priceSale ? (
-            <p>
+            <span>
               <span className='text-secondary'>{currency(priceSale, i18n.language)}</span>
               {priceOriginal && (
                 <span className='line-through'>
                   <s>{currency(priceOriginal, i18n.language)}</s>
                 </span>
               )}
-            </p>
+            </span>
           ) : (
             priceOriginal && (
-              <p>
+              <span>
                 <span>{currency(priceOriginal, i18n.language)}</span>
-              </p>
+              </span>
             )
           )}
-        </div>
+        </p>
       )}
     </>
   )

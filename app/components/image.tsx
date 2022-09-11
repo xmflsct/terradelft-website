@@ -1,4 +1,5 @@
 import { DOMAttributes } from 'react'
+import Zoom from 'react-medium-image-zoom'
 import classNames from '~/utils/classNames'
 import { CommonImage } from '~/utils/contentful'
 
@@ -20,7 +21,7 @@ declare namespace ContentfulImageTransform {
 }
 
 type Props = {
-  image: Pick<CommonImage, 'url' | 'title'> | undefined | null
+  image: Pick<CommonImage, 'url' | 'width' | 'height' | 'title'> | undefined | null
   alt?: string
   width: number
   height?: number
@@ -34,6 +35,7 @@ type Props = {
   // Custom styling
   className?: string
   eager?: boolean
+  zoomable?: boolean
 } & Pick<DOMAttributes<HTMLDivElement>, 'onClick'>
 
 const propsMap = {
@@ -60,7 +62,8 @@ const ContentfulImage: React.FC<Props> = ({
   radius,
   decoding = 'async',
   className,
-  eager = false
+  eager = false,
+  zoomable = false
 }) => {
   if (!image) {
     return (
@@ -76,14 +79,19 @@ const ContentfulImage: React.FC<Props> = ({
     )
   }
 
-  const queries = [{}, {}, {}] // smaller, default, larger
+  const queries = [{}, {}, {}, {}] // smaller, default, larger, original
 
   // should only allow ContentfulImage.Query props
   const addToQuery = (
     prop: Record<string, string>,
-    qs: ('smaller' | 'default' | 'larger')[] = ['smaller', 'default', 'larger']
+    qs: ('smaller' | 'default' | 'larger' | 'original')[] = [
+      'smaller',
+      'default',
+      'larger',
+      'original'
+    ]
   ) => {
-    const mapping = { smaller: 0, default: 1, larger: 2 }
+    const mapping = { smaller: 0, default: 1, larger: 2, original: 3 }
     qs.forEach(q => {
       queries[mapping[q]] = { ...queries[mapping[q]], ...prop }
     })
@@ -93,11 +101,9 @@ const ContentfulImage: React.FC<Props> = ({
     addToQuery({ [propsMap['quality']]: quality.toString() })
   }
 
-  if (width) {
-    addToQuery({ [propsMap['width']]: (width / 2).toString() }, ['smaller'])
-    addToQuery({ [propsMap['width']]: width.toString() }, ['default'])
-    addToQuery({ [propsMap['width']]: (width * 2).toString() }, ['larger'])
-  }
+  addToQuery({ [propsMap['width']]: (width / 2).toString() }, ['smaller'])
+  addToQuery({ [propsMap['width']]: width.toString() }, ['default'])
+  addToQuery({ [propsMap['width']]: (width * 2).toString() }, ['larger'])
 
   if (height) {
     addToQuery({ [propsMap['height']]: (height / 2).toString() }, ['smaller'])
@@ -144,7 +150,7 @@ const ContentfulImage: React.FC<Props> = ({
     `${image.url}?${new URLSearchParams({
       ...queries[2],
       ...formatJPG
-    }).toString()} ${Math.round(width * 2)}w, `
+    }).toString()} ${Math.round(width * 2)}w`
   const transformSrcSetWEBP =
     `${image.url}?${new URLSearchParams({
       ...queries[0],
@@ -157,24 +163,43 @@ const ContentfulImage: React.FC<Props> = ({
     `${image.url}?${new URLSearchParams({
       ...queries[2],
       ...formatWEBP
-    }).toString()} ${Math.round(width * 2)}w, `
+    }).toString()} ${Math.round(width * 2)}w`
 
-  return (
+  const sizes = `${width}px`
+
+  const theImage = () => (
     <picture className={classNames('object-cover bg-stone-200', className)}>
-      <source type='image/webp' srcSet={transformSrcSetWEBP} />
-      <source type='image/jpeg' srcSet={transformSrcSetJPG} />
+      <source type='image/webp' srcSet={transformSrcSetWEBP} sizes={sizes} />
+      <source type='image/jpeg' srcSet={transformSrcSetJPG} sizes={sizes} />
       <img
         width={width}
         height={height}
         src={transformSrc}
-        srcSet={transformSrcSetJPG}
         alt={alt || image.title}
         decoding={decoding}
         loading={eager ? 'eager' : 'lazy'}
         className='w-full mx-auto'
+        sizes={sizes}
       />
     </picture>
   )
+
+  if (zoomable) {
+    return (
+      <Zoom
+        zoomImg={{
+          src: `${image.url}?${new URLSearchParams({
+            ...queries[3],
+            ...formatJPG
+          }).toString()}`
+        }}
+      >
+        {theImage()}
+      </Zoom>
+    )
+  } else {
+    return theImage()
+  }
 }
 
 export default ContentfulImage

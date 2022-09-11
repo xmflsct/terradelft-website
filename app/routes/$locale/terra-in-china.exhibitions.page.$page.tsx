@@ -56,6 +56,9 @@ export const loader = async (args: LoaderArgs) => {
               }
               image {
                 url
+                title
+                width
+                height
               }
               name
               datetimeStart

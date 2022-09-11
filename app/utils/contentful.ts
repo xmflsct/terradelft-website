@@ -44,8 +44,8 @@ export type CommonImage = {
   // fileName: string
   // size: number
   url: string
-  // width: number
-  // height: number
+  width: number
+  height: number
 }
 export type CommonRichText = { json: Document; links?: any }
 
@@ -181,7 +181,10 @@ export const RICH_TEXT_LINKS = gql`
           id
         }
         url
+        title
         description
+        width
+        height
       }
     }
     entries {

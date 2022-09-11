@@ -74,6 +74,9 @@ export const LIST_OBJECT_DETAILS = gql`
     imagesCollection(limit: 1) {
       items {
         url
+        title
+        width
+        height
       }
     }
     priceSale

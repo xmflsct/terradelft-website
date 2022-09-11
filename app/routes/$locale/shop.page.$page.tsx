@@ -288,6 +288,8 @@ export const loader = async (args: LoaderArgs) => {
             imagesCollection(limit: 1) {
               items {
                 url
+                width
+                height
               }
             }
           }

@@ -37,6 +37,8 @@ export const loader = async (args: LoaderArgs) => {
                 name
                 avatar {
                   url
+                  width
+                  height
                 }
                 biography {
                   json

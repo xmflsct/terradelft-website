@@ -183,7 +183,7 @@ const PageSearch: React.FC = () => {
         {image ? (
           <div className='basis-1/5 lg:basis-1/6'>
             <ContentfulImage
-              image={{ url: image, title: 'Search image' }}
+              image={{ url: image, title: 'Search image', width: 157, height: 157 }}
               width={157}
               height={157}
               quality={80}
