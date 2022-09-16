@@ -303,7 +303,7 @@ const PageObject = () => {
           <ObjectSell object={object} setSelectedVariation={setSelectedVariation} />
           <table className='table-auto mb-4'>
             <tbody>
-              {object.year && <ObjectAttribute type={t('year')} value={object.year.year} />}
+              {object.year && <ObjectAttribute type={t('year')} value={object.year} />}
               {object.techniqueCollection && (
                 <ObjectAttribute
                   type={t('technique')}
