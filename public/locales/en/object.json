@@ -43,5 +43,5 @@
       }
     }
   },
-  "related": "Other objects from {{artist}}"
+  "related": "Other objects by {{artist}}"
 }
