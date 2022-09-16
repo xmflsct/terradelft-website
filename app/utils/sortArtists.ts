@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash'
 import { ObjectsArtist } from './contentful'
 
 const sortArtists = ({
@@ -9,10 +8,7 @@ const sortArtists = ({
 }>) => {
   return {
     ...rest,
-    items: sortBy(
-      items,
-      ({ artist }) => artist.match(new RegExp(/\b(\w+)\W*$/))![0]
-    )
+    items: [...items].sort((a, b) => Intl.Collator().compare(a.artist.match(new RegExp(/\b(\S+)\W*$/))![0], b.artist.match(new RegExp(/\b(\S+)\W*$/))![0]))
   }
 }
 
