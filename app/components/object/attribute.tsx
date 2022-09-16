@@ -4,7 +4,7 @@ import { Link } from '../link'
 
 type Props = {
   type: string
-  value: number | { id: string; value: string }[]
+  value: number | { id: string; value: string }[] | { year: number }
 }
 
 const ObjectAttribute: React.FC<Props> = ({ type, value }) => {
@@ -17,7 +17,7 @@ const ObjectAttribute: React.FC<Props> = ({ type, value }) => {
         <td>
           {typeof value === 'object'
             ? // Year only
-              value[Object.keys(value)[0]]
+              value.year
             : // Dimensions only
               dimension(value, i18n.language)}
         </td>
