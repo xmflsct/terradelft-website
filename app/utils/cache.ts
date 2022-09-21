@@ -30,7 +30,7 @@ const cache = async <T = unknown>({
     console.log('⚠️ Not cached')
     const queryResponse = await req()
     const cacheResponse = new Response(JSON.stringify(queryResponse), {
-      headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 60}` }
+      headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 10}` }
     })
     cache.put(cacheKey, cacheResponse)
     return queryResponse
