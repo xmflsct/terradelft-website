@@ -120,7 +120,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
       ? sellVariations[sellVariations.findIndex(v => v.sys.id === commonIDs[0])]
       : undefined
 
-  const updateOptions = () => {
+  useEffect(() => {
     optionsVariant &&
       setOptionsVariant(
         optionsVariant.map(variant => ({
@@ -169,7 +169,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
       setSelectedVariation(undefined)
       setAmount(null)
     }
-  }
+  }, [selected])
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -211,10 +211,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 name='variant'
                 options={optionsVariant}
                 value={selected.variant}
-                onChange={event => {
-                  setSelected(value => ({ ...value, variant: event }))
-                  updateOptions()
-                }}
+                onChange={event => setSelected(value => ({ ...value, variant: event }))}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -227,10 +224,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 name='colour'
                 options={optionsColour}
                 value={selected.colour}
-                onChange={event => {
-                  setSelected(value => ({ ...value, colour: event }))
-                  updateOptions()
-                }}
+                onChange={event => setSelected(value => ({ ...value, colour: event }))}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -243,10 +237,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 name='size'
                 options={optionsSize}
                 value={selected.size}
-                onChange={event => {
-                  setSelected(value => ({ ...value, size: event }))
-                  updateOptions()
-                }}
+                onChange={event => setSelected(value => ({ ...value, size: event }))}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
