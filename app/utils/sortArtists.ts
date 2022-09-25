@@ -8,7 +8,7 @@ const sortArtists = ({
 }>) => {
   return {
     ...rest,
-    items: [...items].sort((a, b) => Intl.Collator().compare(a.artist.match(new RegExp(/\b(\S+)\W*$/))![0], b.artist.match(new RegExp(/\b(\S+)\W*$/))![0]))
+    items: [...items].sort((a, b) => Intl.Collator().compare(a.artist?.match(new RegExp(/\b(\S+)\W*$/))![0], b.artist?.match(new RegExp(/\b(\S+)\W*$/))![0]))
   }
 }
 
