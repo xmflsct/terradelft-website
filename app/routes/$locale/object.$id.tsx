@@ -291,10 +291,7 @@ const PageObject = () => {
   return (
     <>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 items-start'>
-        <ObjectImages
-          images={object.imagesCollection?.items}
-          selectedVariation={selectedVariation}
-        />
+        <ObjectImages object={object} selectedVariation={selectedVariation} />
         <div>
           <H1>{typeof object.name !== 'string' && object.name[i18n.language]}</H1>
           <H3>
