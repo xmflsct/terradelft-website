@@ -168,7 +168,7 @@ const ContentfulImage: React.FC<Props> = ({
   const sizes = `${width}px`
 
   const theImage = () => (
-    <picture className={classNames('object-cover bg-stone-200', className)}>
+    <picture className={classNames('object-cover bg-stone-200')}>
       <source type='image/webp' srcSet={transformSrcSetWEBP} sizes={sizes} />
       <source type='image/jpeg' srcSet={transformSrcSetJPG} sizes={sizes} />
       <img
@@ -186,19 +186,21 @@ const ContentfulImage: React.FC<Props> = ({
 
   if (zoomable) {
     return (
-      <Zoom
-        zoomImg={{
-          src: `${image.url}?${new URLSearchParams({
-            ...queries[3],
-            ...formatJPG
-          }).toString()}`
-        }}
-      >
-        {theImage()}
-      </Zoom>
+      <div className={className}>
+        <Zoom
+          zoomImg={{
+            src: `${image.url}?${new URLSearchParams({
+              ...queries[3],
+              ...formatJPG
+            }).toString()}`
+          }}
+        >
+          {theImage()}
+        </Zoom>
+      </div>
     )
   } else {
-    return theImage()
+    return <div className={className}>{theImage()}</div>
   }
 }
 
