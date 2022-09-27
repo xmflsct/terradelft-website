@@ -12,31 +12,31 @@ const richTextOptions = ({ links, assetWidth }: { links: any; assetWidth?: numbe
   const assetMap = new Map()
   if (links?.assets?.block) {
     for (const asset of links.assets.block) {
-      assetMap.set(asset.sys.id, asset)
+      if (asset) assetMap.set(asset.sys.id, asset)
     }
   }
 
   const entryMap = new Map()
   if (links?.entries?.block) {
     for (const entry of links.entries?.block) {
-      entryMap.set(entry.sys.id, entry)
+      if (entry) entryMap.set(entry.sys.id, entry)
     }
   }
   if (links?.entries?.hyperlink) {
     for (const entry of links.entries?.hyperlink) {
-      entryMap.set(entry.sys.id, entry)
+      if (entry) entryMap.set(entry.sys.id, entry)
     }
   }
   if (links?.entries?.inline) {
     for (const entry of links.entries?.inline) {
-      entryMap.set(entry.sys.id, entry)
+      if (entry) entryMap.set(entry.sys.id, entry)
     }
   }
 
   return {
     renderNode: {
       [BLOCKS.EMBEDDED_ASSET]: node => {
-        const asset = assetMap.get(node.data.target.sys.id) as CommonImage
+        const asset = assetMap.get(node.data.target?.sys.id) as CommonImage
         if (!asset) return
 
         return (
@@ -84,7 +84,7 @@ const richTextOptions = ({ links, assetWidth }: { links: any; assetWidth?: numbe
         }
       },
       [INLINES.ENTRY_HYPERLINK]: node => {
-        const entry = entryMap.get(node.data.target.sys.id)
+        const entry = entryMap.get(node.data.target?.sys.id)
         if (!entry) return null
 
         switch (entry.__typename) {
@@ -121,7 +121,7 @@ const richTextOptions = ({ links, assetWidth }: { links: any; assetWidth?: numbe
         }
       },
       [INLINES.EMBEDDED_ENTRY]: node => {
-        const entry = entryMap.get(node.data.target.sys.id)
+        const entry = entryMap.get(node.data.target?.sys.id)
         if (!entry) return null
 
         switch (entry.__typename) {
