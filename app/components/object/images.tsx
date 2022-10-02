@@ -28,18 +28,27 @@ const ObjectImages: React.FC<Props> = ({ object, selectedImages, selectedVariati
 
   return (
     <div>
-      <ContentfulImage image={images[0]} width={471} zoomable className='mb-4' />
+      <div className='mb-4 relative'>
+        <ContentfulImage image={images[0]} width={471} zoomable />
+        {images[0]?.description && (
+          <span className='absolute bottom-0 right-0 px-2 py-1 bg-background text-secondary text-sm font-semibold border border-secondary rounded rounded-br-none'>
+            {images[0].description}
+          </span>
+        )}
+      </div>
       <div className='columns-2 gap-4'>
         {images.map((image, index) => {
           if (index === 0) return
 
           return (
-            <ContentfulImage
-              image={image}
-              width={147}
-              zoomable
-              className='mb-4 break-inside-avoid'
-            />
+            <div className='mb-4 relative break-inside-avoid'>
+              <ContentfulImage image={image} width={147} zoomable />
+              {image?.description && (
+                <span className='absolute bottom-0 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-secondary text-background text-sm font-semibold'>
+                  {image.description}
+                </span>
+              )}
+            </div>
           )
         })}
       </div>

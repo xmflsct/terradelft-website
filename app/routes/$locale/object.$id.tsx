@@ -96,6 +96,7 @@ export const loader = async (args: LoaderArgs) => {
                 image {
                   url
                   title
+                  description
                   width
                   height
                 }
