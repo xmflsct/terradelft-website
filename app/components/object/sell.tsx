@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CSSObjectWithLabel } from 'react-select'
 import kunstkoop from '~/images/kunstkoop.png'
-import { SelectedVariation } from '~/routes/$locale/object.$id'
+import { SelectedImages, SelectedVariation } from '~/routes/$locale/object.$id'
 import {
   ObjectsObjectVariation_NameLocalized,
   ObjectsObject_NameLocalized
@@ -15,7 +15,8 @@ type Props = {
   object: Omit<ObjectsObject_NameLocalized, 'variationsCollection'> & {
     variationsCollection: { items: ObjectsObjectVariation_NameLocalized[] }
   }
-  setSelectedVariation: Dispatch<SetStateAction<SelectedVariation | undefined>>
+  setSelectedImages: Dispatch<SetStateAction<SelectedImages>>
+  setSelectedVariation: Dispatch<SetStateAction<SelectedVariation>>
 }
 
 export const selectStyle = {
@@ -29,7 +30,7 @@ export const selectStyle = {
   })
 }
 
-const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {
+const ObjectSell: React.FC<Props> = ({ object, setSelectedImages, setSelectedVariation }) => {
   const { t } = useTranslation('object')
 
   if (object.variationsCollection?.items.length) {
@@ -49,7 +50,11 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedVariation }) => {
   return (
     <div className='mb-2'>
       {object.variationsCollection?.items.length ? (
-        <SellVariations object={object} setSelectedVariation={setSelectedVariation} />
+        <SellVariations
+          object={object}
+          setSelectedImages={setSelectedImages}
+          setSelectedVariation={setSelectedVariation}
+        />
       ) : object.stock ?? 0 > 0 ? (
         object.sellOnline ? (
           <SellMain object={object} />

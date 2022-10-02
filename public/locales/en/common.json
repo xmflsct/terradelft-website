@@ -59,5 +59,6 @@
       "nl": "Cadeaubon € {{amount}}"
     }
   },
-  "on-sale": "Sale"
+  "on-sale": "Sale",
+  "no-image": "Image missing"
 }

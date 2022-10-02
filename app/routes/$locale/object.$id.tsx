@@ -274,6 +274,8 @@ export const handle = {
   })
 }
 
+export type SelectedImages = (CommonImage | undefined)[]
+
 export type SelectedVariation = {
   sku: ObjectsObjectVariation['sku']
   image?: CommonImage
@@ -286,18 +288,27 @@ const PageObject = () => {
   const object = useLoaderData<typeof loader>()
   const { t, i18n } = useTranslation('object')
 
-  const [selectedVariation, setSelectedVariation] = useState<SelectedVariation>()
+  const [selectedImages, setSelectedImages] = useState<SelectedImages>([])
+  const [selectedVariation, setSelectedVariation] = useState<SelectedVariation>(null)
 
   return (
     <>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 items-start'>
-        <ObjectImages object={object} selectedVariation={selectedVariation} />
+        <ObjectImages
+          object={object}
+          selectedImages={selectedImages}
+          selectedVariation={selectedVariation}
+        />
         <div>
           <H1>{typeof object.name !== 'string' && object.name[i18n.language]}</H1>
           <H3>
             {t('artist')} <Link to={`/artist/${object.artist.slug}`}>{object.artist.artist}</Link>
           </H3>
-          <ObjectSell object={object} setSelectedVariation={setSelectedVariation} />
+          <ObjectSell
+            object={object}
+            setSelectedImages={setSelectedImages}
+            setSelectedVariation={setSelectedVariation}
+          />
           <table className='table-auto mb-4'>
             <tbody>
               {object.year && <ObjectAttribute type={t('year')} value={object.year} />}

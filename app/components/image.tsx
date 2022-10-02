@@ -1,4 +1,5 @@
 import { DOMAttributes } from 'react'
+import { useTranslation } from 'react-i18next'
 import Zoom from 'react-medium-image-zoom'
 import classNames from '~/utils/classNames'
 import { CommonImage } from '~/utils/contentful'
@@ -28,7 +29,6 @@ type Props = {
   behaviour?: ContentfulImageTransform.Fit
   quality?: number
   backgroundColor?: string
-  format?: ContentfulImageTransform.Format
   focusArea?: ContentfulImageTransform.FocusArea
   radius?: number
   decoding?: 'auto' | 'sync' | 'async'
@@ -58,21 +58,22 @@ const ContentfulImage: React.FC<Props> = ({
   height,
   width,
   focusArea,
-  format,
   radius,
   decoding = 'async',
   className,
   eager = false,
   zoomable = false
 }) => {
+  const { t } = useTranslation('common')
+
   if (!image) {
     return (
       <div
-        className='relative pb-100 bg-stone-200'
+        className='relative pb-100 bg-stone-300'
         children={
           <span
-            className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-background text-3xl'
-            children='Terra Delft'
+            className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-background text-2xl'
+            children={t('no-image')}
           />
         }
       />
