@@ -1,43 +1,58 @@
-import { SelectedVariation } from '~/routes/$locale/object.$id'
-import { ObjectsObject } from '~/utils/contentful'
+import { SelectedImages, SelectedVariation } from '~/routes/$locale/object.$id'
+import { CommonImage, ObjectsObject } from '~/utils/contentful'
 import ContentfulImage from '../image'
 
 type Props = {
-  object?: ObjectsObject
+  object?: Pick<ObjectsObject, 'imagesCollection'>
+  selectedImages?: SelectedImages
   selectedVariation?: SelectedVariation
 }
 
-const ObjectImages: React.FC<Props> = ({ object, selectedVariation }) => {
-  const variationImages = object?.variationsCollection?.items.map(
-    variation => variation.image || null
-  )
-  const allImages = variationImages
-    ? object?.imagesCollection?.items.concat(variationImages)
-    : object?.imagesCollection?.items
+const ObjectImages: React.FC<Props> = ({ object, selectedImages, selectedVariation }) => {
+  let images: (CommonImage | undefined | null)[] = []
+
+  if (selectedImages?.length) {
+    images.push(...selectedImages)
+  } else if (selectedVariation) {
+    images.push(selectedVariation.image)
+  } else {
+    if (object?.imagesCollection?.items) {
+      images.push(...object.imagesCollection.items)
+    }
+  }
+
+  images = images.filter(i => i)
+  if (!images.length) {
+    images = [object?.imagesCollection?.items[0]]
+  }
+
   return (
-    <>
-      <div className='grid grid-cols-3 gap-4'>
-        {selectedVariation?.image && (
-          <div className='col-span-3'>
-            <ContentfulImage image={selectedVariation.image} width={471} zoomable />
-          </div>
-        )}
-        {allImages?.map((image, index) =>
-          image ? (
-            <div
-              key={index}
-              className={`${!selectedVariation && index === 0 ? 'col-span-3' : 'col-auto'}`}
-            >
-              <ContentfulImage
-                image={image}
-                width={!selectedVariation && index === 0 ? 471 : 147}
-                zoomable
-              />
-            </div>
-          ) : null
+    <div>
+      <div className='mb-4 relative'>
+        <ContentfulImage image={images[0]} width={471} zoomable />
+        {images[0]?.description && (
+          <span className='absolute bottom-0 right-0 px-2 py-1 bg-background text-secondary text-sm font-semibold border border-secondary rounded rounded-br-none'>
+            {images[0].description}
+          </span>
         )}
       </div>
-    </>
+      <div className='columns-2 gap-4'>
+        {images.map((image, index) => {
+          if (index === 0) return
+
+          return (
+            <div className='mb-4 relative break-inside-avoid'>
+              <ContentfulImage image={image} width={147} zoomable />
+              {image?.description && (
+                <span className='absolute bottom-0 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-secondary text-background text-sm font-semibold'>
+                  {image.description}
+                </span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 

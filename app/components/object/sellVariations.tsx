@@ -2,7 +2,7 @@ import { difference, findIndex, intersection, max, min, union } from 'lodash'
 import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Select from 'react-select'
-import { SelectedVariation } from '~/routes/$locale/object.$id'
+import { SelectedImages, SelectedVariation } from '~/routes/$locale/object.$id'
 import { BagContext } from '~/states/bag'
 import {
   ObjectsObjectVariation_NameLocalized,
@@ -18,10 +18,11 @@ type Props = {
   object: Omit<ObjectsObject_NameLocalized, 'variationsCollection'> & {
     variationsCollection: { items: ObjectsObjectVariation_NameLocalized[] }
   }
-  setSelectedVariation: Dispatch<SetStateAction<SelectedVariation | undefined>>
+  setSelectedImages: Dispatch<SetStateAction<SelectedImages>>
+  setSelectedVariation: Dispatch<SetStateAction<SelectedVariation>>
 }
 
-const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
+const SellVariations: React.FC<Props> = ({ object, setSelectedImages, setSelectedVariation }) => {
   if (!object.variationsCollection) {
     return null
   }
@@ -108,19 +109,37 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
     setOptionsSize(() => d.size)
     setSelected({ variant: null, colour: null, size: null })
     setAmount(null)
-  }, [object.sys.id])
+  }, [object.sys.id, i18n.language])
 
-  const commonIDs = intersection(
-    selected?.variant?.value || allIDs,
-    selected?.colour?.value || allIDs,
-    selected?.size?.value || allIDs
+  const [commonIDs, setCommonIDs] = useState<string[]>([])
+  const [theVariation, setTheVariation] = useState<ObjectsObjectVariation_NameLocalized | null>(
+    null
   )
-  const variation =
-    commonIDs.length === 1
-      ? sellVariations[sellVariations.findIndex(v => v.sys.id === commonIDs[0])]
-      : undefined
 
   useEffect(() => {
+    let IDs: string[] = []
+    let variation: ObjectsObjectVariation_NameLocalized | null = null
+    if (
+      selected?.variant?.value?.length ||
+      selected?.colour?.value.length ||
+      selected?.size?.value.length
+    ) {
+      IDs = intersection(
+        selected?.variant?.value || allIDs,
+        selected?.colour?.value || allIDs,
+        selected?.size?.value || allIDs
+      )
+      setCommonIDs(IDs)
+      if (IDs.length === 1) {
+        variation = sellVariations[sellVariations.findIndex(v => v.sys.id === IDs[0])]
+        setTheVariation(variation)
+      } else {
+        setTheVariation(null)
+      }
+    } else {
+      setCommonIDs([])
+      setTheVariation(null)
+    }
     optionsVariant &&
       setOptionsVariant(
         optionsVariant.map(variant => ({
@@ -155,7 +174,8 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
         }))
       )
 
-    if (commonIDs.length === 1 && variation) {
+    if (IDs.length === 1 && variation) {
+      setSelectedImages([])
       setSelectedVariation({
         image: variation.image,
         sku: variation.sku,
@@ -166,37 +186,38 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
 
       variation.stock > 0 && setAmount(1)
     } else {
-      setSelectedVariation(undefined)
+      setSelectedImages(sellVariations.filter(v => IDs.includes(v.sys.id)).map(v => v.image))
+      setSelectedVariation(null)
       setAmount(null)
     }
-  }, [selected])
+  }, [selected.variant, selected.colour, selected.size])
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!variation || !amount) return
+    if (!theVariation || !amount) return
 
     objectsAdd({
       type: 'variation',
-      contentful_id: variation.sys.id,
+      contentful_id: theVariation.sys.id,
       contentful_id_url: object.sys.id,
       artist: object.artist,
-      image: variation.image || object.imagesCollection?.items[0],
-      priceOriginal: variation.priceOriginal,
-      priceSale: variation.priceSale,
-      stock: variation.stock || 1,
-      sku: variation.sku,
+      image: theVariation.image || object.imagesCollection?.items[0],
+      priceOriginal: theVariation.priceOriginal,
+      priceSale: theVariation.priceSale,
+      stock: theVariation.stock || 1,
+      sku: theVariation.sku,
       amount,
       // Locale dependent
       name: object.name,
       // Variations
       ...(optionsVariant?.length && {
-        variant: variation.variant || null
+        variant: theVariation.variant || null
       }),
       ...(optionsColour?.length && {
-        colour: variation.colour || null
+        colour: theVariation.colour || null
       }),
       ...(optionsSize?.length && {
-        size: variation.size || null
+        size: theVariation.size || null
       })
     })
   }
@@ -211,7 +232,9 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 name='variant'
                 options={optionsVariant}
                 value={selected.variant}
-                onChange={event => setSelected(value => ({ ...value, variant: event }))}
+                onChange={event => {
+                  setSelected(value => ({ ...value, variant: event }))
+                }}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -224,7 +247,9 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 name='colour'
                 options={optionsColour}
                 value={selected.colour}
-                onChange={event => setSelected(value => ({ ...value, colour: event }))}
+                onChange={event => {
+                  setSelected(value => ({ ...value, colour: event }))
+                }}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -237,7 +262,9 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
                 name='size'
                 options={optionsSize}
                 value={selected.size}
-                onChange={event => setSelected(value => ({ ...value, size: event }))}
+                onChange={event => {
+                  setSelected(value => ({ ...value, size: event }))
+                }}
                 isClearable
                 isSearchable={false}
                 styles={selectStyle}
@@ -247,22 +274,22 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           <FormField label={t('amount')}>
             <Select
               options={Array(
-                commonIDs.length === 1 && variation ? (variation.stock === 1 ? 1 : 99) : 0
+                commonIDs.length === 1 && theVariation ? (theVariation.stock === 1 ? 1 : 99) : 0
               )
                 .fill(undefined)
                 .map((_, i) => ({ value: i + 1, label: i + 1 }))}
               value={amount ? { value: amount, label: amount } : undefined}
               onChange={e => e && setAmount(e.value)}
               isSearchable={false}
-              isDisabled={commonIDs.length === 1 && variation ? variation.stock === 0 : false}
+              isDisabled={commonIDs.length === 1 && theVariation ? theVariation.stock === 0 : false}
               styles={selectStyle}
             />
           </FormField>
 
-          {commonIDs.length === 1 && variation ? (
+          {commonIDs.length === 1 && theVariation ? (
             <Price
-              priceSale={(variation.priceSale ?? 0) * (amount || 1)}
-              priceOriginal={variation.priceOriginal * (amount || 1)}
+              priceSale={(theVariation.priceSale ?? 0) * (amount || 1)}
+              priceOriginal={theVariation.priceOriginal * (amount || 1)}
             />
           ) : priceOriginal.min === priceOriginal.max ? (
             <Price priceOriginal={priceOriginal.max} />
@@ -276,10 +303,12 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedVariation }) => {
           )}
           <Button
             type='submit'
-            disabled={commonIDs.length !== 1 ? true : !((variation?.stock ?? 0) > 0) ? true : false}
+            disabled={
+              commonIDs.length !== 1 ? true : !((theVariation?.stock ?? 0) > 0) ? true : false
+            }
           >
             {commonIDs.length === 1
-              ? (variation?.stock ?? 0) > 0
+              ? (theVariation?.stock ?? 0) > 0
                 ? t('add-to-bag')
                 : t('out-of-stock')
               : t('select-variation')}
