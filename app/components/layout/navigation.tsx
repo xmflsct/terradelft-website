@@ -2,7 +2,7 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Menu, Transition } from '@headlessui/react'
 import { useLocation } from '@remix-run/react'
-import { Fragment } from 'react'
+import { Dispatch, Fragment, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 import classNames from '~/utils/classNames'
 import { NavLink } from '../link'
@@ -10,9 +10,10 @@ import Search from './search'
 
 type Props = {
   toggleNav: boolean
+  setToggleNav: Dispatch<SetStateAction<boolean>>
 }
 
-const Navigation: React.FC<Props> = ({ toggleNav }) => {
+const Navigation: React.FC<Props> = ({ toggleNav, setToggleNav }) => {
   const { t } = useTranslation('common')
   const { pathname } = useLocation()
 
@@ -32,34 +33,36 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
         'flex-col lg:flex-row gap-4'
       )}
     >
-      {/* <div className='hidden'>
-        <form action={`${locationOrigin}/search`}>
-          <InputGroup>
-            <InputGroup.Text>
-              <Button variant='link' type='submit'>
-                <FontAwesomeIcon icon={faSearch} size='sm' fixedWidth />
-              </Button>
-            </InputGroup.Text>
-            <Form.Control name='query' placeholder='Search' />
-          </InputGroup>
-        </form>
-      </div> */}
-      <NavLink to='/' end className={styleNavItem(['/artist/'])} children={t('pages.index')} />
+      <NavLink
+        to='/'
+        end
+        className={styleNavItem(['/artist/'])}
+        children={t('pages.index')}
+        setToggleNav={setToggleNav}
+      />
       <NavLink
         to='/shop/page/1'
         className={styleNavItem(['/object/'])}
         children={t('pages.shop')}
+        setToggleNav={setToggleNav}
       />
       <NavLink
         to='/exhibitions'
         className={styleNavItem(['/exhibition/'])}
         children={t('pages.exhibitions')}
+        setToggleNav={setToggleNav}
       />
-      <NavLink to='/news/page/1' className={styleNavItem(['/news/'])} children={t('pages.news')} />
+      <NavLink
+        to='/news/page/1'
+        className={styleNavItem(['/news/'])}
+        children={t('pages.news')}
+        setToggleNav={setToggleNav}
+      />
       <NavLink
         to='/terra-in-china'
         className={styleNavItem([])}
         children={t('pages.terra-in-china')}
+        setToggleNav={setToggleNav}
       />
       <Menu
         as='div'
@@ -93,6 +96,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
                       to='/about-terra'
                       className={styleNavItem([])}
                       children={t('pages.about-terra')}
+                      setToggleNav={setToggleNav}
                     />
                   }
                 />
@@ -102,6 +106,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
                       to='/reach-terra'
                       className={styleNavItem([])}
                       children={t('pages.reach-terra')}
+                      setToggleNav={setToggleNav}
                     />
                   }
                 />
@@ -111,6 +116,7 @@ const Navigation: React.FC<Props> = ({ toggleNav }) => {
                       to='/newsletter'
                       className={styleNavItem([])}
                       children={t('pages.newsletter')}
+                      setToggleNav={setToggleNav}
                     />
                   }
                 />

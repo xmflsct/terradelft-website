@@ -117,7 +117,7 @@ const Header: React.FC = () => {
           <Search type='header' />
         </div>
       </div>
-      <Navigation toggleNav={toggleNav} />
+      <Navigation toggleNav={toggleNav} setToggleNav={setToggleNav} />
     </header>
   )
 }
