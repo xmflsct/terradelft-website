@@ -27,7 +27,7 @@ export const loader = async (args: LoaderArgs) => {
           exhibitions: eventsEventCollection(
             preview: $preview
             locale: $locale
-            order: datetimeStart_DESC
+            order: datetimeStart_ASC
             where: { datetimeEnd_gte: $datetimeEnd_gte }
           ) {
             total
