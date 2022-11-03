@@ -14,7 +14,7 @@ const cache = async <T = unknown>({
   context: LoaderArgs['context']
 }): Promise<T> => {
   const preview = context.ENVIRONMENT !== 'PRODUCTION'
-  if (preview && !ttlMinutes) {
+  if (preview || !ttlMinutes) {
     return await req()
   }
 
