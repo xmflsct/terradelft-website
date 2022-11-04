@@ -1,8 +1,58 @@
-import { DOMAttributes } from 'react'
+import { minBy } from 'lodash'
+import { DOMAttributes, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Zoom from 'react-medium-image-zoom'
+import Zoom, { UncontrolledProps } from 'react-medium-image-zoom'
 import classNames from '~/utils/classNames'
 import { CommonImage } from '~/utils/contentful'
+import useWindowDimensions from '~/utils/windowDimensions'
+
+const ZoomContent: React.FC<
+  Parameters<NonNullable<UncontrolledProps['ZoomContent']>>['0'] & {
+    image: Pick<NonNullable<Props['image']>, 'width' | 'height'>
+  }
+> = ({ buttonUnzoom, modalState, img, image }) => {
+  const { width, height } = useWindowDimensions()
+  const imageRatio = image.width / image.height
+  const windowRatio = width / height
+  const [mouseHover, setMouseHover] = useState(false)
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | undefined>(
+    undefined
+  )
+  const zoomSize = 200
+  const realWidth = imageRatio > windowRatio ? width : (image.width / image.height) * width
+  const realHeight = imageRatio > windowRatio ? (image.height / image.width) * height : height
+  const zoomLevel = minBy([image.width / width, image.height / height, 2]) || 2
+
+  return (
+    <>
+      {modalState === 'LOADED' ? buttonUnzoom : null}
+      <figure
+        onMouseMove={e => setMousePosition({ x: e.clientX, y: e.clientY })}
+        onMouseEnter={() => setMouseHover(true)}
+        onMouseLeave={() => setMouseHover(false)}
+      >
+        {img}
+        {modalState === 'LOADED' && mouseHover && mousePosition ? (
+          <div
+            style={{
+              position: 'absolute',
+              border: '1px solid lightgray',
+              left: mousePosition.x - zoomSize / 2,
+              top: mousePosition.y - zoomSize / 2,
+              width: zoomSize,
+              height: zoomSize,
+              backgroundImage: `url(${img?.props.src})`,
+              backgroundSize: `${realWidth * zoomLevel}px ${realHeight * zoomLevel}px`,
+              backgroundPositionX: `${-mousePosition.x * zoomLevel + zoomSize / 2}px`,
+              backgroundPositionY: `${-mousePosition.y * zoomLevel + zoomSize / 2}px`
+            }}
+            role='presentation'
+          />
+        ) : null}
+      </figure>
+    </>
+  )
+}
 
 declare namespace ContentfulImageTransform {
   type FocusArea =
@@ -195,6 +245,7 @@ const ContentfulImage: React.FC<Props> = ({
               ...formatJPG
             }).toString()}`
           }}
+          ZoomContent={props => <ZoomContent {...props} image={image} />}
         >
           {theImage()}
         </Zoom>

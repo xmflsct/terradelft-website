@@ -41,7 +41,7 @@ const ObjectImages: React.FC<Props> = ({ object, selectedImages, selectedVariati
           if (index === 0) return
 
           return (
-            <div className='mb-4 relative break-inside-avoid'>
+            <div key={index} className='mb-4 relative break-inside-avoid'>
               <ContentfulImage image={image} width={147} zoomable />
               {image?.description && (
                 <span className='absolute bottom-0 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-secondary text-background text-sm font-semibold'>
