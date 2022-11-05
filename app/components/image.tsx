@@ -18,10 +18,14 @@ const ZoomContent: React.FC<
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | undefined>(
     undefined
   )
-  const zoomSize = 200
-  const realWidth = imageRatio > windowRatio ? width : (image.width / image.height) * width
-  const realHeight = imageRatio > windowRatio ? (image.height / image.width) * height : height
-  const zoomLevel = minBy([image.width / width, image.height / height, 2]) || 2
+  const realWidth = imageRatio > windowRatio ? width : (image.width / image.height) * height
+  const realHeight = imageRatio > windowRatio ? (image.height / image.width) * width : height
+
+  const offsetX = (width - realWidth) / 2
+  const offsetY = (height - realHeight) / 2
+
+  const zoomSize = 266
+  const zoomLevel = minBy([image.width / realWidth, image.height / realHeight, 2]) || 2
 
   return (
     <>
@@ -32,7 +36,7 @@ const ZoomContent: React.FC<
         onMouseLeave={() => setMouseHover(false)}
       >
         {img}
-        {modalState === 'LOADED' && mouseHover && mousePosition ? (
+        {zoomLevel > 1 && modalState === 'LOADED' && mouseHover && mousePosition ? (
           <div
             style={{
               position: 'absolute',
@@ -43,8 +47,8 @@ const ZoomContent: React.FC<
               height: zoomSize,
               backgroundImage: `url(${img?.props.src})`,
               backgroundSize: `${realWidth * zoomLevel}px ${realHeight * zoomLevel}px`,
-              backgroundPositionX: `${-mousePosition.x * zoomLevel + zoomSize / 2}px`,
-              backgroundPositionY: `${-mousePosition.y * zoomLevel + zoomSize / 2}px`
+              backgroundPositionX: `${(offsetX - mousePosition.x) * zoomLevel + zoomSize / 2}px`,
+              backgroundPositionY: `${(offsetY - mousePosition.y) * zoomLevel + zoomSize / 2}px`
             }}
             role='presentation'
           />
