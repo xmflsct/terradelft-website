@@ -17,7 +17,8 @@ const sendEmail = async (args: Args): Promise<boolean> => {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       personalizations: [{ to: [{ email: args.context.EMAIL_RECEIVER }] }],
-      from: { email: args.context.EMAIL_RECEIVER, reply_to: args.data.email, name: args.data.name },
+      from: { email: args.context.EMAIL_RECEIVER, name: args.data.name },
+      reply_to: { email: args.data.email, name: args.data.name },
       subject: `${args.data.type} - ${args.data.subject}`,
       content: [{ type: 'text/html', value: args.data.html }]
     }),
