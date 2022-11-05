@@ -11,8 +11,8 @@ type Args = {
   }
 }
 
-const sendEmail = async (args: Args): Promise<boolean> => {
-  const res = await fetch('https://api.mailchannels.net/tx/v1/send', {
+const sendEmail = async (args: Args): Promise<Response> => {
+  return await fetch('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
@@ -23,9 +23,6 @@ const sendEmail = async (args: Args): Promise<boolean> => {
       content: [{ type: 'text/html', value: args.data.html }]
     }),
   })
-
-  return res.ok
-
 }
 
 export default sendEmail
