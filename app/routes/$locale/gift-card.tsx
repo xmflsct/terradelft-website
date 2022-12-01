@@ -141,14 +141,14 @@ const PageGiftCard: React.FC = () => {
                     <div className='flex flex-row'>
                       <input
                         autoComplete='off'
-                        value={amountCustom}
+                        value={theAmount}
                         onChange={e => {
                           if (!e.target.value) {
                             setTheAmountDirty(false)
-                            setAmountCustom(undefined)
+                            setTheAmount(undefined)
                           } else {
                             setTheAmountDirty(true)
-                            setAmountCustom(Math.ceil(parseFloat(e.target.value)))
+                            setTheAmount(Math.ceil(parseFloat(e.target.value)))
                           }
                         }}
                         size={4}
@@ -160,16 +160,16 @@ const PageGiftCard: React.FC = () => {
                         options={Array(11)
                           .fill(undefined)
                           .map((_, i) => ({ value: i, label: i }))}
-                        value={{ value: theAmount, label: theAmount }}
+                        value={{ value: amountCustom, label: amountCustom }}
                         isSearchable={false}
-                        onChange={e => e && setTheAmount(e.value)}
+                        onChange={e => e && setAmountCustom(e.value)}
                         styles={selectStyle}
                       />
                     </div>
                     {theAmountDirty &&
-                    amountCustom &&
+                    theAmount &&
                     giftCard.customAmountMinimum &&
-                    amountCustom < giftCard.customAmountMinimum ? (
+                    theAmount < giftCard.customAmountMinimum ? (
                       <div className='text-sm text-secondary'>
                         {t('minimum', { amount: giftCard.customAmountMinimum })}
                       </div>
