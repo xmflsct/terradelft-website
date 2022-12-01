@@ -65,8 +65,8 @@ const PageGiftCard: React.FC = () => {
   const [quantity, setQuantity] = useState<{ [k: string]: number | undefined }>(
     Object.fromEntries(giftCard.defaultAmounts.map(amount => [parseInt(amount), undefined]))
   )
-  const [amountCustom, setAmountCustom] = useState<number | undefined>(20)
-  const [theAmount, setTheAmount] = useState<number>()
+  const [amountCustom, setAmountCustom] = useState<number>()
+  const [theAmount, setTheAmount] = useState<number | undefined>(50)
   const [theAmountDirty, setTheAmountDirty] = useState(false)
 
   return (
