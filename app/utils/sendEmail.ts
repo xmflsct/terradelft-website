@@ -1,4 +1,4 @@
-import { LoaderArgs } from "@remix-run/cloudflare"
+import { LoaderArgs } from '@remix-run/cloudflare'
 
 type Args = {
   context: LoaderArgs['context']
@@ -11,18 +11,29 @@ type Args = {
   }
 }
 
-const sendEmail = async (args: Args): Promise<Response> => {
-  return await fetch('https://api.mailchannels.net/tx/v1/send', {
+const sendEmail = async (args: Args): Promise<boolean> => {
+  const receiver = args.context.SENDGRID_EMAIL
+
+  // Filter out yahoo email address, see https://sendgrid.com/blog/yahoo-dmarc-update/
+  const email = args.data.email.includes('@yahoo') ? receiver : args.data.email
+  const message = {
+    personalizations: [{ to: [{ email: receiver }] }],
+    from: { email, name: args.data.name },
+    reply_to: { email: args.data.email, name: args.data.name },
+    subject: `${args.data.type} - ${args.data.subject}`,
+    content: [{ type: 'text/html', value: args.data.html }]
+  }
+
+  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: args.context.EMAIL_RECEIVER }] }],
-      from: { email: args.context.EMAIL_RECEIVER, name: args.data.name },
-      reply_to: { email: args.data.email, name: args.data.name },
-      subject: `${args.data.type} - ${args.data.subject}`,
-      content: [{ type: 'text/html', value: args.data.html }]
-    }),
+    headers: {
+      Authorization: `Bearer ${args.context.SENDGRID_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(message)
   })
+
+  return res.ok
 }
 
 export default sendEmail
