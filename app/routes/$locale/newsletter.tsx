@@ -71,7 +71,7 @@ const PageNewsletter = () => {
   const { countriesOptions } = useLoaderData<typeof loader>()
   const { t } = useTranslation('newsletter')
 
-  const actionData = useActionData<Response>()
+  const sent = useActionData<typeof action>()
   const transition = useTransition()
 
   return (
@@ -124,15 +124,12 @@ const PageNewsletter = () => {
             <span className='ml-2'>{t('GDPR')}</span>
           </div>
 
-          <Button
-            type='submit'
-            disabled={transition.state === ('submitting' || 'loading') || actionData?.ok}
-          >
+          <Button type='submit' disabled={transition.state === ('submitting' || 'loading') || sent}>
             {transition.state === 'submitting'
               ? t('button.submitting')
               : transition.state === 'loading'
               ? t('button.submitting')
-              : actionData?.ok
+              : sent
               ? t('button.success')
               : t('button.default')}
           </Button>

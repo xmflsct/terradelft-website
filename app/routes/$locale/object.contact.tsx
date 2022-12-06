@@ -56,10 +56,10 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
   const location = useLocation()
   const params = useParams()
   const { t } = useTranslation('object')
-  const objectContact = useFetcher<Response>()
+  const objectContact = useFetcher()
 
   useEffect(() => {
-    if (objectContact.type === 'done' && objectContact.data?.ok) {
+    if (objectContact.type === 'done' && objectContact.data === true) {
       setSent(true)
     } else {
       console.warn(objectContact.data)
