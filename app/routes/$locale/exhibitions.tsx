@@ -128,20 +128,6 @@ const PageExhibitions = () => {
       <div>
         <Link to='/exhibitions/page/1'>{t('archive')}</Link>
       </div>
-      <div>
-        <a
-          href={
-            i18n.language.startsWith('en')
-              ? 'https://archive2.terra-delft.nl/exhibition/archive/'
-              : 'https://archive2.terra-delft.nl/nl/expositie/archief/'
-          }
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          {t('archive', { context: 'wordpress' })}{' '}
-          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-        </a>
-      </div>
     </>
   )
 }
