@@ -1,4 +1,4 @@
-const SEOTitle = (title?: string): string => {
+const SEOTitle = (title?: string | null): string => {
   if (title) {
     return `${title} | Terra Delft`
   } else {
