@@ -7,3 +7,12 @@ public/build
 app/styles
 .env
 .mf
+
+# yarn 3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

@@ -14,7 +14,7 @@
   },
   "footer": {
     "left": {
-      "copyright": "© Terra Delft Online 2015 - 2022",
+      "copyright": "© Terra Delft Online 2015 - 2023",
       "opening": {
         "1": "woensdag t/m vrijdag 11 - 18 uur",
         "2": "zaterdag 11 - 17 uur",
@@ -23,7 +23,7 @@
     },
     "center": {
       "address": "Nieuwstraat 7, 2611 HK Delft",
-      "phone": "Tel/Fax: 015-2147072",
+      "phone": "Tel: 015-2147072",
       "email": "Email: info@terra-delft.nl"
     }
   },

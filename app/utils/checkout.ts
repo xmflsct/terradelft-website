@@ -350,7 +350,8 @@ const checkout = async ({
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}`
+      Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
     },
     body
   })
