@@ -12,23 +12,25 @@ type Args = {
 }
 
 const sendEmail = async (args: Args): Promise<boolean> => {
-  const receiver = args.context.SENDGRID_EMAIL
-
-  // Filter out yahoo email address, see https://sendgrid.com/blog/yahoo-dmarc-update/
-  const email = args.data.email.includes('@yahoo') ? receiver : args.data.email
+  const receiver = args.context.EMAIL_RECEIVER
   const message = {
-    personalizations: [{ to: [{ email: receiver }] }],
-    from: { email, name: args.data.name },
-    reply_to: { email: args.data.email, name: args.data.name },
+    sender: {
+      email: 'noreply@terra-delft.nl',
+      name: args.data.name
+    },
+    replyTo: { email: args.data.email, name: args.data.name },
+    to: [{ email: receiver, name: 'Terra Delft' }],
+    bcc: [{ email: args.context.EMAIL_BCC }],
     subject: `${args.data.type} - ${args.data.subject}`,
-    content: [{ type: 'text/html', value: args.data.html }]
+    htmlContent: args.data.html
   }
 
-  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+  const res = await fetch('https://api.sendinblue.com/v3/smtp/email', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${args.context.SENDGRID_KEY}`,
-      'Content-Type': 'application/json'
+      'api-key': args.context.SENDINBLUE_KEY as string,
+      'content-type': 'application/json',
+      accept: 'application/json'
     },
     body: JSON.stringify(message)
   })
