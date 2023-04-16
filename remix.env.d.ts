@@ -9,9 +9,8 @@
 //     CONTENTFUL_KEY?: string
 //     STRIPE_KEY_PRIVATE?: string
 //     STRIPE_KEY_PUBLIC?: string
-//     SENDGRID_EMAIL?: string
-//     SENDGRID_KEY?: string
 //     EMAIL_RECEIVER?: string
+//     SENDINBLUE_KEY?: string
 //     ALGOLIA_APP_ID?: string
 //     ALGOLIA_API_KEY?: string
 //     TERRADELFT_WEBSITE?: KVNamespace
