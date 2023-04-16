@@ -20,6 +20,7 @@ const sendEmail = async (args: Args): Promise<boolean> => {
     },
     replyTo: { email: args.data.email, name: args.data.name },
     to: [{ email: receiver, name: 'Terra Delft' }],
+    bcc: [{ email: args.context.EMAIL_BCC }],
     subject: `${args.data.type} - ${args.data.subject}`,
     htmlContent: args.data.html
   }
