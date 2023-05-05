@@ -1,6 +1,6 @@
 import countries from 'i18n-iso-countries'
 import { forIn } from 'lodash'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { BagContext } from '~/states/bag'
@@ -89,6 +89,7 @@ const CheckoutDelivery: React.FC<Props> = ({
           {t('shipping')}
           <div style={{ flex: '1', marginLeft: '0.5rem' }}>
             <ReactSelect
+              instanceId={useId()}
               name='country'
               options={countryNames}
               value={delivery.shipment}

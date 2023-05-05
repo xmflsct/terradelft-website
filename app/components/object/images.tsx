@@ -1,4 +1,4 @@
-import { SelectedImages, SelectedVariation } from '~/routes/$locale/object.$id'
+import { SelectedImages, SelectedVariation } from '~/routes/$locale.object.$id'
 import { CommonImage, ObjectsObject } from '~/utils/contentful'
 import ContentfulImage from '../image'
 

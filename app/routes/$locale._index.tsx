@@ -1,4 +1,4 @@
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { shuffle } from 'lodash'
@@ -105,11 +105,13 @@ export const loader = async (args: LoaderArgs) => {
   })
 }
 
-export const meta: MetaFunction = () => ({
-  title: SEOTitle(),
-  keywords: SEOKeywords(),
-  description: 'Terra Delft Website'
-})
+export const meta: V2_MetaFunction = () => [
+  {
+    title: SEOTitle(),
+    keywords: SEOKeywords(),
+    description: 'Terra Delft Website'
+  }
+]
 export let handle = {
   i18n: 'index'
 }

@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useEffect, useState } from 'react'
+import { createContext, PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { CommonImage, ObjectsArtist } from '~/utils/contentful'
 
 type ObjectMain = {
@@ -94,8 +94,13 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
       setObjects(objects)
     }
   }, [])
+  const rendered = useRef<boolean>(false)
   useEffect(() => {
-    localStorage.setItem('objects', JSON.stringify(objects))
+    if (rendered.current) {
+      localStorage.setItem('objects', JSON.stringify(objects))
+    } else {
+      rendered.current = true
+    }
   }, [objects])
 
   const [delivery, setDelivery] = useState<TDDelivery>(initBagState.delivery)

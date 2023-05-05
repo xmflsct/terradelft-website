@@ -1,6 +1,6 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useContext } from 'react'
+import { useContext, useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { BagContext } from '~/states/bag'
@@ -85,6 +85,7 @@ const BagList: React.FC = () => {
                     <th className='text-left py-1 pr-4'>{t('object:amount')}</th>
                     <td>
                       <ReactSelect
+                        instanceId={useId()}
                         options={Array(object.stock === 1 ? 1 : 50)
                           .fill(undefined)
                           .map((_, i) => ({ value: i + 1, label: i + 1 }))}

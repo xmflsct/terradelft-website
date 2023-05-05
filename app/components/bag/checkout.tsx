@@ -1,10 +1,10 @@
-import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
+import { useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BagData } from '~/routes/$locale/bag'
+import { BagData } from '~/routes/$locale.bag'
 import { BagContext } from '~/states/bag'
 import { CheckoutContent } from '~/utils/checkout'
 import Button from '../button'
@@ -50,7 +50,7 @@ const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
     )
   }
 
-  const transition = useTransition()
+  const navigation = useNavigation()
 
   const checkoutContent: CheckoutContent = {
     objects,
@@ -96,14 +96,14 @@ const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
       <CheckoutDelivery
         country={country}
         subtotal={amounts.subtotal}
-        isSubmitting={transition.state === 'submitting'}
+        isSubmitting={navigation.state === 'submitting'}
         shipmentMethods={shipmentMethods}
       />
 
       <input type='hidden' name='json' value={JSON.stringify(checkoutContent)} />
 
-      <Button type='submit' disabled={transition.state === 'submitting'} className='my-4 w-full'>
-        {(transition.state === 'submitting' && t('button.wait')) ||
+      <Button type='submit' disabled={navigation.state === 'submitting'} className='my-4 w-full'>
+        {(navigation.state === 'submitting' && t('button.wait')) ||
           (formState.submitCount !== 0 && t('button.retry')) ||
           t('button.submit')}
       </Button>
