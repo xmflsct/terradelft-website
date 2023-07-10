@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CSSObjectWithLabel } from 'react-select'
 import kunstkoop from '~/images/kunstkoop.png'
-import { SelectedImages, SelectedVariation } from '~/routes/$locale/object.$id'
+import { SelectedImages, SelectedVariation } from '~/routes/$locale.object.$id'
 import {
   ObjectsObjectVariation_NameLocalized,
   ObjectsObject_NameLocalized

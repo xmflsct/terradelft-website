@@ -1,4 +1,4 @@
-import { ActionArgs, json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { Form, useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
@@ -68,11 +68,13 @@ export const loader = async (args: LoaderArgs) => {
   return json({ env, country, rates: data.shippingRates.items[0].rates })
 }
 
-export const meta: MetaFunction = () => ({
-  title: SEOTitle(),
-  keywords: SEOKeywords(),
-  description: 'Terra Delft Website'
-})
+export const meta: V2_MetaFunction = () => [
+  {
+    title: SEOTitle(),
+    keywords: SEOKeywords(),
+    description: 'Terra Delft Website'
+  }
+]
 export let handle = { i18n: ['bag', 'object'] }
 
 const PageBag = () => {

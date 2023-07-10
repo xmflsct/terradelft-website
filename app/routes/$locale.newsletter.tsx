@@ -1,5 +1,5 @@
-import { ActionArgs, json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
-import { Form, useActionData, useLoaderData, useTransition } from '@remix-run/react'
+import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import Button from '~/components/button'
 import FormField from '~/components/formField'
@@ -58,11 +58,13 @@ export const action = async ({ context, request }: ActionArgs) => {
   return await sendEmail({ context, data })
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title])
-  }
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+  data?.meta && [
+    {
+      title: SEOTitle(data.meta.title),
+      keywords: SEOKeywords([data.meta.title])
+    }
+  ]
 export let handle = {
   i18n: 'newsletter'
 }
@@ -72,7 +74,7 @@ const PageNewsletter = () => {
   const { t } = useTranslation('newsletter')
 
   const sent = useActionData<typeof action>()
-  const transition = useTransition()
+  const navigation = useNavigation()
 
   return (
     <div className='grid grid-cols-6 gap-4'>
@@ -124,10 +126,10 @@ const PageNewsletter = () => {
             <span className='ml-2'>{t('GDPR')}</span>
           </div>
 
-          <Button type='submit' disabled={transition.state === ('submitting' || 'loading') || sent}>
-            {transition.state === 'submitting'
+          <Button type='submit' disabled={navigation.state === ('submitting' || 'loading') || sent}>
+            {navigation.state === 'submitting'
               ? t('button.submitting')
-              : transition.state === 'loading'
+              : navigation.state === 'loading'
               ? t('button.submitting')
               : sent
               ? t('button.success')

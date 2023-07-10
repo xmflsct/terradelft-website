@@ -1,5 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
@@ -59,16 +59,17 @@ export const loader = async (args: LoaderArgs) => {
   return json(data.artists.items[0])
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.artist
-    ? {
-        title: SEOTitle(data.artist),
-        keywords: SEOKeywords([data.artist]),
-        ...(data.biography && {
-          description: documentToPlainTextString(data.biography.json).substring(0, 199)
-        })
-      }
-    : {}
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+  data?.artist && [
+    {
+      title: SEOTitle(data.artist),
+      keywords: SEOKeywords([data.artist]),
+      ...(data.biography && {
+        description: documentToPlainTextString(data.biography.json).substring(0, 199)
+      })
+    }
+  ]
+
 export const handle = {
   i18n: 'artist',
   structuredData: ({ data }: { data: LoaderData<typeof loader> }): WithContext<Person> =>
@@ -92,7 +93,13 @@ const PageArtist = () => {
       <H1>{artist.artist}</H1>
       <div className='flex flex-col lg:flex-row gap-4 mb-8'>
         <div className='flex-1'>
-          <ContentfulImage alt={artist.artist} image={artist.image} width={400} quality={85} zoomable />
+          <ContentfulImage
+            alt={artist.artist}
+            image={artist.image}
+            width={400}
+            quality={85}
+            zoomable
+          />
         </div>
         <RichText content={artist.biography} className='flex-2' assetWidth={628} />
       </div>

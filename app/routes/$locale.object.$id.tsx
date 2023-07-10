@@ -1,5 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { max } from 'lodash'
@@ -23,7 +23,7 @@ import {
 } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
-import { ObjectContact } from './object.contact'
+import { ObjectContact } from './$locale.object.contact'
 
 export const loader = async (args: LoaderArgs) => {
   const data = await cache<{
@@ -132,7 +132,7 @@ export const loader = async (args: LoaderArgs) => {
     })
   })
 
-  if (!data?.object) {
+  if (!data?.object || !data.object.artist) {
     throw json('Not Found', { status: 404 })
   }
 
@@ -170,20 +170,22 @@ export const loader = async (args: LoaderArgs) => {
   return json(tempObj)
 }
 
-export const meta: MetaFunction = ({
+export const meta: V2_MetaFunction = ({
   data: object,
   params: { locale }
 }: {
   data: LoaderData<typeof loader>
   params: LoaderArgs['params']
 }) =>
-  object && {
-    title: SEOTitle(object.name[locale]),
-    keywords: SEOKeywords([object.name[locale] || '']),
-    ...(object.description && {
-      description: documentToPlainTextString(object.description.json).substring(0, 199)
-    })
-  }
+  object && [
+    {
+      title: SEOTitle(object.name[locale]),
+      keywords: SEOKeywords([object.name[locale] || '']),
+      ...(object.description && {
+        description: documentToPlainTextString(object.description.json).substring(0, 199)
+      })
+    }
+  ]
 export const handle = {
   i18n: 'object',
   structuredData: (

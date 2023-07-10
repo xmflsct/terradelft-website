@@ -1,4 +1,4 @@
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
@@ -30,13 +30,19 @@ export const loader = async (args: LoaderArgs) => {
       ...args,
       variables: { limit: perPage, skip: perPage * (page - 1) },
       query: gql`
-        query PageNewsPage($preview: Boolean, $locale: String, $limit: Int, $skip: Int) {
+        query PageTerraInChinaNewsPage(
+          $preview: Boolean
+          $locale: String
+          $limit: Int
+          $skip: Int
+        ) {
           news: newsNewsCollection(
             preview: $preview
             locale: $locale
             order: date_DESC
             limit: $limit
             skip: $skip
+            where: { terraInChina: true }
           ) {
             total
             items {
@@ -58,8 +64,8 @@ export const loader = async (args: LoaderArgs) => {
     })
   })
   const meta = await loadMeta(args, {
-    titleKey: 'pages.news',
-    titleOptions: { context: 'page', page }
+    titleKey: 'pages.terra-in-china-news-page',
+    titleOptions: { page }
   })
 
   if (!data?.news?.items?.length) {
@@ -77,15 +83,16 @@ export const loader = async (args: LoaderArgs) => {
   })
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    description: 'News'
-  }
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+  data?.meta && [
+    {
+      title: SEOTitle(data.meta.title),
+      keywords: SEOKeywords([data.meta.title])
+    }
+  ]
 export let handle = { i18n: 'news' }
 
-const PageNewsPage = () => {
+const PageTerraInChinaNewsPage = () => {
   const {
     data: {
       news: { page, items }
@@ -95,11 +102,11 @@ const PageNewsPage = () => {
 
   return (
     <>
-      <H1>{t('common:pages.news', { context: 'page', page: page.current })}</H1>
+      <H1>{t('common:pages.terra-in-china-news-page', { page: page.current })}</H1>
       <ListNews news={items} />
-      <Pagination basePath='/news/page' page={page.current} total={page.total} />
+      <Pagination basePath='/terra-in-china/news/page' page={page.current} total={page.total} />
     </>
   )
 }
 
-export default PageNewsPage
+export default PageTerraInChinaNewsPage

@@ -1,5 +1,14 @@
-import { LinksFunction, LoaderArgs, MetaFunction, redirect } from '@remix-run/cloudflare'
-import { Links, LiveReload, Meta, Scripts, ScrollRestoration, Outlet } from '@remix-run/react'
+import { LinksFunction, LoaderArgs, redirect } from '@remix-run/cloudflare'
+import {
+  isRouteErrorResponse,
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useRouteError
+} from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import { H1 } from '~/components/globals'
 import Layout from '~/components/layout'
@@ -27,11 +36,6 @@ export const handle = {
   i18n: 'common'
 }
 
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  viewport: 'width=device-width,initial-scale=1'
-})
-
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: styles }]
 }
@@ -44,6 +48,8 @@ export default function Root() {
   return (
     <html lang={language} dir={dir()}>
       <head>
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='width=device-width,initial-scale=1' />
         <Meta />
         <Links />
         <StructuredData />
@@ -58,23 +64,28 @@ export default function Root() {
   )
 }
 
-export function CatchBoundary() {
+export function ErrorBoundary() {
   const { t } = useTranslation('common')
 
-  return (
-    <html>
-      <head>
-        <title>{SEOTitle(t('pages.404'))}</title>
-        <Meta />
-        <Links />
-      </head>
-      <body className='scroll-smooth bg-background text-primary'>
-        <Layout>
-          <H1>{t('pages.404')}</H1>
-          <img src={notFound} />
-        </Layout>
-        <Scripts />
-      </body>
-    </html>
-  )
+  const error = useRouteError()
+
+  // when true, this is what used to go to `CatchBoundary`
+  if (isRouteErrorResponse(error)) {
+    return (
+      <html>
+        <head>
+          <title>{SEOTitle(t('pages.404'))}</title>
+          <Meta />
+          <Links />
+        </head>
+        <body className='scroll-smooth bg-background text-primary'>
+          <Layout>
+            <H1>{t('pages.404')}</H1>
+            <img src={notFound} />
+          </Layout>
+          <Scripts />
+        </body>
+      </html>
+    )
+  }
 }

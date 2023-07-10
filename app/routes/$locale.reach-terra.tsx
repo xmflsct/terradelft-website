@@ -1,5 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import RichText from '~/components/richText'
@@ -35,14 +35,16 @@ export const loader = async (args: LoaderArgs) => {
   return json({ meta, data })
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title]),
-    ...(data?.data?.page?.description?.json && {
-      description: documentToPlainTextString(data.data.page.description.json).substring(0, 199)
-    })
-  }
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+  data?.meta && [
+    {
+      title: SEOTitle(data.meta.title),
+      keywords: SEOKeywords([data.meta.title]),
+      ...(data?.data?.page?.description?.json && {
+        description: documentToPlainTextString(data.data.page.description.json).substring(0, 199)
+      })
+    }
+  ]
 
 const PageReachTerra = () => {
   const {

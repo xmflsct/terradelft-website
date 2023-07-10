@@ -10,7 +10,7 @@ import FormField from '~/components/formField'
 import classNames from '~/utils/classNames'
 import { ObjectsObject_NameLocalized } from '~/utils/contentful'
 import sendEmail from '~/utils/sendEmail'
-import { SelectedVariation } from './object.$id'
+import { SelectedVariation } from './$locale.object.$id'
 
 export const loader = () => {
   throw json(null, { status: 404 })
@@ -59,10 +59,8 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
   const objectContact = useFetcher()
 
   useEffect(() => {
-    if (objectContact.type === 'done' && objectContact.data === true) {
+    if (objectContact.data === true) {
       setSent(true)
-    } else {
-      console.warn(objectContact.data)
     }
   }, [objectContact])
   const [sent, setSent] = useState(false)
@@ -106,9 +104,11 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
                   <input
                     type='hidden'
                     name='subject'
-                    value={t('contact.form.subject.value', {
-                      name: object.name[params.locale!]
-                    })}
+                    value={
+                      t('contact.form.subject.value', {
+                        name: object.name[params.locale!]
+                      }) || ''
+                    }
                   />
                   <FormField
                     type='vertical'
@@ -117,9 +117,11 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
                       <input
                         readOnly
                         disabled
-                        defaultValue={t('contact.form.subject.value', {
-                          name: object.name[params.locale!]
-                        })}
+                        defaultValue={
+                          t('contact.form.subject.value', {
+                            name: object.name[params.locale!]
+                          }) || ''
+                        }
                         name='sub'
                         type='text'
                         required

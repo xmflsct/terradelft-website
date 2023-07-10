@@ -1,4 +1,4 @@
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -49,11 +49,13 @@ export const loader = async (args: LoaderArgs) => {
   return json({ meta, session, line_items })
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && {
-    title: SEOTitle(data.meta.title),
-    keywords: SEOKeywords([data.meta.title])
-  }
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+  data?.meta && [
+    {
+      title: SEOTitle(data.meta.title),
+      keywords: SEOKeywords([data.meta.title])
+    }
+  ]
 export let handle = { i18n: 'thankYou' }
 
 const PageThankYou: React.FC = () => {

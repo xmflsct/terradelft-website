@@ -1,5 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import type { Event, WithContext } from 'schema-dts'
@@ -68,14 +68,16 @@ export const loader = async (args: LoaderArgs) => {
   return json(data)
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.exhibition && {
-    title: SEOTitle(data.exhibition.name),
-    keywords: SEOKeywords([data.exhibition.name]),
-    ...(data.exhibition.description && {
-      description: documentToPlainTextString(data.exhibition.description.json).substring(0, 199)
-    })
-  }
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+  data?.exhibition && [
+    {
+      title: SEOTitle(data.exhibition.name),
+      keywords: SEOKeywords([data.exhibition.name]),
+      ...(data.exhibition.description && {
+        description: documentToPlainTextString(data.exhibition.description.json).substring(0, 199)
+      })
+    }
+  ]
 export const handle = {
   structuredData: ({ exhibition }: LoaderData<typeof loader>): WithContext<Event> =>
     exhibition && {

@@ -1,8 +1,8 @@
 import { difference, findIndex, intersection, max, min, union } from 'lodash'
-import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useState } from 'react'
+import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Select from 'react-select'
-import { SelectedImages, SelectedVariation } from '~/routes/$locale/object.$id'
+import { SelectedImages, SelectedVariation } from '~/routes/$locale.object.$id'
 import { BagContext } from '~/states/bag'
 import {
   ObjectsObjectVariation_NameLocalized,
@@ -229,6 +229,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedImages, setSelecte
           {optionsVariant?.length && (
             <FormField label={t('variant')}>
               <Select
+                instanceId={useId()}
                 name='variant'
                 options={optionsVariant}
                 value={selected.variant}
@@ -244,6 +245,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedImages, setSelecte
           {optionsColour?.length && (
             <FormField label={t('colour')}>
               <Select
+                instanceId={useId()}
                 name='colour'
                 options={optionsColour}
                 value={selected.colour}
@@ -259,6 +261,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedImages, setSelecte
           {optionsSize?.length && (
             <FormField label={t('size')}>
               <Select
+                instanceId={useId()}
                 name='size'
                 options={optionsSize}
                 value={selected.size}
@@ -273,6 +276,7 @@ const SellVariations: React.FC<Props> = ({ object, setSelectedImages, setSelecte
           )}
           <FormField label={t('amount')}>
             <Select
+              instanceId={useId()}
               options={Array(
                 commonIDs.length === 1 && theVariation ? (theVariation.stock === 1 ? 1 : 99) : 0
               )
