@@ -132,7 +132,7 @@ export const loader = async (args: LoaderArgs) => {
     })
   })
 
-  if (!data?.object) {
+  if (!data?.object || !data.object.artist) {
     throw json('Not Found', { status: 404 })
   }
 
