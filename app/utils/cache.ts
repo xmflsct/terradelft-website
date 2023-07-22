@@ -3,7 +3,7 @@ import { LoaderArgs } from "@remix-run/cloudflare"
 export let cached: boolean | undefined = undefined
 
 const cache = async <T = unknown>({
-  ttlMinutes = 60,
+  ttlMinutes = 15,
   req,
   request,
   context
