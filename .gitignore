@@ -3,10 +3,12 @@ node_modules
 functions/_assets
 functions/\[\[path\]\].js
 functions/\[\[path\]\].js.map
+functions/metafile.js.json
+functions/metafile.server.json
 public/build
 app/styles
 .env
-.mf
+.wrangler
 
 # yarn 3
 .pnp.*

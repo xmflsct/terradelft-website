@@ -177,15 +177,18 @@ export const meta: V2_MetaFunction = ({
   data: LoaderData<typeof loader>
   params: LoaderArgs['params']
 }) =>
-  object && [
-    {
-      title: SEOTitle(object.name[locale]),
-      keywords: SEOKeywords([object.name[locale] || '']),
-      ...(object.description && {
-        description: documentToPlainTextString(object.description.json).substring(0, 199)
-      })
-    }
-  ]
+  object
+    ? [
+        { title: SEOTitle(object.name[locale]) },
+        { name: 'keywords', content: SEOKeywords([object.name[locale] || '']) },
+        object.description
+          ? {
+              name: 'description',
+              content: documentToPlainTextString(object.description.json).substring(0, 199)
+            }
+          : {}
+      ]
+    : []
 export const handle = {
   i18n: 'object',
   structuredData: (

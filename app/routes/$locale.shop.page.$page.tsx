@@ -2,7 +2,7 @@ import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useSubmit } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { find, inRange, maxBy, sortBy } from 'lodash'
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { H4 } from '~/components/globals'
@@ -317,12 +317,12 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && [
-    {
-      title: SEOTitle(data.meta.title),
-      keywords: SEOKeywords([data.meta.title])
-    }
-  ]
+  data?.meta
+    ? [
+        { title: SEOTitle(data.meta.title) },
+        { name: 'keywords', content: SEOKeywords([data.meta.title]) }
+      ]
+    : []
 export let handle = { i18n: 'shop' }
 
 const PageShopPage: React.FC = () => {
@@ -364,7 +364,6 @@ const PageShopPage: React.FC = () => {
       <H4>{t('filters')}</H4>
       <form className='grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
         <ReactSelect
-          instanceId={useId()}
           name='price'
           isClearable
           options={options.prices}
@@ -372,7 +371,6 @@ const PageShopPage: React.FC = () => {
           onChange={d => setSelected({ ...selected, price: d ? d.value : undefined })}
         />
         <ReactSelect
-          instanceId={useId()}
           name='artist'
           isClearable
           isSearchable
@@ -384,7 +382,6 @@ const PageShopPage: React.FC = () => {
           }
         />
         <ReactSelect
-          instanceId={useId()}
           name='variant'
           isClearable
           isSearchable
@@ -397,7 +394,6 @@ const PageShopPage: React.FC = () => {
           }
         />
         <ReactSelect
-          instanceId={useId()}
           name='colour'
           isClearable
           isSearchable

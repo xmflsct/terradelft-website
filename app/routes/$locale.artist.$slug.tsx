@@ -60,15 +60,16 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.artist && [
-    {
-      title: SEOTitle(data.artist),
-      keywords: SEOKeywords([data.artist]),
-      ...(data.biography && {
-        description: documentToPlainTextString(data.biography.json).substring(0, 199)
-      })
-    }
-  ]
+  data?.artist
+    ? [
+        { title: SEOTitle(data.artist) },
+        { name: 'keywords', content: SEOKeywords([data.artist]) },
+        data.biography && {
+          name: 'description',
+          content: documentToPlainTextString(data.biography.json).substring(0, 199)
+        }
+      ]
+    : []
 
 export const handle = {
   i18n: 'artist',

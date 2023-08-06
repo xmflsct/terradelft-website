@@ -1,4 +1,4 @@
-import { useContext, useId, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { BagContext } from '~/states/bag'
@@ -42,7 +42,6 @@ const SellMain: React.FC<Props> = ({ object }) => {
     >
       <FormField label={t('amount')}>
         <ReactSelect
-          instanceId={useId()}
           name='bagAdd'
           options={Array(object.stock === 1 ? 1 : 50)
             .fill(undefined)

@@ -69,15 +69,20 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.exhibition && [
-    {
-      title: SEOTitle(data.exhibition.name),
-      keywords: SEOKeywords([data.exhibition.name]),
-      ...(data.exhibition.description && {
-        description: documentToPlainTextString(data.exhibition.description.json).substring(0, 199)
-      })
-    }
-  ]
+  data?.exhibition
+    ? [
+        {
+          title: SEOTitle(data.exhibition.name)
+        },
+        { name: 'keywords', content: SEOKeywords([data.exhibition.name]) },
+        data.exhibition.description
+          ? {
+              name: 'description',
+              content: documentToPlainTextString(data.exhibition.description.json).substring(0, 199)
+            }
+          : {}
+      ]
+    : []
 export const handle = {
   structuredData: ({ exhibition }: LoaderData<typeof loader>): WithContext<Event> =>
     exhibition && {

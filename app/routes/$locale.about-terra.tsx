@@ -57,15 +57,16 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && [
-    {
-      title: SEOTitle(data.meta.title),
-      keywords: SEOKeywords([data.meta.title]),
-      ...(data.data?.page?.columnLeft?.json && {
-        description: documentToPlainTextString(data.data.page.columnLeft.json).substring(0, 199)
-      })
-    }
-  ]
+  data?.meta
+    ? [
+        { title: SEOTitle(data.meta.title) },
+        { name: 'keywords', content: SEOKeywords([data.meta.title]) },
+        data.data?.page?.columnLeft?.json && {
+          name: 'description',
+          content: documentToPlainTextString(data.data.page.columnLeft.json).substring(0, 199)
+        }
+      ]
+    : []
 export let handle = { i18n: 'aboutTerra' }
 
 const PageAboutTerra = () => {

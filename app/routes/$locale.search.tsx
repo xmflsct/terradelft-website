@@ -125,11 +125,7 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && [
-    {
-      title: SEOTitle(data.meta.title)
-    }
-  ]
+  data?.meta ? [{ title: SEOTitle(data.meta.title) }] : []
 export let handle = { i18n: 'search' }
 
 const PageSearch: React.FC = () => {
