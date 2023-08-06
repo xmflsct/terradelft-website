@@ -130,12 +130,12 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
-  data?.meta && [
-    {
-      title: SEOTitle(data.meta.title),
-      keywords: SEOKeywords([data.meta.title])
-    }
-  ]
+  data?.meta
+    ? [
+        { title: SEOTitle(data.meta.title) },
+        { name: 'keywords', content: SEOKeywords([data.meta.title]) }
+      ]
+    : []
 
 const PageObjectAttribute: React.FC = () => {
   const {

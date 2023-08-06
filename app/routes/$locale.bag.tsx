@@ -69,11 +69,9 @@ export const loader = async (args: LoaderArgs) => {
 }
 
 export const meta: V2_MetaFunction = () => [
-  {
-    title: SEOTitle(),
-    keywords: SEOKeywords(),
-    description: 'Terra Delft Website'
-  }
+  { title: SEOTitle() },
+  { name: 'keywords', content: SEOKeywords() },
+  { name: 'description', content: 'Terra Delft Website' }
 ]
 export let handle = { i18n: ['bag', 'object'] }
 

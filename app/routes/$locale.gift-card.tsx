@@ -2,7 +2,7 @@ import { json, LoaderArgs } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
-import { useContext, useId, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import Button from '~/components/button'
@@ -124,7 +124,6 @@ const PageGiftCard: React.FC = () => {
             {giftCard.defaultAmounts.map((amount, index) => (
               <FormField key={index} label={t('amount', { amount })}>
                 <ReactSelect
-                  instanceId={useId()}
                   options={Array(11)
                     .fill(undefined)
                     .map((_, i) => ({ value: i, label: i }))}
@@ -158,7 +157,6 @@ const PageGiftCard: React.FC = () => {
                         pattern='[0-9]*'
                       />
                       <ReactSelect
-                        instanceId={useId()}
                         options={Array(11)
                           .fill(undefined)
                           .map((_, i) => ({ value: i, label: i }))}
