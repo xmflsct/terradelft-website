@@ -51,6 +51,70 @@ const CheckoutDelivery: React.FC<Props> = ({
     setCountryNames(tempCountries)
   }, [i18n.language])
 
+  const shipments = () => {
+    if (delivery.method === 'shipment') {
+      if (
+        objects.filter(object => object.type !== 'giftcard').length === 0 &&
+        countries.alpha2ToNumeric('NL') === delivery.shipment.value
+      ) {
+        return (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: '0.5rem'
+            }}
+          >
+            <div style={{ flex: '1', paddingLeft: '1.5rem' }}>PostNL post</div>
+            <div>{currency(2, i18n.language)}</div>
+          </div>
+        )
+      } else {
+        return shipmentMethods?.map((method, index) => {
+          return (
+            <div
+              key={index}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: '0.5rem'
+              }}
+            >
+              <div style={{ flex: '1', paddingLeft: '1.5rem' }}>
+                <div>{method.method}</div>
+                {method.description && (
+                  <div style={{ fontSize: '0.875em', color: '#6c757d' }}>{method.description}</div>
+                )}
+                {method.freeForTotal && Number.isFinite(method.freeForTotal) && (
+                  <div style={{ fontSize: '0.875em', color: '#6c757d' }}>
+                    {t('free-for-above', {
+                      amount: currency(method.freeForTotal, i18n.language)
+                    })}
+                  </div>
+                )}
+              </div>
+              <div>
+                {method.price === 0 ||
+                  (method.freeForTotal &&
+                  Number.isFinite(method.freeForTotal) &&
+                  subtotal >= method.freeForTotal
+                    ? t('free')
+                    : objects.filter(object => object.type !== 'giftcard').length === 0 &&
+                      countries.alpha2ToNumeric('NL') === delivery.shipment.value
+                    ? currency(2, i18n.language)
+                    : currency(method.price, i18n.language))}
+              </div>
+            </div>
+          )
+        })
+      }
+    }
+
+    return null
+  }
+
   return (
     <div
       onChange={e =>
@@ -99,48 +163,8 @@ const CheckoutDelivery: React.FC<Props> = ({
             />
           </div>
         </div>
-        {delivery.method === 'shipment' &&
-          shipmentMethods &&
-          shipmentMethods.map((method, index) => {
-            return (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: '0.5rem'
-                }}
-              >
-                <div style={{ flex: '1', paddingLeft: '1.5rem' }}>
-                  <div>{method.method}</div>
-                  {method.description && (
-                    <div style={{ fontSize: '0.875em', color: '#6c757d' }}>
-                      {method.description}
-                    </div>
-                  )}
-                  {method.freeForTotal && Number.isFinite(method.freeForTotal) && (
-                    <div style={{ fontSize: '0.875em', color: '#6c757d' }}>
-                      {t('free-for-above', {
-                        amount: currency(method.freeForTotal, i18n.language)
-                      })}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  {method.price === 0 ||
-                    (method.freeForTotal &&
-                    Number.isFinite(method.freeForTotal) &&
-                    subtotal >= method.freeForTotal
-                      ? t('free')
-                      : objects.filter(object => object.type !== 'giftcard').length === 0 &&
-                        countries.alpha2ToNumeric('NL') === delivery.shipment.value
-                      ? currency(2, i18n.language)
-                      : currency(method.price, i18n.language))}
-                </div>
-              </div>
-            )
-          })}
+
+        {shipments()}
       </div>
     </div>
   )
