@@ -6,7 +6,7 @@ import Backend from 'i18next-http-backend'
 import { StrictMode, startTransition } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
-import { getInitialNamespaces } from 'remix-i18next'
+import { getInitialNamespaces } from 'remix-i18next/client'
 import i18n from './i18n'
 
 config.autoAddCss = false
