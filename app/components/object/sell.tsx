@@ -10,6 +10,7 @@ import {
 import ObjectPrice from './price'
 import SellMain from './sellMain'
 import SellVariations from './sellVariations'
+import { isObjectInStock } from '~/utils/object'
 
 type Props = {
   object: Omit<ObjectsObject_NameLocalized, 'variationsCollection'> & {
@@ -49,7 +50,12 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedImages, setSelectedVar
 
   return (
     <div className='mb-2'>
-      {object.variationsCollection?.items.length ? (
+      {!isObjectInStock(object) ? (
+        <div className='flex flex-row items-center gap-1 my-2'>
+          <div className='w-3 h-3 shrink-0 grow-0 rounded-full bg-red-700' />
+          <span className='font-semibold text-red-700'>{t('out-of-stock')}</span>
+        </div>
+      ) : object.variationsCollection?.items.length ? (
         <SellVariations
           object={object}
           setSelectedImages={setSelectedImages}
@@ -61,18 +67,16 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedImages, setSelectedVar
         ) : (
           <ObjectPrice priceSale={object.priceSale} priceOriginal={object.priceOriginal} />
         )
-      ) : object.stock === 0 ? (
-        <div className='object-sold'>
-          <span>{t('out-of-stock')}</span>
-        </div>
       ) : null}
-      {object.kunstKoop && (
+
+      {object.kunstKoop &&
+      ((object.variationsCollection?.items.length || object.stock) ?? 0 > 0) ? (
         <div className='inline-block'>
           <a href='https://kunstkoop.nl/' target='_blank' rel='noopener noreferrer'>
             <img src={kunstkoop} width={60} height={60} />
           </a>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
