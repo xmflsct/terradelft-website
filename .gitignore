@@ -5,6 +5,7 @@ functions/\[\[path\]\].js
 functions/\[\[path\]\].js.map
 functions/metafile.js.json
 functions/metafile.server.json
+functions/version.txt
 public/build
 app/styles
 .env

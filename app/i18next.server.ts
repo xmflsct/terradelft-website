@@ -1,4 +1,4 @@
-import { RemixI18Next } from 'remix-i18next'
+import { RemixI18Next } from 'remix-i18next/server'
 import i18n from '~/i18n'
 import en from 'public/locales/en'
 import nl from 'public/locales/nl'

@@ -1,7 +1,7 @@
+import { Request } from '@cloudflare/workers-types'
 import { EntryContext } from '@remix-run/cloudflare'
 import { RemixServer } from '@remix-run/react'
 import { createInstance } from 'i18next'
-import isbot from 'isbot'
 import en from 'public/locales/en'
 import nl from 'public/locales/nl'
 import { renderToReadableStream } from 'react-dom/server'
@@ -43,7 +43,7 @@ export default async function handleRequest(
     }
   )
 
-  if (isbot(request.headers.get('user-agent'))) {
+  if ((request.cf?.botManagement as any)?.verified_bot) {
     await body.allReady
   }
 
