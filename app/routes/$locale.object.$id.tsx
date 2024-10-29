@@ -242,7 +242,7 @@ export const handle = {
         offers: {
           '@type': 'Offer',
           price: item.variationsCollection?.items.length
-            ? max(item.variationsCollection.items.map(item => item.priceOriginal))
+            ? max(item.variationsCollection.items.map(item => item?.priceOriginal))
             : item.priceSale
             ? item.priceSale
             : item.priceOriginal,
