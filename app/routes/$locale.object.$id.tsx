@@ -65,7 +65,6 @@ export const loader = async (args: LoaderArgs) => {
                 }
               }
             }
-            kunstKoop
             sellOnline
             priceOriginal
             priceSale

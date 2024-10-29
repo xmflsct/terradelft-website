@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CSSObjectWithLabel } from 'react-select'
-import kunstkoop from '~/images/kunstkoop.png'
 import { SelectedImages, SelectedVariation } from '~/routes/$locale.object.$id'
 import {
   ObjectsObjectVariation_NameLocalized,
@@ -67,15 +66,6 @@ const ObjectSell: React.FC<Props> = ({ object, setSelectedImages, setSelectedVar
         ) : (
           <ObjectPrice priceSale={object.priceSale} priceOriginal={object.priceOriginal} />
         )
-      ) : null}
-
-      {object.kunstKoop &&
-      ((object.variationsCollection?.items.length || object.stock) ?? 0 > 0) ? (
-        <div className='inline-block'>
-          <a href='https://kunstkoop.nl/' target='_blank' rel='noopener noreferrer'>
-            <img src={kunstkoop} width={60} height={60} />
-          </a>
-        </div>
       ) : null}
     </div>
   )

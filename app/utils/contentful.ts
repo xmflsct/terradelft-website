@@ -88,7 +88,6 @@ export type ObjectsObject = {
   description?: CommonRichText
   imagesCollection?: { items: (CommonImage | null)[] }
   artist: ObjectsArtist
-  kunstKoop: boolean
   sellOnline: boolean
   priceOriginal?: number
   priceSale?: number
