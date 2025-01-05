@@ -1,10 +1,9 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { max } from 'lodash-es'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import type { Product, WithContext } from 'schema-dts'
 import { H1, H2, H3 } from '~/components/globals'
 import { Link } from '~/components/link'
@@ -169,13 +168,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return tempObj
 }
 
-export const meta: MetaFunction = ({
-  data: object,
-  params: { locale }
-}: {
-  data: LoaderData<typeof loader>
-  params: LoaderFunctionArgs['params']
-}) =>
+export const meta: MetaFunction<typeof loader> = ({ data: object, params: { locale } }) =>
   object
     ? [
         { title: SEOTitle(object.name[locale]) },

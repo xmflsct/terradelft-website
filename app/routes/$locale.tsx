@@ -1,7 +1,6 @@
-import { data as loaderData, LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { Outlet } from '@remix-run/react'
-import Layout from '~/components/layout'
-import i18n from '~/i18n'
+import { data as loaderData, LoaderFunctionArgs, Outlet } from 'react-router';
+import Layout from '~/components/layout';
+import i18n from '~/i18n';
 
 export const loader = ({ params }: LoaderFunctionArgs) => {
   const locale = params.locale

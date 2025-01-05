@@ -1,17 +1,17 @@
 import { faGlobeEurope, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useContext, useEffect, useState } from 'react'
-import Navigation from './navigation'
 import { useTranslation } from 'react-i18next'
-import { Link as RemixLink, useMatches } from '@remix-run/react'
+import { Link as RemixLink, useMatches } from 'react-router'
 import { Link } from '~/components/link'
+import i18n from '~/i18n'
 import logoEnLarge from '~/images/logo/en/large.png'
 import logoEnSmall from '~/images/logo/en/small.png'
 import logoNlLarge from '~/images/logo/nl/large.png'
 import logoNlSmall from '~/images/logo/nl/small.png'
-import i18n from '~/i18n'
 import { BagContext } from '~/states/bag'
 import classNames from '~/utils/classNames'
+import Navigation from './navigation'
 import Search from './search'
 
 const Header: React.FC = () => {
@@ -30,7 +30,7 @@ const Header: React.FC = () => {
   }, [])
 
   return (
-    <header
+    (<header
       className={classNames(
         'z-40 sticky top-0 lg:relative lg:top-auto bg-background',
         'border-b-2 border-secondary lg:border-none',
@@ -118,8 +118,8 @@ const Header: React.FC = () => {
         </div>
       </div>
       <Navigation toggleNav={toggleNav} setToggleNav={setToggleNav} />
-    </header>
-  )
+    </header>)
+  );
 }
 
 export default Header

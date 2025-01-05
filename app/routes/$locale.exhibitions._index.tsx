@@ -1,7 +1,6 @@
-import { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
@@ -57,7 +56,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { meta, data }
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

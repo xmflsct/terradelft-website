@@ -1,12 +1,10 @@
-import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
-import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { H1 } from '~/components/globals'
-import { currency } from '~/utils/formatNumber'
-import loadMeta from '~/utils/loadMeta'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
+import { H1 } from '~/components/globals';
+import { currency } from '~/utils/formatNumber';
+import loadMeta from '~/utils/loadMeta';
+import { SEOKeywords, SEOTitle } from '~/utils/seo';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   if (!args.params.session) {
@@ -49,7 +47,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { meta, session, line_items }
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

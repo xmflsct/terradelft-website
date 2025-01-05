@@ -1,13 +1,19 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
+import {
+  ActionFunctionArgs,
+  Form,
+  LoaderFunctionArgs,
+  MetaFunction,
+  useActionData,
+  useLoaderData,
+  useNavigation
+} from 'react-router'
 import Button from '~/components/button'
 import FormField from '~/components/formField'
 import { H1 } from '~/components/globals'
 import i18next from '~/i18next.server'
 import sendEmail from '~/utils/sendEmail'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (props: LoaderFunctionArgs) => {
   const t = await i18next.getFixedT(props.request, 'common')
@@ -29,7 +35,7 @@ export const loader = async (props: LoaderFunctionArgs) => {
   countriesOptions.push(countries.BE)
   countriesOptions.push(countries.DE)
   for (const country in countries) {
-    if (country === ('NL' || 'BE' || 'DE')) continue
+    if (country in ['NL', 'BE', 'DE']) continue
     countriesOptions.push(countries[country])
   }
 
@@ -58,7 +64,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
   return await sendEmail({ context, data })
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta && [
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) }
@@ -124,7 +130,7 @@ const PageNewsletter = () => {
             <span className='ml-2'>{t('GDPR')}</span>
           </div>
 
-          <Button type='submit' disabled={navigation.state === ('submitting' || 'loading') || sent}>
+          <Button type='submit' disabled={navigation.state in ['submitting', 'loading'] || sent}>
             {navigation.state === 'submitting'
               ? t('button.submitting')
               : navigation.state === 'loading'

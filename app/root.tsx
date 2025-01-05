@@ -1,22 +1,19 @@
-import { LinksFunction, LoaderFunctionArgs, redirect } from '@remix-run/cloudflare'
+import { useTranslation } from 'react-i18next';
 import {
   isRouteErrorResponse,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
+  Links, LinksFunction, LoaderFunctionArgs, Meta,
+  Outlet, redirect, Scripts,
   ScrollRestoration,
   useRouteError
-} from '@remix-run/react'
-import { useTranslation } from 'react-i18next'
-import { H1 } from '~/components/globals'
-import Layout from '~/components/layout'
-import StructuredData from '~/components/StructuredData'
-import i18n from '~/i18n'
-import i18next from '~/i18next.server'
-import notFound from '~/images/404.jpg'
-import stylesheet from '~/tailwind.css?url'
-import { SEOTitle } from '~/utils/seo'
+} from 'react-router';
+import { H1 } from '~/components/globals';
+import Layout from '~/components/layout';
+import StructuredData from '~/components/StructuredData';
+import i18n from '~/i18n';
+import i18next from '~/i18next.server';
+import notFound from '~/images/404.jpg';
+import stylesheet from '~/tailwind.css?url';
+import { SEOTitle } from '~/utils/seo';
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: stylesheet }]
 

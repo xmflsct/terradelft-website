@@ -1,7 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import type { Event, WithContext } from 'schema-dts'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
@@ -68,7 +67,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return data
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.exhibition
     ? [
         {

@@ -1,21 +1,19 @@
-import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData, useSubmit } from '@remix-run/react'
-import { gql } from 'graphql-request'
-import { find, inRange, maxBy, sortBy } from 'lodash-es'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import ReactSelect from 'react-select'
-import { H4 } from '~/components/globals'
-import ListObjects from '~/components/list/objects'
-import Pagination from '~/components/pagination'
-import i18next from '~/i18next.server'
-import cache from '~/utils/cache'
-import { GiftCard, graphqlRequest } from '~/utils/contentful'
-import { currency } from '~/utils/formatNumber'
-import { getSellableObjects, SellableObject } from '~/utils/kv'
-import loadMeta from '~/utils/loadMeta'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
+import { gql } from 'graphql-request';
+import { find, inRange, maxBy, sortBy } from 'lodash-es';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData, useSubmit } from 'react-router';
+import ReactSelect from 'react-select';
+import { H4 } from '~/components/globals';
+import ListObjects from '~/components/list/objects';
+import Pagination from '~/components/pagination';
+import i18next from '~/i18next.server';
+import cache from '~/utils/cache';
+import { GiftCard, graphqlRequest } from '~/utils/contentful';
+import { currency } from '~/utils/formatNumber';
+import { getSellableObjects, SellableObject } from '~/utils/kv';
+import loadMeta from '~/utils/loadMeta';
+import { SEOKeywords, SEOTitle } from '~/utils/seo';
 
 type Options = {
   prices: {
@@ -316,7 +314,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

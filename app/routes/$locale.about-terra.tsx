@@ -1,8 +1,7 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import { H1, H2, H4 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
@@ -10,7 +9,6 @@ import cache from '~/utils/cache'
 import { AboutTerra, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{ page: AboutTerra }>({
@@ -56,7 +54,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { meta, data }
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

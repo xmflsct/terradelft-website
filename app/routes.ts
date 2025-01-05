@@ -1,4 +1,4 @@
-import { flatRoutes } from '@remix-run/fs-routes'
-import { RouteConfig } from '@remix-run/route-config'
+import { RouteConfig } from '@react-router/dev/routes';
+import { flatRoutes } from '@react-router/fs-routes';
 
 export default flatRoutes() as RouteConfig

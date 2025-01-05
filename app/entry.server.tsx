@@ -1,11 +1,10 @@
 import { Request } from '@cloudflare/workers-types'
-import { EntryContext } from '@remix-run/cloudflare'
-import { RemixServer } from '@remix-run/react'
 import { createInstance } from 'i18next'
 import en from 'public/locales/en'
 import nl from 'public/locales/nl'
 import { renderToReadableStream } from 'react-dom/server'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
+import { EntryContext, ServerRouter } from 'react-router'
 import i18n from './i18n'
 import i18next from './i18next.server'
 import { cached } from './utils/cache'
@@ -17,6 +16,8 @@ export default async function handleRequest(
   headers: Headers,
   context: EntryContext
 ) {
+  const controller = new AbortController()
+
   const instance = createInstance()
 
   const url = new URL(request.url)
@@ -32,10 +33,10 @@ export default async function handleRequest(
 
   const body = await renderToReadableStream(
     <I18nextProvider i18n={instance}>
-      <RemixServer context={context} url={request.url} />
+      <ServerRouter context={context} url={request.url} />
     </I18nextProvider>,
     {
-      signal: request.signal,
+      signal: controller.signal,
       onError(error: unknown) {
         console.error(error)
         status = 500

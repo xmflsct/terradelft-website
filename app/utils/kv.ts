@@ -1,6 +1,6 @@
-import { data as loaderData, LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { gql } from 'graphql-request'
 import { max, min } from 'lodash-es'
+import { data as loaderData, LoaderFunctionArgs } from 'react-router'
 import { graphqlRequest, ObjectsObject, ObjectsObjectVariation } from './contentful'
 
 export let kved: boolean | undefined = undefined
@@ -29,11 +29,12 @@ const getSellableObjects = async (args: LoaderFunctionArgs): Promise<SellableObj
     throw loaderData('Locale missing', { status: 400 })
   }
 
-  let objects: SellableObject[] | null = await (
-    args.context.cloudflare.env.TERRADELFT_WEBSITE as KVNamespace
-  ).get(`objects_${args.params.locale}`, {
-    type: 'json'
-  })
+  let objects: SellableObject[] | null = await args.context.cloudflare.env.TERRADELFT_WEBSITE.get(
+    `objects_${args.params.locale}`,
+    {
+      type: 'json'
+    }
+  )
 
   if (objects === null) {
     kved = false
@@ -143,7 +144,7 @@ const getSellableObjects = async (args: LoaderFunctionArgs): Promise<SellableObj
       return filtered
     }, [])
 
-    await (args.context.cloudflare.env.TERRADELFT_WEBSITE as KVNamespace).put(
+    await args.context.cloudflare.env.TERRADELFT_WEBSITE.put(
       `objects_${args.params.locale}`,
       JSON.stringify(objects),
       { expirationTtl: 60 * 10 }

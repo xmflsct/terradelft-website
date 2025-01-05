@@ -1,8 +1,7 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import type { Person, WithContext } from 'schema-dts'
 import { H1, H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
@@ -59,7 +58,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return data.artists.items[0]
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.artist
     ? [
         { title: SEOTitle(data.artist) },

@@ -4,19 +4,17 @@ import {
   faPalette,
   faUser,
   IconDefinition
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
-import { useTranslation } from 'react-i18next'
-import { H1 } from '~/components/globals'
-import ContentfulImage from '~/components/image'
-import { Link } from '~/components/link'
-import cache from '~/utils/cache'
-import classNames from '~/utils/classNames'
-import loadMeta from '~/utils/loadMeta'
-import { SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTranslation } from 'react-i18next';
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
+import { H1 } from '~/components/globals';
+import ContentfulImage from '~/components/image';
+import { Link } from '~/components/link';
+import cache from '~/utils/cache';
+import classNames from '~/utils/classNames';
+import loadMeta from '~/utils/loadMeta';
+import { SEOTitle } from '~/utils/seo';
 
 type HighlightResult = {
   fullyHighlighted: boolean
@@ -124,7 +122,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { meta, data }
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta ? [{ title: SEOTitle(data.meta.title) }] : []
 export let handle = { i18n: 'search' }
 

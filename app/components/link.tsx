@@ -1,10 +1,9 @@
-import { Link as RemixLink, NavLink as RemixNavLink } from '@remix-run/react'
-import { RemixLinkProps, RemixNavLinkProps } from '@remix-run/react/dist/components'
 import { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
+import { LinkProps, NavLinkProps, Link as RemixLink, NavLink as RemixNavLink } from 'react-router'
 import classNames from '~/utils/classNames'
 
-const Link: React.FC<PropsWithChildren & RemixLinkProps> = props => {
+const Link: React.FC<PropsWithChildren & LinkProps> = props => {
   if (!props.to) {
     return <>{props.children}</>
   }
@@ -27,9 +26,10 @@ const Link: React.FC<PropsWithChildren & RemixLinkProps> = props => {
   )
 }
 
-const NavLink: React.FC<
-  RemixNavLinkProps & { setToggleNav: Dispatch<SetStateAction<boolean>> }
-> = ({ setToggleNav, ...props }) => {
+const NavLink: React.FC<NavLinkProps & { setToggleNav: Dispatch<SetStateAction<boolean>> }> = ({
+  setToggleNav,
+  ...props
+}) => {
   const {
     i18n: { language }
   } = useTranslation()

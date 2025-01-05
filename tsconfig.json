@@ -1,7 +1,8 @@
 {
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".react-router/types/**/*"
   ],
   "compilerOptions": {
     "lib": [
@@ -10,7 +11,7 @@
       "ES2022"
     ],
     "types": [
-      "@remix-run/cloudflare",
+      "@react-router/cloudflare",
       "vite/client"
     ],
     "isolatedModules": true,
@@ -30,6 +31,10 @@
         "./app/*"
       ]
     },
+    "rootDirs": [
+      ".",
+      "./.react-router/types"
+    ],
     // Vite takes care of building everything, not tsc.
     "noEmit": true
   }

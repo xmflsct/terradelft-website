@@ -1,10 +1,9 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Disclosure } from '@headlessui/react'
-import { ActionFunctionArgs } from '@remix-run/cloudflare'
-import { useFetcher, useLocation, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ActionFunctionArgs, useFetcher, useLocation, useParams } from 'react-router'
 import Button from '~/components/button'
 import FormField from '~/components/formField'
 import classNames from '~/utils/classNames'
@@ -172,7 +171,7 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
 
                   <Button
                     type='submit'
-                    disabled={objectContact.state === ('submitting' || 'loading') || sent}
+                    disabled={objectContact.state in ['submitting', 'loading'] || sent}
                   >
                     {objectContact.state === 'submitting'
                       ? t('contact.form.button.submitting')

@@ -1,16 +1,14 @@
-import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData, useParams } from '@remix-run/react'
-import { gql } from 'graphql-request'
-import { useTranslation } from 'react-i18next'
-import { H1 } from '~/components/globals'
-import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
-import Pagination from '~/components/pagination'
-import i18next from '~/i18next.server'
-import cache from '~/utils/cache'
-import { graphqlRequest, ObjectsObject } from '~/utils/contentful'
-import loadMeta from '~/utils/loadMeta'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
+import { gql } from 'graphql-request';
+import { useTranslation } from 'react-i18next';
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData, useParams } from 'react-router';
+import { H1 } from '~/components/globals';
+import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects';
+import Pagination from '~/components/pagination';
+import i18next from '~/i18next.server';
+import cache from '~/utils/cache';
+import { graphqlRequest, ObjectsObject } from '~/utils/contentful';
+import loadMeta from '~/utils/loadMeta';
+import { SEOKeywords, SEOTitle } from '~/utils/seo';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const page = parseInt(args.params.page || '')
@@ -129,7 +127,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

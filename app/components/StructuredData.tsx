@@ -1,4 +1,4 @@
-import { useMatches } from '@remix-run/react'
+import { useMatches } from 'react-router';
 
 const StructuredData: React.FC = () => {
   const matches = useMatches()

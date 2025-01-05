@@ -1,7 +1,6 @@
-import { LoaderFunctionArgs } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs } from 'react-router'
 
-type Args = {
-  context: LoaderFunctionArgs['context']
+type Args = Pick<LoaderFunctionArgs, 'context'> & {
   data: {
     type: string
     name: string

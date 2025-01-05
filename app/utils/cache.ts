@@ -1,17 +1,16 @@
-import { LoaderFunctionArgs } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs } from 'react-router'
 
 export let cached: boolean | undefined = undefined
 
 const cache = async <T = unknown>({
-  ttlMinutes = 15,
+  ttlMinutes = 60,
   req,
   request,
   context
-}: {
+}: Pick<LoaderFunctionArgs, 'context'> & {
   ttlMinutes?: number
   req: () => Promise<T>
   request: Request
-  context: LoaderFunctionArgs['context']
 }): Promise<T> => {
   const preview = (context.cloudflare.env as any).CF_PAGES !== 'PRODUCTION'
   if (preview || !ttlMinutes) {
@@ -36,7 +35,7 @@ const cache = async <T = unknown>({
     return queryResponse
   } else {
     console.log('☑️ Cached')
-    return await cacheMatch.json<T>()
+    return await cacheMatch.json()
   }
 }
 

@@ -1,17 +1,17 @@
-import { useActionData, useLoaderData, useNavigation } from '@remix-run/react'
-import { loadStripe } from '@stripe/stripe-js'
-import countries from 'i18n-iso-countries'
-import { sumBy } from 'lodash-es'
-import { useContext, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { BagData } from '~/routes/$locale.bag'
-import { BagContext } from '~/states/bag'
-import { CheckoutContent } from '~/utils/checkout'
-import Button from '../button'
-import { H3 } from '../globals'
-import CheckoutAmounts from './checkout/amounts'
-import CheckoutDelivery from './checkout/delivery'
-import CheckoutSuppliers from './checkout/suppliers'
+import { loadStripe } from '@stripe/stripe-js';
+import countries from 'i18n-iso-countries';
+import { sumBy } from 'lodash-es';
+import { useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useActionData, useLoaderData, useNavigation } from 'react-router';
+import { BagData } from '~/routes/$locale.bag';
+import { BagContext } from '~/states/bag';
+import { CheckoutContent } from '~/utils/checkout';
+import Button from '../button';
+import { H3 } from '../globals';
+import CheckoutAmounts from './checkout/amounts';
+import CheckoutDelivery from './checkout/delivery';
+import CheckoutSuppliers from './checkout/suppliers';
 
 const BagCheckout: React.FC<BagData> = ({ country, rates }) => {
   const { t, i18n } = useTranslation('bag')

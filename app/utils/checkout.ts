@@ -1,8 +1,8 @@
-import { LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { gql } from 'graphql-request'
-import { sumBy } from 'lodash-es'
-import { TDObject } from '~/states/bag'
-import { graphqlRequest, ShippingRates } from './contentful'
+import { gql } from 'graphql-request';
+import { sumBy } from 'lodash-es';
+import { LoaderFunctionArgs } from 'react-router';
+import { TDObject } from '~/states/bag';
+import { graphqlRequest, ShippingRates } from './contentful';
 
 export type CheckoutContent = {
   objects: TDObject[]

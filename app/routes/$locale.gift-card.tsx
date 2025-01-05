@@ -1,20 +1,19 @@
-import { LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
-import { gql } from 'graphql-request'
-import { sumBy } from 'lodash-es'
-import { useContext, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import ReactSelect from 'react-select'
-import Button from '~/components/button'
-import FormField from '~/components/formField'
-import { H1 } from '~/components/globals'
-import ContentfulImage from '~/components/image'
-import Price from '~/components/object/price'
-import { selectStyle } from '~/components/object/sell'
-import RichText from '~/components/richText'
-import { BagContext } from '~/states/bag'
-import cache from '~/utils/cache'
-import { GiftCard, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { gql } from 'graphql-request';
+import { sumBy } from 'lodash-es';
+import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LoaderFunctionArgs, useLoaderData } from 'react-router';
+import ReactSelect from 'react-select';
+import Button from '~/components/button';
+import FormField from '~/components/formField';
+import { H1 } from '~/components/globals';
+import ContentfulImage from '~/components/image';
+import Price from '~/components/object/price';
+import { selectStyle } from '~/components/object/sell';
+import RichText from '~/components/richText';
+import { BagContext } from '~/states/bag';
+import cache from '~/utils/cache';
+import { GiftCard, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{ giftCard: GiftCard }>({
