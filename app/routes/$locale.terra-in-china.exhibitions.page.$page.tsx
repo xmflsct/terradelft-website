@@ -1,4 +1,4 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
@@ -11,10 +11,10 @@ import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const page = parseInt(args.params.page || '')
   if (page < 0) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
   const perPage = 9
@@ -80,9 +80,9 @@ export const loader = async (args: LoaderArgs) => {
   })
 
   if (!data?.exbhitions?.items?.length) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
-  return json({
+  return {
     meta,
     data: {
       ...data,
@@ -94,10 +94,10 @@ export const loader = async (args: LoaderArgs) => {
         }
       }
     }
-  })
+  }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && [
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) }

@@ -6,7 +6,7 @@ import {
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import { H1 } from '~/components/globals'
@@ -76,10 +76,10 @@ type SearchNews = {
   }
 }
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const query = new URL(args.request.url).searchParams.get('query')
   if (!query)
-    return json({
+    return {
       meta: { title: '' },
       data: {
         hits: [],
@@ -88,7 +88,7 @@ export const loader = async (args: LoaderArgs) => {
         nbPages: 0,
         query: null
       }
-    })
+    }
 
   const url = new URL(
     `https://${args.context.ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${args.params.locale}`
@@ -121,10 +121,10 @@ export const loader = async (args: LoaderArgs) => {
     titleOptions: { query: data.query }
   })
 
-  return json({ meta, data })
+  return { meta, data }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta ? [{ title: SEOTitle(data.meta.title) }] : []
 export let handle = { i18n: 'search' }
 

@@ -1,4 +1,4 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { shuffle } from 'lodash'
@@ -20,7 +20,7 @@ import {
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import sortArtists from '~/utils/sortArtists'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     announcements?: { items: Announcement[] }
     giftCard: GiftCard
@@ -95,17 +95,17 @@ export const loader = async (args: LoaderArgs) => {
     })
   })
 
-  return json({
+  return {
     announcements: data.announcements,
     giftCard: data.giftCard,
     objects: {
       items: shuffle(data.objects.items.reduce(objectsReduceSell<ObjectsObject>, [])).slice(0, 5)
     },
     artists: sortArtists(data.artists)
-  })
+  }
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }

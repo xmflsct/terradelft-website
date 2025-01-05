@@ -1,4 +1,4 @@
-import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { Form, useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +10,7 @@ import checkout from '~/utils/checkout'
 import { graphqlRequest, ShippingRates } from '~/utils/contentful'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const action = async (args: ActionArgs) => {
+export const action = async (args: ActionFunctionArgs) => {
   const formData = await args.request.formData()
   const json = formData.get('json')?.toString()
 
@@ -38,7 +38,7 @@ export type BagData = {
   country: string
   rates: ShippingRates
 }
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     shippingRates: { items: { rates: ShippingRates }[] }
   }>({
@@ -65,10 +65,10 @@ export const loader = async (args: LoaderArgs) => {
   // @ts-ignore
   const country: string = args.request.cf?.country || 'NL'
 
-  return json({ env, country, rates: data.shippingRates.items[0].rates })
+  return { env, country, rates: data.shippingRates.items[0].rates }
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }

@@ -1,4 +1,4 @@
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
@@ -16,7 +16,7 @@ import { BagContext } from '~/states/bag'
 import cache from '~/utils/cache'
 import { GiftCard, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{ giftCard: GiftCard }>({
     ...args,
     req: graphqlRequest({
@@ -49,7 +49,7 @@ export const loader = async (args: LoaderArgs) => {
     })
   })
 
-  return json(data)
+  return data
 }
 
 export const handle = {

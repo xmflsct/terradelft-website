@@ -1,4 +1,4 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useSubmit } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { find, inRange, maxBy, sortBy } from 'lodash'
@@ -28,10 +28,10 @@ type Options = {
   colours: { label: string; value: string; isDisabled: boolean }[]
 }
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const page = parseInt(args.params.page || '')
   if (page < 1) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
   const meta = await loadMeta(args, {
@@ -271,11 +271,11 @@ export const loader = async (args: LoaderArgs) => {
     )
     options.variants = sortBy(options.variants, ({ label, isDisabled }) => label && isDisabled)
     options.colours = sortBy(options.colours, ({ label, isDisabled }) => label && isDisabled)
-    return json({
+    return {
       meta,
       giftCard: null,
       data: { options, objects: reducedObjects, page: null }
-    })
+    }
   }
 
   const { giftCard } = await cache<{ giftCard: GiftCard }>({
@@ -305,7 +305,7 @@ export const loader = async (args: LoaderArgs) => {
   )
   options.variants = sortBy(options.variants, ({ label }) => label)
   options.colours = sortBy(options.colours, ({ label }) => label)
-  return json({
+  return {
     meta,
     giftCard,
     data: {
@@ -313,10 +313,10 @@ export const loader = async (args: LoaderArgs) => {
       objects: objects.slice(page === 1 ? 0 : perPage * page - perPage - 1, perPage * page - 1),
       page: { total: Math.round(objects.length / perPage), current: page }
     }
-  })
+  }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

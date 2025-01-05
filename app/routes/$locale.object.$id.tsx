@@ -1,5 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { max } from 'lodash'
@@ -25,7 +25,7 @@ import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 import { ObjectContact } from './$locale.object.contact'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     object: Omit<ObjectsObject, 'name'> & { name_nl?: string; name_en?: string }
   }>({
@@ -132,7 +132,7 @@ export const loader = async (args: LoaderArgs) => {
   })
 
   if (!data?.object || !data.object.artist) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
   const tempObj = {
@@ -166,15 +166,15 @@ export const loader = async (args: LoaderArgs) => {
     }
   }
 
-  return json(tempObj)
+  return tempObj
 }
 
-export const meta: V2_MetaFunction = ({
+export const meta: MetaFunction = ({
   data: object,
   params: { locale }
 }: {
   data: LoaderData<typeof loader>
-  params: LoaderArgs['params']
+  params: LoaderFunctionArgs['params']
 }) =>
   object
     ? [

@@ -1,4 +1,4 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,9 +8,9 @@ import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   if (!args.params.session) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
   const session = await (
@@ -26,7 +26,7 @@ export const loader = async (args: LoaderArgs) => {
   }>()
 
   if (session.payment_status !== 'paid') {
-    throw json('Not Paid', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
   const line_items = await (
@@ -46,10 +46,10 @@ export const loader = async (args: LoaderArgs) => {
   }>()
 
   const meta = await loadMeta(args, { titleKey: 'pages.thank-you' })
-  return json({ meta, session, line_items })
+  return { meta, session, line_items }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

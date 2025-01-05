@@ -1,4 +1,4 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
@@ -12,7 +12,7 @@ import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     exhibitions: { total: number; items: EventsEvent[] }
   }>({
@@ -55,10 +55,10 @@ export const loader = async (args: LoaderArgs) => {
   })
   const meta = await loadMeta(args, { titleKey: 'pages.exhibitions' })
 
-  return json({ meta, data })
+  return { meta, data }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

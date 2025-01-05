@@ -1,4 +1,4 @@
-import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { useTranslation } from 'react-i18next'
 import Button from '~/components/button'
@@ -9,7 +9,7 @@ import sendEmail from '~/utils/sendEmail'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (props: LoaderArgs) => {
+export const loader = async (props: LoaderFunctionArgs) => {
   const t = await i18next.getFixedT(props.request, 'common')
   const meta = { title: t('pages.newsletter') }
 
@@ -33,10 +33,10 @@ export const loader = async (props: LoaderArgs) => {
     countriesOptions.push(countries[country])
   }
 
-  return json({ meta, countriesOptions })
+  return { meta, countriesOptions }
 }
 
-export const action = async ({ context, request }: ActionArgs) => {
+export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const firstName = formData.get('firstName')
   const lastName = formData.get('lastName')
@@ -58,7 +58,7 @@ export const action = async ({ context, request }: ActionArgs) => {
   return await sendEmail({ context, data })
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
   data?.meta && [
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) }
