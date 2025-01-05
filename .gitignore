@@ -1,16 +1,8 @@
-node_modules
-.cache
-functions/_assets
-functions/\[\[path\]\].js
-functions/\[\[path\]\].js.map
-functions/metafile.js.json
-functions/metafile.server.json
-functions/version.txt
-public/build
-.env
-.dev.*
-.wrangler/
 .react-router/
+.wrangler/
+build/
+node_modules/
+.dev.*
 
 # yarn
 .pnp.*

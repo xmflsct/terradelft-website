@@ -8,7 +8,8 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": "react-router dev"
+    "dev": "react-router dev",
+    "start": "wrangler pages dev ./build/client"
   },
   "dependencies": {
     "@contentful/rich-text-plain-text-renderer": "^16.1.3",
