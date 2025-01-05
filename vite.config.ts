@@ -4,5 +4,9 @@ import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
-  plugins: [cloudflareDevProxy({ environment: 'dev' }), reactRouter(), tsconfigPaths()]
+  plugins: [
+    cloudflareDevProxy({ environment: process.env.CF_PAGES == '1' ? undefined : 'dev' }),
+    reactRouter(),
+    tsconfigPaths()
+  ]
 })
