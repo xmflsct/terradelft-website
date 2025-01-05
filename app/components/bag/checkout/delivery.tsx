@@ -1,10 +1,12 @@
 import countries from 'i18n-iso-countries'
-import { forIn } from 'lodash'
+import { forIn } from 'lodash-es'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'
 import { BagContext } from '~/states/bag'
 import { currency } from '~/utils/formatNumber'
+import localEN from 'i18n-iso-countries/langs/en.json'
+import localNL from 'i18n-iso-countries/langs/nl.json'
 
 type Props = {
   country: string
@@ -35,8 +37,8 @@ const CheckoutDelivery: React.FC<Props> = ({
     }[]
   >()
   useEffect(() => {
-    countries.registerLocale(require(`i18n-iso-countries/langs/en.json`))
-    countries.registerLocale(require(`i18n-iso-countries/langs/nl.json`))
+    countries.registerLocale(localEN)
+    countries.registerLocale(localNL)
     const tempCountries: { value: string; label: string }[] = []
     forIn(countries.getNames(i18n.language), (v, k) => {
       tempCountries.push({

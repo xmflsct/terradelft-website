@@ -91,7 +91,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     }
 
   const url = new URL(
-    `https://${args.context.ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${args.params.locale}`
+    `https://${args.context.cloudflare.env.ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${args.params.locale}`
   )
   const params = new URLSearchParams()
   params.append('query', query)
@@ -110,8 +110,8 @@ export const loader = async (args: LoaderFunctionArgs) => {
       (
         await fetch(url, {
           headers: {
-            'X-Algolia-Application-Id': args.context.ALGOLIA_APP_ID as string,
-            'X-Algolia-API-Key': args.context.ALGOLIA_API_KEY as string
+            'X-Algolia-Application-Id': args.context.cloudflare.env.ALGOLIA_APP_ID as string,
+            'X-Algolia-API-Key': args.context.cloudflare.env.ALGOLIA_API_KEY as string
           }
         })
       ).json()

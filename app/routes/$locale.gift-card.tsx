@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
-import { sumBy } from 'lodash'
+import { sumBy } from 'lodash-es'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'

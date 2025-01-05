@@ -13,9 +13,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
     throw loaderData(null, { status: 404 })
   }
 
-  const session = await (
+  const session = await(
     await fetch(`https://api.stripe.com/v1/checkout/sessions/${args.params.session}`, {
-      headers: { Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}` }
+      headers: { Authorization: `Bearer ${args.context.cloudflare.env.STRIPE_KEY_PRIVATE}` }
     })
   ).json<{
     amount_total: number
@@ -29,11 +29,11 @@ export const loader = async (args: LoaderFunctionArgs) => {
     throw loaderData(null, { status: 404 })
   }
 
-  const line_items = await (
+  const line_items = await(
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${args.params.session}/line_items?limit=100`,
       {
-        headers: { Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}` }
+        headers: { Authorization: `Bearer ${args.context.cloudflare.env.STRIPE_KEY_PRIVATE}` }
       }
     )
   ).json<{

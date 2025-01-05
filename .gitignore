@@ -9,6 +9,7 @@ functions/version.txt
 public/build
 app/styles
 .env
+.dev.*
 .wrangler
 
 # yarn 3

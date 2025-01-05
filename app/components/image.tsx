@@ -1,4 +1,4 @@
-import { minBy } from 'lodash'
+import { minBy } from 'lodash-es'
 import { DOMAttributes, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Zoom, { UncontrolledProps } from 'react-medium-image-zoom'

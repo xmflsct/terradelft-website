@@ -1,7 +1,7 @@
-import { LoaderArgs } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs } from '@remix-run/cloudflare'
 
 type Args = {
-  context: LoaderArgs['context']
+  context: LoaderFunctionArgs['context']
   data: {
     type: string
     name: string
@@ -12,7 +12,7 @@ type Args = {
 }
 
 const sendEmail = async (args: Args): Promise<boolean> => {
-  const receiver = args.context.EMAIL_RECEIVER
+  const receiver = args.context.cloudflare.env.EMAIL_RECEIVER
   const message = {
     sender: {
       email: 'noreply@terra-delft.nl',
@@ -20,7 +20,7 @@ const sendEmail = async (args: Args): Promise<boolean> => {
     },
     replyTo: { email: args.data.email, name: args.data.name },
     to: [{ email: receiver, name: 'Terra Delft' }],
-    bcc: [{ email: args.context.EMAIL_BCC }],
+    bcc: [{ email: args.context.cloudflare.env.EMAIL_BCC }],
     subject: `${args.data.type} - ${args.data.subject}`,
     htmlContent: args.data.html
   }
@@ -28,7 +28,7 @@ const sendEmail = async (args: Args): Promise<boolean> => {
   const res = await fetch('https://api.sendinblue.com/v3/smtp/email', {
     method: 'POST',
     headers: {
-      'api-key': args.context.SENDINBLUE_KEY as string,
+      'api-key': args.context.cloudflare.env.SENDINBLUE_KEY as string,
       'content-type': 'application/json',
       accept: 'application/json'
     },

@@ -61,7 +61,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
       `
     })
   })
-  const env = { STRIPE_KEY_PUBLIC: args.context.STRIPE_KEY_PUBLIC as string }
+  const env = { STRIPE_KEY_PUBLIC: args.context.cloudflare.env.STRIPE_KEY_PUBLIC as string }
   // @ts-ignore
   const country: string = args.request.cf?.country || 'NL'
 

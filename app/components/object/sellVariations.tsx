@@ -1,4 +1,4 @@
-import { difference, findIndex, intersection, max, min, union } from 'lodash'
+import { difference, findIndex, intersection, max, min, union } from 'lodash-es'
 import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Select from 'react-select'

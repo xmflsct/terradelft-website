@@ -1,7 +1,7 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Disclosure } from '@headlessui/react'
-import { ActionArgs, json } from '@remix-run/cloudflare'
+import { ActionFunctionArgs } from '@remix-run/cloudflare'
 import { useFetcher, useLocation, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -12,11 +12,7 @@ import { ObjectsObject_NameLocalized } from '~/utils/contentful'
 import sendEmail from '~/utils/sendEmail'
 import { SelectedVariation } from './$locale.object.$id'
 
-export const loader = () => {
-  throw json(null, { status: 404 })
-}
-
-export const action = async ({ context, request }: ActionArgs) => {
+export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const link = formData.get('link')
   const variant = formData.get('variant')

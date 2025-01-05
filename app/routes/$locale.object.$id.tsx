@@ -2,7 +2,7 @@ import { documentToPlainTextString } from '@contentful/rich-text-plain-text-rend
 import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
-import { max } from 'lodash'
+import { max } from 'lodash-es'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Product, WithContext } from 'schema-dts'

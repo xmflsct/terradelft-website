@@ -1,0 +1,13 @@
+{
+  "compatibility_date": "2024-01-05",
+  "env": {
+    "dev": {
+      "kv_namespaces": [
+        {
+          "binding": "TERRADELFT_WEBSITE",
+          "id": "TERRADELFT_WEBSITE"
+        }
+      ]
+    }
+  }
+}

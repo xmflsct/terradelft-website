@@ -1,7 +1,7 @@
 import { data as loaderData, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData, useSubmit } from '@remix-run/react'
 import { gql } from 'graphql-request'
-import { find, inRange, maxBy, sortBy } from 'lodash'
+import { find, inRange, maxBy, sortBy } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactSelect from 'react-select'

@@ -54,7 +54,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
     })
   })
   const meta = await loadMeta(args, { titleKey: 'pages.exhibitions' })
-
   return { meta, data }
 }
 

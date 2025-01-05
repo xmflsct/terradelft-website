@@ -1,4 +1,4 @@
-import { LoaderArgs } from "@remix-run/cloudflare"
+import { LoaderFunctionArgs } from '@remix-run/cloudflare'
 
 export let cached: boolean | undefined = undefined
 
@@ -10,10 +10,10 @@ const cache = async <T = unknown>({
 }: {
   ttlMinutes?: number
   req: () => Promise<T>
-  request: Request,
-  context: LoaderArgs['context']
+  request: Request
+  context: LoaderFunctionArgs['context']
 }): Promise<T> => {
-  const preview = context.ENVIRONMENT !== 'PRODUCTION'
+  const preview = (context.cloudflare.env as any).CF_PAGES !== 'PRODUCTION'
   if (preview || !ttlMinutes) {
     return await req()
   }

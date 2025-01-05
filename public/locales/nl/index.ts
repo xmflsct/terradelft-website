@@ -1,17 +1,31 @@
-export default {
-  common: require('./common'),
+import * as aboutTerra from './aboutTerra.json'
+import * as artist from './artist.json'
+import * as bag from './bag.json'
+import * as china from './china.json'
+import * as common from './common.json'
+import * as exhibition from './exhibition.json'
+import * as giftCard from './giftCard.json'
+import * as index from './index.json'
+import * as news from './news.json'
+import * as newsletter from './newsletter.json'
+import * as object from './object.json'
+import * as search from './search.json'
+import * as shop from './shop.json'
+import * as thankYou from './thankYou.json'
 
-  aboutTerra: require('./aboutTerra.json'),
-  artist: require('./artist.json'),
-  bag: require('./bag.json'),
-  exhibition: require('./exhibition.json'),
-  giftCard: require('./giftCard.json'),
-  index: require('./index.json'),
-  news: require('./news.json'),
-  newsletter: require('./newsletter.json'),
-  object: require('./object.json'),
-  search: require('./search.json'),
-  shop: require('./shop.json'),
-  china: require('./china.json'),
-  thankYou: require('./thankYou.json')
+export default {
+  common,
+  aboutTerra,
+  artist,
+  bag,
+  exhibition,
+  giftCard,
+  index,
+  news,
+  newsletter,
+  object,
+  search,
+  shop,
+  china,
+  thankYou
 }

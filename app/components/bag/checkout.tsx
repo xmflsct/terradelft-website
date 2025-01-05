@@ -1,7 +1,7 @@
 import { useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import countries from 'i18n-iso-countries'
-import { sumBy } from 'lodash'
+import { sumBy } from 'lodash-es'
 import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BagData } from '~/routes/$locale.bag'

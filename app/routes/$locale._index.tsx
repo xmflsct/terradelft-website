@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
-import { shuffle } from 'lodash'
+import { shuffle } from 'lodash-es'
 import { useTranslation } from 'react-i18next'
 import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
