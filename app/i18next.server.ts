@@ -1,7 +1,7 @@
 import { RemixI18Next } from 'remix-i18next/server'
 import i18n from '~/i18n'
-import en from 'public/locales/en'
-import nl from 'public/locales/nl'
+import en from '~/locales/en'
+import nl from '~/locales/nl'
 
 const i18next = new RemixI18Next({
   detection: {
@@ -9,6 +9,7 @@ const i18next = new RemixI18Next({
     fallbackLanguage: i18n.fallbackLng
   },
   i18next: {
+    ...i18n,
     resources: { en, nl }
   }
 })

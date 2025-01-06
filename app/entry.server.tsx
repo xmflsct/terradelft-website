@@ -1,14 +1,14 @@
 import { Request } from '@cloudflare/workers-types'
 import { createInstance } from 'i18next'
-import en from 'public/locales/en'
-import nl from 'public/locales/nl'
 import { renderToReadableStream } from 'react-dom/server'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { EntryContext, ServerRouter } from 'react-router'
-import i18n from './i18n'
-import i18next from './i18next.server'
-import { cached } from './utils/cache'
-import { kved } from './utils/kv'
+import i18n from '~/i18n'
+import i18next from '~/i18next.server'
+import en from '~/locales/en'
+import nl from '~/locales/nl'
+import { cached } from '~/utils/cache'
+import { kved } from '~/utils/kv'
 
 export default async function handleRequest(
   request: Request,
@@ -21,15 +21,15 @@ export default async function handleRequest(
   const instance = createInstance()
 
   const url = new URL(request.url)
-  const attemptLocale = url.pathname.split('/')?.[1]
-  const lng = attemptLocale
-    ? i18n.supportedLngs.includes(attemptLocale)
-      ? attemptLocale
-      : 'nl'
-    : 'nl'
+  const lng = await i18next.getLocale(request as any)
   const ns = i18next.getRouteNamespaces(context)
 
-  await instance.use(initReactI18next).init({ ...i18n, lng, ns, resources: { en, nl } })
+  await instance.use(initReactI18next).init({
+    ...i18n,
+    lng,
+    ns,
+    resources: { en, nl }
+  })
 
   const body = await renderToReadableStream(
     <I18nextProvider i18n={instance}>
