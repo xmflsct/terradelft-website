@@ -1,9 +1,10 @@
 import { LoaderFunctionArgs } from 'react-router'
 
-export let cached: boolean | undefined = undefined
+export const ttl = 60
+export let cached: boolean | undefined = false
 
 const cache = async <T = unknown>({
-  ttlMinutes = 60,
+  ttlMinutes = ttl,
   req,
   request,
   context
@@ -17,25 +18,23 @@ const cache = async <T = unknown>({
     return await req()
   }
 
-  // @ts-ignore
-  const cache = caches.default
+  const cacheKey = new URL(request.url).pathname
 
-  const cacheUrl = new URL(request.url)
-  const cacheKey = cacheUrl.href
+  const cache = await context.cloudflare.env.TERRADELFT_WEBSITE.get(cacheKey, {
+    type: 'json'
+  })
 
-  const cacheMatch = (await cache.match(cacheKey)) as Response
-
-  if (!cacheMatch) {
+  if (!cache) {
     console.log('⚠️ Not cached')
     const queryResponse = await req()
-    const cacheResponse = new Response(JSON.stringify(queryResponse), {
-      headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 10}` }
+    await context.cloudflare.env.TERRADELFT_WEBSITE.put(cacheKey, JSON.stringify(queryResponse), {
+      expirationTtl: ttlMinutes * 60
     })
-    cache.put(cacheKey, cacheResponse)
     return queryResponse
   } else {
     console.log('☑️ Cached')
-    return await cacheMatch.json()
+    cached = true
+    return await cache
   }
 }
 

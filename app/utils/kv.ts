@@ -1,9 +1,10 @@
 import { gql } from 'graphql-request'
 import { max, min } from 'lodash-es'
 import { data as loaderData, LoaderFunctionArgs } from 'react-router'
+import { ttl } from './cache'
 import { graphqlRequest, ObjectsObject, ObjectsObjectVariation } from './contentful'
 
-export let kved: boolean | undefined = undefined
+export let kved: boolean | undefined = false
 
 export type SellableObject = Pick<
   ObjectsObject,
@@ -147,7 +148,7 @@ const getSellableObjects = async (args: LoaderFunctionArgs): Promise<SellableObj
     await args.context.cloudflare.env.TERRADELFT_WEBSITE.put(
       `objects_${args.params.locale}`,
       JSON.stringify(objects),
-      { expirationTtl: 60 * 10 }
+      { expirationTtl: ttl * 60 }
     )
   } else {
     kved = true
