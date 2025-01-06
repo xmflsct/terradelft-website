@@ -1,0 +1,114 @@
+diff --git a/dist/Select-36d15f93.cjs.prod.js b/dist/Select-36d15f93.cjs.prod.js
+index e2326a0bf776ab9f9a54005fa7fea9e6aaa7b100..44ba17e852eea31deccd048b557dfcff19134b52 100644
+--- a/dist/Select-36d15f93.cjs.prod.js
++++ b/dist/Select-36d15f93.cjs.prod.js
+@@ -1194,6 +1194,7 @@ var Select = /*#__PURE__*/function (_Component) {
+     _classCallCheck(this, Select);
+     _this = _super.call(this, _props);
+     _this.state = {
++      componentHasMounted: false,
+       ariaSelection: null,
+       focusedOption: null,
+       focusedOptionId: null,
+@@ -1207,7 +1208,7 @@ var Select = /*#__PURE__*/function (_Component) {
+       inputIsHiddenAfterUpdate: undefined,
+       prevProps: undefined,
+       instancePrefix: ''
+-    };
++    }
+     _this.blockOptionHover = false;
+     _this.isComposing = false;
+     _this.commonProps = void 0;
+@@ -1739,6 +1740,7 @@ var Select = /*#__PURE__*/function (_Component) {
+   _createClass(Select, [{
+     key: "componentDidMount",
+     value: function componentDidMount() {
++      this.setState(s => ({ ...s, componentHasMounted: true }))
+       this.startListeningComposition();
+       this.startListeningToTouch();
+       if (this.props.closeMenuOnScroll && document && document.addEventListener) {
+@@ -2132,7 +2134,7 @@ var Select = /*#__PURE__*/function (_Component) {
+         'aria-labelledby': this.props['aria-labelledby'],
+         'aria-required': required,
+         role: 'combobox',
+-        'aria-activedescendant': this.isAppleDevice ? undefined : this.state.focusedOptionId || ''
++        'aria-activedescendant': this.state.componentHasMounted && this.isAppleDevice ? undefined : this.state.focusedOptionId || ''
+       }, menuIsOpen && {
+         'aria-controls': this.getElementId('listbox')
+       }), !isSearchable && {
+diff --git a/dist/Select-7eb2ef56.cjs.dev.js b/dist/Select-7eb2ef56.cjs.dev.js
+index 58d420040577220d34ea9aae0f7fe757dc86e162..6953ee6d9fa1d2182cbf8bc1c766818397c16785 100644
+--- a/dist/Select-7eb2ef56.cjs.dev.js
++++ b/dist/Select-7eb2ef56.cjs.dev.js
+@@ -1213,6 +1213,7 @@ var Select = /*#__PURE__*/function (_Component) {
+     _classCallCheck(this, Select);
+     _this = _super.call(this, _props);
+     _this.state = {
++      componentHasMounted: false,
+       ariaSelection: null,
+       focusedOption: null,
+       focusedOptionId: null,
+@@ -1226,7 +1227,7 @@ var Select = /*#__PURE__*/function (_Component) {
+       inputIsHiddenAfterUpdate: undefined,
+       prevProps: undefined,
+       instancePrefix: ''
+-    };
++    }
+     _this.blockOptionHover = false;
+     _this.isComposing = false;
+     _this.commonProps = void 0;
+@@ -1758,6 +1759,7 @@ var Select = /*#__PURE__*/function (_Component) {
+   _createClass(Select, [{
+     key: "componentDidMount",
+     value: function componentDidMount() {
++      this.setState(s => ({ ...s, componentHasMounted: true }))
+       this.startListeningComposition();
+       this.startListeningToTouch();
+       if (this.props.closeMenuOnScroll && document && document.addEventListener) {
+@@ -2151,7 +2153,7 @@ var Select = /*#__PURE__*/function (_Component) {
+         'aria-labelledby': this.props['aria-labelledby'],
+         'aria-required': required,
+         role: 'combobox',
+-        'aria-activedescendant': this.isAppleDevice ? undefined : this.state.focusedOptionId || ''
++        'aria-activedescendant': this.state.componentHasMounted && this.isAppleDevice ? undefined : this.state.focusedOptionId || ''
+       }, menuIsOpen && {
+         'aria-controls': this.getElementId('listbox')
+       }), !isSearchable && {
+diff --git a/dist/Select-aab027f3.esm.js b/dist/Select-aab027f3.esm.js
+index fd5726b720a2fed0e4ad5d80407a801d9e319966..cf071125ea780e958a42a08f6a8287655a046601 100644
+--- a/dist/Select-aab027f3.esm.js
++++ b/dist/Select-aab027f3.esm.js
+@@ -1189,6 +1189,7 @@ var Select = /*#__PURE__*/function (_Component) {
+     _classCallCheck(this, Select);
+     _this = _super.call(this, _props);
+     _this.state = {
++      componentHasMounted: false,
+       ariaSelection: null,
+       focusedOption: null,
+       focusedOptionId: null,
+@@ -1202,7 +1203,7 @@ var Select = /*#__PURE__*/function (_Component) {
+       inputIsHiddenAfterUpdate: undefined,
+       prevProps: undefined,
+       instancePrefix: ''
+-    };
++    }
+     _this.blockOptionHover = false;
+     _this.isComposing = false;
+     _this.commonProps = void 0;
+@@ -1734,6 +1735,7 @@ var Select = /*#__PURE__*/function (_Component) {
+   _createClass(Select, [{
+     key: "componentDidMount",
+     value: function componentDidMount() {
++      this.setState(s => ({ ...s, componentHasMounted: true }))
+       this.startListeningComposition();
+       this.startListeningToTouch();
+       if (this.props.closeMenuOnScroll && document && document.addEventListener) {
+@@ -2127,7 +2129,7 @@ var Select = /*#__PURE__*/function (_Component) {
+         'aria-labelledby': this.props['aria-labelledby'],
+         'aria-required': required,
+         role: 'combobox',
+-        'aria-activedescendant': this.isAppleDevice ? undefined : this.state.focusedOptionId || ''
++        'aria-activedescendant': this.state.componentHasMounted && this.isAppleDevice ? undefined : this.state.focusedOptionId || ''
+       }, menuIsOpen && {
+         'aria-controls': this.getElementId('listbox')
+       }), !isSearchable && {

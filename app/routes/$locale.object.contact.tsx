@@ -1,6 +1,6 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Disclosure } from '@headlessui/react'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActionFunctionArgs, useFetcher, useLocation, useParams } from 'react-router'
@@ -61,10 +61,10 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
   const [sent, setSent] = useState(false)
 
   return (
-    <Disclosure>
+    <Disclosure as='div'>
       {({ open }) => (
         <>
-          <Disclosure.Button
+          <DisclosureButton
             className={classNames(
               'peer',
               'flex w-full justify-between items-center',
@@ -79,8 +79,8 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
               fixedWidth
               className={open ? 'rotate-180 transform' : ''}
             />
-          </Disclosure.Button>
-          <Disclosure.Panel
+          </DisclosureButton>
+          <DisclosurePanel
             children={
               <div
                 className={classNames('px-4 py-2', 'border border-stone-200 rounded-bl rounded-br')}

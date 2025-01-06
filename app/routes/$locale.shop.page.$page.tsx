@@ -1,19 +1,25 @@
-import { gql } from 'graphql-request';
-import { find, inRange, maxBy, sortBy } from 'lodash-es';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData, useSubmit } from 'react-router';
-import ReactSelect from 'react-select';
-import { H4 } from '~/components/globals';
-import ListObjects from '~/components/list/objects';
-import Pagination from '~/components/pagination';
-import i18next from '~/i18next.server';
-import cache from '~/utils/cache';
-import { GiftCard, graphqlRequest } from '~/utils/contentful';
-import { currency } from '~/utils/formatNumber';
-import { getSellableObjects, SellableObject } from '~/utils/kv';
-import loadMeta from '~/utils/loadMeta';
-import { SEOKeywords, SEOTitle } from '~/utils/seo';
+import { gql } from 'graphql-request'
+import { find, inRange, maxBy, sortBy } from 'lodash-es'
+import { useEffect, useId, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import {
+  data as loaderData,
+  LoaderFunctionArgs,
+  MetaFunction,
+  useLoaderData,
+  useSubmit
+} from 'react-router'
+import ReactSelect from 'react-select'
+import { H4 } from '~/components/globals'
+import ListObjects from '~/components/list/objects'
+import Pagination from '~/components/pagination'
+import i18next from '~/i18next.server'
+import cache from '~/utils/cache'
+import { GiftCard, graphqlRequest } from '~/utils/contentful'
+import { currency } from '~/utils/formatNumber'
+import { getSellableObjects, SellableObject } from '~/utils/kv'
+import loadMeta from '~/utils/loadMeta'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 type Options = {
   prices: {
@@ -362,6 +368,7 @@ const PageShopPage: React.FC = () => {
       <H4>{t('filters')}</H4>
       <form className='grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
         <ReactSelect
+          instanceId={useId()}
           name='price'
           isClearable
           options={options.prices}
@@ -369,6 +376,7 @@ const PageShopPage: React.FC = () => {
           onChange={d => setSelected({ ...selected, price: d ? d.value : undefined })}
         />
         <ReactSelect
+          instanceId={useId()}
           name='artist'
           isClearable
           isSearchable
@@ -380,6 +388,7 @@ const PageShopPage: React.FC = () => {
           }
         />
         <ReactSelect
+          instanceId={useId()}
           name='variant'
           isClearable
           isSearchable
@@ -392,6 +401,7 @@ const PageShopPage: React.FC = () => {
           }
         />
         <ReactSelect
+          instanceId={useId()}
           name='colour'
           isClearable
           isSearchable
