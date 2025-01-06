@@ -1,4 +1,3 @@
-import { config } from '@fortawesome/fontawesome-svg-core'
 import i18next from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { StrictMode, startTransition } from 'react'
@@ -9,8 +8,6 @@ import { getInitialNamespaces } from 'remix-i18next/client'
 import i18n from '~/i18n'
 import en from '~/locales/en'
 import nl from '~/locales/nl'
-
-config.autoAddCss = false
 
 async function hydrate() {
   await i18next
