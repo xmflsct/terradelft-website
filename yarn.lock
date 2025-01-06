@@ -3783,13 +3783,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isbot@npm:^5.1.19":
-  version: 5.1.19
-  resolution: "isbot@npm:5.1.19"
-  checksum: 10c0/ee3401a9dd5db52771582e6ccd673928d5ec3b050f3b7456f050ed0d4771af73dbbf498c188f1a13457925ab84d2108761f7a3b437a15c836e450c3a62b63a86
-  languageName: node
-  linkType: hard
-
 "isexe@npm:^2.0.0":
   version: 2.0.0
   resolution: "isexe@npm:2.0.0"
@@ -5976,7 +5969,6 @@ __metadata:
     i18n-iso-countries: "npm:^7.13.0"
     i18next: "npm:^24.2.0"
     i18next-browser-languagedetector: "npm:^8.0.2"
-    isbot: "npm:^5.1.19"
     lodash-es: "npm:^4.17.21"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.4.49"
