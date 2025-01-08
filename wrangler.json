@@ -1,4 +1,7 @@
 {
+  "compatibility_flags": [
+    "nodejs_als"
+  ],
   "compatibility_date": "2024-01-05",
   "env": {
     "dev": {
