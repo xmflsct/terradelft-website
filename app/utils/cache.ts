@@ -13,7 +13,7 @@ const cache = async <T = unknown>({
   req: () => Promise<T>
   request: Request
 }): Promise<T> => {
-  const preview = (context.cloudflare.env as any).CF_PAGES !== 'PRODUCTION'
+  const preview = (context.cloudflare.env as any).CF_PAGES !== '1'
   if (preview || !ttlMinutes) {
     return await req()
   }
