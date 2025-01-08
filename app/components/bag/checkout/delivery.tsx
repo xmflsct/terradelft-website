@@ -124,7 +124,7 @@ const CheckoutDelivery: React.FC<Props> = ({
         e.target.name === 'delivery' && updateDeliveryMethod(e.target.value)
       }
     >
-      <div>
+      <div className='mb-2 flex flex-row items-center'>
         <input
           type='radio'
           name='delivery'
@@ -133,16 +133,18 @@ const CheckoutDelivery: React.FC<Props> = ({
           onChange={() => {}}
           className='mr-2'
         />
-        {t('pick-up')}
-        <span className='float-right'>{t('free')}</span>
+        <div
+          className='grow flex flex-row items-center cursor-pointer'
+          onClick={() => updateDeliveryMethod('pickup')}
+        >
+          <span className='grow'>{t('pick-up')}</span>
+          <span className='float-right'>{t('free')}</span>
+        </div>
       </div>
       <div>
         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}
+          className='flex flex-row items-center cursor-pointer'
+          onClick={() => delivery.method === 'pickup' && updateDeliveryMethod('shipment')}
         >
           <input
             type='radio'
@@ -152,18 +154,17 @@ const CheckoutDelivery: React.FC<Props> = ({
             onChange={() => {}}
             className='mr-2'
           />
-          {t('shipping')}
-          <div style={{ flex: '1', marginLeft: '0.5rem' }}>
-            <ReactSelect
-              name='country'
-              options={countryNames}
-              value={delivery.shipment}
-              placeholder={t('select-country')}
-              onChange={e => updateDeliveryShipmentCountry(e)}
-              isSearchable
-              isDisabled={delivery.method === 'pickup' || isSubmitting}
-            />
-          </div>
+          <span>{t('shipping')}</span>
+          <ReactSelect
+            name='country'
+            options={countryNames}
+            value={delivery.shipment}
+            placeholder={t('select-country')}
+            onChange={e => updateDeliveryShipmentCountry(e)}
+            isSearchable
+            isDisabled={delivery.method === 'pickup' || isSubmitting}
+            className='grow ml-2'
+          />
         </div>
 
         {shipments()}
