@@ -1,10 +1,9 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Disclosure } from '@headlessui/react'
-import { ActionArgs, json } from '@remix-run/cloudflare'
-import { useFetcher, useLocation, useParams } from '@remix-run/react'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ActionFunctionArgs, useFetcher, useLocation, useParams } from 'react-router'
 import Button from '~/components/button'
 import FormField from '~/components/formField'
 import classNames from '~/utils/classNames'
@@ -12,11 +11,7 @@ import { ObjectsObject_NameLocalized } from '~/utils/contentful'
 import sendEmail from '~/utils/sendEmail'
 import { SelectedVariation } from './$locale.object.$id'
 
-export const loader = () => {
-  throw json(null, { status: 404 })
-}
-
-export const action = async ({ context, request }: ActionArgs) => {
+export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const link = formData.get('link')
   const variant = formData.get('variant')
@@ -66,10 +61,10 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
   const [sent, setSent] = useState(false)
 
   return (
-    <Disclosure>
+    <Disclosure as='div'>
       {({ open }) => (
         <>
-          <Disclosure.Button
+          <DisclosureButton
             className={classNames(
               'peer',
               'flex w-full justify-between items-center',
@@ -84,8 +79,8 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
               fixedWidth
               className={open ? 'rotate-180 transform' : ''}
             />
-          </Disclosure.Button>
-          <Disclosure.Panel
+          </DisclosureButton>
+          <DisclosurePanel
             children={
               <div
                 className={classNames('px-4 py-2', 'border border-stone-200 rounded-bl rounded-br')}
@@ -176,7 +171,7 @@ export const ObjectContact: React.FC<Props> = ({ object, selectedVariation }) =>
 
                   <Button
                     type='submit'
-                    disabled={objectContact.state === ('submitting' || 'loading') || sent}
+                    disabled={objectContact.state in ['submitting', 'loading'] || sent}
                   >
                     {objectContact.state === 'submitting'
                       ? t('contact.form.button.submitting')

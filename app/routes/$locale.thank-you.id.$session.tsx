@@ -1,21 +1,19 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
-import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { H1 } from '~/components/globals'
-import { currency } from '~/utils/formatNumber'
-import loadMeta from '~/utils/loadMeta'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
+import { H1 } from '~/components/globals';
+import { currency } from '~/utils/formatNumber';
+import loadMeta from '~/utils/loadMeta';
+import { SEOKeywords, SEOTitle } from '~/utils/seo';
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   if (!args.params.session) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
-  const session = await (
+  const session = await(
     await fetch(`https://api.stripe.com/v1/checkout/sessions/${args.params.session}`, {
-      headers: { Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}` }
+      headers: { Authorization: `Bearer ${args.context.cloudflare.env.STRIPE_KEY_PRIVATE}` }
     })
   ).json<{
     amount_total: number
@@ -26,14 +24,14 @@ export const loader = async (args: LoaderArgs) => {
   }>()
 
   if (session.payment_status !== 'paid') {
-    throw json('Not Paid', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
-  const line_items = await (
+  const line_items = await(
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${args.params.session}/line_items?limit=100`,
       {
-        headers: { Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}` }
+        headers: { Authorization: `Bearer ${args.context.cloudflare.env.STRIPE_KEY_PRIVATE}` }
       }
     )
   ).json<{
@@ -46,10 +44,10 @@ export const loader = async (args: LoaderArgs) => {
   }>()
 
   const meta = await loadMeta(args, { titleKey: 'pages.thank-you' })
-  return json({ meta, session, line_items })
+  return { meta, session, line_items }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },

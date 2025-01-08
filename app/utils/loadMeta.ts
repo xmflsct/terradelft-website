@@ -1,5 +1,5 @@
-import { LoaderArgs } from '@remix-run/cloudflare'
-import i18next from '~/i18next.server'
+import { LoaderFunctionArgs } from 'react-router';
+import i18next from '~/i18next.server';
 
 type Props = {
   titleKey: string
@@ -7,7 +7,7 @@ type Props = {
 }
 
 const loadMeta = async (
-  args: LoaderArgs,
+  args: LoaderFunctionArgs,
   { titleKey, titleOptions }: Props
 ): Promise<{ title: string }> => {
   const t = await i18next.getFixedT(args.request, 'common')

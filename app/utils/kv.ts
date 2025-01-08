@@ -1,13 +1,10 @@
-import { json, LoaderArgs } from '@remix-run/cloudflare'
 import { gql } from 'graphql-request'
-import { max, min } from 'lodash'
-import {
-  graphqlRequest,
-  ObjectsObject,
-  ObjectsObjectVariation
-} from './contentful'
+import { max, min } from 'lodash-es'
+import { data as loaderData, LoaderFunctionArgs } from 'react-router'
+import { ttl } from './cache'
+import { graphqlRequest, ObjectsObject, ObjectsObjectVariation } from './contentful'
 
-export let kved: boolean | undefined = undefined
+export let kved: boolean | undefined = false
 
 export type SellableObject = Pick<
   ObjectsObject,
@@ -23,38 +20,29 @@ export type SellableObject = Pick<
 > & {
   variationsCollection: Pick<
     ObjectsObjectVariation,
-    | 'priceOriginal'
-    | 'priceSale'
-    | 'sellOnline'
-    | 'stock'
-    | 'variant'
-    | 'colour'
+    'priceOriginal' | 'priceSale' | 'sellOnline' | 'stock' | 'variant' | 'colour'
   >[]
   priceRange: { min?: number; max?: number }
 }
 
-const getSellableObjects = async (
-  args: LoaderArgs
-): Promise<SellableObject[]> => {
+const getSellableObjects = async (args: LoaderFunctionArgs): Promise<SellableObject[]> => {
   if (!args.params.locale) {
-    throw json('Locale missing', { status: 400 })
+    throw loaderData('Locale missing', { status: 400 })
   }
 
-  let objects: SellableObject[] | null =
-    await (args.context.TERRADELFT_WEBSITE as KVNamespace).get(`objects_${args.params.locale}`, {
+  let objects: SellableObject[] | null = await args.context.cloudflare.env.TERRADELFT_WEBSITE.get(
+    `objects_${args.params.locale}`,
+    {
       type: 'json'
-    })
+    }
+  )
 
   if (objects === null) {
     kved = false
     objects = []
     const perPage = 60
     let total: number | undefined = undefined
-    for (
-      let page = 0;
-      total === undefined || page <= Math.round(total / perPage);
-      page++
-    ) {
+    for (let page = 0; total === undefined || page <= Math.round(total / perPage); page++) {
       const data = await graphqlRequest<{
         objects: { total: number; items: SellableObject[] }
       }>({
@@ -66,11 +54,7 @@ const getSellableObjects = async (
         },
         query: gql`
           query Shop($locale: String, $limit: Int, $skip: Int) {
-            objects: objectsObjectCollection(
-              locale: $locale
-              limit: $limit
-              skip: $skip
-            ) {
+            objects: objectsObjectCollection(locale: $locale, limit: $limit, skip: $skip) {
               total
               items {
                 sys {
@@ -122,58 +106,49 @@ const getSellableObjects = async (
       objects.push(...data.objects.items)
     }
 
-    objects = objects.reduce(
-      (filtered: SellableObject[], item: SellableObject) => {
-        if (item.variationsCollection?.items.length) {
-          // Count only variations
-          if (
-            item.variationsCollection.items.filter(
-              variation =>
-                variation &&
-                variation.sellOnline &&
-                (variation.stock ?? 0 > 0) &&
-                (variation.priceOriginal || variation.priceSale || -1) > 0
-            ).length
-          ) {
-            filtered.push({
-              ...item,
-              priceRange: {
-                min: min(
-                  item.variationsCollection.items.map(
-                    item => item?.priceSale || item?.priceOriginal
-                  )
-                ),
-                max: max(
-                  item.variationsCollection.items.map(
-                    item => item?.priceOriginal
-                  )
-                )
-              }
-            })
-          }
-        } else {
-          // Count only root object
-          if (
-            item.sellOnline &&
-            (item.stock ?? 0 > 0) &&
-            (item.priceOriginal || item.priceSale || -1) > 0
-          ) {
-            filtered.push({
-              ...item,
-              priceRange: { min: item.priceSale || item.priceOriginal }
-            })
-          }
+    objects = objects.reduce((filtered: SellableObject[], item: SellableObject) => {
+      if (item.variationsCollection?.items.length) {
+        // Count only variations
+        if (
+          item.variationsCollection.items.filter(
+            variation =>
+              variation &&
+              variation.sellOnline &&
+              (variation.stock ?? 0 > 0) &&
+              (variation.priceOriginal || variation.priceSale || -1) > 0
+          ).length
+        ) {
+          filtered.push({
+            ...item,
+            priceRange: {
+              min: min(
+                item.variationsCollection.items.map(item => item?.priceSale || item?.priceOriginal)
+              ),
+              max: max(item.variationsCollection.items.map(item => item?.priceOriginal))
+            }
+          })
         }
+      } else {
+        // Count only root object
+        if (
+          item.sellOnline &&
+          (item.stock ?? 0 > 0) &&
+          (item.priceOriginal || item.priceSale || -1) > 0
+        ) {
+          filtered.push({
+            ...item,
+            priceRange: { min: item.priceSale || item.priceOriginal }
+          })
+        }
+      }
 
-        return filtered
-      },
-      []
-    )
+      return filtered
+    }, [])
 
-    await (args.context.TERRADELFT_WEBSITE as KVNamespace).put(
+    await args.context.cloudflare.env.TERRADELFT_WEBSITE.put(
       `objects_${args.params.locale}`,
       JSON.stringify(objects),
-      { expirationTtl: 60 * 10 }
+      { expirationTtl: ttl * 60 }
     )
   } else {
     kved = true

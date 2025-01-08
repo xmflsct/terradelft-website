@@ -1,9 +1,14 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData, useSubmit } from '@remix-run/react'
 import { gql } from 'graphql-request'
-import { find, inRange, maxBy, sortBy } from 'lodash'
-import { useEffect, useState } from 'react'
+import { find, inRange, maxBy, sortBy } from 'lodash-es'
+import { useEffect, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  data as loaderData,
+  LoaderFunctionArgs,
+  MetaFunction,
+  useLoaderData,
+  useSubmit
+} from 'react-router'
 import ReactSelect from 'react-select'
 import { H4 } from '~/components/globals'
 import ListObjects from '~/components/list/objects'
@@ -15,7 +20,6 @@ import { currency } from '~/utils/formatNumber'
 import { getSellableObjects, SellableObject } from '~/utils/kv'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
 
 type Options = {
   prices: {
@@ -28,10 +32,10 @@ type Options = {
   colours: { label: string; value: string; isDisabled: boolean }[]
 }
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const page = parseInt(args.params.page || '')
   if (page < 1) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
 
   const meta = await loadMeta(args, {
@@ -271,11 +275,11 @@ export const loader = async (args: LoaderArgs) => {
     )
     options.variants = sortBy(options.variants, ({ label, isDisabled }) => label && isDisabled)
     options.colours = sortBy(options.colours, ({ label, isDisabled }) => label && isDisabled)
-    return json({
+    return {
       meta,
       giftCard: null,
       data: { options, objects: reducedObjects, page: null }
-    })
+    }
   }
 
   const { giftCard } = await cache<{ giftCard: GiftCard }>({
@@ -305,7 +309,7 @@ export const loader = async (args: LoaderArgs) => {
   )
   options.variants = sortBy(options.variants, ({ label }) => label)
   options.colours = sortBy(options.colours, ({ label }) => label)
-  return json({
+  return {
     meta,
     giftCard,
     data: {
@@ -313,10 +317,10 @@ export const loader = async (args: LoaderArgs) => {
       objects: objects.slice(page === 1 ? 0 : perPage * page - perPage - 1, perPage * page - 1),
       page: { total: Math.round(objects.length / perPage), current: page }
     }
-  })
+  }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },
@@ -364,6 +368,7 @@ const PageShopPage: React.FC = () => {
       <H4>{t('filters')}</H4>
       <form className='grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
         <ReactSelect
+          instanceId={useId()}
           name='price'
           isClearable
           options={options.prices}
@@ -371,6 +376,7 @@ const PageShopPage: React.FC = () => {
           onChange={d => setSelected({ ...selected, price: d ? d.value : undefined })}
         />
         <ReactSelect
+          instanceId={useId()}
           name='artist'
           isClearable
           isSearchable
@@ -382,6 +388,7 @@ const PageShopPage: React.FC = () => {
           }
         />
         <ReactSelect
+          instanceId={useId()}
           name='variant'
           isClearable
           isSearchable
@@ -394,6 +401,7 @@ const PageShopPage: React.FC = () => {
           }
         />
         <ReactSelect
+          instanceId={useId()}
           name='colour'
           isClearable
           isSearchable

@@ -1,8 +1,7 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import type { Person, WithContext } from 'schema-dts'
 import { H1, H2 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
@@ -13,7 +12,7 @@ import { graphqlRequest, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentf
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{ artists: { items: ObjectsArtist[] } }>({
     ...args,
     req: graphqlRequest({
@@ -54,12 +53,12 @@ export const loader = async (args: LoaderArgs) => {
   })
 
   if (!data?.artists?.items?.length) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
-  return json(data.artists.items[0])
+  return data.artists.items[0]
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.artist
     ? [
         { title: SEOTitle(data.artist) },

@@ -1,8 +1,8 @@
-import { LoaderArgs } from '@remix-run/cloudflare'
-import { gql } from 'graphql-request'
-import { sumBy } from 'lodash'
-import { TDObject } from '~/states/bag'
-import { graphqlRequest, ShippingRates } from './contentful'
+import { gql } from 'graphql-request';
+import { sumBy } from 'lodash-es';
+import { LoaderFunctionArgs } from 'react-router';
+import { TDObject } from '~/states/bag';
+import { graphqlRequest, ShippingRates } from './contentful';
 
 export type CheckoutContent = {
   objects: TDObject[]
@@ -40,7 +40,7 @@ const verifyContentful = async ({
   args,
   content: { amounts, delivery, objects }
 }: {
-  args: LoaderArgs
+  args: LoaderFunctionArgs
   content: CheckoutContent
 }): Promise<ShippingOptions> => {
   if (
@@ -205,8 +205,8 @@ const verifyContentful = async ({
   }
 }
 
-const checkout = async ({ args, content }: { args: LoaderArgs; content: CheckoutContent }) => {
-  if (!args.context.STRIPE_KEY_PRIVATE) {
+const checkout = async ({ args, content }: { args: LoaderFunctionArgs; content: CheckoutContent }) => {
+  if (!args.context.cloudflare.env.STRIPE_KEY_PRIVATE) {
     throw new Error('Missing stripe private key')
   }
 
@@ -353,7 +353,7 @@ const checkout = async ({ args, content }: { args: LoaderArgs; content: Checkout
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${args.context.STRIPE_KEY_PRIVATE}`,
+      Authorization: `Bearer ${args.context.cloudflare.env.STRIPE_KEY_PRIVATE}`,
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body

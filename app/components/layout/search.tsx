@@ -1,8 +1,8 @@
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Form } from '@remix-run/react'
-import { useTranslation } from 'react-i18next'
-import classNames from '~/utils/classNames'
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTranslation } from 'react-i18next';
+import { Form } from 'react-router';
+import classNames from '~/utils/classNames';
 
 type Props = {
   type: 'header' | 'navigation'

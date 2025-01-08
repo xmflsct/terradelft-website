@@ -1,12 +1,12 @@
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Menu, Transition } from '@headlessui/react'
-import { useLocation } from '@remix-run/react'
-import { Dispatch, Fragment, SetStateAction } from 'react'
-import { useTranslation } from 'react-i18next'
-import classNames from '~/utils/classNames'
-import { NavLink } from '../link'
-import Search from './search'
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Menu, Transition } from '@headlessui/react';
+import { Dispatch, Fragment, SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
+import classNames from '~/utils/classNames';
+import { NavLink } from '../link';
+import Search from './search';
 
 type Props = {
   toggleNav: boolean

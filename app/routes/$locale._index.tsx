@@ -1,26 +1,25 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
-import { gql } from 'graphql-request'
-import { shuffle } from 'lodash'
-import { useTranslation } from 'react-i18next'
-import { H2, H3 } from '~/components/globals'
-import ContentfulImage from '~/components/image'
-import { Link } from '~/components/link'
-import ListObjects from '~/components/list/objects'
-import { objectsReduceSell } from '~/components/list/objectsReduceSell'
-import RichText from '~/components/richText'
-import cache from '~/utils/cache'
+import { gql } from 'graphql-request';
+import { shuffle } from 'lodash-es';
+import { useTranslation } from 'react-i18next';
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
+import { H2, H3 } from '~/components/globals';
+import ContentfulImage from '~/components/image';
+import { Link } from '~/components/link';
+import ListObjects from '~/components/list/objects';
+import { objectsReduceSell } from '~/components/list/objectsReduceSell';
+import RichText from '~/components/richText';
+import cache from '~/utils/cache';
 import {
   Announcement,
   GiftCard,
   graphqlRequest,
   ObjectsArtist,
   ObjectsObject
-} from '~/utils/contentful'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import sortArtists from '~/utils/sortArtists'
+} from '~/utils/contentful';
+import { SEOKeywords, SEOTitle } from '~/utils/seo';
+import sortArtists from '~/utils/sortArtists';
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     announcements?: { items: Announcement[] }
     giftCard: GiftCard
@@ -95,17 +94,17 @@ export const loader = async (args: LoaderArgs) => {
     })
   })
 
-  return json({
+  return {
     announcements: data.announcements,
     giftCard: data.giftCard,
     objects: {
       items: shuffle(data.objects.items.reduce(objectsReduceSell<ObjectsObject>, [])).slice(0, 5)
     },
     artists: sortArtists(data.artists)
-  })
+  }
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }

@@ -1,7 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import type { Event, WithContext } from 'schema-dts'
 import ExhibitionInformation from '~/components/exhibition/information'
 import { H1 } from '~/components/globals'
@@ -12,7 +11,7 @@ import { EventsEvent, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     exhibition: Omit<EventsEvent, 'sys' | 'datetimeAllDay' | 'terraInChina'>
   }>({
@@ -63,12 +62,12 @@ export const loader = async (args: LoaderArgs) => {
   })
 
   if (!data?.exhibition) {
-    throw json('Not Found', { status: 404 })
+    throw loaderData(null, { status: 404 })
   }
-  return json(data)
+  return data
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.exhibition
     ? [
         {

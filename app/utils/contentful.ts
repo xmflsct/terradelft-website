@@ -1,10 +1,8 @@
 import { Document } from '@contentful/rich-text-types'
-import { json, LoaderArgs } from '@remix-run/cloudflare'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
+import { data as loaderData, LoaderFunctionArgs } from 'react-router'
 
-type GraphQLRequest = {
-  context: LoaderArgs['context']
-  params: LoaderArgs['params']
+type GraphQLRequest = Pick<LoaderFunctionArgs, 'context' | 'params'> & {
   query: RequestDocument
   variables?: Variables
 }
@@ -15,23 +13,23 @@ export const graphqlRequest = <T = unknown>({
   query,
   variables
 }: GraphQLRequest) => {
-  if (!context.CONTENTFUL_SPACE || !context.CONTENTFUL_KEY) {
-    throw json('Missing Contentful config', { status: 500 })
+  if (!context.cloudflare.env.CONTENTFUL_SPACE || !context.cloudflare.env.CONTENTFUL_KEY) {
+    throw loaderData('Missing Contentful config', { status: 500 })
   }
 
-  const preview = context.ENVIRONMENT !== 'PRODUCTION'
+  const preview = (context.cloudflare.env as any).CF_PAGES != '1'
   const locale = params.locale
 
   if (!locale) {
-    throw json('Missing locale', { status: 500 })
+    throw loaderData('Missing locale', { status: 500 })
   }
 
   return async () =>
     await new GraphQLClient(
-      `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/master`,
+      `https://graphql.contentful.com/content/v1/spaces/${context.cloudflare.env.CONTENTFUL_SPACE}/environments/master`,
       {
         fetch,
-        headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
+        headers: { Authorization: `Bearer ${context.cloudflare.env.CONTENTFUL_KEY}` },
         errorPolicy: preview ? 'ignore' : 'ignore'
       }
     ).request<T>(query, { ...variables, preview, locale })

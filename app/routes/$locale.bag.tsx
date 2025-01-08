@@ -1,16 +1,15 @@
-import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { Form, useLoaderData } from '@remix-run/react'
-import { gql } from 'graphql-request'
-import { useTranslation } from 'react-i18next'
-import BagCheckout from '~/components/bag/checkout'
-import BagList from '~/components/bag/list'
-import { H1 } from '~/components/globals'
-import cache from '~/utils/cache'
-import checkout from '~/utils/checkout'
-import { graphqlRequest, ShippingRates } from '~/utils/contentful'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { gql } from 'graphql-request';
+import { useTranslation } from 'react-i18next';
+import { ActionFunctionArgs, Form, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
+import BagCheckout from '~/components/bag/checkout';
+import BagList from '~/components/bag/list';
+import { H1 } from '~/components/globals';
+import cache from '~/utils/cache';
+import checkout from '~/utils/checkout';
+import { graphqlRequest, ShippingRates } from '~/utils/contentful';
+import { SEOKeywords, SEOTitle } from '~/utils/seo';
 
-export const action = async (args: ActionArgs) => {
+export const action = async (args: ActionFunctionArgs) => {
   const formData = await args.request.formData()
   const json = formData.get('json')?.toString()
 
@@ -38,7 +37,7 @@ export type BagData = {
   country: string
   rates: ShippingRates
 }
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     shippingRates: { items: { rates: ShippingRates }[] }
   }>({
@@ -61,14 +60,14 @@ export const loader = async (args: LoaderArgs) => {
       `
     })
   })
-  const env = { STRIPE_KEY_PUBLIC: args.context.STRIPE_KEY_PUBLIC as string }
+  const env = { STRIPE_KEY_PUBLIC: args.context.cloudflare.env.STRIPE_KEY_PUBLIC as string }
   // @ts-ignore
   const country: string = args.request.cf?.country || 'NL'
 
-  return json({ env, country, rates: data.shippingRates.items[0].rates })
+  return { env, country, rates: data.shippingRates.items[0].rates }
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }

@@ -1,25 +1,29 @@
-import { LinksFunction, LoaderArgs, redirect } from '@remix-run/cloudflare'
+import * as Sentry from '@sentry/react'
+import { useTranslation } from 'react-i18next'
 import {
   isRouteErrorResponse,
   Links,
-  LiveReload,
+  LinksFunction,
+  LoaderFunctionArgs,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
   useRouteError
-} from '@remix-run/react'
-import { useTranslation } from 'react-i18next'
+} from 'react-router'
 import { H1 } from '~/components/globals'
 import Layout from '~/components/layout'
 import StructuredData from '~/components/StructuredData'
 import i18n from '~/i18n'
 import i18next from '~/i18next.server'
 import notFound from '~/images/404.jpg'
-import styles from '~/styles/app.css'
+import stylesheet from '~/tailwind.css?url'
 import { SEOTitle } from '~/utils/seo'
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: stylesheet }]
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
 
   if (new URL(request.url).pathname === '/') {
@@ -34,10 +38,6 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 export const handle = {
   i18n: 'common'
-}
-
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: styles }]
 }
 
 export default function Root() {
@@ -58,7 +58,6 @@ export default function Root() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   )
@@ -68,6 +67,9 @@ export function ErrorBoundary() {
   const { t } = useTranslation('common')
 
   const error = useRouteError()
+  if (!isRouteErrorResponse(error) && error && error instanceof Error) {
+    Sentry.captureException(error)
+  }
 
   // when true, this is what used to go to `CatchBoundary`
   if (isRouteErrorResponse(error)) {
@@ -80,7 +82,9 @@ export function ErrorBoundary() {
         </head>
         <body className='scroll-smooth bg-background text-primary'>
           <Layout>
-            <H1>{t('pages.404')}</H1>
+            <H1>
+              {t('pages.404')} {error.status}
+            </H1>
             <img src={notFound} />
           </Layout>
           <Scripts />

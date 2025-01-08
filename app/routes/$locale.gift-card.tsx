@@ -1,9 +1,8 @@
-import { json, LoaderArgs } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
-import { sumBy } from 'lodash'
-import { useContext, useState } from 'react'
+import { sumBy } from 'lodash-es'
+import { useContext, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { LoaderFunctionArgs, useLoaderData } from 'react-router'
 import ReactSelect from 'react-select'
 import Button from '~/components/button'
 import FormField from '~/components/formField'
@@ -16,7 +15,7 @@ import { BagContext } from '~/states/bag'
 import cache from '~/utils/cache'
 import { GiftCard, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{ giftCard: GiftCard }>({
     ...args,
     req: graphqlRequest({
@@ -49,7 +48,7 @@ export const loader = async (args: LoaderArgs) => {
     })
   })
 
-  return json(data)
+  return data
 }
 
 export const handle = {
@@ -124,6 +123,7 @@ const PageGiftCard: React.FC = () => {
             {giftCard.defaultAmounts.map((amount, index) => (
               <FormField key={index} label={t('amount', { amount })}>
                 <ReactSelect
+                  instanceId={useId()}
                   options={Array(11)
                     .fill(undefined)
                     .map((_, i) => ({ value: i, label: i }))}
@@ -157,6 +157,7 @@ const PageGiftCard: React.FC = () => {
                         pattern='[0-9]*'
                       />
                       <ReactSelect
+                        instanceId={useId()}
                         options={Array(11)
                           .fill(undefined)
                           .map((_, i) => ({ value: i, label: i }))}

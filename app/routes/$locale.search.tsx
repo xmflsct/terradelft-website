@@ -4,19 +4,17 @@ import {
   faPalette,
   faUser,
   IconDefinition
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
-import { useTranslation } from 'react-i18next'
-import { H1 } from '~/components/globals'
-import ContentfulImage from '~/components/image'
-import { Link } from '~/components/link'
-import cache from '~/utils/cache'
-import classNames from '~/utils/classNames'
-import loadMeta from '~/utils/loadMeta'
-import { SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTranslation } from 'react-i18next';
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
+import { H1 } from '~/components/globals';
+import ContentfulImage from '~/components/image';
+import { Link } from '~/components/link';
+import cache from '~/utils/cache';
+import classNames from '~/utils/classNames';
+import loadMeta from '~/utils/loadMeta';
+import { SEOTitle } from '~/utils/seo';
 
 type HighlightResult = {
   fullyHighlighted: boolean
@@ -76,10 +74,10 @@ type SearchNews = {
   }
 }
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const query = new URL(args.request.url).searchParams.get('query')
   if (!query)
-    return json({
+    return {
       meta: { title: '' },
       data: {
         hits: [],
@@ -88,10 +86,10 @@ export const loader = async (args: LoaderArgs) => {
         nbPages: 0,
         query: null
       }
-    })
+    }
 
   const url = new URL(
-    `https://${args.context.ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${args.params.locale}`
+    `https://${args.context.cloudflare.env.ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/${args.params.locale}`
   )
   const params = new URLSearchParams()
   params.append('query', query)
@@ -110,8 +108,8 @@ export const loader = async (args: LoaderArgs) => {
       (
         await fetch(url, {
           headers: {
-            'X-Algolia-Application-Id': args.context.ALGOLIA_APP_ID as string,
-            'X-Algolia-API-Key': args.context.ALGOLIA_API_KEY as string
+            'X-Algolia-Application-Id': args.context.cloudflare.env.ALGOLIA_APP_ID as string,
+            'X-Algolia-API-Key': args.context.cloudflare.env.ALGOLIA_API_KEY as string
           }
         })
       ).json()
@@ -121,10 +119,10 @@ export const loader = async (args: LoaderArgs) => {
     titleOptions: { query: data.query }
   })
 
-  return json({ meta, data })
+  return { meta, data }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta ? [{ title: SEOTitle(data.meta.title) }] : []
 export let handle = { i18n: 'search' }
 

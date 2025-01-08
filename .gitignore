@@ -1,17 +1,10 @@
-node_modules
-.cache
-functions/_assets
-functions/\[\[path\]\].js
-functions/\[\[path\]\].js.map
-functions/metafile.js.json
-functions/metafile.server.json
-functions/version.txt
-public/build
-app/styles
-.env
-.wrangler
+.react-router/
+.wrangler/
+build/
+node_modules/
+.dev.*
 
-# yarn 3
+# yarn
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -19,3 +12,6 @@ app/styles
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Sentry Config File
+.env.sentry-build-plugin

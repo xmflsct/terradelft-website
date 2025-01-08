@@ -1,18 +1,16 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
-import { gql } from 'graphql-request'
-import { useTranslation } from 'react-i18next'
-import ExhibitionInformation from '~/components/exhibition/information'
-import { H2 } from '~/components/globals'
-import ContentfulImage from '~/components/image'
-import { Link } from '~/components/link'
-import cache from '~/utils/cache'
-import { EventsEvent, graphqlRequest, NewsNews } from '~/utils/contentful'
-import loadMeta from '~/utils/loadMeta'
-import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
+import { gql } from 'graphql-request';
+import { useTranslation } from 'react-i18next';
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
+import ExhibitionInformation from '~/components/exhibition/information';
+import { H2 } from '~/components/globals';
+import ContentfulImage from '~/components/image';
+import { Link } from '~/components/link';
+import cache from '~/utils/cache';
+import { EventsEvent, graphqlRequest, NewsNews } from '~/utils/contentful';
+import loadMeta from '~/utils/loadMeta';
+import { SEOKeywords, SEOTitle } from '~/utils/seo';
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     exhibitions: { items: EventsEvent[] }
     news: { items: NewsNews[] }
@@ -73,10 +71,10 @@ export const loader = async (args: LoaderArgs) => {
   })
   const meta = await loadMeta(args, { titleKey: 'pages.terra-in-china' })
 
-  return json({ meta, data })
+  return { meta, data }
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) =>
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
         { title: SEOTitle(data.meta.title) },
