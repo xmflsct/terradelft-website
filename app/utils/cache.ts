@@ -32,7 +32,7 @@ const cache = async <T = unknown>({
       expirationTtl: ttlMinutes * 60
     })
 
-    context.env.TERRADELFT_GRAPHQL.writeDataPoint({
+    context.cloudflare.env.TERRADELFT_GRAPHQL.writeDataPoint({
       indexes: ['not-cached'],
       blobs: [cacheKey]
     })
@@ -42,7 +42,7 @@ const cache = async <T = unknown>({
     console.log('☑️ Cached')
     cached = true
 
-    context.env.TERRADELFT_GRAPHQL.writeDataPoint({
+    context.cloudflare.env.TERRADELFT_GRAPHQL.writeDataPoint({
       indexes: ['cached'],
       blobs: [cacheKey]
     })
