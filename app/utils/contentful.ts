@@ -1,6 +1,7 @@
 import { Document } from '@contentful/rich-text-types'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
 import { data as loaderData, LoaderFunctionArgs } from 'react-router'
+import isPreview from './isPreview'
 
 type GraphQLRequest = Pick<LoaderFunctionArgs, 'context' | 'params'> & {
   query: RequestDocument
@@ -17,7 +18,7 @@ export const graphqlRequest = <T = unknown>({
     throw loaderData('Missing Contentful config', { status: 500 })
   }
 
-  const preview = (context.cloudflare.env as any).CF_PAGES != '1'
+  const preview = isPreview(context)
   const locale = params.locale
 
   if (!locale) {

@@ -20,7 +20,6 @@ export default async function handleRequest(
 
   const instance = createInstance()
 
-  const url = new URL(request.url)
   const lng = await i18next.getLocale(request as any)
   const ns = i18next.getRouteNamespaces(context)
 

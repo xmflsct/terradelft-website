@@ -1,0 +1,11 @@
+compatibility_date = "2024-01-05"
+compatibility_flags = [ "nodejs_compat" ]
+
+[env.dev]
+kv_namespaces = [
+  { binding = "TERRADELFT_WEBSITE", id = "TERRADELFT_WEBSITE" }
+]
+
+analytics_engine_datasets = [
+  { binding = "TERRADELFT_GRAPHQL", dataset = "TERRADELFT_GRAPHQL" }
+]

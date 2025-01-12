@@ -1,4 +1,5 @@
 import { LoaderFunctionArgs } from 'react-router'
+import isPreview from './isPreview'
 
 export const ttl = 60
 export let cached: boolean | undefined = false
@@ -13,8 +14,7 @@ const cache = async <T = unknown>({
   req: () => Promise<T>
   request: Request
 }): Promise<T> => {
-  const preview = (context.cloudflare.env as any).CF_PAGES !== '1'
-  if (preview || !ttlMinutes) {
+  if (isPreview(context) || !ttlMinutes) {
     return await req()
   }
 
