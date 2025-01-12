@@ -26,14 +26,27 @@ const cache = async <T = unknown>({
 
   if (!cache) {
     console.log('⚠️ Not cached')
+
     const queryResponse = await req()
     await context.cloudflare.env.TERRADELFT_WEBSITE.put(cacheKey, JSON.stringify(queryResponse), {
       expirationTtl: ttlMinutes * 60
     })
+
+    context.env.TERRADELFT_GRAPHQL.writeDataPoint({
+      indexes: ['not-cached'],
+      blobs: [cacheKey]
+    })
+
     return queryResponse
   } else {
     console.log('☑️ Cached')
     cached = true
+
+    context.env.TERRADELFT_GRAPHQL.writeDataPoint({
+      indexes: ['cached'],
+      blobs: [cacheKey]
+    })
+
     return await cache
   }
 }
