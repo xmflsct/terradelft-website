@@ -14,4 +14,5 @@ interface Env {
 	SENTRY_PROJECT: string;
 	STRIPE_KEY_PRIVATE: string;
 	STRIPE_KEY_PUBLIC: string;
+	TERRADELFT_GRAPHQL: AnalyticsEngineDataset;
 }

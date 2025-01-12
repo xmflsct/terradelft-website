@@ -23,8 +23,8 @@
     "@react-router/cloudflare": "^7.1.1",
     "@sentry/cloudflare": "^8.48.0",
     "@sentry/react": "^8.48.0",
-    "@sentry/vite-plugin": "^2.22.7",
-    "@stripe/stripe-js": "^5.4.0",
+    "@sentry/vite-plugin": "^2.23.0",
+    "@stripe/stripe-js": "^5.5.0",
     "get-youtube-id": "^1.0.1",
     "graphql": "^16.10.0",
     "graphql-request": "^7.1.2",
@@ -41,14 +41,14 @@
     "remix-i18next": "^7.0.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241230.0",
+    "@cloudflare/workers-types": "^4.20250109.0",
     "@contentful/rich-text-types": "^17.0.0",
     "@react-router/dev": "^7.1.1",
     "@react-router/fs-routes": "^7.1.1",
-    "@tailwindcss/typography": "^0.5.15",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/lodash-es": "^4.17.12",
-    "@types/react": "^19.0.3",
-    "@types/react-dom": "^19.0.2",
+    "@types/react": "^19.0.5",
+    "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
@@ -58,10 +58,10 @@
     "postcss-import": "^16.1.0",
     "schema-dts": "^1.1.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "vite": "^6.0.7",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^3.99.0"
+    "wrangler": "^3.101.0"
   },
   "packageManager": "yarn@4.6.0"
 }

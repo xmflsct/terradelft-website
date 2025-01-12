@@ -10,6 +10,12 @@
           "binding": "TERRADELFT_WEBSITE",
           "id": "TERRADELFT_WEBSITE"
         }
+      ],
+      "analytics_engine_datasets": [
+        {
+          "binding": "TERRADELFT_GRAPHQL",
+          "dataset": "TERRADELFT_GRAPHQL"
+        }
       ]
     }
   }
