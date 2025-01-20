@@ -189,7 +189,8 @@ export const handle = {
   ): WithContext<Product> => ({
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: object.name[locale],
+    ...(object.sku && { sku: object.sku }),
+    name: `${object.name[locale]} - ${object.artist.artist}`,
     image: object.imagesCollection?.items[0]?.url,
     ...(object.description && {
       description: documentToPlainTextString(object.description.json).substring(0, 199)
@@ -203,15 +204,16 @@ export const handle = {
         : object.priceOriginal,
       priceCurrency: 'EUR'
     },
+    ...(object.materialCollection?.items.length && {
+      material: object.materialCollection.items.map(material => material.material).join('/')
+    }),
+    itemCondition: 'NewCondition',
     subjectOf: {
       '@type': 'CreativeWork',
       ...(object.description && {
         abstract: documentToPlainTextString(object.description.json).substring(0, 199)
       }),
-      author: { '@type': 'Person', name: object.artist.artist },
-      ...(object.materialCollection?.items.length && {
-        material: object.materialCollection.items.map(material => material.material)
-      })
+      author: { '@type': 'Person', name: object.artist.artist }
     },
     ...(object.dimensionDepth && {
       depth: { '@type': 'QuantitativeValue', value: object.dimensionDepth }
