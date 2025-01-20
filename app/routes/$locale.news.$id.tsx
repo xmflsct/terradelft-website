@@ -1,15 +1,16 @@
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer';
-import { gql } from 'graphql-request';
-import { useTranslation } from 'react-i18next';
-import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
-import type { Article, WithContext } from 'schema-dts';
-import { H1 } from '~/components/globals';
-import ContentfulImage from '~/components/image';
-import RichText from '~/components/richText';
-import cache from '~/utils/cache';
-import { graphqlRequest, NewsNews, RICH_TEXT_LINKS } from '~/utils/contentful';
-import { SEOKeywords, SEOTitle } from '~/utils/seo';
-import { LoaderData } from '~/utils/unwrapLoaderData';
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { gql } from 'graphql-request'
+import { useTranslation } from 'react-i18next'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
+import type { Article, WithContext } from 'schema-dts'
+import { H1 } from '~/components/globals'
+import ContentfulImage from '~/components/image'
+import RichText from '~/components/richText'
+import cache from '~/utils/cache'
+import { graphqlRequest, NewsNews, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
@@ -46,9 +47,10 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return data
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.news
     ? [
+        ...linkHref(`news/${params.id}`),
         { title: SEOTitle(data.news.title) },
         { name: 'keywords', content: SEOKeywords([data.news.title]) },
         data.news.content

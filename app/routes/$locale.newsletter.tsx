@@ -12,6 +12,7 @@ import Button from '~/components/button'
 import FormField from '~/components/formField'
 import { H1 } from '~/components/globals'
 import i18next from '~/i18next.server'
+import { linkHref } from '~/utils/linkHref'
 import sendEmail from '~/utils/sendEmail'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
@@ -66,6 +67,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta && [
+    ...linkHref('newsletter'),
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) }
   ]

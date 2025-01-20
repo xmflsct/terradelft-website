@@ -7,6 +7,7 @@ import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import { AboutTerra, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
@@ -57,6 +58,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
+        ...linkHref('about-terra'),
         { title: SEOTitle(data.meta.title) },
         { name: 'keywords', content: SEOKeywords([data.meta.title]) },
         data.data?.page?.columnLeft?.json && {

@@ -1,11 +1,12 @@
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer';
-import { gql } from 'graphql-request';
-import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
-import RichText from '~/components/richText';
-import cache from '~/utils/cache';
-import { graphqlRequest, ReachTerra, RICH_TEXT_LINKS } from '~/utils/contentful';
-import loadMeta from '~/utils/loadMeta';
-import { SEOKeywords, SEOTitle } from '~/utils/seo';
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { gql } from 'graphql-request'
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
+import RichText from '~/components/richText'
+import cache from '~/utils/cache'
+import { graphqlRequest, ReachTerra, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
+import loadMeta from '~/utils/loadMeta'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{ page: ReachTerra }>({
@@ -34,18 +35,17 @@ export const loader = async (args: LoaderFunctionArgs) => {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) =>
-  data?.meta
-    ? [
-        { title: SEOTitle(data.meta.title) },
-        { name: 'keywords', content: SEOKeywords([data.meta.title]) },
-        data?.data?.page?.description?.json
-          ? {
-              name: 'description',
-              content: documentToPlainTextString(data.data.page.description.json).substring(0, 199)
-            }
-          : {}
-      ]
-    : []
+  data?.meta && [
+    ...linkHref('reach-terra'),
+    { title: SEOTitle(data.meta.title) },
+    { name: 'keywords', content: SEOKeywords([data.meta.title]) },
+    data?.data?.page?.description?.json
+      ? {
+          name: 'description',
+          content: documentToPlainTextString(data.data.page.description.json).substring(0, 199)
+        }
+      : {}
+  ]
 
 const PageReachTerra = () => {
   const {

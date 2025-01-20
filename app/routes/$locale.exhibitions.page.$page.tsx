@@ -6,6 +6,7 @@ import ListExhibitions from '~/components/list/exhibitions'
 import Pagination from '~/components/pagination'
 import cache from '~/utils/cache'
 import { EventsEvent, graphqlRequest } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
@@ -92,8 +93,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.meta && [
+    ...linkHref(`exhibitions/page/${params.page}`),
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) },
     { name: 'description', content: data.meta.title }

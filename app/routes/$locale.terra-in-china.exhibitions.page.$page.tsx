@@ -1,13 +1,14 @@
-import { gql } from 'graphql-request';
-import { useTranslation } from 'react-i18next';
-import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
-import { H1 } from '~/components/globals';
-import ListExhibitions from '~/components/list/exhibitions';
-import Pagination from '~/components/pagination';
-import cache from '~/utils/cache';
-import { EventsEvent, graphqlRequest } from '~/utils/contentful';
-import loadMeta from '~/utils/loadMeta';
-import { SEOKeywords, SEOTitle } from '~/utils/seo';
+import { gql } from 'graphql-request'
+import { useTranslation } from 'react-i18next'
+import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
+import { H1 } from '~/components/globals'
+import ListExhibitions from '~/components/list/exhibitions'
+import Pagination from '~/components/pagination'
+import cache from '~/utils/cache'
+import { EventsEvent, graphqlRequest } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
+import loadMeta from '~/utils/loadMeta'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const page = parseInt(args.params.page || '')
@@ -95,8 +96,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.meta && [
+    ...linkHref(`terra-in-china/exhibitions/page/${params.page}`),
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) }
   ]

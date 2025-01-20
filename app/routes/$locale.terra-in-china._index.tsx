@@ -1,14 +1,15 @@
-import { gql } from 'graphql-request';
-import { useTranslation } from 'react-i18next';
-import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
-import ExhibitionInformation from '~/components/exhibition/information';
-import { H2 } from '~/components/globals';
-import ContentfulImage from '~/components/image';
-import { Link } from '~/components/link';
-import cache from '~/utils/cache';
-import { EventsEvent, graphqlRequest, NewsNews } from '~/utils/contentful';
-import loadMeta from '~/utils/loadMeta';
-import { SEOKeywords, SEOTitle } from '~/utils/seo';
+import { gql } from 'graphql-request'
+import { useTranslation } from 'react-i18next'
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
+import ExhibitionInformation from '~/components/exhibition/information'
+import { H2 } from '~/components/globals'
+import ContentfulImage from '~/components/image'
+import { Link } from '~/components/link'
+import cache from '~/utils/cache'
+import { EventsEvent, graphqlRequest, NewsNews } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
+import loadMeta from '~/utils/loadMeta'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
@@ -77,6 +78,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data?.meta
     ? [
+        ...linkHref(`terra-in-china`),
         { title: SEOTitle(data.meta.title) },
         { name: 'keywords', content: SEOKeywords([data.meta.title]) }
       ]
