@@ -1,13 +1,20 @@
-import { gql } from 'graphql-request';
-import { useTranslation } from 'react-i18next';
-import { ActionFunctionArgs, Form, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
-import BagCheckout from '~/components/bag/checkout';
-import BagList from '~/components/bag/list';
-import { H1 } from '~/components/globals';
-import cache from '~/utils/cache';
-import checkout from '~/utils/checkout';
-import { graphqlRequest, ShippingRates } from '~/utils/contentful';
-import { SEOKeywords, SEOTitle } from '~/utils/seo';
+import { gql } from 'graphql-request'
+import { useTranslation } from 'react-i18next'
+import {
+  ActionFunctionArgs,
+  Form,
+  LoaderFunctionArgs,
+  MetaFunction,
+  useLoaderData
+} from 'react-router'
+import BagCheckout from '~/components/bag/checkout'
+import BagList from '~/components/bag/list'
+import { H1 } from '~/components/globals'
+import cache from '~/utils/cache'
+import checkout from '~/utils/checkout'
+import { graphqlRequest, ShippingRates } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const action = async (args: ActionFunctionArgs) => {
   const formData = await args.request.formData()
@@ -68,6 +75,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 }
 
 export const meta: MetaFunction = () => [
+  ...linkHref('bag'),
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }

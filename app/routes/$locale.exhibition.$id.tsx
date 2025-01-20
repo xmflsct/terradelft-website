@@ -8,6 +8,7 @@ import ContentfulImage from '~/components/image'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import { EventsEvent, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
@@ -67,9 +68,10 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return data
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.exhibition
     ? [
+        ...linkHref(`/exhibition/${params.id}`),
         {
           title: SEOTitle(data.exhibition.name)
         },

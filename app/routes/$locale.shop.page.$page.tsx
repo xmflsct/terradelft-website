@@ -18,6 +18,7 @@ import cache from '~/utils/cache'
 import { GiftCard, graphqlRequest } from '~/utils/contentful'
 import { currency } from '~/utils/formatNumber'
 import { getSellableObjects, SellableObject } from '~/utils/kv'
+import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
@@ -320,13 +321,12 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
-  data?.meta
-    ? [
-        { title: SEOTitle(data.meta.title) },
-        { name: 'keywords', content: SEOKeywords([data.meta.title]) }
-      ]
-    : []
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
+  data?.meta && [
+    ...linkHref(`shop/page/${params.page}`),
+    { title: SEOTitle(data.meta.title) },
+    { name: 'keywords', content: SEOKeywords([data.meta.title]) }
+  ]
 export let handle = { i18n: 'shop' }
 
 const PageShopPage: React.FC = () => {

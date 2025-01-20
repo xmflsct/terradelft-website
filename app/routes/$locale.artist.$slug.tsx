@@ -9,6 +9,7 @@ import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import { graphqlRequest, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
@@ -58,9 +59,10 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return data.artists.items[0]
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.artist
     ? [
+        ...linkHref(`artist/${params.slug}`),
         { title: SEOTitle(data.artist) },
         { name: 'keywords', content: SEOKeywords([data.artist]) },
         data.biography && {

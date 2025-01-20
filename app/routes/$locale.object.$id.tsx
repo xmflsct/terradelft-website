@@ -23,6 +23,7 @@ import {
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 import { ObjectContact } from './$locale.object.contact'
+import { linkHref } from '~/utils/linkHref'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
@@ -168,19 +169,18 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return tempObj
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data: object, params: { locale } }) =>
-  object
-    ? [
-        { title: SEOTitle(object.name[locale]) },
-        { name: 'keywords', content: SEOKeywords([object.name[locale] || '']) },
-        object.description
-          ? {
-              name: 'description',
-              content: documentToPlainTextString(object.description.json).substring(0, 199)
-            }
-          : {}
-      ]
-    : []
+export const meta: MetaFunction<typeof loader> = ({ data: object, params: { id, locale } }) =>
+  object && [
+    ...linkHref(`object/${id}`),
+    { title: SEOTitle(object.name[locale]) },
+    { name: 'keywords', content: SEOKeywords([object.name[locale] || '']) },
+    object.description
+      ? {
+          name: 'description',
+          content: documentToPlainTextString(object.description.json).substring(0, 199)
+        }
+      : {}
+  ]
 export const handle = {
   i18n: 'object',
   structuredData: (

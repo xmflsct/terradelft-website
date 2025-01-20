@@ -1,23 +1,24 @@
-import { gql } from 'graphql-request';
-import { shuffle } from 'lodash-es';
-import { useTranslation } from 'react-i18next';
-import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
-import { H2, H3 } from '~/components/globals';
-import ContentfulImage from '~/components/image';
-import { Link } from '~/components/link';
-import ListObjects from '~/components/list/objects';
-import { objectsReduceSell } from '~/components/list/objectsReduceSell';
-import RichText from '~/components/richText';
-import cache from '~/utils/cache';
+import { gql } from 'graphql-request'
+import { shuffle } from 'lodash-es'
+import { useTranslation } from 'react-i18next'
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
+import { H2, H3 } from '~/components/globals'
+import ContentfulImage from '~/components/image'
+import { Link } from '~/components/link'
+import ListObjects from '~/components/list/objects'
+import { objectsReduceSell } from '~/components/list/objectsReduceSell'
+import RichText from '~/components/richText'
+import cache from '~/utils/cache'
 import {
   Announcement,
   GiftCard,
   graphqlRequest,
   ObjectsArtist,
   ObjectsObject
-} from '~/utils/contentful';
-import { SEOKeywords, SEOTitle } from '~/utils/seo';
-import sortArtists from '~/utils/sortArtists';
+} from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
+import { SEOKeywords, SEOTitle } from '~/utils/seo'
+import sortArtists from '~/utils/sortArtists'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
@@ -105,6 +106,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 }
 
 export const meta: MetaFunction = () => [
+  ...linkHref(''),
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }
