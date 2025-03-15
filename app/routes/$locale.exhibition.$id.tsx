@@ -75,6 +75,18 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
         {
           title: SEOTitle(data.exhibition.name)
         },
+        {
+          property: 'og:title',
+          content: SEOTitle(data.exhibition.name)
+        },
+        ...(data.exhibition.image
+          ? [
+              {
+                property: 'og:image',
+                content: data.exhibition.image.url
+              }
+            ]
+          : []),
         { name: 'keywords', content: SEOKeywords([data.exhibition.name]) },
         data.exhibition.description
           ? {

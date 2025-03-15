@@ -173,6 +173,18 @@ export const meta: MetaFunction<typeof loader> = ({ data: object, params: { id, 
   object && [
     ...linkHref(`object/${id}`, locale),
     { title: SEOTitle(object.name[locale]) },
+    {
+      property: 'og:title',
+      content: SEOTitle(object.name[locale])
+    },
+    ...(object.imagesCollection?.items[0]
+      ? [
+          {
+            property: 'og:image',
+            content: object.imagesCollection.items[0].url
+          }
+        ]
+      : []),
     { name: 'keywords', content: SEOKeywords([object.name[locale] || '']) },
     object.description
       ? {
