@@ -171,7 +171,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
 export const meta: MetaFunction<typeof loader> = ({ data: object, params: { id, locale } }) =>
   object && [
-    ...linkHref(`object/${id}`),
+    ...linkHref(`object/${id}`, locale),
     { title: SEOTitle(object.name[locale]) },
     { name: 'keywords', content: SEOKeywords([object.name[locale] || '']) },
     object.description

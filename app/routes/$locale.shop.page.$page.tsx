@@ -323,7 +323,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.meta && [
-    ...linkHref(`shop/page/${params.page}`),
+    ...linkHref(`shop/page/${params.page}`, params.locale),
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) }
   ]

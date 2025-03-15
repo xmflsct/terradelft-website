@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from 'react-router'
 import isPreview from './isPreview'
 
-export const ttl = 60
+export const ttl = 360
 export let cached: boolean | undefined = false
 
 const cache = async <T = unknown>({

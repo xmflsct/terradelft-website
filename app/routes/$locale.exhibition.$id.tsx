@@ -71,7 +71,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.exhibition
     ? [
-        ...linkHref(`/exhibition/${params.id}`),
+        ...linkHref(`exhibition/${params.id}`, params.locale),
         {
           title: SEOTitle(data.exhibition.name)
         },

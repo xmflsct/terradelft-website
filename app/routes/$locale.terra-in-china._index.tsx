@@ -75,10 +75,10 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { meta, data }
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.meta
     ? [
-        ...linkHref(`terra-in-china`),
+        ...linkHref(`terra-in-china`, params.locale),
         { title: SEOTitle(data.meta.title) },
         { name: 'keywords', content: SEOKeywords([data.meta.title]) }
       ]

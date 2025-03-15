@@ -62,7 +62,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.artist
     ? [
-        ...linkHref(`artist/${params.slug}`),
+        ...linkHref(`artist/${params.slug}`, params.locale),
         { title: SEOTitle(data.artist) },
         { name: 'keywords', content: SEOKeywords([data.artist]) },
         data.biography && {
