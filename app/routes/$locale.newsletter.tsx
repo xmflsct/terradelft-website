@@ -65,9 +65,9 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
   return await sendEmail({ context, data })
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
+export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
   data?.meta && [
-    ...linkHref('newsletter'),
+    ...linkHref('newsletter', params.locale),
     { title: SEOTitle(data.meta.title) },
     { name: 'keywords', content: SEOKeywords([data.meta.title]) }
   ]

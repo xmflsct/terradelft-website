@@ -105,8 +105,8 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 }
 
-export const meta: MetaFunction = () => [
-  ...linkHref(''),
+export const meta: MetaFunction = ({ params }) => [
+  ...linkHref('', params.locale),
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }

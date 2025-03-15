@@ -74,8 +74,8 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { env, country, rates: data.shippingRates.items[0].rates }
 }
 
-export const meta: MetaFunction = () => [
-  ...linkHref('bag'),
+export const meta: MetaFunction = ({ params }) => [
+  ...linkHref('bag', params.locale),
   { title: SEOTitle() },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }
