@@ -3,6 +3,7 @@
 build/
 node_modules/
 .dev.*
+.DS_Store
 
 # yarn
 .pnp.*
