@@ -2,7 +2,7 @@ import { gql } from 'graphql-request'
 import { sumBy } from 'lodash-es'
 import { useContext, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LoaderFunctionArgs, useLoaderData } from 'react-router'
+import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import ReactSelect from 'react-select'
 import Button from '~/components/button'
 import FormField from '~/components/formField'
@@ -11,11 +11,16 @@ import ContentfulImage from '~/components/image'
 import Price from '~/components/object/price'
 import { selectStyle } from '~/components/object/sell'
 import RichText from '~/components/richText'
+import i18next from '~/i18next.server'
 import { BagContext } from '~/states/bag'
 import cache from '~/utils/cache'
 import { GiftCard, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { linkHref } from '~/utils/linkHref'
+import { SEOTitle } from '~/utils/seo'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  const t = await i18next.getFixedT(args.request)
+
   const data = await cache<{ giftCard: GiftCard }>({
     ...args,
     req: graphqlRequest({
@@ -48,9 +53,17 @@ export const loader = async (args: LoaderFunctionArgs) => {
     })
   })
 
-  return data
+  return { ...data, title: t('common:gift-card:name') }
 }
 
+export const meta: MetaFunction<typeof loader> = ({ data, params }) => [
+  ...linkHref('', params.locale),
+  { title: SEOTitle(data?.title) },
+  {
+    property: 'og:title',
+    content: SEOTitle(data?.title)
+  }
+]
 export const handle = {
   i18n: ['giftCard', 'object']
 }

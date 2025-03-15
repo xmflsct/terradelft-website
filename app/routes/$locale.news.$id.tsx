@@ -52,6 +52,18 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
     ? [
         ...linkHref(`news/${params.id}`, params.locale),
         { title: SEOTitle(data.news.title) },
+        {
+          property: 'og:title',
+          content: SEOTitle(data.news.title)
+        },
+        ...(data.news.image
+          ? [
+              {
+                property: 'og:image',
+                content: data.news.image
+              }
+            ]
+          : []),
         { name: 'keywords', content: SEOKeywords([data.news.title]) },
         data.news.content
           ? {

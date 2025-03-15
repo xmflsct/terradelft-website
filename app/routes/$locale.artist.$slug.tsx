@@ -64,6 +64,18 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) =>
     ? [
         ...linkHref(`artist/${params.slug}`, params.locale),
         { title: SEOTitle(data.artist) },
+        {
+          property: 'og:title',
+          content: SEOTitle(data.artist)
+        },
+        ...(data.image
+          ? [
+              {
+                property: 'og:image',
+                content: data.image.url
+              }
+            ]
+          : []),
         { name: 'keywords', content: SEOKeywords([data.artist]) },
         data.biography && {
           name: 'description',

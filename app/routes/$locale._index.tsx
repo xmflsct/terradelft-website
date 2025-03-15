@@ -108,10 +108,14 @@ export const loader = async (args: LoaderFunctionArgs) => {
 export const meta: MetaFunction = ({ params }) => [
   ...linkHref('', params.locale),
   { title: SEOTitle() },
+  {
+    property: 'og:title',
+    content: SEOTitle()
+  },
   { name: 'keywords', content: SEOKeywords() },
   { name: 'description', content: 'Terra Delft Website' }
 ]
-export let handle = {
+export const handle = {
   i18n: 'index'
 }
 
