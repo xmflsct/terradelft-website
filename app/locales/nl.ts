@@ -19,7 +19,7 @@ export default {
         opening: {
           '1': 'woensdag t/m vrijdag 11 - 18 uur',
           '2': 'zaterdag 11 - 17 uur',
-          '3': '1e zondag vd mnd 13 - 17 uur'
+          '3': 'zondag 13 - 17 uur'
         }
       },
       center: {
