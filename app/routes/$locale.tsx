@@ -1,14 +1,12 @@
-import { data as loaderData, LoaderFunctionArgs, Outlet } from 'react-router';
-import Layout from '~/components/layout';
-import i18n from '~/i18n';
+import { data as loaderData, LoaderFunctionArgs, Outlet } from 'react-router'
+import Layout from '~/components/layout'
+import { invalidLocale } from '~/utils/invalidLocale'
 
 export const loader = ({ params }: LoaderFunctionArgs) => {
   const locale = params.locale
   if (!locale) throw loaderData(null, { status: 404 })
 
-  if (!i18n.supportedLngs.includes(locale)) {
-    throw loaderData(null, { status: 404 })
-  }
+  invalidLocale(locale)
 
   return null
 }

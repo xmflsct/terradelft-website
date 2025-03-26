@@ -4,11 +4,14 @@ import { LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import { graphqlRequest, ReachTerra, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const data = await cache<{ page: ReachTerra }>({
     ...args,
     req: graphqlRequest({

@@ -7,12 +7,14 @@ import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
 import cache from '~/utils/cache'
 import { EventsEvent, graphqlRequest } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
-import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const data = await cache<{
     exhibitions: { total: number; items: EventsEvent[] }
   }>({

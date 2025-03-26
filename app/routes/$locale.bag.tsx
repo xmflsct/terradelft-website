@@ -13,6 +13,7 @@ import { H1 } from '~/components/globals'
 import cache from '~/utils/cache'
 import checkout from '~/utils/checkout'
 import { graphqlRequest, ShippingRates } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
@@ -45,6 +46,8 @@ export type BagData = {
   rates: ShippingRates
 }
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const data = await cache<{
     shippingRates: { items: { rates: ShippingRates }[] }
   }>({

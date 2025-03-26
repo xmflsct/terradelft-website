@@ -12,16 +12,19 @@ import Button from '~/components/button'
 import FormField from '~/components/formField'
 import { H1 } from '~/components/globals'
 import i18next from '~/i18next.server'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import sendEmail from '~/utils/sendEmail'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
-export const loader = async (props: LoaderFunctionArgs) => {
-  const t = await i18next.getFixedT(props.request, 'common')
+export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
+  const t = await i18next.getFixedT(args.request, 'common')
   const meta = { title: t('pages.newsletter') }
 
   let countries = require('i18n-iso-countries')
-  switch (props.params.locale) {
+  switch (args.params.locale) {
     case 'en':
       countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
       break
@@ -30,7 +33,7 @@ export const loader = async (props: LoaderFunctionArgs) => {
       break
   }
 
-  countries = countries.getNames(props.params.locale)
+  countries = countries.getNames(args.params.locale)
   const countriesOptions: string[] = []
   countriesOptions.push(countries.NL)
   countriesOptions.push(countries.BE)

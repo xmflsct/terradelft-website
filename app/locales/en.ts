@@ -19,7 +19,7 @@ export default {
         opening: {
           '1': 'Wednesday to Friday 11.00 - 18.00',
           '2': 'Saturday 11.00 - 17.00',
-          '3': '1st Sunday/month 13.00 - 17.00'
+          '3': 'Sunday 13.00 - 17.00'
         }
       },
       center: {

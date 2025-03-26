@@ -6,11 +6,14 @@ import ListNews from '~/components/list/news'
 import Pagination from '~/components/pagination'
 import cache from '~/utils/cache'
 import { graphqlRequest, NewsNews } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const page = parseInt(args.params.page || '')
   if (page < 0) {
     throw loaderData(null, { status: 404 })

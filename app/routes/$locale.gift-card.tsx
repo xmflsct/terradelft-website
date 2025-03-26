@@ -15,10 +15,13 @@ import i18next from '~/i18next.server'
 import { BagContext } from '~/states/bag'
 import cache from '~/utils/cache'
 import { GiftCard, graphqlRequest, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import { SEOTitle } from '~/utils/seo'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const t = await i18next.getFixedT(args.request)
 
   const data = await cache<{ giftCard: GiftCard }>({
