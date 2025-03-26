@@ -3,10 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { data as loaderData, LoaderFunctionArgs, MetaFunction, useLoaderData } from 'react-router';
 import { H1 } from '~/components/globals';
 import { currency } from '~/utils/formatNumber';
+import { invalidLocale } from '~/utils/invalidLocale';
 import loadMeta from '~/utils/loadMeta';
 import { SEOKeywords, SEOTitle } from '~/utils/seo';
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   if (!args.params.session) {
     throw loaderData(null, { status: 404 })
   }

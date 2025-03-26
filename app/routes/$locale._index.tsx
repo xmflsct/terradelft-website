@@ -16,11 +16,14 @@ import {
   ObjectsArtist,
   ObjectsObject
 } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import sortArtists from '~/utils/sortArtists'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const data = await cache<{
     announcements?: { items: Announcement[] }
     giftCard: GiftCard

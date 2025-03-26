@@ -9,11 +9,14 @@ import ListObjects, { LIST_OBJECT_DETAILS } from '~/components/list/objects'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import { graphqlRequest, ObjectsArtist, RICH_TEXT_LINKS } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
 import { linkHref } from '~/utils/linkHref'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const data = await cache<{ artists: { items: ObjectsArtist[] } }>({
     ...args,
     req: graphqlRequest({

@@ -20,12 +20,15 @@ import {
   ObjectsObjectVariation,
   RICH_TEXT_LINKS
 } from '~/utils/contentful'
+import { invalidLocale } from '~/utils/invalidLocale'
+import { linkHref } from '~/utils/linkHref'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 import { ObjectContact } from './$locale.object.contact'
-import { linkHref } from '~/utils/linkHref'
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  invalidLocale(args.params.locale)
+
   const data = await cache<{
     object: Omit<ObjectsObject, 'name'> & { name_nl?: string; name_en?: string }
   }>({
