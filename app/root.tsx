@@ -26,11 +26,17 @@ export const links: LinksFunction = () => [{ rel: 'stylesheet', href: stylesheet
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
 
-  if (new URL(request.url).pathname === '/') {
+  const { pathname, search } = new URL(request.url)
+
+  if (pathname === '/') {
     return redirect(`/${i18n.supportedLngs.includes(locale) ? locale : 'nl'}`, {
       status: 302,
       headers: { 'Cache-Control': 'no-cache' }
     })
+  }
+
+  if (pathname.endsWith('/')) {
+    throw redirect(`${pathname.slice(0, -1)}${search}`, 301)
   }
 
   return null
