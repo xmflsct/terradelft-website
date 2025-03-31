@@ -18,6 +18,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     exhibitions: { total: number; items: EventsEvent[] }
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,

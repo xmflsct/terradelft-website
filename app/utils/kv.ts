@@ -25,7 +25,7 @@ export type SellableObject = Pick<
   priceRange: { min?: number; max?: number }
 }
 
-const getSellableObjects = async (args: LoaderFunctionArgs): Promise<SellableObject[]> => {
+const getSellableObjects = async (args: Pick<LoaderFunctionArgs, 'params' | 'context'>): Promise<SellableObject[]> => {
   if (!args.params.locale) {
     throw loaderData('Locale missing', { status: 400 })
   }

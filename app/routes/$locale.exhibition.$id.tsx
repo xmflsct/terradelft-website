@@ -19,6 +19,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     exhibition: Omit<EventsEvent, 'sys' | 'datetimeAllDay' | 'terraInChina'>
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,

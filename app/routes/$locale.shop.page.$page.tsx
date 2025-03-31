@@ -34,6 +34,8 @@ type Options = {
   colours: { label: string; value: string; isDisabled: boolean }[]
 }
 
+export const shopPerPage = 48
+
 export const loader = async (args: LoaderFunctionArgs) => {
   invalidLocale(args.params.locale)
 
@@ -306,7 +308,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
     })
   })
 
-  const perPage = 48
   options.artists = sortBy(
     options.artists,
     ({ label }) => label.match(new RegExp(/\b(\w+)\W*$/))![0]
@@ -318,8 +319,11 @@ export const loader = async (args: LoaderFunctionArgs) => {
     giftCard,
     data: {
       options,
-      objects: objects.slice(page === 1 ? 0 : perPage * page - perPage - 1, perPage * page - 1),
-      page: { total: Math.round(objects.length / perPage), current: page }
+      objects: objects.slice(
+        page === 1 ? 0 : shopPerPage * page - shopPerPage - 1,
+        shopPerPage * page - 1
+      ),
+      page: { total: Math.round(objects.length / shopPerPage), current: page }
     }
   }
 }

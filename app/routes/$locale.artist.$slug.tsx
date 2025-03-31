@@ -18,6 +18,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   invalidLocale(args.params.locale)
 
   const data = await cache<{ artists: { items: ObjectsArtist[] } }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,

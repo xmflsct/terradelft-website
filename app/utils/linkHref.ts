@@ -10,19 +10,19 @@ export const linkHref: (path: string, locale?: string) => { tagName: 'link', rel
         {
           tagName: "link",
           rel: 'alternate',
-          hreflang: 'en',
+          hrefLang: 'en',
           href: `https://www.terra-delft.nl/en/${path}`
         },
         {
           tagName: "link",
           rel: 'alternate',
-          hreflang: 'nl',
+          hrefLang: 'nl',
           href: `https://www.terra-delft.nl/nl/${path}`
         },
         {
           tagName: "link",
           rel: 'alternate',
-          hreflang: 'x-default',
+          hrefLang: 'x-default',
           href: `https://www.terra-delft.nl/en/${path}`
         }
       ]
@@ -36,19 +36,19 @@ export const linkHref: (path: string, locale?: string) => { tagName: 'link', rel
         {
           tagName: "link",
           rel: 'alternate',
-          hreflang: 'nl',
+          hrefLang: 'nl',
           href: `https://www.terra-delft.nl/nl/${path}`
         },
         {
           tagName: "link",
           rel: 'alternate',
-          hreflang: 'en',
+          hrefLang: 'en',
           href: `https://www.terra-delft.nl/en/${path}`
         },
         {
           tagName: "link",
           rel: 'alternate',
-          hreflang: 'x-default',
+          hrefLang: 'x-default',
           href: `https://www.terra-delft.nl/en/${path}`
         }
       ]

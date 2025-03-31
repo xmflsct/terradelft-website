@@ -36,7 +36,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   if (pathname.endsWith('/')) {
-    throw redirect(`${pathname.slice(0, -1)}${search}`, 301)
+    return redirect(`${pathname.slice(0, -1)}${search}`, 301)
   }
 
   return null

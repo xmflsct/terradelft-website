@@ -19,6 +19,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     exhibitions: { items: EventsEvent[] }
     news: { items: NewsNews[] }
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,

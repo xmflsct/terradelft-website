@@ -27,6 +27,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
       items: Pick<NewsNews, 'sys' | 'title' | 'date' | 'image'>[]
     }
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,
