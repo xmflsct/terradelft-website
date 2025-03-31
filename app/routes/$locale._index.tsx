@@ -6,7 +6,6 @@ import { H2, H3 } from '~/components/globals'
 import ContentfulImage from '~/components/image'
 import { Link } from '~/components/link'
 import ListObjects from '~/components/list/objects'
-import { objectsReduceSell } from '~/components/list/objectsReduceSell'
 import RichText from '~/components/richText'
 import cache from '~/utils/cache'
 import {
@@ -17,6 +16,7 @@ import {
   ObjectsObject
 } from '~/utils/contentful'
 import { invalidLocale } from '~/utils/invalidLocale'
+import { getSellableObjects } from '~/utils/kv'
 import { linkHref } from '~/utils/linkHref'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 import sortArtists from '~/utils/sortArtists'
@@ -24,12 +24,13 @@ import sortArtists from '~/utils/sortArtists'
 export const loader = async (args: LoaderFunctionArgs) => {
   invalidLocale(args.params.locale)
 
+  const objects = await getSellableObjects(args)
   const data = await cache<{
     announcements?: { items: Announcement[] }
     giftCard: GiftCard
-    objects: { items: ObjectsObject[] }
     artists: { items: ObjectsArtist[] }
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,
@@ -56,32 +57,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
               }
             }
           }
-          objects: objectsObjectCollection(preview: $preview, locale: $locale, limit: 50) {
-            items {
-              sys {
-                id
-              }
-              name
-              imagesCollection(limit: 1) {
-                items {
-                  url
-                  title
-                  width
-                  height
-                }
-              }
-              priceSale
-              sellOnline
-              stock
-              variationsCollection(limit: 50) {
-                items {
-                  priceSale
-                  sellOnline
-                  stock
-                }
-              }
-            }
-          }
           artists: objectsArtistCollection(preview: $preview, locale: $locale) {
             items {
               slug
@@ -102,7 +77,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     announcements: data.announcements,
     giftCard: data.giftCard,
     objects: {
-      items: shuffle(data.objects.items.reduce(objectsReduceSell<ObjectsObject>, [])).slice(0, 5)
+      items: shuffle(objects).slice(0, 5)
     },
     artists: sortArtists(data.artists)
   }

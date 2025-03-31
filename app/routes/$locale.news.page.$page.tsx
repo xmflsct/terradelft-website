@@ -11,6 +11,8 @@ import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
+export const newsPerPage = 12
+
 export const loader = async (args: LoaderFunctionArgs) => {
   invalidLocale(args.params.locale)
 
@@ -19,18 +21,17 @@ export const loader = async (args: LoaderFunctionArgs) => {
     throw loaderData(null, { status: 404 })
   }
 
-  const perPage = 12
-
   const data = await cache<{
     news: {
       total: number
       items: Pick<NewsNews, 'sys' | 'title' | 'date' | 'image'>[]
     }
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,
-      variables: { limit: perPage, skip: perPage * (page - 1) },
+      variables: { limit: newsPerPage, skip: newsPerPage * (page - 1) },
       query: gql`
         query PageNewsPage($preview: Boolean, $locale: String, $limit: Int, $skip: Int) {
           news: newsNewsCollection(
@@ -73,7 +74,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
       ...data,
       news: {
         ...data.news,
-        page: { total: Math.round(data.news.total / perPage), current: page }
+        page: { total: Math.round(data.news.total / newsPerPage), current: page }
       }
     }
   }

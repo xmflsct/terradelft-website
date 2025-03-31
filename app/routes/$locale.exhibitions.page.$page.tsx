@@ -11,6 +11,8 @@ import { linkHref } from '~/utils/linkHref'
 import loadMeta from '~/utils/loadMeta'
 import { SEOKeywords, SEOTitle } from '~/utils/seo'
 
+export const exhibitionsPerPage = 12
+
 export const loader = async (args: LoaderFunctionArgs) => {
   invalidLocale(args.params.locale)
 
@@ -19,17 +21,16 @@ export const loader = async (args: LoaderFunctionArgs) => {
     throw loaderData(null, { status: 404 })
   }
 
-  const perPage = 12
-
   const data = await cache<{
     exbhitions: { total: number; items: EventsEvent[] }
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,
       variables: {
-        limit: perPage,
-        skip: perPage * (page - 1),
+        limit: exhibitionsPerPage,
+        skip: exhibitionsPerPage * (page - 1),
         datetimeEnd_lt: new Date().toISOString()
       },
       query: gql`
@@ -88,7 +89,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
       exbhitions: {
         ...data.exbhitions,
         page: {
-          total: Math.round(data.exbhitions.total / perPage),
+          total: Math.round(data.exbhitions.total / exhibitionsPerPage),
           current: page
         }
       }

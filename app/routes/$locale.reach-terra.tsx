@@ -13,6 +13,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   invalidLocale(args.params.locale)
 
   const data = await cache<{ page: ReachTerra }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,

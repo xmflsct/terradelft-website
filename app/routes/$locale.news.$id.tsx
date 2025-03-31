@@ -19,6 +19,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   const data = await cache<{
     news: Omit<NewsNews, 'sys' | 'terraInChina'>
   }>({
+    ttlMinutes: 10080,
     ...args,
     req: graphqlRequest({
       ...args,
