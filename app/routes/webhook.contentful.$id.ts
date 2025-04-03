@@ -66,18 +66,12 @@ export const action = async ({ params, context, request }: ActionFunctionArgs) =
     case 'newsNews':
       await deletePerLocale(`/news/${contentId}`)
 
-      const newsTotal = await graphqlRequest<{
-        news: {
-          total: number
-        }
-      }>({
+      const newsTotal = await graphqlRequest<{ news: { total: number } }>({
         context,
         params: { locale: 'nl' },
         query: gql`
         query Query($locale: String) {
-          news: newsNewsCollection(
-            locale: $locale
-          ) {
+          news: newsNewsCollection(locale: $locale) {
             total
           }
         }
@@ -96,10 +90,27 @@ export const action = async ({ params, context, request }: ActionFunctionArgs) =
       }
 
       break
-    // case 'objectsObject':
-    //   // not complete
-    //   await deletePerLocale(`/object/${contentId}`)
-    //   break
+    case 'objectsObject':
+      // not complete
+      // await deletePerLocale(`/object/${contentId}`)
+
+      if (payload.fields?.artist?.nl?.sys.id) {
+        const artist = await graphqlRequest<{ artist: Pick<ObjectsArtist, 'slug'> }>({
+          context,
+          params: { locale: 'nl' },
+          variables: { id: payload.fields.artist.nl.sys.id },
+          query: gql`
+            query Query($locale: String, $id: String!) {
+              artist: objectsArtist(locale: $locale, id: $id) {
+                slug
+              }
+            }
+          `
+        })()
+        await deletePerLocale(`/artist/${artist.artist.slug}`)
+      }
+
+      break
     case 'objectsArtist':
       if (payload.sys.fields?.slug) {
         await deletePerLocale(`/artist/${payload.sys.fields.slug}`)
